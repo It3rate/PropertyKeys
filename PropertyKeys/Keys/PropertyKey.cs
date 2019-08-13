@@ -8,7 +8,7 @@ namespace PropertyKeys
     {
         public float t;
         public int[] targetIDs;
-        Action<T> property;
-        ValueKey<T> ValueKey;
+        Action<Values> property;
+        ValueKey ValueKey;
     }
 }
