@@ -14,6 +14,8 @@ namespace PropertyKeys.Keys
         {
             float ct = 0;
             float divlen = values.Length - 1;
+            float wrap = divlen / (valueKey.StopCount - 1f);
+            float wrappingT = (t * wrap) % 1; // used in grid drawing
             Vector2 start;
             Vector2 end;
             for (int i = 0; i < values.Length; i++)
@@ -21,7 +23,7 @@ namespace PropertyKeys.Keys
                 ct = i / divlen;
                 start = valueKey.Start.GetVector2At(ct, valueKey.IsDiscrete);
                 end = valueKey.End.GetVector2At(ct, valueKey.IsDiscrete);
-                values[i] = start + start * t + (1.0f - t) * end;
+                values[i] = Vector2.Lerp(start, end, wrappingT);// start + start * t + (1.0f - t) * end;
             }
         }
 

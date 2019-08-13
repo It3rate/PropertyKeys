@@ -12,7 +12,7 @@ namespace PropertyKeys
         public int StopCount;
         public bool IsDiscrete;
 
-        public ValueKey(Values start = default(Values), Values end = default(Values), EasingType easingType = EasingType.Linear, int stopCount = 1, bool isDiscrete = false)
+        public ValueKey(Values start = default(Values), Values end = default(Values), EasingType easingType = EasingType.Linear, int stopCount = 2, bool isDiscrete = false)
         {
             Start = start;
             End = end;
