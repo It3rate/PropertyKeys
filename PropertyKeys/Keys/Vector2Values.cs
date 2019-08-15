@@ -12,19 +12,19 @@ namespace PropertyKeys.Keys
         private Vector2[] values; 
         public override void ApplyValues(float t, ValueKey valueKey)
         {
-            float ct = 0;
-            float divlen = values.Length - 1;
-            float wrap = divlen / (valueKey.StopCount - 1f);
-            float wrappingT = (t * wrap) % 1; // used in grid drawing
-            Vector2 start;
-            Vector2 end;
-            for (int i = 0; i < values.Length; i++)
-            {
-                ct = i / divlen;
-                start = valueKey.Start.GetVector2At(ct, valueKey.IsDiscrete);
-                end = valueKey.End.GetVector2At(ct, valueKey.IsDiscrete);
-                values[i] = Vector2.Lerp(start, end, wrappingT);// start + start * t + (1.0f - t) * end;
-            }
+            //float ct = 0;
+            //float divlen = values.Length - 1;
+            //float wrap = divlen / (valueKey.StopCount - 1f);
+            //float wrappingT = (t * wrap) % 1; // used in grid drawing
+            //Vector2 start;
+            //Vector2 end;
+            //for (int i = 0; i < values.Length; i++)
+            //{
+            //    ct = i / divlen;
+            //    start = valueKey.Start.GetVector2At(ct, valueKey.IsDiscrete);
+            //    end = valueKey.End.GetVector2At(ct, valueKey.IsDiscrete);
+            //    values[i] = Vector2.Lerp(start, end, wrappingT);// start + start * t + (1.0f - t) * end;
+            //}
         }
 
 

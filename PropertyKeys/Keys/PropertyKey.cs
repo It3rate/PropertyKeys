@@ -8,7 +8,8 @@ namespace PropertyKeys
     {
         public float t;
         public int[] targetIDs;
-        Action<Values> property;
-        ValueKey ValueKey;
+        public Action<Values> property;
+        public ValueKey ValueKey;
+        public bool IsRepeating; // stop count repeats every n items
     }
 }
