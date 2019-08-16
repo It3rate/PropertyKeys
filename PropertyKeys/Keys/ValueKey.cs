@@ -89,22 +89,16 @@ namespace PropertyKeys
                 {
                     int xIndex = index % dim;
                     int yIndex = index / dim;
-                    Vector2 startVx = GetVirtualValue(Start, (xIndex / (float)(dim - 1f)));
-                    Vector2 endVx = GetVirtualValue(End, (xIndex / (float)(dim - 1f)));
-                    Vector2 startVy = GetVirtualValue(Start, (index / (float)ElementCount));// (ElementCount / dim)));
-                    Vector2 endVy = GetVirtualValue(End, (index / (float)ElementCount));// (ElementCount / dim)));
-                    float xt = xIndex / (float)(dim - 1f);
+                    int rows = ElementCount / dim;
+                    float xt = xIndex / (dim - 1f);
+                    float yt = (index / dim) / (float)rows;
+                    Vector2 startVx = GetVirtualValue(Start, xt);
+                    Vector2 endVx = GetVirtualValue(End, xt);
+                    Vector2 startVy = GetVirtualValue(Start, yt);
+                    Vector2 endVy = GetVirtualValue(End, yt);
                     Vector2 startV = new Vector2(startVx.X, startVy.Y);
                     Vector2 endV = new Vector2(endVx.X, endVy.Y);
                     result = Vector2.Lerp(startV, endV, t);
-                    //result = Vector2.Lerp(startVy, endVy, xt * (t * dim - (int)(t * dim)));
-
-                    //Vector2 startVx = GetVirtualValue(Start, index_t);// (xIndex / (float)(dim - 1f)));
-                    //Vector2 endVx = GetVirtualValue(End, index_t);// (xIndex / (float)(dim - 1f)));
-                    //Vector2 startV = new Vector2(startVx.X, startVy.Y);
-                    //Vector2 endV = new Vector2(endVx.X, endVy.Y);
-                    //result = Vector2.Lerp(startV, endV, t);
-
                 }
             }
             else

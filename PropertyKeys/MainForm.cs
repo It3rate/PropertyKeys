@@ -42,7 +42,7 @@ namespace PropertyKeys
 
         private void Tick(object sender, ElapsedEventArgs e)
         {
-            t += (e.SignalTime - curTime).Milliseconds / 1000f;
+            t += (e.SignalTime - curTime).Milliseconds / 3000f;
             curTime = e.SignalTime;
             Invalidate();
         }
