@@ -5,13 +5,13 @@ using System.Text;
 
 namespace PropertyKeys
 {
-    public abstract class ValueKey
+    public class ValueKey
     {
         private static readonly Vector2[] Empty = new Vector2[] { };
         private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0, 0 }; // zero means repeating, so this is a regular one row array
 
-        private int ElementCount;
+        public int ElementCount;
         private readonly List<Vector2> Elements;
         public int[] Dimensions;
 
@@ -67,7 +67,80 @@ namespace PropertyKeys
                 //values[i] = Vector2.Lerp(start, end, wrappingT);// start + start * t + (1.0f - t) * end;
             }
         }
-        public abstract Vector2 GetVector2At(float t, bool interpolate);
+        public Vector2 GetVector2AtTime(float t, bool interpolate)
+        {
+            Vector2 result = Vector2.Zero;
+            return result;
+        }
+        public Vector2 GetVector2AtIndex(int index, bool interpolate, float t)
+        {
+            Vector2 result;
+            int dim = Dimensions[0];
+            if (dim != 0 || Start.Length != ElementCount || End.Length != ElementCount)
+            {
+                float index_t = index / ((float)ElementCount - 1f);
+                if (dim == 0)
+                {
+                    Vector2 startV = GetVirtualValue(Start, index_t);
+                    Vector2 endV = GetVirtualValue(End, index_t);
+                    result = Vector2.Lerp(startV, endV, t);
+                }
+                else
+                {
+                    int xIndex = index % dim;
+                    int yIndex = index / dim;
+                    Vector2 startVx = GetVirtualValue(Start, (xIndex / (float)(dim - 1f)));
+                    Vector2 endVx = GetVirtualValue(End, (xIndex / (float)(dim - 1f)));
+                    Vector2 startVy = GetVirtualValue(Start, (index / (float)ElementCount));// (ElementCount / dim)));
+                    Vector2 endVy = GetVirtualValue(End, (index / (float)ElementCount));// (ElementCount / dim)));
+                    float xt = xIndex / (float)(dim - 1f);
+                    Vector2 startV = new Vector2(startVx.X, startVy.Y);
+                    Vector2 endV = new Vector2(endVx.X, endVy.Y);
+                    result = Vector2.Lerp(startV, endV, t);
+                    //result = Vector2.Lerp(startVy, endVy, xt * (t * dim - (int)(t * dim)));
+
+                    //Vector2 startVx = GetVirtualValue(Start, index_t);// (xIndex / (float)(dim - 1f)));
+                    //Vector2 endVx = GetVirtualValue(End, index_t);// (xIndex / (float)(dim - 1f)));
+                    //Vector2 startV = new Vector2(startVx.X, startVy.Y);
+                    //Vector2 endV = new Vector2(endVx.X, endVy.Y);
+                    //result = Vector2.Lerp(startV, endV, t);
+
+                }
+            }
+            else
+            {
+                int startIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
+                int endIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
+                result = Vector2.Lerp(Start[startIndex], End[endIndex], t);
+            }
+            return result;
+        }
+
+        private static Vector2 GetVirtualValue(Vector2[] values, float t)
+        {
+            Vector2 result;
+            if (values.Length > 1)
+            {
+                // interpolate between indexes to get virtual values from array.
+                float pos = Math.Min(1, Math.Max(0, t)) * (values.Length - 1);
+                int startIndex = (int)Math.Floor(pos);
+                startIndex = Math.Min(values.Length - 1, Math.Max(0, startIndex));
+                if (pos < values.Length - 1)
+                {
+                    float remainder_t = pos - startIndex;
+                    result = Vector2.Lerp(values[startIndex], values[startIndex + 1], remainder_t);
+                }
+                else
+                {
+                    result = values[startIndex];
+                }
+            }
+            else
+            {
+                result = values[0];
+            }
+            return result;
+        }
 
     }
 }
