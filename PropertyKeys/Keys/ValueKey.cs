@@ -12,7 +12,6 @@ namespace PropertyKeys
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0, 0 }; // zero means repeating, so this is a regular one row array
 
         public int ElementCount;
-        private readonly List<Vector2> Elements;
         public int[] Dimensions;
 
         private readonly Vector2[] Start;
@@ -20,13 +19,12 @@ namespace PropertyKeys
 
         public EasingType[] EasingTypes;
         public bool IsDiscrete;
-        public bool IsRepeating; // start>end interpolation applies each 'StopCount' elements
+        public bool IsRepeating; // start>end interpolation applies each 'Dimension' elements
 
-        public ValueKey(Vector2[] start, Vector2[] end = null, EasingType[] easingTypes = null,
+        public ValueKey(Vector2[] start, Vector2[] end = null, EasingType[] easingTypes = null, int elementCount = -1,
             int[] dimensions = null, bool isDiscrete = false, bool isRepeating = false)
         {
-            ElementCount = start.Length; // can be larger or smaller based on sampling
-            Elements = new List<Vector2>(ElementCount);
+            ElementCount = (elementCount < 1) ? start.Length : elementCount; // can be larger or smaller based on sampling
             Start = start;
             End = (end == null) ? Empty : end;
             EasingTypes = (easingTypes == null) ? DefaultEasing : easingTypes;
@@ -35,50 +33,25 @@ namespace PropertyKeys
             IsRepeating = isRepeating;
         }
 
-        public void SetT(float t, Values outValues)
+        public void ApplyAt(float t, bool interpolate, Vector2[] outValues)
         {
-            float _t;
-            float cols = Dimensions[0] > 0 ? Dimensions[0] : ElementCount;
-            _t = IsDiscrete ? (int)(t * cols) / (float)cols : t; // is discrete step in T? Or in easing?
-
-            // tx = Easing.GetValueAt(t, EasingTypes[0]);
-            // ty = Easing.GetValueAt(t, EasingTypes[1]); // if exists, else [0]
-            // x will be (tx * ElementCount) - cols
-            // y will be (int)((ty * ElementCount) / cols)  /  Math.Ceiling(ElementCount/cols)
-
-            _t = Easing.GetValueAt(t, EasingTypes[0]);
-            outValues.ApplyValues(_t, this);// d_start + d_start * _t + (1.0f - _t) * d_end;
-        }
-
-        public void ApplyValues(float t)
-        {
-            float ct = 0;
-            float divlen = ElementCount - 1;
-            float cols = Dimensions[0] > 0 ? Dimensions[0] : ElementCount;
-            float wrap = divlen / (cols - 1f);
-            float wrappingT = (t * wrap) % 1; // used in grid drawing
-            Vector2 start;
-            Vector2 end;
-            for (int i = 0; i < ElementCount; i++)
+            for (int i = 0; i < outValues.Length; i++)
             {
-                ct = i / divlen;
-                //start = valueKey.Start.GetVector2At(ct, valueKey.IsDiscrete);
-                //end = valueKey.End.GetVector2At(ct, valueKey.IsDiscrete);
-                //values[i] = Vector2.Lerp(start, end, wrappingT);// start + start * t + (1.0f - t) * end;
+                outValues[i] = GetVector2AtIndex(i, interpolate, t, outValues.Length);
             }
         }
-        public Vector2 GetVector2AtTime(float t, bool interpolate)
-        {
-            Vector2 result = Vector2.Zero;
-            return result;
-        }
+        
         public Vector2 GetVector2AtIndex(int index, bool interpolate, float t)
+        {
+            return GetVector2AtIndex(index, interpolate, t, ElementCount);
+        }
+        public Vector2 GetVector2AtIndex(int index, bool interpolate, float t, int elementCount)
         {
             Vector2 result;
             int dim = Dimensions[0];
-            if (dim != 0 || Start.Length != ElementCount || End.Length != ElementCount)
+            if (dim != 0 || Start.Length != elementCount || End.Length != elementCount)
             {
-                float index_t = index / ((float)ElementCount - 1f);
+                float index_t = index / ((float)elementCount - 1f);
                 if (dim == 0)
                 {
                     result = GetVirtualValue(Start, index_t);
@@ -92,8 +65,8 @@ namespace PropertyKeys
                 {
                     int xIndex = index % dim;
                     int yIndex = index / dim;
-                    int rows = ElementCount / dim;
-                    float xt = xIndex / (dim - 1f);
+                    int rows = elementCount / dim;
+                    float xt = xIndex / (dim - 0f);
                     float yt = (index / dim) / (float)rows;
                     Vector2 startVx = GetVirtualValue(Start, xt);
                     Vector2 startVy = GetVirtualValue(Start, yt);
