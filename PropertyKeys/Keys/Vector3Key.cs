@@ -55,9 +55,9 @@ namespace PropertyKeys.Keys
             bool isZeros = Strides.All(o => o == 0);
             if (isZeros || Start.Length != elementCount || End.Length != elementCount)
             {
-                float index_t = index / ((float)elementCount - 1f);
                 if (isZeros)
                 {
+                    float index_t = index / ((float)elementCount - 1f);
                     result = GetVirtualValue(Start, index_t);
                     if (End != null && End.Length > 0)
                     {
@@ -67,44 +67,8 @@ namespace PropertyKeys.Keys
                 }
                 else
                 {
-                    float dimT = 1f;
-                    int curSize = 1;
-                    int prevSize = curSize; // prevSize allows rendering to edges of grid
-                    float[] temp = new float[] { 0, 0, 0 };
-                    float[] start = new float[] { 0, 0, 0 };
-                    float[] end = new float[] { 0, 0, 0 };
-                    for (int i = 0; i < VectorSize; i++)
-                    {
-                        // first zero results in fill to end
-                        bool isLast = (Strides.Length - 1 < i) || (Strides[i] == 0);
-                        if (isLast)
-                        {
-                            dimT = (index / curSize) / (float)(elementCount / (curSize + prevSize));
-                        }
-                        else
-                        {
-                            prevSize = curSize;
-                            curSize *= Strides[i];
-                            dimT = (index % curSize) / (float)(curSize - prevSize);
-                        }
-                        GetVirtualValue(Start, dimT).CopyTo(temp);
-                        start[i] = temp[i];
-                        if(End != null && End.Length > 0)
-                        {
-                            GetVirtualValue(End, dimT).CopyTo(temp);
-                            end[i] = temp[i];
-                        }
-
-                        if (isLast)
-                        {
-                            break;
-                        }
-                    }
-                    result = new Vector3(start[0], start[1], start[2]);
-                    if (End != null && End.Length > 0)
-                    {
-                        result = Vector3.Lerp(result, new Vector3(end[0], end[1], end[2]), t);
-                    }
+                    result = RingSample(index, interpolate, t, elementCount);
+                    //result = GridSample(index, interpolate, t, elementCount);
                 }
             }
             else
@@ -116,6 +80,81 @@ namespace PropertyKeys.Keys
                     int endIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
                     result = Vector3.Lerp(result, End[endIndex], t);
                 }
+            }
+            return result;
+        }
+
+        private Vector3 RingSample(int index, bool interpolate, float t, int elementCount)
+        {
+            Vector3 result;
+            float index_t = index / (float)elementCount;
+
+            Vector3 tls = GetVirtualValue(Start, 0);
+            Vector3 brs = GetVirtualValue(Start, 1);
+            Vector3 tle = GetVirtualValue(End, 0);
+            Vector3 bre = GetVirtualValue(End, 1);
+            Vector3 tl = Vector3.Lerp(tls, tle, t);
+            Vector3 br = Vector3.Lerp(brs, bre, t);
+
+            float dx = (br.X - tl.X) / 2.0f;
+            float dy = (br.Y - tl.Y) / 2.0f;
+            result = new Vector3(
+                (float)(Math.Sin(index_t * 2.0f * Math.PI) * dx + tl.X + dx),
+                (float)(Math.Cos(index_t * 2.0f * Math.PI) * dy + tl.Y + dy), 0);
+            return result;
+
+            //Vector3 start = GetVirtualValue(Start, index_t);
+            //Vector3 end = start;
+            //Vector3 vt = start;
+            //if (End != null && End.Length > 0)
+            //{
+            //    end = GetVirtualValue(End, index_t);
+            //    vt = Vector3.Lerp(start, end, t);
+            //}
+            //return vt;
+
+        }
+
+        private Vector3 GridSample(int index, bool interpolate, float t, int elementCount)
+        {
+            Vector3 result;
+            float dimT = 1f;
+            int curSize = 1;
+            int prevSize = curSize; // prevSize allows rendering to edges of grid
+            float[] temp = new float[] { 0, 0, 0 };
+            float[] start = new float[] { 0, 0, 0 };
+            float[] end = new float[] { 0, 0, 0 };
+            for (int i = 0; i < VectorSize; i++)
+            {
+                // first zero results in fill to end
+                bool isLast = (Strides.Length - 1 < i) || (Strides[i] == 0);
+                if (isLast)
+                {
+                    dimT = (index / curSize) / (float)(elementCount / (curSize + prevSize));
+                }
+                else
+                {
+                    prevSize = curSize;
+                    curSize *= Strides[i];
+                    dimT = (index % curSize) / (float)(curSize - prevSize);
+                }
+                GetVirtualValue(Start, dimT).CopyTo(temp);
+                start[i] = temp[i];
+                if (End != null && End.Length > 0)
+                {
+                    GetVirtualValue(End, dimT).CopyTo(temp);
+                    end[i] = temp[i];
+                }
+
+                if (isLast)
+                {
+                    break;
+                }
+            }
+            result = new Vector3(start[0], start[1], start[2]);
+            if (End != null && End.Length > 0)
+            {
+                result = Vector3.Lerp(result, new Vector3(end[0], end[1], end[2]), t);
             }
             return result;
         }
