@@ -14,13 +14,37 @@ namespace PropertyKeys.Components
 
         public Circles()
         {
-            Vector2[] start = new Vector2[] { new Vector2(20, 70), new Vector2(140, 350), new Vector2(440, 260) };
-            Vector2[] end = new Vector2[] { new Vector2(220, 10), new Vector2(340, 250), new Vector2(85, 400) };
-            //Vector2[] start = new Vector2[] { new Vector2(100, 100), new Vector2(120, 120), new Vector2(200, 200) };
-            //Vector2[] end = new Vector2[] { new Vector2(200, 200), new Vector2(370, 370), new Vector2(400, 400) };
-            Location = new ValueKey(start, end);
-            Location.ElementCount = 32;
-            Location.Dimensions = new int[] { 4 };
+            Random rnd = new Random();
+            int test = 1;
+            if(test == 0)
+            {
+                Vector2[] start = new Vector2[] { new Vector2(20, 70), new Vector2(140, 350), new Vector2(440, 260) };
+                Vector2[] end = new Vector2[] { new Vector2(220, 10), new Vector2(340, 250), new Vector2(85, 400) };
+                //Vector2[] start = new Vector2[] { new Vector2(100, 100), new Vector2(120, 120), new Vector2(200, 200) };
+                //Vector2[] end = new Vector2[] { new Vector2(200, 200), new Vector2(370, 370), new Vector2(400, 400) };
+                Location = new ValueKey(start, end)
+                {
+                    ElementCount = 32,
+                    Dimensions = new int[] { 4 }
+                };
+            }
+            else if (test == 1)
+            {
+                int count = 50;
+                List<Vector2> start = new List<Vector2>();
+                List<Vector2> end = new List<Vector2>();
+                for (int i = 0; i < count; i++)
+                {
+                    Vector2 v = new Vector2(rnd.Next(500), rnd.Next(300));
+                    start.Add(v);
+                    end.Add( new Vector2(v.X + rnd.Next(250) - 25, v.Y + rnd.Next(50) - 25));
+            }
+            Location = new ValueKey(start.ToArray(), end.ToArray())
+            {
+                ElementCount = 200,
+                //Dimensions = new int[] { 15 }
+            };
+        }
         }
 
         public void Draw(Graphics g, float t)

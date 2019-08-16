@@ -81,9 +81,12 @@ namespace PropertyKeys
                 float index_t = index / ((float)ElementCount - 1f);
                 if (dim == 0)
                 {
-                    Vector2 startV = GetVirtualValue(Start, index_t);
-                    Vector2 endV = GetVirtualValue(End, index_t);
-                    result = Vector2.Lerp(startV, endV, t);
+                    result = GetVirtualValue(Start, index_t);
+                    if(End != null && End.Length > 0)
+                    {
+                        Vector2 endV = GetVirtualValue(End, index_t);
+                        result = Vector2.Lerp(result, endV, t);
+                    }
                 }
                 else
                 {
@@ -93,19 +96,27 @@ namespace PropertyKeys
                     float xt = xIndex / (dim - 1f);
                     float yt = (index / dim) / (float)rows;
                     Vector2 startVx = GetVirtualValue(Start, xt);
-                    Vector2 endVx = GetVirtualValue(End, xt);
                     Vector2 startVy = GetVirtualValue(Start, yt);
-                    Vector2 endVy = GetVirtualValue(End, yt);
-                    Vector2 startV = new Vector2(startVx.X, startVy.Y);
-                    Vector2 endV = new Vector2(endVx.X, endVy.Y);
-                    result = Vector2.Lerp(startV, endV, t);
+                    result = new Vector2(startVx.X, startVy.Y);
+
+                    if (End != null && End.Length > 0)
+                    {
+                        Vector2 endVx = GetVirtualValue(End, xt);
+                        Vector2 endVy = GetVirtualValue(End, yt);
+                        Vector2 endV = new Vector2(endVx.X, endVy.Y);
+                        result = Vector2.Lerp(result, endV, t);
+                    }
                 }
             }
             else
             {
                 int startIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
-                int endIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
-                result = Vector2.Lerp(Start[startIndex], End[endIndex], t);
+                result = Start[startIndex];
+                if (End != null && End.Length > 0)
+                {
+                    int endIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
+                    result = Vector2.Lerp(result, End[endIndex], t);
+                }
             }
             return result;
         }
