@@ -14,7 +14,7 @@ namespace PropertyKeys.Keys
         Grid,
         Ring,
     }
-    public class Vector3Key
+    public class Vector3Key : ValueKey
     {
         private static readonly Vector3[] Empty = new Vector3[] { };
         private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
@@ -23,7 +23,7 @@ namespace PropertyKeys.Keys
         private const int VectorSize = 3;
         private readonly Vector3[] Values;
 
-        public int ElementCount;
+        public override int ElementCount { get; set; }
         public EasingType[] EasingTypes; // per dimension
         public int[] Strides;
         public SampleType SampleType;
@@ -42,33 +42,62 @@ namespace PropertyKeys.Keys
             SampleType = sampleType;
         }
 
-        public void ApplyAt(float t, bool interpolate, Vector3[] outValues, Vector3Key endKey)
+        //public void ApplyAt(float t, bool interpolate, Vector3[] outValues)
+        //{
+        //    for (int i = 0; i < outValues.Length; i++)
+        //    {
+        //        outValues[i] = GetVector3AtIndex(i, interpolate, t, outValues.Length);
+        //    }
+        //}
+
+
+        public float[] BlendValueAtIndex(ValueKey endKey, int index, bool interpolate, float t)
         {
-            for (int i = 0; i < outValues.Length; i++)
-            {
-                outValues[i] = GetVector3AtIndex(i, interpolate, t, outValues.Length, endKey);
-            }
+            Vector3 start = GetVector3AtIndex(index, interpolate, 0);
+            float[] endAr = endKey.GetFloatArrayAtIndex(index, interpolate, 1);
+            Vector3 end = ValueKey.MergeToVector3(start, endAr);
+            float[] temp = new float[] { 0, 0, 0 };
+            Vector3.Lerp(start, end, t).CopyTo(temp);
+            return temp;
         }
 
-        public Vector3 GetVector3AtIndex(int index, bool interpolate, float t, Vector3Key end)
+        public override float[] GetFloatArrayAtIndex(int index, bool interpolate, float t)
         {
-            return GetVector3AtIndex(index, interpolate, t, ElementCount, end);
+            float[] temp = new float[] { 0, 0, 0 };
+            GetVector3AtIndex(index, interpolate, t, ElementCount).CopyTo(temp);
+            return temp;
         }
-        public Vector3 GetVector3AtIndex(int index, bool interpolate, float t, int elementCount, Vector3Key endKey)
+        public override float GetFloatAtIndex(int index, bool interpolate, float t)
+        {
+            Vector3 result = GetVector3AtIndex(index, interpolate, t, ElementCount);
+            return result.X;
+        }
+        public override Vector2 GetVector2AtIndex(int index, bool interpolate, float t)
+        {
+            Vector3 result = GetVector3AtIndex(index, interpolate, t, ElementCount);
+            return new Vector2(result.X, result.Y);
+        }
+        public override Vector3 GetVector3AtIndex(int index, bool interpolate, float t)
+        {
+            return GetVector3AtIndex(index, interpolate, t, ElementCount);
+        }
+        public override Vector4 GetVector4AtIndex(int index, bool interpolate, float t)
+        {
+            Vector3 result = GetVector3AtIndex(index, interpolate, t, ElementCount);
+            return new Vector4(result.X, result.Y, result.Z, 0);
+        }
+
+
+        public Vector3 GetVector3AtIndex(int index, bool interpolate, float t, int elementCount)
         {
             Vector3 result;
             bool isZeros = Strides.All(o => o == 0);
-            if (isZeros || Values.Length != elementCount || endKey.Values.Length != elementCount)
+            if (isZeros || Values.Length != elementCount)
             {
                 if (isZeros)
                 {
                     float index_t = index / ((float)elementCount - 1f);
                     result = GetVirtualValue(Values, index_t);
-                    if (endKey != null && endKey.Values.Length > 0)
-                    {
-                        Vector3 endV = GetVirtualValue(endKey.Values, index_t);
-                        result = Vector3.Lerp(result, endV, t);
-                    }
                 }
                 else
                 {
@@ -86,11 +115,6 @@ namespace PropertyKeys.Keys
             {
                 int startIndex = Math.Min(Values.Length - 1, Math.Max(0, index));
                 result = Values[startIndex];
-                if (endKey != null && endKey.Values.Length > 0)
-                {
-                    int endIndex = Math.Min(Values.Length - 1, Math.Max(0, index));
-                    result = Vector3.Lerp(result, endKey.Values[endIndex], t);
-                }
             }
             return result;
         }

@@ -24,7 +24,7 @@ namespace PropertyKeys.Components
                 //Vector2[] end = new Vector2[] { new Vector2(220, 10), new Vector2(340, 250), new Vector2(85, 400) };
                 Vector2[] start = new Vector2[] { new Vector2(100, 100), new Vector2(120, 120), new Vector2(200, 200) };
                 Vector2[] end = new Vector2[] { new Vector2(200, 200), new Vector2(370, 370), new Vector2(400, 400) };
-                Location = new ValueKey(start, end, elementCount: 32, dimensions: new int[] { 4 });
+                //Location = new ValueKey(start, end, elementCount: 32, dimensions: new int[] { 4 });
             }
             else if (test == 1)
             {
@@ -37,7 +37,7 @@ namespace PropertyKeys.Components
                     start.Add(v);
                     end.Add(new Vector2(v.X + rnd.Next((int)v.X) - v.X / 2.0f, v.Y + rnd.Next(50) - 25));
                 }
-                Location = new ValueKey(start.ToArray(), end.ToArray(), elementCount: 200);
+                //Location = new ValueKey(start.ToArray(), end.ToArray(), elementCount: 200);
             }
             else if (test == 2)
             {
@@ -60,7 +60,7 @@ namespace PropertyKeys.Components
             int count = Location3.GetElementCountAt(t);
             for (int i = 0; i < count; i++)
             {
-                Vector3 v = Location3.GetVector3AtIndex(i, true, t);
+                Vector3 v = Location3.GetValueAtIndex(i, true, t);
                 float it = i / (float)count;
                 Brush b = new SolidBrush(Color.FromArgb(128, 128 - (int)(t*128), (int)(it*255)));
                 float r = 10;

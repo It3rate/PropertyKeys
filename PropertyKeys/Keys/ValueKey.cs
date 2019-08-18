@@ -5,120 +5,108 @@ using System.Text;
 
 namespace PropertyKeys
 {
-    public class ValueKey
+    public abstract class ValueKey
     {
-        private static readonly Vector2[] Empty = new Vector2[] { };
-        private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
-        private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0, 0 }; // zero means repeating, so this is a regular one row array
+        public abstract int ElementCount { get; set;  }
+        public abstract float[] GetFloatArrayAtIndex(int index, bool interpolate, float t);
+        public abstract float GetFloatAtIndex(int index, bool interpolate, float t);
+        public abstract Vector2 GetVector2AtIndex(int index, bool interpolate, float t);
+        public abstract Vector3 GetVector3AtIndex(int index, bool interpolate, float t);
+        public abstract Vector4 GetVector4AtIndex(int index, bool interpolate, float t);
 
-        public int ElementCount;
-        public int[] Dimensions;
+        //public abstract float[] GetValueAtIndex(int index, bool interpolate, float t);
+        //public abstract int GetElementCountAt(float t);
 
-        private readonly Vector2[] Start;
-        private readonly Vector2[] End;
 
-        public EasingType[] EasingTypes;
-        public bool IsDiscrete;
-        public bool IsRepeating; // start>end interpolation applies each 'Dimension' elements
-
-        public ValueKey(Vector2[] start, Vector2[] end = null, EasingType[] easingTypes = null, int elementCount = -1,
-            int[] dimensions = null, bool isDiscrete = false, bool isRepeating = false)
+        public static Vector2 GetVector2(Vector3 a)
         {
-            ElementCount = (elementCount < 1) ? start.Length : elementCount; // can be larger or smaller based on sampling
-            Start = start;
-            End = (end == null) ? Empty : end;
-            EasingTypes = (easingTypes == null) ? DefaultEasing : easingTypes;
-            Dimensions = (dimensions == null) ? DefaultDimensions : dimensions;
-            IsDiscrete = isDiscrete;
-            IsRepeating = isRepeating;
+            return new Vector2(a.X, a.Y);
         }
 
-        public void ApplyAt(float t, bool interpolate, Vector2[] outValues)
+        public static float MergeToFloat(float a, float[] b)
         {
-            for (int i = 0; i < outValues.Length; i++)
-            {
-                outValues[i] = GetVector2AtIndex(i, interpolate, t, outValues.Length);
-            }
+            return b.Length > 0 ? b[0] : a;
         }
-        
-        public Vector2 GetVector2AtIndex(int index, bool interpolate, float t)
+        public static Vector2 MergeToVector2(Vector2 a, float[] b)
         {
-            return GetVector2AtIndex(index, interpolate, t, ElementCount);
+            return new Vector2(b.Length > 0 ? b[0] : a.X, b.Length > 1 ? b[1] : a.Y);
         }
-        public Vector2 GetVector2AtIndex(int index, bool interpolate, float t, int elementCount)
+        public static Vector3 MergeToVector3(Vector3 a, float[] b)
         {
-            Vector2 result;
-            int dim = Dimensions[0];
-            if (dim != 0 || Start.Length != elementCount || End.Length != elementCount)
-            {
-                float index_t = index / ((float)elementCount - 1f);
-                if (dim == 0)
-                {
-                    result = GetVirtualValue(Start, index_t);
-                    if(End != null && End.Length > 0)
-                    {
-                        Vector2 endV = GetVirtualValue(End, index_t);
-                        result = Vector2.Lerp(result, endV, t);
-                    }
-                }
-                else
-                {
-                    int xIndex = index % dim;
-                    int yIndex = index / dim;
-                    int rows = elementCount / dim;
-                    float xt = xIndex / (dim - 0f);
-                    float yt = (index / dim) / (float)rows;
-                    Vector2 startVx = GetVirtualValue(Start, xt);
-                    Vector2 startVy = GetVirtualValue(Start, yt);
-                    result = new Vector2(startVx.X, startVy.Y);
-
-                    if (End != null && End.Length > 0)
-                    {
-                        Vector2 endVx = GetVirtualValue(End, xt);
-                        Vector2 endVy = GetVirtualValue(End, yt);
-                        Vector2 endV = new Vector2(endVx.X, endVy.Y);
-                        result = Vector2.Lerp(result, endV, t);
-                    }
-                }
-            }
-            else
-            {
-                int startIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
-                result = Start[startIndex];
-                if (End != null && End.Length > 0)
-                {
-                    int endIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
-                    result = Vector2.Lerp(result, End[endIndex], t);
-                }
-            }
-            return result;
+            return new Vector3(b.Length > 0 ? b[0] : a.X, b.Length > 1 ? b[1] : a.Y, b.Length > 2 ? b[2] : a.Z);
+        }
+        public static Vector4 MergeToVector4(Vector4 a, float[] b)
+        {
+            return new Vector4(b.Length > 0 ? b[0] : a.X, b.Length > 1 ? b[1] : a.Y, b.Length > 2 ? b[2] : a.Z, b.Length > 3 ? b[3] : a.W);
         }
 
-        private static Vector2 GetVirtualValue(Vector2[] values, float t)
+
+        public static float MergeVectors(float a, float b)
         {
-            Vector2 result;
-            if (values.Length > 1)
-            {
-                // interpolate between indexes to get virtual values from array.
-                float pos = Math.Min(1, Math.Max(0, t)) * (values.Length - 1);
-                int startIndex = (int)Math.Floor(pos);
-                startIndex = Math.Min(values.Length - 1, Math.Max(0, startIndex));
-                if (pos < values.Length - 1)
-                {
-                    float remainder_t = pos - startIndex;
-                    result = Vector2.Lerp(values[startIndex], values[startIndex + 1], remainder_t);
-                }
-                else
-                {
-                    result = values[startIndex];
-                }
-            }
-            else
-            {
-                result = values[0];
-            }
-            return result;
+            return b;
+        }
+        public static float MergeVectors(float a, Vector2 b)
+        {
+            return b.X;
+        }
+        public static float MergeVectors(float a, Vector3 b)
+        {
+            return b.X;
+        }
+        public static float MergeVectors(float a, Vector4 b)
+        {
+            return b.X;
         }
 
+        public static Vector2 MergeVectors(Vector2 a, float b)
+        {
+            return new Vector2(b, a.Y);
+        }
+        public static Vector2 MergeVectors(Vector2 a, Vector2 b)
+        {
+            return b;
+        }
+        public static Vector2 MergeVectors(Vector2 a, Vector3 b)
+        {
+            return new Vector2(b.X, b.Y);
+        }
+        public static Vector2 MergeVectors(Vector2 a, Vector4 b)
+        {
+            return new Vector2(b.X, b.Y);
+        }
+
+        public static Vector3 MergeVectors(Vector3 a, float b)
+        {
+            return new Vector3(b, a.Y, a.Z);
+        }
+        public static Vector3 MergeVectors(Vector3 a, Vector2 b)
+        {
+            return new Vector3(b, a.Z);
+        }
+        public static Vector3 MergeVectors(Vector3 a, Vector3 b)
+        {
+            return b;
+        }
+        public static Vector3 MergeVectors(Vector3 a, Vector4 b)
+        {
+            return new Vector3(b.X, b.Y, b.Z);
+        }
+
+        public static Vector4 MergeVectors(Vector4 a, float b)
+        {
+            return new Vector4(b, a.Y, a.Z, a.W);
+        }
+        public static Vector4 MergeVectors(Vector4 a, Vector2 b)
+        {
+            return new Vector4(b, a.Z, a.W);
+        }
+        public static Vector4 MergeVectors(Vector4 a, Vector3 b)
+        {
+            return new Vector4(b, a.W);
+        }
+        public static Vector4 MergeVectors(Vector4 a, Vector4 b)
+        {
+            return b;
+        }
     }
 }
