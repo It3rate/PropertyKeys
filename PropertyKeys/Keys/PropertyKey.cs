@@ -29,7 +29,6 @@ namespace PropertyKeys
         {
             Vector3 start = Start.GetVector3AtIndex(index, interpolate, 0, End);
             Vector3 end = End.GetVector3AtIndex(index, interpolate, 1, null);
-            t = Easing.GetValueAt(t, EasingType.Squared);
             return Vector3.Lerp(start, end, t);
         }
         public int GetElementCountAt(float t)

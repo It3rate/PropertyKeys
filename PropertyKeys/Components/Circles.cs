@@ -43,9 +43,10 @@ namespace PropertyKeys.Components
             {
                 Vector3[] start = new Vector3[] { new Vector3(100, 40, 0), new Vector3(300, 200, 0) };//, new Vector3(200, 200, 0) };
                 Vector3[] end = new Vector3[] { new Vector3(200, 200, 0), new Vector3(400, 400, 0) };
-                var startKey = new Vector3Key(start, elementCount: 22, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
-                var endKey = new Vector3Key(end, elementCount: 64, dimensions: new int[] { 8, 0, 0 });
-                Location3 = new PropertyKey<Vector3Key>(startKey, endKey);
+                var startKey = new Vector3Key(start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
+                var endKey = new Vector3Key(end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
+                    easingTypes: new EasingType[]{ EasingType.Squared, EasingType.InverseSquared });
+                Location3 = new PropertyKey<Vector3Key>(startKey, endKey, easingType:EasingType.InverseSquared);
             }
         }
 
@@ -54,7 +55,8 @@ namespace PropertyKeys.Components
             //t = 1f;
             int floorT = (int)t;
             t = t - floorT;
-            if (floorT % 2 == 1) t = 1.0f - t;
+            if (floorT % 2 == 0) t = 1.0f - t;
+            t = Easing.GetValueAt(t, Location3.EasingType);
             int count = Location3.GetElementCountAt(t);
             for (int i = 0; i < count; i++)
             {

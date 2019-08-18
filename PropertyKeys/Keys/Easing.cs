@@ -9,6 +9,7 @@ namespace PropertyKeys
         None = 0,
         Linear = 1,
         Squared = 2,
+        InverseSquared = 3,
     }
     public struct Easing
     {
@@ -32,6 +33,9 @@ namespace PropertyKeys
                     break;
                 case EasingType.Squared:
                     result = t * t;
+                    break;
+                case EasingType.InverseSquared:
+                    result = 1f - (t * t);
                     break;
             }
             return result;

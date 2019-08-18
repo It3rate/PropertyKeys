@@ -74,11 +74,11 @@ namespace PropertyKeys.Keys
                 {
                     if(SampleType == SampleType.Default || SampleType == SampleType.Grid)
                     {
-                        result = GridSample(index, interpolate, t, elementCount, endKey);
+                        result = GridSample(index, interpolate, t, elementCount);
                     }
                     else
                     {
-                        result = RingSample(index, interpolate, t, elementCount, endKey);
+                        result = RingSample(index, interpolate, t, elementCount);
                     }
                 }
             }
@@ -95,29 +95,24 @@ namespace PropertyKeys.Keys
             return result;
         }
 
-        private Vector3 RingSample(int index, bool interpolate, float t, int elementCount, Vector3Key endKey)
+        private Vector3 RingSample(int index, bool interpolate, float t, int elementCount)
         {
             Vector3 result;
-            float index_t = index / (float)(elementCount - 1f);
+            float index_t = index / (float)(elementCount - 1f); // full circle
 
-            Vector3 tls = GetVirtualValue(Values, 0);
-            Vector3 brs = GetVirtualValue(Values, 1);
-            //Vector3 tle = GetVirtualValue(endKey.Values, 0);
-            //Vector3 bre = GetVirtualValue(endKey.Values, 1);
-            //Vector3 tl = Vector3.Lerp(tls, tle, t);
-            //Vector3 br = Vector3.Lerp(brs, bre, t);
+            Vector3 tl = GetVirtualValue(Values, 0);
+            Vector3 br = GetVirtualValue(Values, 1);
 
-            float dx = (brs.X - tls.X) / 2.0f;
-            float dy = (brs.Y - tls.Y) / 2.0f;
+            float dx = (br.X - tl.X) / 2.0f;
+            float dy = (br.Y - tl.Y) / 2.0f;
             result = new Vector3(
-                (float)(Math.Sin(index_t * 2.0f * Math.PI + Math.PI) * dx + tls.X + dx),
-                (float)(Math.Cos(index_t * 2.0f * Math.PI + Math.PI) * dy + tls.Y + dy), 0);
+                (float)(Math.Sin(index_t * 2.0f * Math.PI + Math.PI) * dx + tl.X + dx),
+                (float)(Math.Cos(index_t * 2.0f * Math.PI + Math.PI) * dy + tl.Y + dy), 0);
             return result;
         }
 
-        private Vector3 GridSample(int index, bool interpolate, float t, int elementCount, Vector3Key endKey)
+        private Vector3 GridSample(int index, bool interpolate, float t, int elementCount)
         {
-            endKey = null;
             Vector3 result;
             float dimT = 1f;
             int curSize = 1;
@@ -139,13 +134,13 @@ namespace PropertyKeys.Keys
                     curSize *= Strides[i];
                     dimT = (index % curSize) / (float)(curSize - prevSize);
                 }
+
+                if (i < EasingTypes.Length)
+                {
+                    dimT = Easing.GetValueAt(dimT, EasingTypes[i]);
+                }
                 GetVirtualValue(Values, dimT).CopyTo(temp);
                 start[i] = temp[i];
-                if (endKey != null && endKey.Values.Length > 0)
-                {
-                    GetVirtualValue(endKey.Values, dimT).CopyTo(temp);
-                    end[i] = temp[i];
-                }
 
                 if (isLast)
                 {
@@ -153,10 +148,6 @@ namespace PropertyKeys.Keys
                 }
             }
             result = new Vector3(start[0], start[1], start[2]);
-            if (endKey != null && endKey.Values.Length > 0)
-            {
-                result = Vector3.Lerp(result, new Vector3(end[0], end[1], end[2]), t);
-            }
             return result;
         }
 
