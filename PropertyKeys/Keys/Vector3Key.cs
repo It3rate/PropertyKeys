@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace PropertyKeys.Keys
 {
+    public enum SampleType
+    {
+        Default,
+        Line,
+        Grid,
+        Ring,
+    }
     public class Vector3Key
     {
         private static readonly Vector3[] Empty = new Vector3[] { };
@@ -17,6 +24,7 @@ namespace PropertyKeys.Keys
 
         public int ElementCount;
         public int[] Strides;
+        public SampleType[] SampleTypes; // todo: Move SampleTypes, Start/End to propertyKey (keys are single state across potential multiple dimensions).
 
         private readonly Vector3[] Start;
         private readonly Vector3[] End;
@@ -26,7 +34,7 @@ namespace PropertyKeys.Keys
         public bool IsRepeating; // start>end interpolation applies each 'Dimension' elements
 
         public Vector3Key(Vector3[] start, Vector3[] end = null, EasingType[] easingTypes = null, int elementCount = -1,
-            int[] dimensions = null, bool isDiscrete = false, bool isRepeating = false)
+            int[] dimensions = null, bool isDiscrete = false, bool isRepeating = false, SampleType[] sampleTypes = null)
         {
             ElementCount = (elementCount < 1) ? start.Length : elementCount; // can be larger or smaller based on sampling
             Start = start;
@@ -35,6 +43,7 @@ namespace PropertyKeys.Keys
             Strides = (dimensions == null) ? DefaultDimensions : dimensions;
             IsDiscrete = isDiscrete;
             IsRepeating = isRepeating;
+            SampleTypes = (sampleTypes == null) ? new SampleType[] { SampleType.Default } : sampleTypes;
         }
 
         public void ApplyAt(float t, bool interpolate, Vector3[] outValues)
@@ -67,8 +76,14 @@ namespace PropertyKeys.Keys
                 }
                 else
                 {
-                    result = RingSample(index, interpolate, t, elementCount);
-                    //result = GridSample(index, interpolate, t, elementCount);
+                    if(SampleTypes[0] == SampleType.Default || SampleTypes[0] == SampleType.Grid)
+                    {
+                        result = GridSample(index, interpolate, t, elementCount);
+                    }
+                    else
+                    {
+                        result = RingSample(index, interpolate, t, elementCount);
+                    }
                 }
             }
             else
