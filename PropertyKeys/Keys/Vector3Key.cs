@@ -21,117 +21,103 @@ namespace PropertyKeys.Keys
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0 }; // zero means repeating, so this is a regular one row array
 
         private const int VectorSize = 3;
+        private readonly Vector3[] Values;
 
         public int ElementCount;
+        public EasingType[] EasingTypes; // per dimension
         public int[] Strides;
-        public SampleType[] SampleTypes; // todo: Move SampleTypes, Start/End to propertyKey (keys are single state across potential multiple dimensions).
-
-        private readonly Vector3[] Start;
-        private readonly Vector3[] End;
-
-        public EasingType[] EasingTypes;
+        public SampleType SampleType;
         public bool IsDiscrete;
         public bool IsRepeating; // start>end interpolation applies each 'Dimension' elements
 
-        public Vector3Key(Vector3[] start, Vector3[] end = null, EasingType[] easingTypes = null, int elementCount = -1,
-            int[] dimensions = null, bool isDiscrete = false, bool isRepeating = false, SampleType[] sampleTypes = null)
+        public Vector3Key(Vector3[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
+            bool isDiscrete = false, bool isRepeating = false, SampleType sampleType = SampleType.Default)
         {
-            ElementCount = (elementCount < 1) ? start.Length : elementCount; // can be larger or smaller based on sampling
-            Start = start;
-            End = (end == null) ? Empty : end;
-            EasingTypes = (easingTypes == null) ? DefaultEasing : easingTypes;
+            Values = values;
+            ElementCount = (elementCount < 1) ? values.Length : elementCount; // can be larger or smaller based on sampling
             Strides = (dimensions == null) ? DefaultDimensions : dimensions;
+            EasingTypes = (easingTypes == null) ? DefaultEasing : easingTypes;
             IsDiscrete = isDiscrete;
             IsRepeating = isRepeating;
-            SampleTypes = (sampleTypes == null) ? new SampleType[] { SampleType.Default } : sampleTypes;
+            SampleType = sampleType;
         }
 
-        public void ApplyAt(float t, bool interpolate, Vector3[] outValues)
+        public void ApplyAt(float t, bool interpolate, Vector3[] outValues, Vector3Key endKey)
         {
             for (int i = 0; i < outValues.Length; i++)
             {
-                outValues[i] = GetVector3AtIndex(i, interpolate, t, outValues.Length);
+                outValues[i] = GetVector3AtIndex(i, interpolate, t, outValues.Length, endKey);
             }
         }
 
-        public Vector3 GetVector3AtIndex(int index, bool interpolate, float t)
+        public Vector3 GetVector3AtIndex(int index, bool interpolate, float t, Vector3Key end)
         {
-            return GetVector3AtIndex(index, interpolate, t, ElementCount);
+            return GetVector3AtIndex(index, interpolate, t, ElementCount, end);
         }
-        public Vector3 GetVector3AtIndex(int index, bool interpolate, float t, int elementCount)
+        public Vector3 GetVector3AtIndex(int index, bool interpolate, float t, int elementCount, Vector3Key endKey)
         {
             Vector3 result;
             bool isZeros = Strides.All(o => o == 0);
-            if (isZeros || Start.Length != elementCount || End.Length != elementCount)
+            if (isZeros || Values.Length != elementCount || endKey.Values.Length != elementCount)
             {
                 if (isZeros)
                 {
                     float index_t = index / ((float)elementCount - 1f);
-                    result = GetVirtualValue(Start, index_t);
-                    if (End != null && End.Length > 0)
+                    result = GetVirtualValue(Values, index_t);
+                    if (endKey != null && endKey.Values.Length > 0)
                     {
-                        Vector3 endV = GetVirtualValue(End, index_t);
+                        Vector3 endV = GetVirtualValue(endKey.Values, index_t);
                         result = Vector3.Lerp(result, endV, t);
                     }
                 }
                 else
                 {
-                    if(SampleTypes[0] == SampleType.Default || SampleTypes[0] == SampleType.Grid)
+                    if(SampleType == SampleType.Default || SampleType == SampleType.Grid)
                     {
-                        result = GridSample(index, interpolate, t, elementCount);
+                        result = GridSample(index, interpolate, t, elementCount, endKey);
                     }
                     else
                     {
-                        result = RingSample(index, interpolate, t, elementCount);
+                        result = RingSample(index, interpolate, t, elementCount, endKey);
                     }
                 }
             }
             else
             {
-                int startIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
-                result = Start[startIndex];
-                if (End != null && End.Length > 0)
+                int startIndex = Math.Min(Values.Length - 1, Math.Max(0, index));
+                result = Values[startIndex];
+                if (endKey != null && endKey.Values.Length > 0)
                 {
-                    int endIndex = Math.Min(Start.Length - 1, Math.Max(0, index));
-                    result = Vector3.Lerp(result, End[endIndex], t);
+                    int endIndex = Math.Min(Values.Length - 1, Math.Max(0, index));
+                    result = Vector3.Lerp(result, endKey.Values[endIndex], t);
                 }
             }
             return result;
         }
 
-        private Vector3 RingSample(int index, bool interpolate, float t, int elementCount)
+        private Vector3 RingSample(int index, bool interpolate, float t, int elementCount, Vector3Key endKey)
         {
             Vector3 result;
-            float index_t = index / (float)elementCount;
+            float index_t = index / (float)(elementCount - 1f);
 
-            Vector3 tls = GetVirtualValue(Start, 0);
-            Vector3 brs = GetVirtualValue(Start, 1);
-            Vector3 tle = GetVirtualValue(End, 0);
-            Vector3 bre = GetVirtualValue(End, 1);
-            Vector3 tl = Vector3.Lerp(tls, tle, t);
-            Vector3 br = Vector3.Lerp(brs, bre, t);
+            Vector3 tls = GetVirtualValue(Values, 0);
+            Vector3 brs = GetVirtualValue(Values, 1);
+            //Vector3 tle = GetVirtualValue(endKey.Values, 0);
+            //Vector3 bre = GetVirtualValue(endKey.Values, 1);
+            //Vector3 tl = Vector3.Lerp(tls, tle, t);
+            //Vector3 br = Vector3.Lerp(brs, bre, t);
 
-            float dx = (br.X - tl.X) / 2.0f;
-            float dy = (br.Y - tl.Y) / 2.0f;
+            float dx = (brs.X - tls.X) / 2.0f;
+            float dy = (brs.Y - tls.Y) / 2.0f;
             result = new Vector3(
-                (float)(Math.Sin(index_t * 2.0f * Math.PI) * dx + tl.X + dx),
-                (float)(Math.Cos(index_t * 2.0f * Math.PI) * dy + tl.Y + dy), 0);
+                (float)(Math.Sin(index_t * 2.0f * Math.PI + Math.PI) * dx + tls.X + dx),
+                (float)(Math.Cos(index_t * 2.0f * Math.PI + Math.PI) * dy + tls.Y + dy), 0);
             return result;
-
-            //Vector3 start = GetVirtualValue(Start, index_t);
-            //Vector3 end = start;
-            //Vector3 vt = start;
-            //if (End != null && End.Length > 0)
-            //{
-            //    end = GetVirtualValue(End, index_t);
-            //    vt = Vector3.Lerp(start, end, t);
-            //}
-            //return vt;
-
         }
 
-        private Vector3 GridSample(int index, bool interpolate, float t, int elementCount)
+        private Vector3 GridSample(int index, bool interpolate, float t, int elementCount, Vector3Key endKey)
         {
+            endKey = null;
             Vector3 result;
             float dimT = 1f;
             int curSize = 1;
@@ -153,11 +139,11 @@ namespace PropertyKeys.Keys
                     curSize *= Strides[i];
                     dimT = (index % curSize) / (float)(curSize - prevSize);
                 }
-                GetVirtualValue(Start, dimT).CopyTo(temp);
+                GetVirtualValue(Values, dimT).CopyTo(temp);
                 start[i] = temp[i];
-                if (End != null && End.Length > 0)
+                if (endKey != null && endKey.Values.Length > 0)
                 {
-                    GetVirtualValue(End, dimT).CopyTo(temp);
+                    GetVirtualValue(endKey.Values, dimT).CopyTo(temp);
                     end[i] = temp[i];
                 }
 
@@ -167,7 +153,7 @@ namespace PropertyKeys.Keys
                 }
             }
             result = new Vector3(start[0], start[1], start[2]);
-            if (End != null && End.Length > 0)
+            if (endKey != null && endKey.Values.Length > 0)
             {
                 result = Vector3.Lerp(result, new Vector3(end[0], end[1], end[2]), t);
             }

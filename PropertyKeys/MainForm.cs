@@ -23,7 +23,7 @@ namespace PropertyKeys
         private Circles circles;
         System.Timers.Timer timer;
         DateTime curTime;
-        private float t;
+        private float t = 0;
 
         public MainForm()
         {
@@ -42,7 +42,7 @@ namespace PropertyKeys
 
         private void Tick(object sender, ElapsedEventArgs e)
         {
-            t += (e.SignalTime - curTime).Milliseconds / 3000f;
+            t += 0.01f;// (e.SignalTime - curTime).Milliseconds / 3000f;
             curTime = e.SignalTime;
             Invalidate();
         }
