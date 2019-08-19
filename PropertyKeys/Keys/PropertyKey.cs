@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PropertyKeys
 {
-    public class PropertyKey<T>
+    public class PropertyKey
     {
         public int[] targetIDs;
         private readonly ValueKey Start;
@@ -17,7 +17,7 @@ namespace PropertyKeys
         public bool IsRepeating = false; // stop count repeats every n items
         public float t = 0f;
 
-        public PropertyKey(Vector3Key start, Vector3Key end, int[] targetIDs = null, EasingType easingType = EasingType.Linear)
+        public PropertyKey(ValueKey start, ValueKey end, int[] targetIDs = null, EasingType easingType = EasingType.Linear)
         {
             Start = start;
             End = end;
@@ -25,11 +25,9 @@ namespace PropertyKeys
             EasingType = easingType;
         }
 
-        public Vector3 GetValueAtIndex(int index, bool interpolate, float t)
+        public float[] GetValuesAtIndex(int index, float t)
         {
-            Vector3 start = Start.GetVector3AtIndex(index, interpolate, 0);
-            Vector3 end = End.GetVector3AtIndex(index, interpolate, 1);
-            return Vector3.Lerp(start, end, t);
+            return Start.BlendValueAtIndex(End, index, t);
         }
         public int GetElementCountAt(float t)
         {

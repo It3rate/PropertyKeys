@@ -7,16 +7,21 @@ namespace PropertyKeys
 {
     public abstract class ValueKey
     {
-        public abstract int ElementCount { get; set;  }
-        public abstract float[] GetFloatArrayAtIndex(int index, bool interpolate, float t);
-        public abstract float GetFloatAtIndex(int index, bool interpolate, float t);
-        public abstract Vector2 GetVector2AtIndex(int index, bool interpolate, float t);
-        public abstract Vector3 GetVector3AtIndex(int index, bool interpolate, float t);
-        public abstract Vector4 GetVector4AtIndex(int index, bool interpolate, float t);
+        public int[] Strides { get; set; }
+        public EasingType[] EasingTypes { get; set; }
+        public abstract int VectorSize{ get; }
 
-        //public abstract float[] GetValueAtIndex(int index, bool interpolate, float t);
-        //public abstract int GetElementCountAt(float t);
+        public abstract int ElementCount { get; set; }
+        public abstract float[] BlendValueAtIndex(ValueKey endKey, int index, float t);
 
+        public abstract float[] GetFloatArrayAtIndex(int index, float t);
+        public abstract float GetFloatAtIndex(int index, float t);
+        public abstract Vector2 GetVector2AtIndex(int index, float t);
+        public abstract Vector3 GetVector3AtIndex(int index, float t);
+        public abstract Vector4 GetVector4AtIndex(int index, float t);
+
+        public abstract float[] GetVirtualValue(float t);
+        public abstract void GetVirtualValue(float t, float[] copyInto);
 
         public static Vector2 GetVector2(Vector3 a)
         {
@@ -107,6 +112,47 @@ namespace PropertyKeys
         public static Vector4 MergeVectors(Vector4 a, Vector4 b)
         {
             return b;
+        }
+
+        public static float[] GetFloatArray(float input)
+        {
+            return new float[]{ input};
+        }
+        public static float[] GetFloatArray(Vector2 input)
+        {
+            float[] temp = new float[] { 0, 0 };
+            input.CopyTo(temp);
+            return temp;
+        }
+        public static float[] GetFloatArray(Vector3 input)
+        {
+            float[] temp = new float[] { 0, 0, 0 };
+            input.CopyTo(temp);
+            return temp;
+        }
+        public static float[] GetFloatArray(Vector4 input)
+        {
+            float[] temp = new float[] { 0, 0, 0, 0 };
+            input.CopyTo(temp);
+            return temp;
+        }
+
+
+        public static float GetFloat(float[] b)
+        {
+            return b.Length > 0 ? b[0] : 0;
+        }
+        public static Vector2 GetVector2(float[] b)
+        {
+            return new Vector2(b.Length > 0 ? b[0] : 0, b.Length > 1 ? b[1] : 0);
+        }
+        public static Vector3 GetVector3(float[] b)
+        {
+            return new Vector3(b.Length > 0 ? b[0] : 0, b.Length > 1 ? b[1] : 0, b.Length > 2 ? b[2] : 0);
+        }
+        public static Vector4 GetVector4(float[] b)
+        {
+            return new Vector4(b.Length > 0 ? b[0] : 0, b.Length > 1 ? b[1] : 0, b.Length > 2 ? b[2] : 0, b.Length > 3 ? b[3] : 0);
         }
     }
 }

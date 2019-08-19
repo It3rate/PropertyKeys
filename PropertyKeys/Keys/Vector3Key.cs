@@ -20,12 +20,12 @@ namespace PropertyKeys.Keys
         private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0 }; // zero means repeating, so this is a regular one row array
 
-        private const int VectorSize = 3;
+        public override int VectorSize => 3;
         private readonly Vector3[] Values;
 
         public override int ElementCount { get; set; }
-        public EasingType[] EasingTypes; // per dimension
-        public int[] Strides;
+        //public EasingType[] EasingTypes; // per dimension
+        //public int[] Strides;
         public SampleType SampleType;
         public bool IsDiscrete;
         public bool IsRepeating; // start>end interpolation applies each 'Dimension' elements
@@ -42,53 +42,44 @@ namespace PropertyKeys.Keys
             SampleType = sampleType;
         }
 
-        //public void ApplyAt(float t, bool interpolate, Vector3[] outValues)
-        //{
-        //    for (int i = 0; i < outValues.Length; i++)
-        //    {
-        //        outValues[i] = GetVector3AtIndex(i, interpolate, t, outValues.Length);
-        //    }
-        //}
-
-
-        public float[] BlendValueAtIndex(ValueKey endKey, int index, bool interpolate, float t)
+        public override float[] BlendValueAtIndex(ValueKey endKey, int index, float t)
         {
-            Vector3 start = GetVector3AtIndex(index, interpolate, 0);
-            float[] endAr = endKey.GetFloatArrayAtIndex(index, interpolate, 1);
+            Vector3 start = GetVector3AtIndex(index, 0);
+            float[] endAr = endKey.GetFloatArrayAtIndex(index, 1); // in case this isn't vect3, always use start size
             Vector3 end = ValueKey.MergeToVector3(start, endAr);
             float[] temp = new float[] { 0, 0, 0 };
             Vector3.Lerp(start, end, t).CopyTo(temp);
             return temp;
         }
 
-        public override float[] GetFloatArrayAtIndex(int index, bool interpolate, float t)
+        public override float[] GetFloatArrayAtIndex(int index, float t)
         {
             float[] temp = new float[] { 0, 0, 0 };
-            GetVector3AtIndex(index, interpolate, t, ElementCount).CopyTo(temp);
+            GetVector3AtIndex(index, t, ElementCount).CopyTo(temp);
             return temp;
         }
-        public override float GetFloatAtIndex(int index, bool interpolate, float t)
+        public override float GetFloatAtIndex(int index, float t)
         {
-            Vector3 result = GetVector3AtIndex(index, interpolate, t, ElementCount);
+            Vector3 result = GetVector3AtIndex(index, t, ElementCount);
             return result.X;
         }
-        public override Vector2 GetVector2AtIndex(int index, bool interpolate, float t)
+        public override Vector2 GetVector2AtIndex(int index, float t)
         {
-            Vector3 result = GetVector3AtIndex(index, interpolate, t, ElementCount);
+            Vector3 result = GetVector3AtIndex(index, t, ElementCount);
             return new Vector2(result.X, result.Y);
         }
-        public override Vector3 GetVector3AtIndex(int index, bool interpolate, float t)
+        public override Vector3 GetVector3AtIndex(int index, float t)
         {
-            return GetVector3AtIndex(index, interpolate, t, ElementCount);
+            return GetVector3AtIndex(index, t, ElementCount);
         }
-        public override Vector4 GetVector4AtIndex(int index, bool interpolate, float t)
+        public override Vector4 GetVector4AtIndex(int index, float t)
         {
-            Vector3 result = GetVector3AtIndex(index, interpolate, t, ElementCount);
+            Vector3 result = GetVector3AtIndex(index, t, ElementCount);
             return new Vector4(result.X, result.Y, result.Z, 0);
         }
 
 
-        public Vector3 GetVector3AtIndex(int index, bool interpolate, float t, int elementCount)
+        public Vector3 GetVector3AtIndex(int index, float t, int elementCount)
         {
             Vector3 result;
             bool isZeros = Strides.All(o => o == 0);
@@ -103,11 +94,11 @@ namespace PropertyKeys.Keys
                 {
                     if(SampleType == SampleType.Default || SampleType == SampleType.Grid)
                     {
-                        result = GridSample(index, interpolate, t, elementCount);
+                        result = GetVector3(GridSample(this, index, t, elementCount));
                     }
                     else
                     {
-                        result = RingSample(index, interpolate, t, elementCount);
+                        result = GetVector3(RingSample(this, index, t, elementCount));
                     }
                 }
             }
@@ -119,60 +110,13 @@ namespace PropertyKeys.Keys
             return result;
         }
 
-        private Vector3 RingSample(int index, bool interpolate, float t, int elementCount)
+        public override float[] GetVirtualValue(float t)
         {
-            Vector3 result;
-            float index_t = index / (float)(elementCount - 1f); // full circle
-
-            Vector3 tl = GetVirtualValue(Values, 0);
-            Vector3 br = GetVirtualValue(Values, 1);
-
-            float dx = (br.X - tl.X) / 2.0f;
-            float dy = (br.Y - tl.Y) / 2.0f;
-            result = new Vector3(
-                (float)(Math.Sin(index_t * 2.0f * Math.PI + Math.PI) * dx + tl.X + dx),
-                (float)(Math.Cos(index_t * 2.0f * Math.PI + Math.PI) * dy + tl.Y + dy), 0);
-            return result;
+            return GetFloatArray(GetVirtualValue(this.Values, t));
         }
-
-        private Vector3 GridSample(int index, bool interpolate, float t, int elementCount)
+        public override void GetVirtualValue(float t, float[] copyInto)
         {
-            Vector3 result;
-            float dimT = 1f;
-            int curSize = 1;
-            int prevSize = curSize; // prevSize allows rendering to edges of grid
-            float[] temp = new float[] { 0, 0, 0 };
-            float[] start = new float[] { 0, 0, 0 };
-            float[] end = new float[] { 0, 0, 0 };
-            for (int i = 0; i < VectorSize; i++)
-            {
-                // first zero results in fill to end
-                bool isLast = (Strides.Length - 1 < i) || (Strides[i] == 0);
-                if (isLast)
-                {
-                    dimT = (index / curSize) / (float)(elementCount / (curSize + prevSize));
-                }
-                else
-                {
-                    prevSize = curSize;
-                    curSize *= Strides[i];
-                    dimT = (index % curSize) / (float)(curSize - prevSize);
-                }
-
-                if (i < EasingTypes.Length)
-                {
-                    dimT = Easing.GetValueAt(dimT, EasingTypes[i]);
-                }
-                GetVirtualValue(Values, dimT).CopyTo(temp);
-                start[i] = temp[i];
-
-                if (isLast)
-                {
-                    break;
-                }
-            }
-            result = new Vector3(start[0], start[1], start[2]);
-            return result;
+            GetVirtualValue(this.Values, t).CopyTo(copyInto);
         }
 
         private static Vector3 GetVirtualValue(Vector3[] values, float t)
@@ -200,6 +144,60 @@ namespace PropertyKeys.Keys
             }
             return result;
         }
+
+        private static float[] RingSample(ValueKey valueKey, int index, float t, int elementCount)
+        {
+            float[] result;
+            float index_t = index / (float)(elementCount - 1f); // full circle
+
+            float[] tl = valueKey.GetVirtualValue(0f);
+            float[] br = valueKey.GetVirtualValue(1f);
+
+            float dx = (br[0] - tl[0]) / 2.0f;
+            float dy = (br[1] - tl[1]) / 2.0f;
+            result = new float[] {
+                (float)(Math.Sin(index_t * 2.0f * Math.PI + Math.PI) * dx + tl[0] + dx),
+                (float)(Math.Cos(index_t * 2.0f * Math.PI + Math.PI) * dy + tl[1] + dy) };
+            return result;
+        }
+
+        private static float[] GridSample(ValueKey valueKey, int index, float t, int elementCount)
+        {
+            float[] result = new float[] { 0, 0, 0 };
+            float dimT = 1f;
+            int curSize = 1;
+            int prevSize = curSize; // prevSize allows rendering to edges of grid
+            float[] temp = new float[] { 0, 0, 0 };
+            for (int i = 0; i < valueKey.VectorSize; i++)
+            {
+                // first zero results in fill to end
+                bool isLast = (valueKey.Strides.Length - 1 < i) || (valueKey.Strides[i] == 0);
+                if (isLast)
+                {
+                    dimT = (index / curSize) / (float)(elementCount / (curSize + prevSize));
+                }
+                else
+                {
+                    prevSize = curSize;
+                    curSize *= valueKey.Strides[i];
+                    dimT = (index % curSize) / (float)(curSize - prevSize);
+                }
+
+                if (i < valueKey.EasingTypes.Length)
+                {
+                    dimT = Easing.GetValueAt(dimT, valueKey.EasingTypes[i]);
+                }
+                valueKey.GetVirtualValue(dimT, temp);
+                result[i] = temp[i];
+
+                if (isLast)
+                {
+                    break;
+                }
+            }
+            return result;
+        }
+
 
     }
 }

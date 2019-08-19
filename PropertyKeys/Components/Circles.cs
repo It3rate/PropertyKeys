@@ -11,8 +11,7 @@ namespace PropertyKeys.Components
 {
     public class Circles
     {
-        ValueKey Location { get; set; }
-        PropertyKey<Vector3Key> Location3 { get; set; }
+        PropertyKey Location { get; set; }
 
         public Circles()
         {
@@ -46,7 +45,7 @@ namespace PropertyKeys.Components
                 var startKey = new Vector3Key(start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
                 var endKey = new Vector3Key(end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
                     easingTypes: new EasingType[]{ EasingType.Squared, EasingType.InverseSquared });
-                Location3 = new PropertyKey<Vector3Key>(startKey, endKey, easingType:EasingType.InverseSquared);
+                Location = new PropertyKey(startKey, endKey, easingType:EasingType.InverseSquared);
             }
         }
 
@@ -56,15 +55,15 @@ namespace PropertyKeys.Components
             int floorT = (int)t;
             t = t - floorT;
             if (floorT % 2 == 0) t = 1.0f - t;
-            t = Easing.GetValueAt(t, Location3.EasingType);
-            int count = Location3.GetElementCountAt(t);
+            t = Easing.GetValueAt(t, Location.EasingType);
+            int count = Location.GetElementCountAt(t);
             for (int i = 0; i < count; i++)
             {
-                Vector3 v = Location3.GetValueAtIndex(i, true, t);
+                float[] v = Location.GetValuesAtIndex(i, t);
                 float it = i / (float)count;
                 Brush b = new SolidBrush(Color.FromArgb(128, 128 - (int)(t*128), (int)(it*255)));
                 float r = 10;
-                g.FillEllipse(b, v.X - r, v.Y - r, r * 2, r * 2);
+                g.FillEllipse(b, v[0] - r, v[1] - r, r * 2, r * 2);
                 g.DrawRectangle(Pens.Blue, new Rectangle(200, 200, 200, 200));
             }
         }
