@@ -12,6 +12,7 @@ namespace PropertyKeys.Components
     public class Circles
     {
         PropertyKey Location { get; set; }
+        PropertyKey Color { get; set; }
 
         public Circles()
         {
@@ -46,6 +47,12 @@ namespace PropertyKeys.Components
                 var endKey = new Vector3Key(end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
                     easingTypes: new EasingType[]{ EasingType.Squared, EasingType.InverseSquared });
                 Location = new PropertyKey(startKey, endKey, easingType:EasingType.InverseSquared);
+
+                Vector3[] colorStart = new Vector3[] { new Vector3(0.3f, 0.1f, 0), new Vector3(1f, 1f, 0), new Vector3(0, 0.15f, 1f), new Vector3(0, 0.5f, 0.1f) };
+                Vector3[] colorEnd = new Vector3[] { new Vector3(0.8f, 0, 0.8f), new Vector3(0, 1f, 0.1f), new Vector3(0.4f, 1f, 0.1f), new Vector3(0, 0, 1f) };
+                var colorStartKey = new Vector3Key(colorStart, elementCount: startKey.ElementCount);
+                var colorEndKey = new Vector3Key(colorEnd, elementCount: endKey.ElementCount, easingTypes: new EasingType[] { EasingType.Squared });
+                Color = new PropertyKey(colorStartKey, colorEndKey, easingType: EasingType.InverseSquared);
             }
         }
 
@@ -61,7 +68,8 @@ namespace PropertyKeys.Components
             {
                 float[] v = Location.GetValuesAtIndex(i, t);
                 float it = i / (float)count;
-                Brush b = new SolidBrush(Color.FromArgb(128, 128 - (int)(t*128), (int)(it*255)));
+                Color c = ValueKey.GetRGBColorFrom(Color.GetValuesAtIndex(i, t));
+                Brush b = new SolidBrush(c);
                 float r = 10;
                 g.FillEllipse(b, v[0] - r, v[1] - r, r * 2, r * 2);
                 g.DrawRectangle(Pens.Blue, new Rectangle(200, 200, 200, 200));

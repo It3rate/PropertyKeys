@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Numerics;
 using System.Text;
 
@@ -11,7 +12,9 @@ namespace PropertyKeys
         public EasingType[] EasingTypes { get; set; }
         public abstract int VectorSize{ get; }
 
-        public abstract int ElementCount { get; set; }
+        // todo: elementCount probably needs to come from the parent, at least optionally. Or repeat/loop? Or param (another t vs index?)
+        // Eg does color count need to equal positions count?
+        public abstract int ElementCount { get; set; } 
         public abstract float[] BlendValueAtIndex(ValueKey endKey, int index, float t);
 
         public abstract float[] GetFloatArrayAtIndex(int index, float t);
@@ -153,6 +156,47 @@ namespace PropertyKeys
         public static Vector4 GetVector4(float[] b)
         {
             return new Vector4(b.Length > 0 ? b[0] : 0, b.Length > 1 ? b[1] : 0, b.Length > 2 ? b[2] : 0, b.Length > 3 ? b[3] : 0);
+        }
+
+        public static Color GetRGBColorFrom(float a)
+        {
+            return Color.FromArgb(255, (int)(a * 255), (int)(a * 255), (int)(a * 255));
+        }
+        public static Color GetRGBColorFrom(Vector2 a)
+        {
+            return Color.FromArgb(255, (int)(a.X * 255), (int)(a.Y * 255), 0);
+        }
+        public static Color GetRGBColorFrom(Vector3 a)
+        {
+            return Color.FromArgb(255, (int)(a.X * 255), (int)(a.Y * 255), (int)(a.Z * 255));
+        }
+        public static Color GetRGBColorFrom(Vector4 a)
+        {
+            return Color.FromArgb((int)(a.W * 255), (int)(a.X * 255), (int)(a.Y * 255), (int)(a.Z * 255));
+        }
+
+        public static Color GetRGBColorFrom(float[] a)
+        {
+            Color result;
+            switch (a.Length)
+            {
+                case 1:
+                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[0] * 255), (int)(a[0] * 255));
+                    break;
+                case 2:
+                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[1] * 255), 0);
+                    break;
+                case 3:
+                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[1] * 255), (int)(a[2] * 255));
+                    break;
+                case 4:
+                    result = Color.FromArgb((int)(a[3] * 255), (int)(a[0] * 255), (int)(a[1] * 255), (int)(a[2] * 255));
+                    break;
+                default:
+                    result = Color.Red;
+                    break;
+            }
+            return result;
         }
     }
 }

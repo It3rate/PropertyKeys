@@ -44,6 +44,7 @@ namespace PropertyKeys.Keys
 
         public override float[] BlendValueAtIndex(ValueKey endKey, int index, float t)
         {
+            // todo: Getting grid size from data doesn't make sense, probably need to pass it with grid sampling class? Or calc from bounds of data (yes)?
             Vector3 start = GetVector3AtIndex(index, 0);
             float[] endAr = endKey.GetFloatArrayAtIndex(index, 1); // in case this isn't vect3, always use start size
             Vector3 end = ValueKey.MergeToVector3(start, endAr);
