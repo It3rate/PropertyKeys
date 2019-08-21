@@ -30,6 +30,9 @@ namespace PropertyKeys.Keys
         public bool IsDiscrete;
         public bool IsRepeating; // start>end interpolation applies each 'Dimension' elements
 
+        public Vector3 MinBounds { get; private set; }
+        public Vector3 MaxBounds { get; private set; }
+
         public Vector3Key(Vector3[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
             bool isDiscrete = false, bool isRepeating = false, SampleType sampleType = SampleType.Default)
         {
@@ -40,6 +43,28 @@ namespace PropertyKeys.Keys
             IsDiscrete = isDiscrete;
             IsRepeating = isRepeating;
             SampleType = sampleType;
+            CalculateBounds();
+        }
+
+        private void CalculateBounds()
+        {
+            float minx = float.MaxValue;
+            float miny = float.MaxValue;
+            float minz = float.MaxValue;
+            float maxx = float.MinValue;
+            float maxy = float.MinValue;
+            float maxz = float.MinValue;
+            foreach (Vector3 val in Values)
+            {
+                minx = val.X < minx ? val.X : minx;
+                miny = val.Y < miny ? val.Y : miny;
+                minz = val.Z < minz ? val.Z : minz;
+                maxx = val.X > maxx ? val.X : maxx;
+                maxy = val.Y > maxy ? val.Y : maxy;
+                maxz = val.Z > maxz ? val.Z : maxz;
+            }
+            MinBounds = new Vector3(minx, miny, minz);
+            MaxBounds = new Vector3(minx, miny, minz);
         }
 
         public override float[] BlendValueAtIndex(ValueKey endKey, int index, float t)
