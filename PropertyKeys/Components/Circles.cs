@@ -45,7 +45,7 @@ namespace PropertyKeys.Components
                 Vector3[] end = new Vector3[] { new Vector3(200, 200, 0), new Vector3(400, 400, 0) };
                 var startKey = new Vector3Key(start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
                 var endKey = new Vector3Key(end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
-                    easingTypes: new EasingType[]{ EasingType.Squared, EasingType.InverseSquared });
+                    easingTypes: new EasingType[]{ EasingType.Squared, EasingType.InverseSquared }, sampleType: SampleType.Grid);
                 Location = new PropertyKey(startKey, endKey, easingType:EasingType.InverseSquared);
 
                 Vector3[] colorStart = new Vector3[] { new Vector3(0.3f, 0.1f, 0), new Vector3(1f, 1f, 0), new Vector3(0, 0.15f, 1f), new Vector3(0, 0.5f, 0.1f) };

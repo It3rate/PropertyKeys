@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PropertyKeys.Samplers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -26,7 +27,6 @@ namespace PropertyKeys.Keys
         public override int ElementCount { get; set; }
         //public EasingType[] EasingTypes; // per dimension
         //public int[] Strides;
-        public SampleType SampleType;
         public bool IsDiscrete;
         public bool IsRepeating; // start>end interpolation applies each 'Dimension' elements
 
@@ -42,7 +42,16 @@ namespace PropertyKeys.Keys
             EasingTypes = (easingTypes == null) ? DefaultEasing : easingTypes;
             IsDiscrete = isDiscrete;
             IsRepeating = isRepeating;
-            SampleType = sampleType;
+            
+            if (sampleType == SampleType.Ring)
+            {
+                Sampler = new RingSampler();
+            }
+            else if (sampleType == SampleType.Grid)
+            {
+                Sampler = new GridSampler();
+            }
+
             CalculateBounds();
         }
 
@@ -109,29 +118,20 @@ namespace PropertyKeys.Keys
         {
             Vector3 result;
             bool isZeros = Strides.All(o => o == 0);
-            if (isZeros || Values.Length != elementCount)
+            if (Sampler != null)
             {
-                if (isZeros)
-                {
-                    float index_t = index / ((float)elementCount - 1f);
-                    result = GetVirtualValue(Values, index_t);
-                }
-                else
-                {
-                    if(SampleType == SampleType.Default || SampleType == SampleType.Grid)
-                    {
-                        result = GetVector3(GridSample(this, index, t, elementCount));
-                    }
-                    else
-                    {
-                        result = GetVector3(RingSample(this, index, t, elementCount));
-                    }
-                }
+                float[] sample = Sampler.GetSample(this, index, t, elementCount);
+                result = GetVector3(sample);
             }
-            else
+            else if (Values.Length == elementCount)
             {
                 int startIndex = Math.Min(Values.Length - 1, Math.Max(0, index));
                 result = Values[startIndex];
+            }
+            else
+            {
+                float index_t = index / ((float)elementCount - 1f);
+                result = GetVirtualValue(Values, index_t);
             }
             return result;
         }
