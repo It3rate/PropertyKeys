@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace PropertyKeys.Samplers
 {
-    public class HexagonSampler : BaseSampler
+    public class LineSampler : BaseSampler
     {
         public override float[] GetSample(ValueKey valueKey, int index)
         {
-            throw new NotImplementedException();
+            float index_t = (valueKey.ElementCount > 1) ?  index / (valueKey.ElementCount - 1f) : 0f;
+            return valueKey.GetVirtualValue(index_t);
         }
     }
 }

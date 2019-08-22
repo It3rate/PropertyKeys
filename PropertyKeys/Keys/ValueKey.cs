@@ -20,11 +20,11 @@ namespace PropertyKeys
         public abstract int ElementCount { get; set; } 
         public abstract float[] BlendValueAtIndex(ValueKey endKey, int index, float t);
 
-        public abstract float[] GetFloatArrayAtIndex(int index, float t);
-        public abstract float GetFloatAtIndex(int index, float t);
-        public abstract Vector2 GetVector2AtIndex(int index, float t);
-        public abstract Vector3 GetVector3AtIndex(int index, float t);
-        public abstract Vector4 GetVector4AtIndex(int index, float t);
+        public abstract float[] GetFloatArrayAtIndex(int index);
+        public abstract float GetFloatAtIndex(int index);
+        public abstract Vector2 GetVector2AtIndex(int index);
+        public abstract Vector3 GetVector3AtIndex(int index);
+        public abstract Vector4 GetVector4AtIndex(int index);
 
         public abstract float[] GetVirtualValue(float t);
         public abstract void GetVirtualValue(float t, float[] copyInto);

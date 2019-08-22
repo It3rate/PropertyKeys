@@ -50,8 +50,8 @@ namespace PropertyKeys.Components
 
                 Vector3[] colorStart = new Vector3[] { new Vector3(0.3f, 0.1f, 0), new Vector3(1f, 1f, 0), new Vector3(0, 0.15f, 1f), new Vector3(0, 0.5f, 0.1f) };
                 Vector3[] colorEnd = new Vector3[] { new Vector3(0.8f, 0, 0.8f), new Vector3(0, 1f, 0.1f), new Vector3(0.4f, 1f, 0.1f), new Vector3(0, 0, 1f) };
-                var colorStartKey = new Vector3Key(colorStart, elementCount: startKey.ElementCount);
-                var colorEndKey = new Vector3Key(colorEnd, elementCount: endKey.ElementCount, easingTypes: new EasingType[] { EasingType.Squared });
+                var colorStartKey = new Vector3Key(colorStart, elementCount: startKey.ElementCount, sampleType: SampleType.Line);
+                var colorEndKey = new Vector3Key(colorEnd, elementCount: endKey.ElementCount, sampleType: SampleType.Line, easingTypes: new EasingType[] { EasingType.Squared });
                 Color = new PropertyKey(colorStartKey, colorEndKey, easingType: EasingType.InverseSquared);
             }
         }

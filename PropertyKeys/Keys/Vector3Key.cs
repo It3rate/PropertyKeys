@@ -14,6 +14,7 @@ namespace PropertyKeys.Keys
         Line,
         Grid,
         Ring,
+        Hexagon,
     }
     public class Vector3Key : ValueKey
     {
@@ -51,6 +52,10 @@ namespace PropertyKeys.Keys
             {
                 Sampler = new GridSampler();
             }
+            else if (sampleType == SampleType.Line)
+            {
+                Sampler = new LineSampler();
+            }
 
             CalculateBounds();
         }
@@ -79,59 +84,54 @@ namespace PropertyKeys.Keys
         public override float[] BlendValueAtIndex(ValueKey endKey, int index, float t)
         {
             // todo: Getting grid size from data doesn't make sense, probably need to pass it with grid sampling class? Or calc from bounds of data (yes)?
-            Vector3 start = GetVector3AtIndex(index, 0);
-            float[] endAr = endKey.GetFloatArrayAtIndex(index, 1); // in case this isn't vect3, always use start size
+            Vector3 start = GetVector3AtIndex(index);
+            float[] endAr = endKey.GetFloatArrayAtIndex(index); // in case this isn't vect3, always use start size
             Vector3 end = ValueKey.MergeToVector3(start, endAr);
             float[] temp = new float[] { 0, 0, 0 };
             Vector3.Lerp(start, end, t).CopyTo(temp);
             return temp;
         }
 
-        public override float[] GetFloatArrayAtIndex(int index, float t)
+        public override float[] GetFloatArrayAtIndex(int index)
         {
             float[] temp = new float[] { 0, 0, 0 };
-            GetVector3AtIndex(index, t, ElementCount).CopyTo(temp);
+            GetVector3AtIndex(index, ElementCount).CopyTo(temp);
             return temp;
         }
-        public override float GetFloatAtIndex(int index, float t)
+        public override float GetFloatAtIndex(int index)
         {
-            Vector3 result = GetVector3AtIndex(index, t, ElementCount);
+            Vector3 result = GetVector3AtIndex(index, ElementCount);
             return result.X;
         }
-        public override Vector2 GetVector2AtIndex(int index, float t)
+        public override Vector2 GetVector2AtIndex(int index)
         {
-            Vector3 result = GetVector3AtIndex(index, t, ElementCount);
+            Vector3 result = GetVector3AtIndex(index, ElementCount);
             return new Vector2(result.X, result.Y);
         }
-        public override Vector3 GetVector3AtIndex(int index, float t)
+        public override Vector3 GetVector3AtIndex(int index)
         {
-            return GetVector3AtIndex(index, t, ElementCount);
+            return GetVector3AtIndex(index, ElementCount);
         }
-        public override Vector4 GetVector4AtIndex(int index, float t)
+        public override Vector4 GetVector4AtIndex(int index)
         {
-            Vector3 result = GetVector3AtIndex(index, t, ElementCount);
+            Vector3 result = GetVector3AtIndex(index, ElementCount);
             return new Vector4(result.X, result.Y, result.Z, 0);
         }
 
 
-        public Vector3 GetVector3AtIndex(int index, float t, int elementCount)
+        public Vector3 GetVector3AtIndex(int index, int elementCount)
         {
             Vector3 result;
             bool isZeros = Strides.All(o => o == 0);
             if (Sampler != null)
             {
-                float[] sample = Sampler.GetSample(this, index, t, elementCount);
+                float[] sample = Sampler.GetSample(this, index);
                 result = GetVector3(sample);
             }
-            else if (Values.Length == elementCount)
+            else // direct sample of data
             {
                 int startIndex = Math.Min(Values.Length - 1, Math.Max(0, index));
                 result = Values[startIndex];
-            }
-            else
-            {
-                float index_t = index / ((float)elementCount - 1f);
-                result = GetVirtualValue(Values, index_t);
             }
             return result;
         }
@@ -170,60 +170,6 @@ namespace PropertyKeys.Keys
             }
             return result;
         }
-
-        private static float[] RingSample(ValueKey valueKey, int index, float t, int elementCount)
-        {
-            float[] result;
-            float index_t = index / (float)(elementCount - 1f); // full circle
-
-            float[] tl = valueKey.GetVirtualValue(0f);
-            float[] br = valueKey.GetVirtualValue(1f);
-
-            float dx = (br[0] - tl[0]) / 2.0f;
-            float dy = (br[1] - tl[1]) / 2.0f;
-            result = new float[] {
-                (float)(Math.Sin(index_t * 2.0f * Math.PI + Math.PI) * dx + tl[0] + dx),
-                (float)(Math.Cos(index_t * 2.0f * Math.PI + Math.PI) * dy + tl[1] + dy) };
-            return result;
-        }
-
-        private static float[] GridSample(ValueKey valueKey, int index, float t, int elementCount)
-        {
-            float[] result = new float[] { 0, 0, 0 };
-            float dimT = 1f;
-            int curSize = 1;
-            int prevSize = curSize; // prevSize allows rendering to edges of grid
-            float[] temp = new float[] { 0, 0, 0 };
-            for (int i = 0; i < valueKey.VectorSize; i++)
-            {
-                // first zero results in fill to end
-                bool isLast = (valueKey.Strides.Length - 1 < i) || (valueKey.Strides[i] == 0);
-                if (isLast)
-                {
-                    dimT = (index / curSize) / (float)(elementCount / (curSize + prevSize));
-                }
-                else
-                {
-                    prevSize = curSize;
-                    curSize *= valueKey.Strides[i];
-                    dimT = (index % curSize) / (float)(curSize - prevSize);
-                }
-
-                if (i < valueKey.EasingTypes.Length)
-                {
-                    dimT = Easing.GetValueAt(dimT, valueKey.EasingTypes[i]);
-                }
-                valueKey.GetVirtualValue(dimT, temp);
-                result[i] = temp[i];
-
-                if (isLast)
-                {
-                    break;
-                }
-            }
-            return result;
-        }
-
 
     }
 }

@@ -8,10 +8,10 @@ namespace PropertyKeys.Samplers
 {
     public class RingSampler : BaseSampler
     {
-        public override float[] GetSample(ValueKey valueKey, int index, float t, int elementCount)
+        public override float[] GetSample(ValueKey valueKey, int index)
         {
             float[] result;
-            float index_t = index / (float)(elementCount - 1f); // full circle
+            float index_t = index / (valueKey.ElementCount - 1f); // full circle
 
             float[] tl = valueKey.GetVirtualValue(0f);
             float[] br = valueKey.GetVirtualValue(1f);

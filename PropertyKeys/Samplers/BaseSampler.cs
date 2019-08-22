@@ -8,6 +8,6 @@ namespace PropertyKeys.Samplers
 {
     public abstract class BaseSampler
     {
-        public abstract float[] GetSample(ValueKey valueKey, int index, float t, int elementCount);
+        public abstract float[] GetSample(ValueKey valueKey, int index);
     }
 }
