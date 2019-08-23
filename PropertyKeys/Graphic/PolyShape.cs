@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PropertyKeys.Graphic
 {
@@ -12,6 +8,7 @@ namespace PropertyKeys.Graphic
     {
         public float Orientation { get; set; }
         public int PointCount { get; set; }
+        public float Starness { get; set; }
         public float Roundness { get; set; }
         public float Radius { get; set; }
 

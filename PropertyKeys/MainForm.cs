@@ -25,13 +25,21 @@ namespace PropertyKeys
         DateTime curTime;
         private float t = 0;
 
+        private int version = 0;
+
         public MainForm()
         {
             InitializeComponent();
 
             this.DoubleBuffered = true;
 
-            circles = new Circles();
+            Button b0 = new Button();
+            b0.Text = "Next";
+            b0.Click += B0_Click;
+
+            this.Controls.Add(b0);
+
+            circles = new Circles(version);
 
             curTime = DateTime.Now;
             timer = new System.Timers.Timer();
@@ -40,9 +48,19 @@ namespace PropertyKeys
             timer.Enabled = true;
         }
 
+        private void B0_Click(object sender, EventArgs e)
+        {
+            version++;
+            if(version >= Circles.versionCount)
+            {
+                version = 0;
+            }
+            circles = new Circles(version);
+        }
+
         private void Tick(object sender, ElapsedEventArgs e)
         {
-            t += 0.008f;// (e.SignalTime - curTime).Milliseconds / 3000f;
+            t += version == 2 ? 0.008f : 0.02f;// (e.SignalTime - curTime).Milliseconds / 3000f;
             curTime = e.SignalTime;
             Invalidate();
         }

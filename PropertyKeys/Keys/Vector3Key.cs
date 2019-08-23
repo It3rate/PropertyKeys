@@ -1,10 +1,7 @@
 ﻿using PropertyKeys.Samplers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PropertyKeys.Keys
 {
@@ -33,6 +30,7 @@ namespace PropertyKeys.Keys
 
         public Vector3 MinBounds { get; private set; }
         public Vector3 MaxBounds { get; private set; }
+        public override float[] Size => new float[] { MaxBounds.X - MinBounds.X, MaxBounds.Y - MinBounds.Y, MaxBounds.Z - MinBounds.Z };
 
         public Vector3Key(Vector3[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
             bool isDiscrete = false, bool isRepeating = false, SampleType sampleType = SampleType.Default)
@@ -56,6 +54,10 @@ namespace PropertyKeys.Keys
             {
                 Sampler = new LineSampler();
             }
+            else if (sampleType == SampleType.Hexagon)
+            {
+                Sampler = new HexagonSampler();
+            }
 
             CalculateBounds();
         }
@@ -78,18 +80,26 @@ namespace PropertyKeys.Keys
                 maxz = val.Z > maxz ? val.Z : maxz;
             }
             MinBounds = new Vector3(minx, miny, minz);
-            MaxBounds = new Vector3(minx, miny, minz);
+            MaxBounds = new Vector3(maxx, maxy, maxz);
         }
 
         public override float[] BlendValueAtIndex(ValueKey endKey, int index, float t)
         {
+            float[] result;
             // todo: Getting grid size from data doesn't make sense, probably need to pass it with grid sampling class? Or calc from bounds of data (yes)?
             Vector3 start = GetVector3AtIndex(index);
-            float[] endAr = endKey.GetFloatArrayAtIndex(index); // in case this isn't vect3, always use start size
-            Vector3 end = ValueKey.MergeToVector3(start, endAr);
-            float[] temp = new float[] { 0, 0, 0 };
-            Vector3.Lerp(start, end, t).CopyTo(temp);
-            return temp;
+            if (endKey!= null)
+            {
+                float[] endAr = endKey.GetFloatArrayAtIndex(index); // in case this isn't vect3, always use start size
+                Vector3 end = ValueKey.MergeToVector3(start, endAr);
+                result = new float[] { 0, 0, 0 };
+                Vector3.Lerp(start, end, t).CopyTo(result);
+            }
+            else
+            {
+                result = GetFloatArray(start);
+            }
+            return result;
         }
 
         public override float[] GetFloatArrayAtIndex(int index)

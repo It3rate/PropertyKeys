@@ -1,9 +1,6 @@
 ﻿using PropertyKeys.Samplers;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using System.Text;
 
 namespace PropertyKeys
 {
@@ -14,6 +11,8 @@ namespace PropertyKeys
         public abstract int VectorSize{ get; }
 
         public BaseSampler Sampler { get; set; }
+
+        public abstract float[] Size { get; }
 
         // todo: elementCount probably needs to come from the parent, at least optionally. Or repeat/loop? Or param (another t vs index?)
         // Eg does color count need to equal positions count?
