@@ -1,4 +1,5 @@
-﻿using PropertyKeys.Keys;
+﻿using PropertyKeys.Graphic;
+using PropertyKeys.Keys;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,9 +15,13 @@ namespace PropertyKeys.Components
         PropertyKey Location { get; set; }
         PropertyKey Color { get; set; }
 
+        BaseGraphic graphic;
+
         public Circles()
         {
             Random rnd = new Random();
+            graphic = new PolyShape(pointCount: 6, radius: 10f, orientation:1f/12f);
+
             int test = 2;
             if(test == 0)
             {
@@ -67,13 +72,17 @@ namespace PropertyKeys.Components
             for (int i = 0; i < count; i++)
             {
                 float[] v = Location.GetValuesAtIndex(i, t);
-                float it = i / (float)count;
+                //float it = i / (float)count;
                 Color c = ValueKey.GetRGBColorFrom(Color.GetValuesAtIndex(i, t));
                 Brush b = new SolidBrush(c);
-                float r = 10;
-                g.FillEllipse(b, v[0] - r, v[1] - r, r * 2, r * 2);
-                g.DrawRectangle(Pens.Blue, new Rectangle(200, 200, 200, 200));
+                g.TranslateTransform(v[0], v[1]);
+                graphic.Draw(g, b, null, t);
+
+                g.TranslateTransform(-v[0],- v[1]);
+                // float r = 10;
+                //g.FillEllipse(b, v[0] - r, v[1] - r, r * 2, r * 2);
             }
+            g.DrawRectangle(Pens.Blue, new Rectangle(200, 200, 200, 200));
         }
     }
 }
