@@ -12,10 +12,13 @@ namespace PropertyKeys.Components
         PropertyKey Location { get; set; }
         PropertyKey Color { get; set; }
 
+        PropertyKey Wander { get; set; }
+        bool wanders = true;
+
         PolyShape graphic;
         Random rnd = new Random();
 
-        public const int versionCount = 3;
+        public const int versionCount = 4;
 
         public Circles(int version)
         {
@@ -25,7 +28,7 @@ namespace PropertyKeys.Components
 
         public void SetVersion(int version)
         {
-            if (version == 0)
+            if (version == 0 || version == 1)
             {
                 int cols = 6;
                 int rows = 6;
@@ -42,8 +45,9 @@ namespace PropertyKeys.Components
                 //Location = new PropertyKey(startKey, null);
                 Location = new PropertyKey(startKey, endKey);
                 SetColor(startKey, endKey);
+                wanders = version == 1;
             }
-            else if (version == 1)
+            else if (version == 2)
             {
                 graphic.Radius = 30;
                 int count = 50;
@@ -59,8 +63,9 @@ namespace PropertyKeys.Components
                 var endKey = new Vector3Key(end.ToArray());
                 Location = new PropertyKey(startKey, endKey);
                 SetColor(startKey, endKey);
+                wanders = true;
             }
-            else if (version == 2)
+            else if (version == 3)
             {
                 graphic.Radius = 10;
                 Vector3[] start = new Vector3[] { new Vector3(200, 140, 0), new Vector3(400, 300, 0) };//, new Vector3(200, 200, 0) };
@@ -71,7 +76,19 @@ namespace PropertyKeys.Components
                 Location = new PropertyKey(startKey, endKey, easingType: EasingType.InverseSquared);
 
                 SetColor(startKey, endKey);
+                wanders = false;
             }
+
+            List<Vector3> wanderList = new List<Vector3>();
+            for (int i = 0; i < Location.Start.ElementCount; i++)
+            {
+                wanderList.Add(Vector3.Zero);
+            }
+            Wander = new PropertyKey(
+                new Vector3Key(wanderList.ToArray(), sampleType: SampleType.Line), 
+                new Vector3Key(wanderList.ToArray(), sampleType: SampleType.Line));
+            Wander.Start.ElementCount = Location.Start.ElementCount;
+            Wander.End.ElementCount = Location.End.ElementCount;
         }
 
         private void SetColor(ValueKey startKey, ValueKey endKey)
@@ -95,6 +112,14 @@ namespace PropertyKeys.Components
             for (int i = 0; i < count; i++)
             {
                 float[] v = Location.GetValuesAtIndex(i, easedT);
+                if (wanders)
+                {
+                    Wander.Start.NudgeValuesBy(0.4f);
+                    Wander.End.NudgeValuesBy(0.4f);
+                    float[] wan = Wander.GetValuesAtIndex(i, easedT);
+                    v[0] += wan[0];
+                    v[1] += wan[1];
+                }
                 float it = i / (float)count;
                 Color c = ValueKey.GetRGBColorFrom(Color.GetValuesAtIndex(i, easedT));
                 Brush b = new SolidBrush(c);

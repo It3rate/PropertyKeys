@@ -5,8 +5,8 @@ namespace PropertyKeys
     public class PropertyKey
     {
         public int[] targetIDs;
-        private readonly ValueKey Start;
-        private readonly ValueKey End;
+        public readonly ValueKey Start;
+        public readonly ValueKey End;
         public Action<Values> property;
 
         public EasingType EasingType;

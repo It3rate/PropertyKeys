@@ -15,6 +15,8 @@ namespace PropertyKeys.Keys
     }
     public class Vector3Key : ValueKey
     {
+        private Random rnd = new Random();
+
         private static readonly Vector3[] Empty = new Vector3[] { };
         private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0 }; // zero means repeating, so this is a regular one row array
@@ -60,6 +62,17 @@ namespace PropertyKeys.Keys
             }
 
             CalculateBounds();
+        }
+
+        public override void NudgeValuesBy(float nudge)
+        {
+            for (int i = 0; i < Values.Length; i++)
+            {
+                Vector3 v = Values[i];
+                Values[i] = new Vector3(v.X + (float)rnd.NextDouble() * nudge - nudge / 2f,
+                    v.Y + (float)rnd.NextDouble() * nudge - nudge / 2f,
+                    v.Z + (float)rnd.NextDouble() * nudge - nudge / 2f);
+            }
         }
 
         private void CalculateBounds()

@@ -28,6 +28,8 @@ namespace PropertyKeys
         public abstract float[] GetVirtualValue(float t);
         public abstract void GetVirtualValue(float t, float[] copyInto);
 
+        public abstract void NudgeValuesBy(float nudge);
+
         public static Vector2 GetVector2(Vector3 a)
         {
             return new Vector2(a.X, a.Y);
