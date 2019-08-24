@@ -1,18 +1,18 @@
 ﻿using System;
 
-namespace PropertyKeys
+namespace PropertyKeys.Keys
 {
     public class PropertyKey
     {
         public int[] targetIDs;
-        public readonly ValueKey[] ValueKeys; // todo: no reason to have start/end - should be array like everything else, and interpolated.
+        public readonly BaseValueStore[] ValueKeys; // todo: no reason to have start/end - should be array like everything else, and interpolated.
         public Action<Values> property;
 
         public EasingType EasingType;
         public bool IsRepeating = false; // stop count repeats every n items
         public float t = 0f;
 
-        public PropertyKey(ValueKey[] valueKeys, int[] targetIDs = null, EasingType easingType = EasingType.Linear)
+        public PropertyKey(BaseValueStore[] valueKeys, int[] targetIDs = null, EasingType easingType = EasingType.Linear)
         {
             ValueKeys = valueKeys;
             this.targetIDs = targetIDs;

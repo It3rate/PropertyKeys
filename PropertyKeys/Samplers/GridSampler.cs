@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PropertyKeys.Keys;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,14 +9,14 @@ namespace PropertyKeys.Samplers
 {
     public class GridSampler : BaseSampler
     {
-        public override float[] GetSample(ValueKey valueKey, int index)
+        public override float[] GetSample(BaseValueStore valueStore, int index)
         {
             float[] result = new float[] { 0, 0, 0 };
-            float[] strideTs = GetStrideIndexes(valueKey, index);
+            float[] strideTs = GetStrideIndexes(valueStore, index);
             float[] temp = new float[] { 0, 0, 0 };
-            for (int i = 0; i < valueKey.VectorSize; i++)
+            for (int i = 0; i < valueStore.VectorSize; i++)
             {
-                valueKey.GetVirtualValue(strideTs[i], temp);
+                valueStore.GetValueAt(strideTs[i], temp);
                 result[i] = temp[i];
             }
             return result;

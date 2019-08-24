@@ -32,25 +32,31 @@ namespace PropertyKeys.Keys
     }
     public class ObjectKeys
     {
-        public Dictionary<PropertyID, ValueKey> Keys { get; }
+        public Dictionary<PropertyID, BaseValueStore> Keys { get; }
         /// <summary>
         /// ObjectKeys can be composed by merging with parent keys. First match wins, though this could change to merge/add/interpolate with parents.
         /// </summary>
         public ObjectKeys Parent { get; set; }
 
-        public ObjectKeys()
+        public ObjectKeys(ObjectKeys parent = null)
         {
-            Keys = new Dictionary<PropertyID, ValueKey>();
+            Parent = parent;
+            Keys = new Dictionary<PropertyID, BaseValueStore>();
         }
 
-        public ValueKey GetValueKey(PropertyID propertyID)
+        public BaseValueStore GetValueKey(PropertyID propertyID)
         {
-            ValueKey result = Keys[propertyID];
+            BaseValueStore result = Keys[propertyID];
             if(result == null && Parent != null)
             {
                 result = Parent.GetValueKey(propertyID);
             }
             return result;
+        }
+
+        public ObjectKeys CreateChild()
+        {
+            return new ObjectKeys(this);
         }
     }
 }

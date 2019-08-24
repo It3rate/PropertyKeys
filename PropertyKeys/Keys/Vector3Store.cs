@@ -5,15 +5,7 @@ using System.Numerics;
 
 namespace PropertyKeys.Keys
 {
-    public enum SampleType
-    {
-        Default,
-        Line,
-        Grid,
-        Ring,
-        Hexagon,
-    }
-    public class Vector3Key : ValueKey
+    public class Vector3Store : BaseValueStore
     {
         private Random rnd = new Random();
 
@@ -34,7 +26,7 @@ namespace PropertyKeys.Keys
         public Vector3 MaxBounds { get; private set; }
         public override float[] Size => new float[] { MaxBounds.X - MinBounds.X, MaxBounds.Y - MinBounds.Y, MaxBounds.Z - MinBounds.Z };
 
-        public Vector3Key(Vector3[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
+        public Vector3Store(Vector3[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
             bool isDiscrete = false, bool isRepeating = false, SampleType sampleType = SampleType.Default)
         {
             Values = values;
@@ -96,17 +88,17 @@ namespace PropertyKeys.Keys
             MaxBounds = new Vector3(maxx, maxy, maxz);
         }
 
-        public override float[] BlendValueAtIndex(ValueKey endKey, int index, float t)
+        public override float[] BlendValueAtIndex(BaseValueStore end, int index, float t)
         {
             float[] result;
             // todo: Getting grid size from data doesn't make sense, probably need to pass it with grid sampling class? Or calc from bounds of data (yes)?
             Vector3 start = GetVector3AtIndex(index);
-            if (endKey!= null)
+            if (end!= null)
             {
-                float[] endAr = endKey.GetFloatArrayAtIndex(index); // in case this isn't vect3, always use start size
-                Vector3 end = ValueKey.MergeToVector3(start, endAr);
+                float[] endAr = end.GetFloatArrayAtIndex(index); // in case this isn't vect3, always use start size
+                Vector3 merged = BaseValueStore.MergeToVector3(start, endAr);
                 result = new float[] { 0, 0, 0 };
-                Vector3.Lerp(start, end, t).CopyTo(result);
+                Vector3.Lerp(start, merged, t).CopyTo(result);
             }
             else
             {
@@ -159,11 +151,11 @@ namespace PropertyKeys.Keys
             return result;
         }
 
-        public override float[] GetVirtualValue(float t)
+        public override float[] GetValueAt(float t)
         {
             return GetFloatArray(GetVirtualValue(this.Values, t));
         }
-        public override void GetVirtualValue(float t, float[] copyInto)
+        public override void GetValueAt(float t, float[] copyInto)
         {
             GetVirtualValue(this.Values, t).CopyTo(copyInto);
         }

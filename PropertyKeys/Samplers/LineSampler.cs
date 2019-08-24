@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PropertyKeys.Keys;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,10 @@ namespace PropertyKeys.Samplers
 {
     public class LineSampler : BaseSampler
     {
-        public override float[] GetSample(ValueKey valueKey, int index)
+        public override float[] GetSample(BaseValueStore valueStore, int index)
         {
-            float index_t = (valueKey.ElementCount > 1) ?  index / (valueKey.ElementCount - 1f) : 0f;
-            return valueKey.GetVirtualValue(index_t);
+            float index_t = (valueStore.ElementCount > 1) ?  index / (valueStore.ElementCount - 1f) : 0f;
+            return valueStore.GetValueAt(index_t);
         }
     }
 }

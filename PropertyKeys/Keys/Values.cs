@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace PropertyKeys
+namespace PropertyKeys.Keys
 {
     public abstract class Values
     {
-        public abstract void ApplyValues(float t, ValueKey valueKey);
+        public abstract void ApplyValues(float t, BaseValueStore valueKey);
 
         public abstract bool GetBoolAt(float t);
         public abstract int GetIntAt(float t);
