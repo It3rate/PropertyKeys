@@ -5,29 +5,80 @@ namespace PropertyKeys
     public class PropertyKey
     {
         public int[] targetIDs;
-        public readonly ValueKey Start;
-        public readonly ValueKey End;
+        public readonly ValueKey[] ValueKeys; // todo: no reason to have start/end - should be array like everything else, and interpolated.
         public Action<Values> property;
 
         public EasingType EasingType;
         public bool IsRepeating = false; // stop count repeats every n items
         public float t = 0f;
 
-        public PropertyKey(ValueKey start, ValueKey end, int[] targetIDs = null, EasingType easingType = EasingType.Linear)
+        public PropertyKey(ValueKey[] valueKeys, int[] targetIDs = null, EasingType easingType = EasingType.Linear)
         {
-            Start = start;
-            End = end;
+            ValueKeys = valueKeys;
             this.targetIDs = targetIDs;
             EasingType = easingType;
         }
 
         public float[] GetValuesAtIndex(int index, float t)
         {
-            return Start.BlendValueAtIndex(End, index, t);
+            float[] result;
+
+            int startIndex, endIndex;
+            float vT;
+            GetScaledT(t, out vT, out startIndex, out endIndex);
+
+            if(startIndex == endIndex)
+            {
+                result = ValueKeys[startIndex].GetFloatArrayAtIndex(index);
+            }
+            else
+            {
+                result = ValueKeys[startIndex].BlendValueAtIndex(ValueKeys[endIndex], index, vT);
+            }
+            return result;
         }
         public int GetElementCountAt(float t)
         {
-            return End == null ? Start.ElementCount : (int)(Start.ElementCount + t * (End.ElementCount - Start.ElementCount));
+            int result;
+            int startIndex, endIndex;
+            float vT;
+            GetScaledT(t, out vT, out startIndex, out endIndex);
+
+            if (startIndex == endIndex)
+            {
+                result = ValueKeys[startIndex].ElementCount;
+            }
+            else
+            {
+                int sec = ValueKeys[startIndex].ElementCount;
+                int eec = ValueKeys[startIndex + 1].ElementCount;
+                result = sec + (int)(vT * (eec - sec));
+            }
+            return result;
         }
+
+        public void GetScaledT(float t, out float virtualT, out int startIndex, out int endIndex)
+        {
+            if (t >= 1)
+            {
+                startIndex = ValueKeys.Length - 1;
+                endIndex = startIndex;
+                virtualT = 1f;
+            }
+            else if (t <= 0)
+            {
+                startIndex = ValueKeys.Length - 0;
+                endIndex = startIndex;
+                virtualT = 0f;
+            }
+            else
+            {
+                float vt = t * (ValueKeys.Length - 1f);
+                startIndex = (int)vt;
+                endIndex = startIndex + 1;
+                virtualT = vt - startIndex;
+            }
+        }
+
     }
 }

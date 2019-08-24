@@ -43,7 +43,7 @@ namespace PropertyKeys.Components
                 var startKey = new Vector3Key(start, elementCount: cols*cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
                 var endKey = new Vector3Key(end, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
                 //Location = new PropertyKey(startKey, null);
-                Location = new PropertyKey(startKey, endKey);
+                Location = new PropertyKey(new ValueKey[] { startKey, endKey });
                 SetColor(startKey, endKey);
                 wanders = version == 1;
             }
@@ -61,7 +61,7 @@ namespace PropertyKeys.Components
                 }
                 var startKey = new Vector3Key(start.ToArray());
                 var endKey = new Vector3Key(end.ToArray());
-                Location = new PropertyKey(startKey, endKey);
+                Location = new PropertyKey(new ValueKey[] { startKey, endKey });
                 SetColor(startKey, endKey);
                 wanders = true;
             }
@@ -73,22 +73,22 @@ namespace PropertyKeys.Components
                 var startKey = new Vector3Key(start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
                 var endKey = new Vector3Key(end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
                     easingTypes: new EasingType[] { EasingType.Squared, EasingType.Linear }, sampleType: SampleType.Grid);
-                Location = new PropertyKey(startKey, endKey, easingType: EasingType.InverseSquared);
+                Location = new PropertyKey(new ValueKey[] { startKey, startKey, endKey, endKey }, easingType: EasingType.InverseSquared);
 
                 SetColor(startKey, endKey);
                 wanders = false;
             }
 
             List<Vector3> wanderList = new List<Vector3>();
-            for (int i = 0; i < Location.Start.ElementCount; i++)
+            for (int i = 0; i < Location.ValueKeys[0].ElementCount; i++)
             {
                 wanderList.Add(Vector3.Zero);
             }
-            Wander = new PropertyKey(
-                new Vector3Key(wanderList.ToArray(), sampleType: SampleType.Line), 
-                new Vector3Key(wanderList.ToArray(), sampleType: SampleType.Line));
-            Wander.Start.ElementCount = Location.Start.ElementCount;
-            Wander.End.ElementCount = Location.End.ElementCount;
+            Wander = new PropertyKey(new ValueKey[] {
+                new Vector3Key(wanderList.ToArray(), sampleType: SampleType.Line),
+                new Vector3Key(wanderList.ToArray(), sampleType: SampleType.Line)} );
+            Wander.ValueKeys[0].ElementCount = Location.ValueKeys[0].ElementCount;
+            Wander.ValueKeys[1].ElementCount = Location.ValueKeys[1].ElementCount;
         }
 
         private void SetColor(ValueKey startKey, ValueKey endKey)
@@ -97,7 +97,7 @@ namespace PropertyKeys.Components
             Vector3[] colorEnd = new Vector3[] { new Vector3(0.8f, 0, 0.8f), new Vector3(0, 1f, 0.1f), new Vector3(0.4f, 1f, 0.1f), new Vector3(0, 0, 1f) };
             var colorStartKey = new Vector3Key(colorStart, elementCount: startKey.ElementCount, sampleType: SampleType.Line);
             var colorEndKey = new Vector3Key(colorEnd, elementCount: endKey.ElementCount, sampleType: SampleType.Line, easingTypes: new EasingType[] { EasingType.Squared });
-            Color = new PropertyKey(colorStartKey, colorEndKey, easingType: EasingType.InverseSquared);
+            Color = new PropertyKey(new ValueKey[] { colorStartKey, colorEndKey }, easingType: EasingType.InverseSquared);
         }
 
         public void Draw(Graphics g, float t)
@@ -114,8 +114,8 @@ namespace PropertyKeys.Components
                 float[] v = Location.GetValuesAtIndex(i, easedT);
                 if (wanders)
                 {
-                    Wander.Start.NudgeValuesBy(0.4f);
-                    Wander.End.NudgeValuesBy(0.4f);
+                    Wander.ValueKeys[0].NudgeValuesBy(0.4f);
+                    Wander.ValueKeys[1].NudgeValuesBy(0.4f);
                     float[] wan = Wander.GetValuesAtIndex(i, easedT);
                     v[0] += wan[0];
                     v[1] += wan[1];
