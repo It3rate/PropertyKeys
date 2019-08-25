@@ -14,5 +14,9 @@ namespace PropertyKeys.Samplers
             float index_t = (valueStore.ElementCount > 1) ?  index / (valueStore.ElementCount - 1f) : 0f;
             return valueStore.GetValueAt(index_t);
         }
+        public override float[] GetSample(BaseValueStore valueStore, float t)
+        {
+            return valueStore.GetValueAt(t);
+        }
     }
 }

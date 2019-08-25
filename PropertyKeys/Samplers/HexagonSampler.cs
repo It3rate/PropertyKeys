@@ -20,7 +20,7 @@ namespace PropertyKeys.Samplers
                 int curRow = (int)((float)index / valueStore.Strides[0]);
                 if(i == 0 && ((curRow & 1) == 1) && valueStore.Strides[0] > 0)
                 {
-                    result[i] = temp[i] + (valueStore.Size[0] / (valueStore.Strides[0] - 1f) * 0.5f);// (float)Math.Sqrt(3) * 3f);
+                    result[i] = temp[i] + (valueStore.Size[0] / (valueStore.Strides[0] - 1f) * 0.5f);
                 }
                 else
                 {
@@ -28,6 +28,10 @@ namespace PropertyKeys.Samplers
                 }
             }
             return result;
+        }
+        public override float[] GetSample(BaseValueStore valueStore, float t)
+        {
+            return valueStore.GetValueAt(t);
         }
     }
 }

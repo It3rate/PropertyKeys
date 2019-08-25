@@ -99,10 +99,10 @@ namespace PropertyKeys.Components
 
         private void SetColor(BaseValueStore startKey, BaseValueStore endKey)
         {
-            Vector3[] colorStart = new Vector3[] { new Vector3(0.3f, 0.1f, 0), new Vector3(1f, 1f, 0), new Vector3(0, 0.15f, 1f), new Vector3(0, 0.5f, 0.1f) };
-            Vector3[] colorEnd = new Vector3[] { new Vector3(0.8f, 0, 0.8f), new Vector3(0, 1f, 0.1f), new Vector3(0.4f, 1f, 0.1f), new Vector3(0, 0, 1f) };
-            var colorStartKey = new Vector3Store(colorStart, elementCount: startKey.ElementCount, sampleType: SampleType.Line);
-            var colorEndKey = new Vector3Store(colorEnd, elementCount: endKey.ElementCount, sampleType: SampleType.Line, easingTypes: new EasingType[] { EasingType.Squared });
+            float[] colorStart = new float[] { 0.3f, 0.1f, 0,   1f, 1f, 0,  0, 0.15f, 1f,   0, 0.5f, 0.1f };
+            float[] colorEnd = new float[] { 0.8f, 0, 0.8f,   0, 1f, 0.1f,   0.4f, 1f, 0.1f,   0, 0, 1f };
+            var colorStartKey = new FloatStore(3, colorStart, elementCount: startKey.ElementCount, sampleType: SampleType.Line);
+            var colorEndKey = new FloatStore(3, colorEnd, elementCount: endKey.ElementCount, sampleType: SampleType.Line, easingTypes: new EasingType[] { EasingType.Squared });
             Color = new PropertyKey(new BaseValueStore[] { colorStartKey, colorEndKey }, easingType: EasingType.InverseSquared);
         }
 

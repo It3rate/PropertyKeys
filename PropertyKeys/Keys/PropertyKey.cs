@@ -5,7 +5,7 @@ namespace PropertyKeys.Keys
     public class PropertyKey
     {
         public int[] targetIDs;
-        public readonly BaseValueStore[] ValueKeys; // todo: no reason to have start/end - should be array like everything else, and interpolated.
+        public readonly BaseValueStore[] ValueKeys;
         public Action<Values> property;
 
         public EasingType EasingType;
@@ -19,6 +19,24 @@ namespace PropertyKeys.Keys
             EasingType = easingType;
         }
 
+        //public float[] GetValuesAtT(float indexT, float t)
+        //{
+        //    float[] result;
+
+        //    int startIndex, endIndex;
+        //    float vT;
+        //    GetScaledT(t, out vT, out startIndex, out endIndex);
+
+        //    if (startIndex == endIndex)
+        //    {
+        //        result = ValueKeys[startIndex].GetFloatArrayAtIndex(index);
+        //    }
+        //    else
+        //    {
+        //        result = ValueKeys[startIndex].BlendValueAtIndex(ValueKeys[endIndex], index, vT);
+        //    }
+        //    return result;
+        //}
         public float[] GetValuesAtIndex(int index, float t)
         {
             float[] result;
@@ -27,7 +45,7 @@ namespace PropertyKeys.Keys
             float vT;
             GetScaledT(t, out vT, out startIndex, out endIndex);
 
-            if(startIndex == endIndex)
+            if (startIndex == endIndex)
             {
                 result = ValueKeys[startIndex].GetFloatArrayAtIndex(index);
             }

@@ -21,6 +21,10 @@ namespace PropertyKeys.Samplers
             }
             return result;
         }
+        public override float[] GetSample(BaseValueStore valueStore, float t)
+        {
+            return valueStore.GetValueAt(t);
+        }
 
     }
 }

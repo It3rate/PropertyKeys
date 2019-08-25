@@ -19,6 +19,7 @@ namespace PropertyKeys.Samplers
     public abstract class BaseSampler
     {
         public abstract float[] GetSample(BaseValueStore valueStore, int index);
+        public abstract float[] GetSample(BaseValueStore valueStore, float t);
 
         public float[] GetStrideIndexes(BaseValueStore valueStore, int index)
         {
