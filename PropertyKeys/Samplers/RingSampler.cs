@@ -18,8 +18,8 @@ namespace PropertyKeys.Samplers
         public override float[] GetSample(BaseValueStore valueStore, float t)
         {
             float[] result;
-            float[] tl = valueStore.GetValueAt(0f);
-            float[] br = valueStore.GetValueAt(1f);
+            float[] tl = valueStore.GetUnsampledValueAtT(0f);
+            float[] br = valueStore.GetUnsampledValueAtT(1f);
 
             float dx = (br[0] - tl[0]) / 2.0f;
             float dy = (br[1] - tl[1]) / 2.0f;

@@ -18,18 +18,41 @@ namespace PropertyKeys.Samplers
 
     public abstract class BaseSampler
     {
+        public static BaseSampler CreateSampler(SampleType sampleType)
+        {
+            BaseSampler result;
+            switch (sampleType)
+            {
+                case SampleType.Line:
+                    result = new LineSampler();
+                    break;
+                case SampleType.Grid:
+                    result = new GridSampler();
+                    break;
+                case SampleType.Ring:
+                    result = new RingSampler();
+                    break;
+                case SampleType.Hexagon:
+                    result = new HexagonSampler();
+                    break;
+                default:
+                    result = new LineSampler();
+                    break;
+            }
+            return result;
+        }
         public abstract float[] GetSample(BaseValueStore valueStore, int index);
         public abstract float[] GetSample(BaseValueStore valueStore, float t);
 
         public float[] GetStrideIndexes(BaseValueStore valueStore, int index)
         {
-            float[] result = new float[] { 0, 0, 0 };
-            float dimT = 1f;
+            float[] result = valueStore.GetZeroArray();
+            float dimT = 0;
             int curSize = 1;
             int prevSize = curSize; // prevSize allows rendering to edges of grid
-            float[] temp = new float[] { 0, 0, 0 };
-            // Need to sample in each dimension of the vector and completely fill the remainder.
-            for (int i = 0; i < valueStore.VectorSize; i++)
+            float[] temp = valueStore.GetZeroArray();
+            // Need to sample in each dimension of the vector and completely fill the remainder once zero is hit.
+            for (int i = 0; i < result.Length; i++)
             {
                 // first zero results in fill to end
                 bool isLast = (valueStore.Strides.Length - 1 < i) || (valueStore.Strides[i] == 0);

@@ -87,15 +87,11 @@ namespace PropertyKeys.Components
                 SetColor(startKey, endKey);
                 wanders = false;
             }
-
-            List<Vector3> wanderList = new List<Vector3>();
-            for (int i = 0; i < Location.ValueKeys[0].ElementCount; i++)
-            {
-                wanderList.Add(Vector3.Zero);
-            }
+            
+            int len = Location.ValueKeys[0].ElementCount * 2;
             Wander = new PropertyKey(new BaseValueStore[] {
-                new Vector3Store(wanderList.ToArray(), sampleType: SampleType.Line),
-                new Vector3Store(wanderList.ToArray(), sampleType: SampleType.Line)} );
+                new FloatStore(2, new float[len], sampleType: SampleType.Line),
+                new FloatStore(2, new float[len], sampleType: SampleType.Line)} );
             Wander.ValueKeys[0].ElementCount = Location.ValueKeys[0].ElementCount;
             Wander.ValueKeys[1].ElementCount = Location.ValueKeys[1].ElementCount;
         }

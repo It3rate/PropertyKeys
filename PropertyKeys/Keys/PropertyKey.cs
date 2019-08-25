@@ -5,14 +5,14 @@ namespace PropertyKeys.Keys
     public class PropertyKey
     {
         public int[] targetIDs;
-        public readonly BaseValueStore[] ValueKeys;
+        public readonly IValueStore[] ValueKeys;
         public Action<Values> property;
 
         public EasingType EasingType;
         public bool IsRepeating = false; // stop count repeats every n items
         public float t = 0f;
 
-        public PropertyKey(BaseValueStore[] valueKeys, int[] targetIDs = null, EasingType easingType = EasingType.Linear)
+        public PropertyKey(IValueStore[] valueKeys, int[] targetIDs = null, EasingType easingType = EasingType.Linear)
         {
             ValueKeys = valueKeys;
             this.targetIDs = targetIDs;

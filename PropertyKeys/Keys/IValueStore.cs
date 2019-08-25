@@ -11,7 +11,15 @@ namespace PropertyKeys.Keys
         int ElementCount { get; set; }
 
         float[] GetFloatArrayAtIndex(int index);
-        float[] GetValueAt(float t);
-        float[] BlendValueAtIndex(BaseValueStore endKey, int index, float t);
+        float[] GetFloatArrayAtT(float t);
+        float[] GetUnsampledValueAtT(float t);
+        float[] BlendValueAtIndex(IValueStore endKey, int index, float t);
+        float[] BlendValueAtT(IValueStore endKey, float index_t, float t);
+
+        void NudgeValuesBy(float nudge);
+
+        float[] GetZeroArray();
+        float[] GetMinArray();
+        float[] GetMaxArray();
     }
 }

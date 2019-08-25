@@ -15,17 +15,12 @@ namespace PropertyKeys.Keys
         private static readonly float[] Empty = new float[] { };
         private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0 }; // zero means repeating, so this is a regular one row array
-
-        private int _vectorSize = 1;
-        public override int VectorSize => _vectorSize;
-
+        
         private readonly float[] Values;
 
         public override int ElementCount { get; set; }
-        //public EasingType[] EasingTypes; // per dimension
-        //public int[] Strides;
         public bool IsDiscrete;
-        public bool IsRepeating; // start>end interpolation applies each 'Dimension' elements
+        public bool IsRepeating;
 
         public float[] MinBounds { get; private set; }
         public float[] MaxBounds { get; private set; }
@@ -33,50 +28,25 @@ namespace PropertyKeys.Keys
         {
             get
             {
-                List<float> result = new List<float>();
+                float[] result = GetZeroArray();
                 for (int i = 0; i < VectorSize; i++)
                 {
-                    result.Add(MaxBounds[i] - MinBounds[i]);
+                    result[i] = MaxBounds[i] - MinBounds[i];
                 }
-                return result.ToArray();
+                return result;
             }
         }
 
-        private float[] zeroArray;
-        private float[] maxArray;
-        private float[] minArray;
-
         public FloatStore(int vectorSize, float[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
-            bool isDiscrete = false, bool isRepeating = false, SampleType sampleType = SampleType.Default)
+            bool isDiscrete = false, bool isRepeating = false, SampleType sampleType = SampleType.Default):base(vectorSize)
         {
-            _vectorSize = vectorSize;
             Values = values;
             ElementCount = (elementCount < 1) ? values.Length / VectorSize : elementCount; // can be larger or smaller based on sampling
             Strides = (dimensions == null) ? DefaultDimensions : dimensions;
             EasingTypes = (easingTypes == null) ? DefaultEasing : easingTypes;
             IsDiscrete = isDiscrete;
             IsRepeating = isRepeating;
-
-            if (sampleType == SampleType.Ring)
-            {
-                Sampler = new RingSampler();
-            }
-            else if (sampleType == SampleType.Grid)
-            {
-                Sampler = new GridSampler();
-            }
-            else if (sampleType == SampleType.Line)
-            {
-                Sampler = new LineSampler();
-            }
-            else if (sampleType == SampleType.Hexagon)
-            {
-                Sampler = new HexagonSampler();
-            }
-
-            zeroArray = GetSizedArray(0);
-            maxArray = GetSizedArray(float.MaxValue);
-            minArray = GetSizedArray(float.MinValue);
+            Sampler = BaseSampler.CreateSampler(sampleType);
 
             CalculateBounds();
         }
@@ -93,29 +63,7 @@ namespace PropertyKeys.Keys
             }
         }
 
-        private void CalculateBounds()
-        {
-            MinBounds = (float[])maxArray.Clone();
-            MaxBounds = (float[])minArray.Clone();
-
-            for (int i = 0; i < Values.Length; i += VectorSize)
-            {
-                for (int j = 0; j < VectorSize; j++)
-                {
-                    if (Values[i + j] < MinBounds[j])
-                    {
-                        MinBounds[j] = Values[i + j];
-                    }
-
-                    if (Values[i + j] > MaxBounds[j])
-                    {
-                        MaxBounds[j] = Values[i + j];
-                    }
-                }
-            }
-        }
-
-        public override float[] BlendValueAtIndex(BaseValueStore end, int index, float t)
+        public override float[] BlendValueAtIndex(IValueStore end, int index, float t)
         {
             float[] result = GetFloatArrayAtIndex(index);
             if (end != null)
@@ -125,38 +73,21 @@ namespace PropertyKeys.Keys
             }
             return result;
         }
+        public override float[] BlendValueAtT(IValueStore end, float index_t, float t)
+        {
+            float[] result = GetFloatArrayAtT(index_t);
+            if (end != null)
+            {
+                float[] endAr = end.GetFloatArrayAtT(index_t);
+                InterpolateIntoA(result, endAr, t);
+            }
+            return result;
+        }
 
 
         public override float[] GetFloatArrayAtIndex(int index)
         {
-            return GetValueAtIndex(index, ElementCount);
-        }
-        public override float GetFloatAtIndex(int index)
-        {
-            float[] result = GetFloatArrayAtIndex(index);
-            return result[0];
-        }
-        public override Vector2 GetVector2AtIndex(int index)
-        {
-            float[] result = GetFloatArrayAtIndex(index);
-            return new Vector2(result[0], result.Length > 1 ? result[1] : 0);
-        }
-        public override Vector3 GetVector3AtIndex(int index)
-        {
-            float[] result = GetFloatArrayAtIndex(index);
-            return new Vector3(result[0], result.Length > 1 ? result[1] : 0, result.Length > 2 ? result[2] : 0);
-        }
-        public override Vector4 GetVector4AtIndex(int index)
-        {
-            float[] result = GetFloatArrayAtIndex(index);
-            return new Vector4(result[0], result.Length > 1 ? result[1] : 0, result.Length > 2 ? result[2] : 0, result.Length > 3 ? result[3] : 0);
-        }
-
-
-        public float[] GetValueAtIndex(int index, int elementCount)
-        {
             float[] result;
-            bool isZeros = Strides.All(o => o == 0);
             if (Sampler != null)
             {
                 result = Sampler.GetSample(this, index);
@@ -170,20 +101,12 @@ namespace PropertyKeys.Keys
             return result;
         }
 
-        public override float[] GetValueAt(float t)
+        public override float[] GetFloatArrayAtT(float t)
         {
-            return GetVirtualValue(t);
-        }
-        public override void GetValueAt(float t, float[] copyInto)
-        {
-            float[] result = GetVirtualValue(t);
-            for (int i = 0; i < copyInto.Length; i++)
-            {
-                copyInto[i] = result.Length > i ? result[i] : 0;
-            }
+            throw new NotImplementedException();
         }
 
-        private float[] GetVirtualValue(float t)
+        public override float[] GetUnsampledValueAtT(float t)
         {
             float[] result;
             int len = Values.Length / VectorSize;
@@ -211,20 +134,19 @@ namespace PropertyKeys.Keys
             }
             return result;
         }
-
-        private float[] GetSizedArray(float value)
+        
+        public override void GetUnsampledValueAt(float t, float[] copyInto)
         {
-            List<float> result = new List<float>(VectorSize);
-            for (int i = 0; i < VectorSize; i++)
+            float[] result = GetUnsampledValueAtT(t);
+            for (int i = 0; i < copyInto.Length; i++)
             {
-                result.Add(value);
+                copyInto[i] = result.Length > i ? result[i] : 0;
             }
-            return result.ToArray();
         }
 
         private float[] GetSizedValuesAt(int index)
         {
-            float[] result = (float[])zeroArray.Clone();
+            float[] result = GetZeroArray();
             if(index * VectorSize + VectorSize <= Values.Length)
             {
                 Array.Copy(Values, index * VectorSize, result, 0, VectorSize);
@@ -243,6 +165,28 @@ namespace PropertyKeys.Keys
                 else
                 {
                     break;
+                }
+            }
+        }
+
+        private void CalculateBounds()
+        {
+            MinBounds = GetMaxArray();
+            MaxBounds = GetMinArray();
+
+            for (int i = 0; i < Values.Length; i += VectorSize)
+            {
+                for (int j = 0; j < VectorSize; j++)
+                {
+                    if (Values[i + j] < MinBounds[j])
+                    {
+                        MinBounds[j] = Values[i + j];
+                    }
+
+                    if (Values[i + j] > MaxBounds[j])
+                    {
+                        MaxBounds[j] = Values[i + j];
+                    }
                 }
             }
         }
