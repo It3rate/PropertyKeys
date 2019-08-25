@@ -14,6 +14,8 @@ namespace PropertyKeys.Keys
 
         public abstract float[] Size { get; }
 
+        public abstract float[] this[int index] { get; }
+
         // todo: elementCount probably needs to come from the parent, at least optionally. Or repeat/loop? Or param (another t vs index?)
         // Eg does color count need to equal positions count?
         public abstract int ElementCount { get; set; } 

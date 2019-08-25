@@ -40,10 +40,14 @@ namespace PropertyKeys.Components
                 float armLen = totalWidth / (float)(cols - 1) / 3f;
                 float height = (armLen * (float)Math.Sqrt(3)) / 2f * (rows - 1f);
                 graphic.Radius = armLen;
-                Vector3[] start = new Vector3[] { new Vector3(150, 150, 0), new Vector3(150 + totalWidth,  150 + height, 0)};
-                Vector3[] end = new Vector3[] { new Vector3(start[0].X - growth, start[0].Y - growth, 0), new Vector3(start[1].X + growth, start[1].Y + growth, 0) };
-                var startKey = new Vector3Store(start, elementCount: cols*cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
-                var endKey = new Vector3Store(end, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+
+                float[] start = new float[] { 150, 150,   150 + totalWidth, 150 + height };
+                var startKey = new FloatStore(2, start, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+
+                float[] end = new float[] {
+                    startKey[0][0] - growth, startKey[0][1] - growth,
+                    startKey[1][0] + growth, startKey[1][1] + growth};
+                var endKey = new FloatStore(2, end, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
                 //Location = new PropertyKey(startKey, null);
                 Location = new PropertyKey(new BaseValueStore[] { startKey, endKey });
                 SetColor(startKey, endKey);

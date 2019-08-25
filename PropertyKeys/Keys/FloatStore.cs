@@ -80,6 +80,10 @@ namespace PropertyKeys.Keys
 
             CalculateBounds();
         }
+        public override float[] this[int index]
+        {
+            get { return GetSizedValuesAt(index); }
+        }
 
         public override void NudgeValuesBy(float nudge)
         {
@@ -221,7 +225,7 @@ namespace PropertyKeys.Keys
         private float[] GetSizedValuesAt(int index)
         {
             float[] result = (float[])zeroArray.Clone();
-            if(Values.Length <= index * VectorSize + VectorSize)
+            if(index * VectorSize + VectorSize <= Values.Length)
             {
                 Array.Copy(Values, index * VectorSize, result, 0, VectorSize);
             }

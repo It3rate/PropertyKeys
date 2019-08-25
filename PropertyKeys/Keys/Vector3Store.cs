@@ -56,6 +56,11 @@ namespace PropertyKeys.Keys
             CalculateBounds();
         }
 
+        public override float[] this[int index]
+        {
+            get { return GetFloatArrayAtIndex(index); }
+        }
+
         public override void NudgeValuesBy(float nudge)
         {
             for (int i = 0; i < Values.Length; i++)
