@@ -101,13 +101,13 @@ namespace PropertyKeys.Keys
             if (end!= null)
             {
                 float[] endAr = end.GetFloatArrayAtIndex(index); // in case this isn't vect3, always use start size
-                Vector3 merged = BaseValueStore.MergeToVector3(start, endAr);
+                Vector3 merged = VectorUtils.MergeToVector3(start, endAr);
                 result = new float[] { 0, 0, 0 };
                 Vector3.Lerp(start, merged, t).CopyTo(result);
             }
             else
             {
-                result = GetFloatArray(start);
+                result = VectorUtils.GetFloatArray(start);
             }
             return result;
         }
@@ -146,7 +146,7 @@ namespace PropertyKeys.Keys
             if (Sampler != null)
             {
                 float[] sample = Sampler.GetSample(this, index);
-                result = GetVector3(sample);
+                result = VectorUtils.GetVector3(sample);
             }
             else // direct sample of data
             {
@@ -158,7 +158,7 @@ namespace PropertyKeys.Keys
 
         public override float[] GetValueAt(float t)
         {
-            return GetFloatArray(GetVirtualValue(this.Values, t));
+            return VectorUtils.GetFloatArray(GetVirtualValue(this.Values, t));
         }
         public override void GetValueAt(float t, float[] copyInto)
         {

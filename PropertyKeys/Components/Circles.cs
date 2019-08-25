@@ -57,16 +57,18 @@ namespace PropertyKeys.Components
             {
                 graphic.Radius = 30;
                 int count = 50;
-                List<Vector3> start = new List<Vector3>();
-                List<Vector3> end = new List<Vector3>();
-                for (int i = 0; i < count; i++)
+                int vectorSize = 2;
+                float[] start = new float[count * vectorSize];
+                float[] end = new float[count * vectorSize];
+                for (int i = 0; i < count * vectorSize; i += vectorSize)
                 {
-                    Vector3 v = new Vector3(rnd.Next(500) + 100, rnd.Next(300) + 50, 0);
-                    start.Add(v);
-                    end.Add(new Vector3(v.X + rnd.Next((int)v.X) - v.X / 2.0f, v.Y + rnd.Next(100) - 50, 0));
+                    start[i] = rnd.Next(500) + 100;
+                    start[i + 1] = rnd.Next(300) + 50;
+                    end[i] = start[i] + rnd.Next((int)start[i]) - start[i] / 2.0f;
+                    end[i + 1] = start[i + 1] + rnd.Next(100) - 50;
                 }
-                var startKey = new Vector3Store(start.ToArray());
-                var endKey = new Vector3Store(end.ToArray());
+                var startKey = new FloatStore(vectorSize, start);
+                var endKey = new FloatStore(vectorSize, end);
                 Location = new PropertyKey(new BaseValueStore[] { startKey, endKey });
                 SetColor(startKey, endKey);
                 wanders = true;
@@ -74,10 +76,11 @@ namespace PropertyKeys.Components
             else if (version == 3)
             {
                 graphic.Radius = 10;
-                Vector3[] start = new Vector3[] { new Vector3(200, 140, 0), new Vector3(400, 300, 0) };//, new Vector3(200, 200, 0) };
-                Vector3[] end = new Vector3[] { new Vector3(200, 200, 0), new Vector3(400, 400, 0) };
-                var startKey = new Vector3Store(start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
-                var endKey = new Vector3Store(end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
+                int vectorSize = 2;
+                float[] start = new float[] { 200, 140, 400, 300 };
+                float[] end = new float[] { 200, 200, 400, 400};
+                var startKey = new FloatStore(vectorSize, start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
+                var endKey = new FloatStore(vectorSize, end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
                     easingTypes: new EasingType[] { EasingType.Squared, EasingType.Linear }, sampleType: SampleType.Grid);
                 Location = new PropertyKey(new BaseValueStore[] { startKey, startKey, endKey, endKey }, easingType: EasingType.InverseSquared);
 
@@ -127,7 +130,7 @@ namespace PropertyKeys.Components
                     v[1] += wan[1];
                 }
                 float it = i / (float)count;
-                Color c = BaseValueStore.GetRGBColorFrom(Color.GetValuesAtIndex(i, easedT));
+                Color c = GraphicUtils.GetRGBColorFrom(Color.GetValuesAtIndex(i, easedT));
                 Brush b = new SolidBrush(c);
                 state = g.Save();
                 float scale = 1f; //  + t * 0.2f;

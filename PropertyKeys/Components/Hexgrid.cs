@@ -17,7 +17,7 @@ namespace PropertyKeys.Components
         public int Columns { get; set; }
         public float Spacing { get; set; }
         public PolyShape Shape { get; set; }
-        public Vector3Store Locations { get; set; }
+        public FloatStore Locations { get; set; }
 
         public Matrix Transform { get; set; }
 
@@ -38,8 +38,8 @@ namespace PropertyKeys.Components
             float armLen = totalWidth / (float)(Columns - 1) / 3f;
             float totalHeight = (armLen * (float)Math.Sqrt(3)) / 2f * (Rows - 1f);
             Shape.Radius = armLen + Spacing * armLen;
-            Vector3[] start = new Vector3[] { new Vector3(0, 0, 0), new Vector3(totalWidth, totalHeight, 0) };
-            Locations = new Vector3Store(start, elementCount: Columns * Columns, dimensions: new int[] { Columns, 0, 0 }, sampleType: SampleType.Hexagon);
+            float[] start = new float[] { 0, 0, totalWidth, totalHeight };
+            Locations = new FloatStore(2, start, elementCount: Columns * Columns, dimensions: new int[] { Columns, 0, 0 }, sampleType: SampleType.Hexagon);
         }
     }
 }
