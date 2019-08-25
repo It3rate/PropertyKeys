@@ -12,7 +12,7 @@ namespace PropertyKeys.Samplers
         public override float[] GetSample(BaseValueStore valueStore, int index)
         {
             float[] result = valueStore.GetZeroArray();
-            float[] strideTs = GetStrideIndexes(valueStore, index);
+            float[] strideTs = GetStrideTsForIndex(valueStore, index);
             float[] temp = valueStore.GetZeroArray();
             for (int i = 0; i < result.Length; i++)
             {
@@ -23,7 +23,15 @@ namespace PropertyKeys.Samplers
         }
         public override float[] GetSample(BaseValueStore valueStore, float t)
         {
-            return valueStore.GetUnsampledValueAtT(t);
+            float[] result = valueStore.GetZeroArray();
+            float[] strideTs = GetStrideTsForT(valueStore, t);
+            float[] temp = valueStore.GetZeroArray();
+            for (int i = 0; i < result.Length; i++)
+            {
+                valueStore.GetUnsampledValueAt(strideTs[i], temp);
+                result[i] = temp[i];
+            }
+            return result;
         }
 
     }

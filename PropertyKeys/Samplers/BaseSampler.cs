@@ -44,8 +44,16 @@ namespace PropertyKeys.Samplers
         public abstract float[] GetSample(BaseValueStore valueStore, int index);
         public abstract float[] GetSample(BaseValueStore valueStore, float t);
 
-        public float[] GetStrideIndexes(BaseValueStore valueStore, int index)
+        public float[] GetStrideTsForIndex(BaseValueStore valueStore, int index)
         {
+            return GetStrideTsForT(valueStore, (float)index / valueStore.ElementCount);
+        }
+        public float[] GetStrideTsForT(BaseValueStore valueStore, float t)
+        {
+            int index = (int)(t * valueStore.ElementCount);
+            float remainder = t * valueStore.ElementCount - index;
+            remainder = (Math.Abs(remainder) < 0.0001) ? 0 : remainder;
+
             float[] result = valueStore.GetZeroArray();
             float dimT = 0;
             int curSize = 1;
@@ -58,7 +66,7 @@ namespace PropertyKeys.Samplers
                 bool isLast = (valueStore.Strides.Length - 1 < i) || (valueStore.Strides[i] == 0);
                 if (isLast)
                 {
-                    dimT = (index / curSize) / (float)(valueStore.ElementCount / (curSize + prevSize));
+                    dimT = (index / curSize) / (float)(valueStore.ElementCount / (curSize + prevSize)) + remainder;
                 }
                 else
                 {
