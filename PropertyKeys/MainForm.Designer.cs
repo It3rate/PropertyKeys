@@ -1,4 +1,4 @@
-﻿namespace PropertyKeys
+﻿namespace DataArcs
 {
     partial class MainForm
     {

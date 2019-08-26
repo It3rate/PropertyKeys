@@ -1,15 +1,15 @@
-﻿using PropertyKeys.Keys;
+﻿using DataArcs.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PropertyKeys.Samplers
+namespace DataArcs.Samplers
 {
     public class GridSampler : BaseSampler
     {
-        public override float[] GetSample(BaseValueStore valueStore, int index)
+        public override float[] GetSample(IValueStore valueStore, int index)
         {
             float[] result = valueStore.GetZeroArray();
             float[] strideTs = GetStrideTsForIndex(valueStore, index);
@@ -19,7 +19,7 @@ namespace PropertyKeys.Samplers
             }
             return result;
         }
-        public override float[] GetSample(BaseValueStore valueStore, float t)
+        public override float[] GetSample(IValueStore valueStore, float t)
         {
             float[] result = valueStore.GetZeroArray();
             float[] strideTs = GetStrideTsForT(valueStore, t);

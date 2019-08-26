@@ -1,20 +1,21 @@
-﻿using PropertyKeys.Graphic;
-using PropertyKeys.Keys;
-using PropertyKeys.Samplers;
+﻿using DataArcs.Graphic;
+using DataArcs.Stores;
+using DataArcs.Samplers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Numerics;
-namespace PropertyKeys.Components
+
+namespace DataArcs.Components
 {
     public class Circles
     {
-        ObjectKeys object1;
-        PropertyKey Location { get; set; }
-        PropertyKey Color { get; set; }
+        Composite object1;
+        PropertyStore Location { get; set; }
+        PropertyStore Color { get; set; }
 
-        PropertyKey Wander { get; set; }
+        PropertyStore Wander { get; set; }
         bool wanders = true;
 
         PolyShape graphic;
@@ -42,15 +43,14 @@ namespace PropertyKeys.Components
                 graphic.Radius = armLen;
 
                 float[] start = new float[] { 150, 150,   150 + totalWidth, 150 + height };
-                var startKey = new FloatStore(2, start, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+                var startStore = new FloatStore(2, start, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
 
                 float[] end = new float[] {
-                    startKey[0][0] - growth, startKey[0][1] - growth,
-                    startKey[1][0] + growth, startKey[1][1] + growth};
-                var endKey = new FloatStore(2, end, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
-                //Location = new PropertyKey(startKey, null);
-                Location = new PropertyKey(new BaseValueStore[] { startKey, endKey });
-                SetColor(startKey, endKey);
+                    startStore[0][0] - growth, startStore[0][1] - growth,
+                    startStore[1][0] + growth, startStore[1][1] + growth};
+                var endStore = new FloatStore(2, end, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+                Location = new PropertyStore(new FloatStore[] { startStore, endStore });
+                SetColor(startStore, endStore);
                 wanders = version == 1;
             }
             else if (version == 2)
@@ -67,10 +67,10 @@ namespace PropertyKeys.Components
                     end[i] = start[i] + rnd.Next((int)start[i]) - start[i] / 2.0f;
                     end[i + 1] = start[i + 1] + rnd.Next(100) - 50;
                 }
-                var startKey = new FloatStore(vectorSize, start);
-                var endKey = new FloatStore(vectorSize, end);
-                Location = new PropertyKey(new BaseValueStore[] { startKey, endKey });
-                SetColor(startKey, endKey);
+                var startStore = new FloatStore(vectorSize, start);
+                var endStore = new FloatStore(vectorSize, end);
+                Location = new PropertyStore(new FloatStore[] { startStore, endStore });
+                SetColor(startStore, endStore);
                 wanders = true;
             }
             else if (version == 3)
@@ -79,30 +79,30 @@ namespace PropertyKeys.Components
                 int vectorSize = 2;
                 float[] start = new float[] { 200, 140, 400, 300 };
                 float[] end = new float[] { 200, 200, 400, 400};
-                var startKey = new FloatStore(vectorSize, start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
-                var endKey = new FloatStore(vectorSize, end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
+                var startStore = new FloatStore(vectorSize, start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
+                var endStore = new FloatStore(vectorSize, end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
                     easingTypes: new EasingType[] { EasingType.Squared, EasingType.Linear }, sampleType: SampleType.Grid);
-                Location = new PropertyKey(new BaseValueStore[] { startKey, startKey, endKey, endKey }, easingType: EasingType.InverseSquared);
+                Location = new PropertyStore(new FloatStore[] { startStore, startStore, endStore, endStore }, easingType: EasingType.InverseSquared);
 
-                SetColor(startKey, endKey);
+                SetColor(startStore, endStore);
                 wanders = false;
             }
             
-            int len = Location.ValueKeys[0].ElementCount * 2;
-            Wander = new PropertyKey(new BaseValueStore[] {
+            int len = Location.ValueStores[0].ElementCount * 2;
+            Wander = new PropertyStore(new FloatStore[] {
                 new FloatStore(2, new float[len], sampleType: SampleType.Line),
                 new FloatStore(2, new float[len], sampleType: SampleType.Line)} );
-            Wander.ValueKeys[0].ElementCount = Location.ValueKeys[0].ElementCount;
-            Wander.ValueKeys[1].ElementCount = Location.ValueKeys[1].ElementCount;
+            Wander.ValueStores[0].ElementCount = Location.ValueStores[0].ElementCount;
+            Wander.ValueStores[1].ElementCount = Location.ValueStores[1].ElementCount;
         }
 
-        private void SetColor(BaseValueStore startKey, BaseValueStore endKey)
+        private void SetColor(FloatStore startStore, FloatStore endStore)
         {
-            float[] colorStart = new float[] { 0.3f, 0.1f, 0,   1f, 1f, 0,  0, 0.15f, 1f,   0, 0.5f, 0.1f };
-            float[] colorEnd = new float[] { 0.8f, 0, 0.8f,   0, 1f, 0.1f,   0.4f, 1f, 0.1f,   0, 0, 1f };
-            var colorStartKey = new FloatStore(3, colorStart, elementCount: startKey.ElementCount, sampleType: SampleType.Line);
-            var colorEndKey = new FloatStore(3, colorEnd, elementCount: endKey.ElementCount, sampleType: SampleType.Line, easingTypes: new EasingType[] { EasingType.Squared });
-            Color = new PropertyKey(new BaseValueStore[] { colorStartKey, colorEndKey }, easingType: EasingType.InverseSquared);
+            float[] start = new float[] { 0.3f, 0.1f, 0,   1f, 1f, 0,  0, 0.15f, 1f,   0, 0.5f, 0.1f };
+            float[] end = new float[] { 0.8f, 0, 0.8f,   0, 1f, 0.1f,   0.4f, 1f, 0.1f,   0, 0, 1f };
+            var colorStartStore = new FloatStore(3, start, elementCount: startStore.ElementCount, sampleType: SampleType.Line);
+            var colorEndStore = new FloatStore(3, end, elementCount: endStore.ElementCount, sampleType: SampleType.Line, easingTypes: new EasingType[] { EasingType.Squared });
+            Color = new PropertyStore(new FloatStore[] { colorStartStore, colorEndStore }, easingType: EasingType.InverseSquared);
         }
 
         public void Draw(Graphics g, float t)
@@ -119,8 +119,8 @@ namespace PropertyKeys.Components
                 float[] v = Location.GetValuesAtIndex(i, easedT);
                 if (wanders)
                 {
-                    Wander.ValueKeys[0].NudgeValuesBy(0.4f);
-                    Wander.ValueKeys[1].NudgeValuesBy(0.4f);
+                    Wander.ValueStores[0].NudgeValuesBy(0.4f);
+                    Wander.ValueStores[1].NudgeValuesBy(0.4f);
                     float[] wan = Wander.GetValuesAtIndex(i, easedT);
                     v[0] += wan[0];
                     v[1] += wan[1];

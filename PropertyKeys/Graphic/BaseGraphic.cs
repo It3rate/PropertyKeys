@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace PropertyKeys.Graphic
+namespace DataArcs.Graphic
 {
     public abstract class BaseGraphic
     {

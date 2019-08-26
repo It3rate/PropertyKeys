@@ -1,11 +1,11 @@
-﻿using PropertyKeys.Keys;
+﻿using DataArcs.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PropertyKeys.Samplers
+namespace DataArcs.Samplers
 {
     public enum SampleType
     {
@@ -41,14 +41,14 @@ namespace PropertyKeys.Samplers
             }
             return result;
         }
-        public abstract float[] GetSample(BaseValueStore valueStore, int index);
-        public abstract float[] GetSample(BaseValueStore valueStore, float t);
+        public abstract float[] GetSample(IValueStore valueStore, int index);
+        public abstract float[] GetSample(IValueStore valueStore, float t);
 
-        public float[] GetStrideTsForIndex(BaseValueStore valueStore, int index)
+        public float[] GetStrideTsForIndex(IValueStore valueStore, int index)
         {
             return GetStrideTsForT(valueStore, (float)index / valueStore.ElementCount);
         }
-        public float[] GetStrideTsForT(BaseValueStore valueStore, float t)
+        public float[] GetStrideTsForT(IValueStore valueStore, float t)
         {
             int index = (int)(t * valueStore.ElementCount);
             float remainder = t * valueStore.ElementCount - index;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PropertyKeys.Graphic
+namespace DataArcs.Graphic
 {
     public class GraphicUtils
     {

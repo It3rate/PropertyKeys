@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PropertyKeys.Keys
+namespace DataArcs.Stores
 {
     public enum PropertyID : int
     {
         None = 0,
-        Index,
         Shape,
         Transform,
         Location,
@@ -30,33 +29,33 @@ namespace PropertyKeys.Keys
 
         Custom = 0x1000,
     }
-    public class ObjectKeys
+    public class Composite
     {
-        public Dictionary<PropertyID, IValueStore> Keys { get; }
+        public Dictionary<PropertyID, PropertyStore> Stores { get; }
         /// <summary>
-        /// ObjectKeys can be composed by merging with parent keys. First match wins, though this could change to merge/add/interpolate with parents.
+        /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
         /// </summary>
-        public ObjectKeys Parent { get; set; }
+        public Composite Parent { get; set; }
 
-        public ObjectKeys(ObjectKeys parent = null)
+        public Composite(Composite parent = null)
         {
             Parent = parent;
-            Keys = new Dictionary<PropertyID, IValueStore>();
+            Stores = new Dictionary<PropertyID, PropertyStore>();
         }
 
-        public IValueStore GetValueKey(PropertyID propertyID)
+        public PropertyStore GetPropertyStore(PropertyID propertyID)
         {
-            IValueStore result = Keys[propertyID];
+            PropertyStore result = Stores[propertyID];
             if(result == null && Parent != null)
             {
-                result = Parent.GetValueKey(propertyID);
+                result = Parent.GetPropertyStore(propertyID);
             }
             return result;
         }
 
-        public ObjectKeys CreateChild()
+        public Composite CreateChild()
         {
-            return new ObjectKeys(this);
+            return new Composite(this);
         }
     }
 }

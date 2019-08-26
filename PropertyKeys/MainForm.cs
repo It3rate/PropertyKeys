@@ -1,4 +1,4 @@
-﻿using PropertyKeys.Components;
+﻿using DataArcs.Components;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Timers;
 using System.Windows.Forms;
 
-namespace PropertyKeys
+namespace DataArcs
 {
     public partial class MainForm : Form
     {

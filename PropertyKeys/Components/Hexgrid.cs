@@ -1,6 +1,6 @@
-﻿using PropertyKeys.Graphic;
-using PropertyKeys.Keys;
-using PropertyKeys.Samplers;
+﻿using DataArcs.Graphic;
+using DataArcs.Stores;
+using DataArcs.Samplers;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Drawing2D;
@@ -9,7 +9,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PropertyKeys.Components
+namespace DataArcs.Components
 {
     public class Hexgrid
     {

@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PropertyKeys.Keys
+namespace DataArcs.Stores
 {
     public interface IValueStore
     {
-        int ElementCount { get; set; }
+        int VectorSize { get; }
+        int ElementCount { get; set; } 
+        int[] Strides { get; set; }
+        EasingType[] EasingTypes { get; set; }
+        float[] Size { get; }
 
         float[] GetFloatArrayAtIndex(int index);
         float[] GetFloatArrayAtT(float t);

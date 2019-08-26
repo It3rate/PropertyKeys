@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace PropertyKeys.Graphic
+namespace DataArcs.Graphic
 {
     public class PolyShape : BaseGraphic
     {

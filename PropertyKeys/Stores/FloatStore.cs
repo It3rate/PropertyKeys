@@ -1,4 +1,4 @@
-﻿using PropertyKeys.Samplers;
+﻿using DataArcs.Samplers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,21 +6,27 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PropertyKeys.Keys
+namespace DataArcs.Stores
 {
-    public class FloatStore : BaseValueStore
+    public class FloatStore : IValueStore
     {
         private Random rnd = new Random();
 
         private static readonly float[] Empty = new float[] { };
         private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0 }; // zero means repeating, so this is a regular one row array
-        
+
+        public int VectorSize { get; } = 1;
+        public int ElementCount { get; set; } = 1;
+        public int[] Strides { get; set; }
+        public EasingType[] EasingTypes { get; set; }
+        public BaseSampler Sampler { get; set; }
+
         private readonly float[] Values;
 
         public float[] MinBounds { get; private set; }
         public float[] MaxBounds { get; private set; }
-        public override float[] Size
+        public float[] Size
         {
             get
             {
@@ -34,8 +40,9 @@ namespace PropertyKeys.Keys
         }
 
         public FloatStore(int vectorSize, float[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
-            SampleType sampleType = SampleType.Default):base(vectorSize)
+            SampleType sampleType = SampleType.Default)
         {
+            VectorSize = vectorSize;
             Values = values;
             ElementCount = (elementCount < 1) ? values.Length / VectorSize : elementCount; // can be larger or smaller based on sampling
             Strides = (dimensions == null) ? DefaultDimensions : dimensions;
@@ -44,12 +51,12 @@ namespace PropertyKeys.Keys
 
             CalculateBounds();
         }
-        public override float[] this[int index]
+        public float[] this[int index]
         {
             get { return GetSizedValuesAt(index); }
         }
 
-        public override void NudgeValuesBy(float nudge)
+        public void NudgeValuesBy(float nudge)
         {
             for (int i = 0; i < Values.Length; i++)
             {
@@ -57,7 +64,7 @@ namespace PropertyKeys.Keys
             }
         }
 
-        public override float[] GetFloatArrayAtIndex(int index)
+        public float[] GetFloatArrayAtIndex(int index)
         {
             float[] result;
             if (Sampler != null)
@@ -73,12 +80,12 @@ namespace PropertyKeys.Keys
             return result;
         }
 
-        public override float[] GetFloatArrayAtT(float t)
+        public float[] GetFloatArrayAtT(float t)
         {
             throw new NotImplementedException();
         }
 
-        public override float[] GetUnsampledValueAtT(float t)
+        public float[] GetUnsampledValueAtT(float t)
         {
             float[] result;
             int len = Values.Length / VectorSize;
@@ -93,7 +100,7 @@ namespace PropertyKeys.Keys
                     float remainder_t = pos - startIndex;
                     result = GetSizedValuesAt(startIndex);
                     float[] end = GetSizedValuesAt(startIndex + 1);
-                    InterpolateInto(result, end, remainder_t);
+                    DataUtils.InterpolateInto(result, end, remainder_t);
                 }
                 else
                 {
@@ -139,5 +146,9 @@ namespace PropertyKeys.Keys
                 }
             }
         }
+
+        public float[] GetZeroArray() { return DataUtils.GetZeroArray(VectorSize); }
+        public float[] GetMinArray() { return DataUtils.GetMinArray(VectorSize); }
+        public float[] GetMaxArray() { return DataUtils.GetMaxArray(VectorSize); }
     }
 }
