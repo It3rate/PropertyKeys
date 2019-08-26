@@ -13,8 +13,6 @@ namespace PropertyKeys.Keys
         float[] GetFloatArrayAtIndex(int index);
         float[] GetFloatArrayAtT(float t);
         float[] GetUnsampledValueAtT(float t);
-        float[] BlendValueAtIndex(IValueStore endKey, int index, float t);
-        float[] BlendValueAtT(IValueStore endKey, float index_t, float t);
 
         void NudgeValuesBy(float nudge);
 

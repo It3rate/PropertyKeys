@@ -19,24 +19,6 @@ namespace PropertyKeys.Keys
             EasingType = easingType;
         }
 
-        //public float[] GetValuesAtT(float indexT, float t)
-        //{
-        //    float[] result;
-
-        //    int startIndex, endIndex;
-        //    float vT;
-        //    GetScaledT(t, out vT, out startIndex, out endIndex);
-
-        //    if (startIndex == endIndex)
-        //    {
-        //        result = ValueKeys[startIndex].GetFloatArrayAtIndex(index);
-        //    }
-        //    else
-        //    {
-        //        result = ValueKeys[startIndex].BlendValueAtIndex(ValueKeys[endIndex], index, vT);
-        //    }
-        //    return result;
-        //}
         public float[] GetValuesAtIndex(int index, float t)
         {
             float[] result;
@@ -51,10 +33,11 @@ namespace PropertyKeys.Keys
             }
             else
             {
-                result = ValueKeys[startIndex].BlendValueAtIndex(ValueKeys[endIndex], index, vT);
+                result = BlendValueAtIndex(ValueKeys[startIndex], ValueKeys[endIndex], index, vT);
             }
             return result;
         }
+
         public int GetElementCountAt(float t)
         {
             int result;
@@ -71,6 +54,27 @@ namespace PropertyKeys.Keys
                 int sec = ValueKeys[startIndex].ElementCount;
                 int eec = ValueKeys[startIndex + 1].ElementCount;
                 result = sec + (int)(vT * (eec - sec));
+            }
+            return result;
+        }
+
+        public float[] BlendValueAtIndex(IValueStore start, IValueStore end, int index, float t)
+        {
+            float[] result = start.GetFloatArrayAtIndex(index);
+            if (end != null)
+            {
+                float[] endAr = end.GetFloatArrayAtIndex(index);
+                BaseValueStore.InterpolateInto(result, endAr, t);
+            }
+            return result;
+        }
+        public float[] BlendValueAtT(IValueStore start, IValueStore end, float index_t, float t)
+        {
+            float[] result = start.GetFloatArrayAtT(index_t);
+            if (end != null)
+            {
+                float[] endAr = end.GetFloatArrayAtT(index_t);
+                BaseValueStore.InterpolateInto(result, endAr, t);
             }
             return result;
         }
@@ -97,6 +101,5 @@ namespace PropertyKeys.Keys
                 virtualT = vt - startIndex;
             }
         }
-
     }
 }

@@ -9,7 +9,15 @@ namespace PropertyKeys.Keys
         private float[] zeroArray;
         private float[] maxArray;
         private float[] minArray;
+
         public int VectorSize { get; } = 1;
+        public int ElementCount { get; set; } = 1;
+        public int[] Strides { get; set; }
+        public EasingType[] EasingTypes { get; set; }
+        public BaseSampler Sampler { get; set; }
+        public abstract float[] Size { get; }
+        public abstract float[] this[int index] { get; }
+        
 
         public BaseValueStore(int vectorSize)
         {
@@ -19,25 +27,9 @@ namespace PropertyKeys.Keys
             maxArray = GetSizedArray(float.MaxValue);
         }
 
-        public int[] Strides { get; set; }
-        public EasingType[] EasingTypes { get; set; }
-
-        public BaseSampler Sampler { get; set; }
-
-        public abstract float[] Size { get; }
-
-        public abstract float[] this[int index] { get; }
-
-        // todo: elementCount probably needs to come from the parent, at least optionally. Or repeat/loop? Or param (another t vs index?)
-        // Eg does color count need to equal positions count?
-        public abstract int ElementCount { get; set; } 
         public abstract float[] GetFloatArrayAtIndex(int index);
         public abstract float[] GetFloatArrayAtT(float t);
         public abstract float[] GetUnsampledValueAtT(float t);
-        public abstract float[] BlendValueAtIndex(IValueStore end, int index, float t);
-        public abstract float[] BlendValueAtT(IValueStore end, float index_t, float t);
-
-        public abstract void GetUnsampledValueAt(float t, float[] copyInto);
         
         public abstract void NudgeValuesBy(float nudge);
 
@@ -50,6 +42,21 @@ namespace PropertyKeys.Keys
                 result[i] = value;
             }
             return result;
+        }
+
+        public static void InterpolateInto(float[] result, float[] b, float t)
+        {
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (i < b.Length)
+                {
+                    result[i] += (b[i] - result[i]) * t;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         public float[] GetZeroArray() { return (float[])zeroArray.Clone(); }

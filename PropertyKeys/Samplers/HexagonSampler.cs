@@ -13,18 +13,17 @@ namespace PropertyKeys.Samplers
         {
             float[] result = valueStore.GetZeroArray();
             float[] strideTs = GetStrideTsForIndex(valueStore, index);
-            float[] temp = valueStore.GetZeroArray();
             for (int i = 0; i < result.Length; i++)
             {
-                valueStore.GetUnsampledValueAt(strideTs[i], temp);
+                float temp = valueStore.GetUnsampledValueAtT(strideTs[i])[i];
                 int curRow = (int)((float)index / valueStore.Strides[0]);
                 if(i == 0 && ((curRow & 1) == 1) && valueStore.Strides[0] > 0)
                 {
-                    result[i] = temp[i] + (valueStore.Size[0] / (valueStore.Strides[0] - 1f) * 0.5f);
+                    result[i] = temp + (valueStore.Size[0] / (valueStore.Strides[0] - 1f) * 0.5f);
                 }
                 else
                 {
-                    result[i] = temp[i];
+                    result[i] = temp;
                 }
             }
             return result;

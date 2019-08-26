@@ -18,10 +18,6 @@ namespace PropertyKeys.Keys
         
         private readonly float[] Values;
 
-        public override int ElementCount { get; set; }
-        public bool IsDiscrete;
-        public bool IsRepeating;
-
         public float[] MinBounds { get; private set; }
         public float[] MaxBounds { get; private set; }
         public override float[] Size
@@ -38,14 +34,12 @@ namespace PropertyKeys.Keys
         }
 
         public FloatStore(int vectorSize, float[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
-            bool isDiscrete = false, bool isRepeating = false, SampleType sampleType = SampleType.Default):base(vectorSize)
+            SampleType sampleType = SampleType.Default):base(vectorSize)
         {
             Values = values;
             ElementCount = (elementCount < 1) ? values.Length / VectorSize : elementCount; // can be larger or smaller based on sampling
             Strides = (dimensions == null) ? DefaultDimensions : dimensions;
             EasingTypes = (easingTypes == null) ? DefaultEasing : easingTypes;
-            IsDiscrete = isDiscrete;
-            IsRepeating = isRepeating;
             Sampler = BaseSampler.CreateSampler(sampleType);
 
             CalculateBounds();
@@ -62,28 +56,6 @@ namespace PropertyKeys.Keys
                 Values[i] += (float)rnd.NextDouble() * nudge - nudge / 2f;
             }
         }
-
-        public override float[] BlendValueAtIndex(IValueStore end, int index, float t)
-        {
-            float[] result = GetFloatArrayAtIndex(index);
-            if (end != null)
-            {
-                float[] endAr = end.GetFloatArrayAtIndex(index);
-                InterpolateIntoA(result, endAr, t);
-            }
-            return result;
-        }
-        public override float[] BlendValueAtT(IValueStore end, float index_t, float t)
-        {
-            float[] result = GetFloatArrayAtT(index_t);
-            if (end != null)
-            {
-                float[] endAr = end.GetFloatArrayAtT(index_t);
-                InterpolateIntoA(result, endAr, t);
-            }
-            return result;
-        }
-
 
         public override float[] GetFloatArrayAtIndex(int index)
         {
@@ -121,7 +93,7 @@ namespace PropertyKeys.Keys
                     float remainder_t = pos - startIndex;
                     result = GetSizedValuesAt(startIndex);
                     float[] end = GetSizedValuesAt(startIndex + 1);
-                    InterpolateIntoA(result, end, remainder_t);
+                    InterpolateInto(result, end, remainder_t);
                 }
                 else
                 {
@@ -135,15 +107,6 @@ namespace PropertyKeys.Keys
             return result;
         }
         
-        public override void GetUnsampledValueAt(float t, float[] copyInto)
-        {
-            float[] result = GetUnsampledValueAtT(t);
-            for (int i = 0; i < copyInto.Length; i++)
-            {
-                copyInto[i] = result.Length > i ? result[i] : 0;
-            }
-        }
-
         private float[] GetSizedValuesAt(int index)
         {
             float[] result = GetZeroArray();
@@ -154,20 +117,6 @@ namespace PropertyKeys.Keys
             return result;
         }
 
-        private void InterpolateIntoA(float[] a, float[] b, float t)
-        {
-            for (int i = 0; i < a.Length; i++)
-            {
-                if (i < b.Length)
-                {
-                    a[i] += (b[i] - a[i]) * t;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
 
         private void CalculateBounds()
         {

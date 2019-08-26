@@ -13,11 +13,9 @@ namespace PropertyKeys.Samplers
         {
             float[] result = valueStore.GetZeroArray();
             float[] strideTs = GetStrideTsForIndex(valueStore, index);
-            float[] temp = valueStore.GetZeroArray();
             for (int i = 0; i < result.Length; i++)
             {
-                valueStore.GetUnsampledValueAt(strideTs[i], temp);
-                result[i] = temp[i];
+                result[i] = valueStore.GetUnsampledValueAtT(strideTs[i])[i];
             }
             return result;
         }
@@ -25,11 +23,9 @@ namespace PropertyKeys.Samplers
         {
             float[] result = valueStore.GetZeroArray();
             float[] strideTs = GetStrideTsForT(valueStore, t);
-            float[] temp = valueStore.GetZeroArray();
             for (int i = 0; i < result.Length; i++)
             {
-                valueStore.GetUnsampledValueAt(strideTs[i], temp);
-                result[i] = temp[i];
+                result[i] = valueStore.GetUnsampledValueAtT(strideTs[i])[i];
             }
             return result;
         }
