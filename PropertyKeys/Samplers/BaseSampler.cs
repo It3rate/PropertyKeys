@@ -41,14 +41,14 @@ namespace DataArcs.Samplers
             }
             return result;
         }
-        public abstract float[] GetSample(IValueStore valueStore, int index);
-        public abstract float[] GetSample(IValueStore valueStore, float t);
+        public abstract float[] GetSample(FloatStore valueStore, int index);
+        public abstract float[] GetSample(FloatStore valueStore, float t);
 
-        public float[] GetStrideTsForIndex(IValueStore valueStore, int index)
+        public float[] GetStrideTsForIndex(FloatStore valueStore, int index)
         {
             return GetStrideTsForT(valueStore, (float)index / valueStore.ElementCount);
         }
-        public float[] GetStrideTsForT(IValueStore valueStore, float t)
+        public float[] GetStrideTsForT(FloatStore valueStore, float t)
         {
             int index = (int)(t * valueStore.ElementCount);
             float remainder = t * valueStore.ElementCount - index;

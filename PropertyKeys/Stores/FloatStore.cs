@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Stores
 {
-    public class FloatStore : IValueStore
+    public class FloatStore
     {
         private Random rnd = new Random();
-
-        private static readonly float[] Empty = new float[] { };
+        
         private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0 }; // zero means repeating, so this is a regular one row array
 

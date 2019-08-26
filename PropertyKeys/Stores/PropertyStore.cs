@@ -4,10 +4,10 @@ namespace DataArcs.Stores
 {
     public class PropertyStore
     {
-        public readonly IValueStore[] ValueStores;
+        public readonly FloatStore[] ValueStores;
         public EasingType EasingType;
 
-        public PropertyStore(IValueStore[] valueStores, EasingType easingType = EasingType.Linear)
+        public PropertyStore(FloatStore[] valueStores, EasingType easingType = EasingType.Linear)
         {
             ValueStores = valueStores;
             EasingType = easingType;
@@ -73,7 +73,7 @@ namespace DataArcs.Stores
 
 
 
-        public static float[] BlendValueAtIndex(IValueStore start, IValueStore end, int index, float t)
+        public static float[] BlendValueAtIndex(FloatStore start, FloatStore end, int index, float t)
         {
             float[] result = start.GetFloatArrayAtIndex(index);
             if (end != null)
@@ -83,7 +83,7 @@ namespace DataArcs.Stores
             }
             return result;
         }
-        public static float[] BlendValueAtT(IValueStore start, IValueStore end, float index_t, float t)
+        public static float[] BlendValueAtT(FloatStore start, FloatStore end, float index_t, float t)
         {
             float[] result = start.GetFloatArrayAtT(index_t);
             if (end != null)
