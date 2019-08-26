@@ -26,12 +26,13 @@ namespace DataArcs.Stores
         Starness,
         Roundness,
         Radius,
+        RandomMotion,
 
         Custom = 0x1000,
     }
     public class Composite
     {
-        public Dictionary<PropertyID, PropertyStore> Stores { get; }
+        private Dictionary<PropertyID, PropertyStore> Stores { get; }
         /// <summary>
         /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
         /// </summary>
@@ -39,18 +40,28 @@ namespace DataArcs.Stores
 
         public Composite(Composite parent = null)
         {
+            Stores = new Dictionary<PropertyID, PropertyStore>();
             Parent = parent;
             Stores = new Dictionary<PropertyID, PropertyStore>();
         }
 
         public PropertyStore GetPropertyStore(PropertyID propertyID)
         {
-            PropertyStore result = Stores[propertyID];
+            Stores.TryGetValue(propertyID, out PropertyStore result);
             if(result == null && Parent != null)
             {
                 result = Parent.GetPropertyStore(propertyID);
             }
             return result;
+        }
+
+        public void AddProperty(PropertyID id, PropertyStore propertyStore)
+        {
+            Stores.Add(id, propertyStore);
+        }
+        public void RemoveProperty(PropertyID id, PropertyStore propertyStore)
+        {
+            Stores.Remove(id);
         }
 
         public Composite CreateChild()

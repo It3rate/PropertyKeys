@@ -20,9 +20,7 @@ namespace DataArcs.Stores
         public int[] Strides { get; set; }
         public EasingType[] EasingTypes { get; set; }
         public BaseSampler Sampler { get; set; }
-
         private readonly float[] Values;
-
         public float[] MinBounds { get; private set; }
         public float[] MaxBounds { get; private set; }
         public float[] Size
@@ -37,6 +35,10 @@ namespace DataArcs.Stores
                 return result;
             }
         }
+        public float[] this[int index]
+        {
+            get { return GetSizedValuesAt(index); }
+        }
 
         public FloatStore(int vectorSize, float[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
             SampleType sampleType = SampleType.Default)
@@ -49,10 +51,6 @@ namespace DataArcs.Stores
             Sampler = BaseSampler.CreateSampler(sampleType);
 
             CalculateBounds();
-        }
-        public float[] this[int index]
-        {
-            get { return GetSizedValuesAt(index); }
         }
 
         public void NudgeValuesBy(float nudge)
@@ -81,7 +79,16 @@ namespace DataArcs.Stores
 
         public float[] GetFloatArrayAtT(float t)
         {
-            throw new NotImplementedException();
+            float[] result;
+            if (Sampler != null)
+            {
+                result = Sampler.GetSample(this, t);
+            }
+            else // direct sample of data
+            {
+                result = GetUnsampledValueAtT(t);
+            }
+            return result;
         }
 
         public float[] GetUnsampledValueAtT(float t)

@@ -30,6 +30,23 @@ namespace DataArcs.Stores
             return result;
         }
 
+        public float[] GetValuesAtT(float index_t, float t)
+        {
+            float[] result;
+
+            GetScaledT(t, out float vT, out int startIndex, out int endIndex);
+
+            if (startIndex == endIndex)
+            {
+                result = ValueStores[startIndex].GetFloatArrayAtT(vT);
+            }
+            else
+            {
+                result = BlendValueAtT(ValueStores[startIndex], ValueStores[endIndex], index_t, vT);
+            }
+            return result;
+        }
+
         public int GetElementCountAt(float t)
         {
             int result;
