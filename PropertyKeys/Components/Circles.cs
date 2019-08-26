@@ -7,6 +7,18 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Numerics;
 
+// Todo:
+// Animate composites
+// Sequencer
+// convert to cuda
+// hook up to commands
+// definitions/instances
+// basic UI
+// Add algorithmic step sampler (physics, navier stokes, runge kutta, reaction diffusion etc)
+// add ML in simple 'bacteria' test
+// Property combination (vs simple override) so add, multiply etc.
+// matrix support
+
 namespace DataArcs.Components
 {
     public class Circles
