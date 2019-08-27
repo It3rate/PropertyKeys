@@ -43,9 +43,9 @@ namespace DataArcs.Components
 
             if (version == 0 || version == 1)
             {
-                int cols = 6;
+                int cols = 10;
                 int rows = 6;
-                float totalWidth = 300f;
+                float totalWidth = 500f;
                 float growth = 25;
                 //graphic.Orientation = 0.5f;
                 float armLen = totalWidth / (float)(cols - 1) / 3f;
@@ -53,12 +53,12 @@ namespace DataArcs.Components
                 graphic.Radius = armLen;
 
                 float[] start = new float[] { 150, 150,   150 + totalWidth, 150 + height };
-                var startStore = new FloatStore(2, start, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+                var startStore = new FloatStore(2, start, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
 
                 float[] end = new float[] {
                     startStore[0][0] - growth, startStore[0][1] - growth,
                     startStore[1][0] + growth, startStore[1][1] + growth};
-                var endStore = new FloatStore(2, end, elementCount: cols * cols, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+                var endStore = new FloatStore(2, end, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore, endStore }));
                 wanders = (version == 1);
             }
@@ -86,11 +86,11 @@ namespace DataArcs.Components
             {
                 graphic.Radius = 10;
                 int vectorSize = 2;
-                float[] start = new float[] { 200, 140, 400, 300 };
+                float[] start = new float[] { 200, 40, 400, 200 };
                 float[] end = new float[] { 200, 200, 400, 400};
                 var startStore = new FloatStore(vectorSize, start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
                 var endStore = new FloatStore(vectorSize, end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
-                    easingTypes: new EasingType[] { EasingType.Squared, EasingType.Linear }, sampleType: SampleType.Grid);
+                    easingTypes: new EasingType[] { EasingType.Squared, EasingType.InverseSquared }, sampleType: SampleType.Grid);
 
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore, startStore, endStore, endStore }, easingType: EasingType.InverseSquared));
                 
@@ -132,7 +132,7 @@ namespace DataArcs.Components
             int floorT = (int)t;
             t = t - floorT;
             if (floorT % 2 == 0) t = 1.0f - t;
-            float easedT = Easing.GetValueAt(t, loc.EasingType);
+            float easedT = t;// Easing.GetValueAt(t, loc.EasingType);
             int count = loc.GetElementCountAt(easedT);
             GraphicsState state;
             for (int i = 0; i < count; i++)
