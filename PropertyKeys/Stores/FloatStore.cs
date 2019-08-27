@@ -52,6 +52,28 @@ namespace DataArcs.Stores
 
             CalculateBounds();
         }
+        public static FloatStore CreateLerp(int vectorSize)
+        {
+            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
+            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
+            float[] values = DataUtils.CombineArrays(start, end);
+            return new FloatStore(vectorSize, values, sampleType: SampleType.Line);
+        }
+        public static FloatStore CreateGrid(int vectorSize, int rows, int cols)
+        {
+            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
+            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
+            float[] values = DataUtils.CombineArrays(start, end);
+            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Grid);
+        }
+
+        public static FloatStore CreateHexGrid(int vectorSize, int rows, int cols)
+        {
+            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
+            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
+            float[] values = DataUtils.CombineArrays(start, end);
+            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+        }
 
         public void NudgeValuesBy(float nudge)
         {

@@ -23,6 +23,7 @@ namespace DataArcs.Components
 {
     public class Circles
     {
+        Composite parent0;
         Composite object1;
         bool wanders = true;
 

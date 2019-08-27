@@ -2,10 +2,25 @@
 
 namespace DataArcs.Stores
 {
+    public enum CombineFunction
+    {
+        Replace,
+        Add,
+        Subtract,
+        Multiply,
+        Divide,
+        Average,
+        Interpolate,
+    }
     public class PropertyStore
     {
         public readonly FloatStore[] ValueStores;
         public EasingType EasingType;
+
+        public CombineFunction CombineFunction { get; } = CombineFunction.Replace;
+        public PropertyStore Parameter0 { get; }
+        public float Parameter1 { get; } = 0;
+        public int Parameter2 { get; } = 0;
 
         public PropertyStore(FloatStore[] valueStores, EasingType easingType = EasingType.Linear)
         {

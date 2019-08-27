@@ -41,6 +41,24 @@ namespace DataArcs.Stores
             return result;
         }
 
+        public static float[] CombineArrays(params float[][] arrays)
+        {
+            int len = 0;
+            for (int i = 0; i < arrays.Length; i++)
+            {
+                len += arrays[i].Length;
+            }
+
+            float[] result = new float[len];
+            int index = 0;
+            for (int i = 0; i < arrays.Length; i++)
+            {
+                Array.Copy(arrays[i], 0, result, index, arrays[i].Length);
+                index += arrays[i].Length;
+            }
+            return result;
+        }
+
         public static void InterpolateInto(float[] result, float[] b, float t)
         {
             for (int i = 0; i < result.Length; i++)
