@@ -15,12 +15,13 @@ namespace DataArcs.Stores
         private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0 }; // zero means repeating, so this is a regular one row array
 
-        public int VectorSize { get; } = 1;
+        protected float[] Values { get; private set; }
+
+        private int VectorSize { get; } = 1;
         public int ElementCount { get; set; } = 1;
         public int[] Strides { get; set; }
         public EasingType[] EasingTypes { get; set; }
         public BaseSampler Sampler { get; set; }
-        private readonly float[] Values;
         public float[] MinBounds { get; private set; }
         public float[] MaxBounds { get; private set; }
         public float[] Size
@@ -44,35 +45,18 @@ namespace DataArcs.Stores
             SampleType sampleType = SampleType.Default)
         {
             VectorSize = vectorSize;
+            Strides = dimensions ?? DefaultDimensions;
+            EasingTypes = easingTypes ?? DefaultEasing;
+
+            Initialize(values, elementCount, sampleType);
+        }
+
+        protected virtual void Initialize(float[] values, int elementCount, SampleType sampleType)
+        {
             Values = values;
             ElementCount = (elementCount < 1) ? values.Length / VectorSize : elementCount; // can be larger or smaller based on sampling
-            Strides = (dimensions == null) ? DefaultDimensions : dimensions;
-            EasingTypes = (easingTypes == null) ? DefaultEasing : easingTypes;
             Sampler = BaseSampler.CreateSampler(sampleType);
-
             CalculateBounds();
-        }
-        public static FloatStore CreateLerp(int vectorSize)
-        {
-            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
-            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
-            float[] values = DataUtils.CombineArrays(start, end);
-            return new FloatStore(vectorSize, values, sampleType: SampleType.Line);
-        }
-        public static FloatStore CreateGrid(int vectorSize, int rows, int cols)
-        {
-            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
-            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
-            float[] values = DataUtils.CombineArrays(start, end);
-            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Grid);
-        }
-
-        public static FloatStore CreateHexGrid(int vectorSize, int rows, int cols)
-        {
-            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
-            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
-            float[] values = DataUtils.CombineArrays(start, end);
-            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
         }
 
         public void NudgeValuesBy(float nudge)
@@ -83,7 +67,7 @@ namespace DataArcs.Stores
             }
         }
 
-        public float[] GetFloatArrayAtIndex(int index)
+        public virtual float[] GetFloatArrayAtIndex(int index)
         {
             float[] result;
             if (Sampler != null)
@@ -99,7 +83,7 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public float[] GetFloatArrayAtT(float t)
+        public virtual float[] GetFloatArrayAtT(float t)
         {
             float[] result;
             if (Sampler != null)
@@ -113,7 +97,7 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public float[] GetUnsampledValueAtT(float t)
+        public virtual float[] GetUnsampledValueAtT(float t)
         {
             float[] result;
             int len = Values.Length / VectorSize;
@@ -141,8 +125,8 @@ namespace DataArcs.Stores
             }
             return result;
         }
-        
-        private float[] GetSizedValuesAt(int index)
+
+        protected virtual float[] GetSizedValuesAt(int index)
         {
             float[] result = GetZeroArray();
             if(index * VectorSize + VectorSize <= Values.Length)
@@ -153,7 +137,7 @@ namespace DataArcs.Stores
         }
 
 
-        private void CalculateBounds()
+        protected virtual void CalculateBounds()
         {
             MinBounds = GetMaxArray();
             MaxBounds = GetMinArray();
@@ -175,6 +159,28 @@ namespace DataArcs.Stores
             }
         }
 
+        public static FloatStore CreateLerp(int vectorSize)
+        {
+            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
+            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
+            float[] values = DataUtils.CombineArrays(start, end);
+            return new FloatStore(vectorSize, values, sampleType: SampleType.Line);
+        }
+        public static FloatStore CreateGrid(int vectorSize, int rows, int cols)
+        {
+            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
+            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
+            float[] values = DataUtils.CombineArrays(start, end);
+            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Grid);
+        }
+
+        public static FloatStore CreateHexGrid(int vectorSize, int rows, int cols)
+        {
+            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
+            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
+            float[] values = DataUtils.CombineArrays(start, end);
+            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+        }
         public float[] GetZeroArray() { return DataUtils.GetZeroArray(VectorSize); }
         public float[] GetMinArray() { return DataUtils.GetMinArray(VectorSize); }
         public float[] GetMaxArray() { return DataUtils.GetMaxArray(VectorSize); }

@@ -21,15 +21,37 @@ namespace DataArcs.Stores
             maxArray = new float[count][];
             for (int i = 0; i < count; i++)
             {
-                zeroArray[i] = DataUtils.GetSizedArray(i, 0);
-                minArray[i] = DataUtils.GetSizedArray(i, float.MinValue);
-                maxArray[i] = DataUtils.GetSizedArray(i, float.MaxValue);
+                zeroArray[i] = GetSizedArray(i, 0);
+                minArray[i] = GetSizedArray(i, float.MinValue);
+                maxArray[i] = GetSizedArray(i, float.MaxValue);
             }
         }
         public static float[] GetZeroArray(int size) { return (float[])zeroArray[size].Clone(); }
         public static float[] GetMinArray(int size) { return (float[])minArray[size].Clone(); }
         public static float[] GetMaxArray(int size) { return (float[])maxArray[size].Clone(); }
 
+        public static void GetScaledT(float t, int len, out float virtualT, out int startIndex, out int endIndex)
+        {
+            if (t >= 1)
+            {
+                startIndex = len - 1;
+                endIndex = startIndex;
+                virtualT = 1f;
+            }
+            else if (t <= 0)
+            {
+                startIndex = len - 0;
+                endIndex = startIndex;
+                virtualT = 0f;
+            }
+            else
+            {
+                float vt = t * (len - 1f);
+                startIndex = (int)vt;
+                endIndex = startIndex + 1;
+                virtualT = vt - startIndex;
+            }
+        }
 
         public static float[] GetSizedArray(int size, float value)
         {

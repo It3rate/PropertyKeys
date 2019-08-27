@@ -32,7 +32,7 @@ namespace DataArcs.Stores
         {
             float[] result;
 
-            GetScaledT(t, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
@@ -49,7 +49,7 @@ namespace DataArcs.Stores
         {
             float[] result;
 
-            GetScaledT(t, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
@@ -65,7 +65,7 @@ namespace DataArcs.Stores
         public int GetElementCountAt(float t)
         {
             int result;
-            GetScaledT(t, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
@@ -80,28 +80,6 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public void GetScaledT(float t, out float virtualT, out int startIndex, out int endIndex)
-        {
-            if (t >= 1)
-            {
-                startIndex = ValueStores.Length - 1;
-                endIndex = startIndex;
-                virtualT = 1f;
-            }
-            else if (t <= 0)
-            {
-                startIndex = ValueStores.Length - 0;
-                endIndex = startIndex;
-                virtualT = 0f;
-            }
-            else
-            {
-                float vt = t * (ValueStores.Length - 1f);
-                startIndex = (int)vt;
-                endIndex = startIndex + 1;
-                virtualT = vt - startIndex;
-            }
-        }
 
 
 
