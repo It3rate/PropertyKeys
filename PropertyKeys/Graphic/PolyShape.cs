@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataArcs.Stores;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -10,7 +11,10 @@ namespace DataArcs.Graphic
         public int PointCount { get; set; }
         public float Starness { get; set; }
         public float Roundness { get; set; }
-        public float Radius { get; set; }
+        float _radius;
+        public float Radius { get => _radius; set { _radius = value; GeneratePolyShape();} }
+
+        private BezierStore polygon;
 
         public PolyShape(float orientation = 0, int pointCount = 4, float roundness = 0, float radius = 10f)
         {
@@ -21,39 +25,34 @@ namespace DataArcs.Graphic
         }
         public override void Draw(Graphics g, Brush brush, Pen pen, float t)
         {
-            GraphicsPath p = new GraphicsPath();
-            float step = M_PIx2 / PointCount;
-            float startX = 0;
-            float startY = 0;
-            float prevX = 0;
-            float prevY = 0;
-            for (int i = 0; i < PointCount; i++)
-            {
-                float theta = step * i + Orientation * M_PIx2;
-                float x = (float)Math.Sin(theta) * Radius;
-                float y = (float)Math.Cos(theta) * Radius;
-                if(i == 0)
-                {
-                    startX = x;
-                    startY = y;
-                }
-                else {
-                    p.AddLine(prevX, prevY, x, y);
-                }
-                prevX = x;
-                prevY = y;
-            }
-            p.AddLine(prevX, prevY, startX, startY);
-
             if (brush != null)
             {
-                g.FillPath(brush, p);
+                g.FillPath(brush, polygon.Path);
             }
 
             if (pen != null)
             {
-                g.DrawPath(pen, p);
+                g.DrawPath(pen, polygon.Path);
             }
+        }
+        public void GeneratePolyShape()
+        {
+            polygon = GeneratePolyShape(Orientation, PointCount, Roundness, Radius);
+        }
+        public static BezierStore GeneratePolyShape(float orientation, int pointCount, float roundness, float radius)
+        {
+            float[] values = new float[pointCount * 2];
+            BezierMove[] moves = new BezierMove[pointCount];
+
+            float step = M_PIx2 / pointCount;
+            for (int i = 0; i < pointCount; i++)
+            {
+                float theta = step * i + orientation * M_PIx2;
+                values[i * 2] = (float)Math.Sin(theta) * radius;
+                values[i * 2 + 1] = (float)Math.Cos(theta) * radius;
+                moves[i] = (i == 0) ? BezierMove.MoveTo : BezierMove.LineTo;
+            }
+            return new BezierStore(values, moves);
         }
     }
 }

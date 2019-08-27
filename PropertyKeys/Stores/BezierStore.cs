@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Stores
 {
+    // maybe store all values as quadratic, allowing easier blending?
+     // try blending with len/angle from zero vs interpolate points.
     public enum BezierMove : int
     {
         MoveTo,
@@ -21,9 +23,9 @@ namespace DataArcs.Stores
         private static readonly int[] moveSize = new int[]{2,2,4,6,0};
 
         public BezierMove[] Moves { get; }
-        public GraphicsPath Path { get; private set; }
+        public GraphicsPath Path { get; set; }
 
-        public BezierStore(float[] values, BezierMove[] moves) : base(0, values)
+        public BezierStore(float[] values, BezierMove[] moves) : base(1, values)
         {
             // default to polyline if moves is empty
             if(moves == null)
@@ -36,6 +38,8 @@ namespace DataArcs.Stores
                 }
             }
             Moves = moves;
+            ElementCount = Moves.Length;
+
             GeneratePath();
         }
 
@@ -84,7 +88,7 @@ namespace DataArcs.Stores
             Array.Copy(Values, start, result, 0, size);
             return result;
         }
-
+        
         private void GeneratePath()
         {
             Path = new GraphicsPath();
