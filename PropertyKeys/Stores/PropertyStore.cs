@@ -5,6 +5,7 @@ namespace DataArcs.Stores
     public enum CombineFunction
     {
         Replace,
+        Append,
         Add,
         Subtract,
         Multiply,

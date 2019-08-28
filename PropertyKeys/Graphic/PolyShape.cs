@@ -14,6 +14,7 @@ namespace DataArcs.Graphic
         float _radius;
         public float Radius { get => _radius; set { _radius = value; GeneratePolyShape();} }
 
+        public readonly BezierStore[] BezierStores;
         private BezierStore polygon;
 
         public PolyShape(float orientation = 0, int pointCount = 4, float roundness = 0, float radius = 10f)

@@ -40,7 +40,7 @@ namespace DataArcs.Stores
             Moves = moves;
             ElementCount = Moves.Length;
 
-            GeneratePath();
+            Path = GeneratePath(Values, Moves);
         }
 
         public override float[] GetFloatArrayAtT(float t)
@@ -89,53 +89,54 @@ namespace DataArcs.Stores
             return result;
         }
         
-        private void GeneratePath()
+        public static GraphicsPath GeneratePath(float[] values, BezierMove[] moves)
         {
-            Path = new GraphicsPath();
-            Path.FillMode = FillMode.Alternate;
+            GraphicsPath path = new GraphicsPath();
+            path.FillMode = FillMode.Alternate;
             float posX = 0;
             float posY = 0;
             int index = 0;
-            for (int i = 0; i < Moves.Length; i++)
+            for (int i = 0; i < moves.Length; i++)
             {
-                BezierMove moveType = Moves[i];
+                BezierMove moveType = moves[i];
                 switch (moveType)
                 {
                     case BezierMove.MoveTo:
-                        posX = Values[index];
-                        posY = Values[index + 1];
+                        posX = values[index];
+                        posY = values[index + 1];
                         break;
                     case BezierMove.LineTo:
-                        Path.AddLine(posX, posY, Values[index], Values[index + 1]);
-                        posX = Values[index];
-                        posY = Values[index + 1];
+                        path.AddLine(posX, posY, values[index], values[index + 1]);
+                        posX = values[index];
+                        posY = values[index + 1];
                         break;
                     case BezierMove.QuadTo:
                         // must convert to cubic for gdi
-                        float cx = Values[index];
-                        float cy = Values[index + 1];
-                        float a1X = Values[index + 2];
-                        float a1Y = Values[index + 3];
+                        float cx = values[index];
+                        float cy = values[index + 1];
+                        float a1X = values[index + 2];
+                        float a1Y = values[index + 3];
                         float c1x = (cx - posX) * 2 / 3 + posX;
                         float c1y = (cy - posY) * 2 / 3 + posY;
                         float c2x = a1X - (a1X - cx) * 2 / 3;
                         float c2y = a1Y - (a1Y - cy) * 2 / 3;
-                        Path.AddBezier(posX, posY, c1x, c1y, c2x, c2y, a1X, a1Y);
+                        path.AddBezier(posX, posY, c1x, c1y, c2x, c2y, a1X, a1Y);
                         posX = a1X;
                         posY = a1Y;
                         break;
                     case BezierMove.CubeTo:
-                        Path.AddBezier(posX, posY, Values[index], Values[index + 1], Values[index + 2], Values[index + 3], Values[index+4], Values[index+5]);
-                        posX = Values[index + 4];
-                        posY = Values[index + 5];
+                        path.AddBezier(posX, posY, values[index], values[index + 1], values[index + 2], values[index + 3], values[index+4], values[index+5]);
+                        posX = values[index + 4];
+                        posY = values[index + 5];
                         break;
                     case BezierMove.End:
                     default:
-                        Path.CloseFigure();
+                        path.CloseFigure();
                         break;
                 }
                 index += moveSize[(int)moveType];
             }
+            return path;
         }
     }
 }
