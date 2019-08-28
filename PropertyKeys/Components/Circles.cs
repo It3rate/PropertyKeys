@@ -66,8 +66,8 @@ namespace DataArcs.Components
             else if (version == 2)
             {
                 graphic.Radius = 30;
-                int count = 50;
-                int vectorSize = 2;
+                const int count = 50;
+                const int vectorSize = 2;
                 float[] start = new float[count * vectorSize];
                 float[] end = new float[count * vectorSize];
                 for (int i = 0; i < count * vectorSize; i += vectorSize)

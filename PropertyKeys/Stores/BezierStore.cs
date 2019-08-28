@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DataArcs.Stores
 {
     // maybe store all values as quadratic, allowing easier blending?
-     // try blending with len/angle from zero vs interpolate points.
+    // try blending with len/angle from zero vs interpolate points.
     public enum BezierMove : int
     {
         MoveTo,
@@ -20,9 +20,10 @@ namespace DataArcs.Stores
     }
     public class BezierStore : FloatStore
     {
-        private static readonly int[] moveSize = new int[]{2,2,4,6,0};
+        private static readonly int[] MoveSize = new int[]{2,2,4,6,0};
+        
+        protected BezierMove[] Moves { get; set; }
 
-        public BezierMove[] Moves { get; }
         public GraphicsPath Path { get; set; }
 
         public BezierStore(float[] values, BezierMove[] moves) : base(1, values)
@@ -39,9 +40,12 @@ namespace DataArcs.Stores
             }
             Moves = moves;
             ElementCount = Moves.Length;
+            CalculateBounds(Values);
 
             GeneratePath();
         }
+
+        protected override bool BoundsDataReady() => Values != null && Moves != null;
 
         public override float[] GetFloatArrayAtT(float t)
         {
@@ -81,9 +85,9 @@ namespace DataArcs.Stores
             int start = 0;
             for (int i = 0; i < index; i++)
             {
-                start += moveSize[(int)Moves[i]];
+                start += MoveSize[(int)Moves[i]];
             }
-            int size = moveSize[(int)Moves[index]];
+            int size = MoveSize[(int)Moves[index]];
             float[] result = new float[size];
             Array.Copy(Values, start, result, 0, size);
             return result;
@@ -96,9 +100,8 @@ namespace DataArcs.Stores
             float posX = 0;
             float posY = 0;
             int index = 0;
-            for (int i = 0; i < Moves.Length; i++)
+            foreach (var moveType in Moves)
             {
-                BezierMove moveType = Moves[i];
                 switch (moveType)
                 {
                     case BezierMove.MoveTo:
@@ -114,15 +117,15 @@ namespace DataArcs.Stores
                         // must convert to cubic for gdi
                         float cx = Values[index];
                         float cy = Values[index + 1];
-                        float a1X = Values[index + 2];
-                        float a1Y = Values[index + 3];
+                        float a1x = Values[index + 2];
+                        float a1y = Values[index + 3];
                         float c1x = (cx - posX) * 2 / 3 + posX;
                         float c1y = (cy - posY) * 2 / 3 + posY;
-                        float c2x = a1X - (a1X - cx) * 2 / 3;
-                        float c2y = a1Y - (a1Y - cy) * 2 / 3;
-                        Path.AddBezier(posX, posY, c1x, c1y, c2x, c2y, a1X, a1Y);
-                        posX = a1X;
-                        posY = a1Y;
+                        float c2x = a1x - (a1x - cx) * 2 / 3;
+                        float c2y = a1y - (a1y - cy) * 2 / 3;
+                        Path.AddBezier(posX, posY, c1x, c1y, c2x, c2y, a1x, a1y);
+                        posX = a1x;
+                        posY = a1y;
                         break;
                     case BezierMove.CubeTo:
                         Path.AddBezier(posX, posY, Values[index], Values[index + 1], Values[index + 2], Values[index + 3], Values[index+4], Values[index+5]);
@@ -134,7 +137,7 @@ namespace DataArcs.Stores
                         Path.CloseFigure();
                         break;
                 }
-                index += moveSize[(int)moveType];
+                index += MoveSize[(int)moveType];
             }
         }
     }

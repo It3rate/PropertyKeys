@@ -1,6 +1,7 @@
 ﻿using DataArcs.Samplers;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -8,56 +9,24 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Stores
 {
-    public class FloatStore
+    public class FloatStore : Store
     {
-        private Random rnd = new Random();
-        
-        private static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
-        private static readonly int[] DefaultDimensions = new int[] { 0, 0, 0 }; // zero means repeating, so this is a regular one row array
+        protected float[] Values { get; set; }
+        protected BaseSampler Sampler { get; set; }
 
-        protected float[] Values { get; private set; }
-
-        private int VectorSize { get; } = 1;
-        public int ElementCount { get; set; } = 1;
-        public int[] Strides { get; set; }
-        public EasingType[] EasingTypes { get; set; }
-        public BaseSampler Sampler { get; set; }
-        public float[] MinBounds { get; private set; }
-        public float[] MaxBounds { get; private set; }
-        public float[] Size
-        {
-            get
-            {
-                float[] result = GetZeroArray();
-                for (int i = 0; i < VectorSize; i++)
-                {
-                    result[i] = MaxBounds[i] - MinBounds[i];
-                }
-                return result;
-            }
-        }
-        public float[] this[int index]
-        {
-            get { return GetSizedValuesAt(index); }
-        }
+        public override float[] GetFloatValues => (float[])Values.Clone();
+        public override int[] GetIntValues => Values.ToInt();
+        public float[] this[int index] => GetSizedValuesAt(index);
 
         public FloatStore(int vectorSize, float[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
-            SampleType sampleType = SampleType.Default)
-        {
-            VectorSize = vectorSize;
-            Strides = dimensions ?? DefaultDimensions;
-            EasingTypes = easingTypes ?? DefaultEasing;
-
-            Initialize(values, elementCount, sampleType);
-        }
-
-        protected virtual void Initialize(float[] values, int elementCount, SampleType sampleType)
+            SampleType sampleType = SampleType.Default) : base(vectorSize, dimensions, easingTypes)
         {
             Values = values;
             ElementCount = (elementCount < 1) ? values.Length / VectorSize : elementCount; // can be larger or smaller based on sampling
             Sampler = BaseSampler.CreateSampler(sampleType);
-            CalculateBounds();
+            CalculateBounds(Values);
         }
+        protected override bool BoundsDataReady() => Values != null;
 
         public void NudgeValuesBy(float nudge)
         {
@@ -67,7 +36,7 @@ namespace DataArcs.Stores
             }
         }
 
-        public virtual float[] GetFloatArrayAtIndex(int index)
+        public override float[] GetFloatArrayAtIndex(int index)
         {
             float[] result;
             if (Sampler != null)
@@ -83,7 +52,7 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public virtual float[] GetFloatArrayAtT(float t)
+        public override float[] GetFloatArrayAtT(float t)
         {
             float[] result;
             if (Sampler != null)
@@ -95,6 +64,14 @@ namespace DataArcs.Stores
                 result = GetUnsampledValueAtT(t);
             }
             return result;
+        }
+        public override int[] GetIntArrayAtIndex(int index)
+        {
+            return GetFloatArrayAtIndex(index).ToInt();
+        }
+        public override int[] GetIntArrayAtT(float t)
+        {
+            return GetFloatArrayAtT(t).ToInt();
         }
 
         public virtual float[] GetUnsampledValueAtT(float t)
@@ -137,52 +114,41 @@ namespace DataArcs.Stores
         }
 
 
-        protected virtual void CalculateBounds()
-        {
-            MinBounds = GetMaxArray();
-            MaxBounds = GetMinArray();
-
-            for (int i = 0; i < Values.Length; i += VectorSize)
-            {
-                for (int j = 0; j < VectorSize; j++)
-                {
-                    if (Values[i + j] < MinBounds[j])
-                    {
-                        MinBounds[j] = Values[i + j];
-                    }
-
-                    if (Values[i + j] > MaxBounds[j])
-                    {
-                        MaxBounds[j] = Values[i + j];
-                    }
-                }
-            }
-        }
-
         public static FloatStore CreateLerp(int vectorSize)
         {
-            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
-            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
-            float[] values = DataUtils.CombineArrays(start, end);
+            float[] start = DataUtils.GetSizedFloatArray(vectorSize, 0f);
+            float[] end = DataUtils.GetSizedFloatArray(vectorSize, 1f);
+            float[] values = DataUtils.CombineFloatArrays(start, end);
             return new FloatStore(vectorSize, values, sampleType: SampleType.Line);
+        }
+
+        public static FloatStore CreateBox(int vectorSize, int rows, int cols, SampleType sampleType)
+        {
+            float[] start = DataUtils.GetSizedFloatArray(vectorSize, 0f);
+            float[] end = DataUtils.GetSizedFloatArray(vectorSize, 1f);
+            float[] values = DataUtils.CombineFloatArrays(start, end);
+            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: sampleType);
         }
         public static FloatStore CreateGrid(int vectorSize, int rows, int cols)
         {
-            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
-            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
-            float[] values = DataUtils.CombineArrays(start, end);
-            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Grid);
+            return CreateBox(vectorSize, rows, cols, SampleType.Grid);
         }
-
         public static FloatStore CreateHexGrid(int vectorSize, int rows, int cols)
         {
-            float[] start = DataUtils.GetSizedArray(vectorSize, 0f);
-            float[] end = DataUtils.GetSizedArray(vectorSize, 1f);
-            float[] values = DataUtils.CombineArrays(start, end);
-            return new FloatStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+            return CreateBox(vectorSize, rows, cols, SampleType.Hexagon);
         }
-        public float[] GetZeroArray() { return DataUtils.GetZeroArray(VectorSize); }
-        public float[] GetMinArray() { return DataUtils.GetMinArray(VectorSize); }
-        public float[] GetMaxArray() { return DataUtils.GetMaxArray(VectorSize); }
+
+        public float[] GetZeroArray() { return DataUtils.GetFloatZeroArray(VectorSize); }
+        public float[] GetMinArray() { return DataUtils.GetFloatMinArray(VectorSize); }
+        public float[] GetMaxArray() { return DataUtils.GetFloatMaxArray(VectorSize); }
+
+        public static float[] GetZeroArray(int size) { return DataUtils.GetFloatZeroArray(size); }
+        public static float[] GetMinArray(int size) { return DataUtils.GetFloatMinArray(size); }
+        public static float[] GetMaxArray(int size) { return DataUtils.GetFloatMaxArray(size); }
+
+        public override GraphicsPath GetPath()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
