@@ -155,6 +155,7 @@ namespace DataArcs.Components
                 g.ScaleTransform(scale, scale);
                 g.TranslateTransform(v[0] / scale, v[1] / scale);
                 graphic.Orientation = 1f/12f +  t / 12f;
+                graphic.Starness = -t / 2.0f;
                 graphic.Draw(g, b, null, easedT);
                 g.Restore(state);
             }

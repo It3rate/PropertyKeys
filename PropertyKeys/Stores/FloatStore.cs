@@ -86,10 +86,10 @@ namespace DataArcs.Stores
                 startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
                 if (pos < len - 1)
                 {
-                    float remainder_t = pos - startIndex;
+                    float remainderT = pos - startIndex;
                     result = GetSizedValuesAt(startIndex);
                     float[] end = GetSizedValuesAt(startIndex + 1);
-                    DataUtils.InterpolateInto(result, end, remainder_t);
+                    DataUtils.InterpolateInto(result, end, remainderT);
                 }
                 else
                 {

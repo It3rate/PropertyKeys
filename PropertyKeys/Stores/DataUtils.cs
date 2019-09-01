@@ -8,6 +8,8 @@ namespace DataArcs.Stores
 {
     public class DataUtils
     {
+        public const float TOLERANCE = 0.00001f;
+
         private static readonly float[][] zeroFloatArray;
         private static readonly float[][] minFloatArray;
         private static readonly float[][] maxFloatArray;
