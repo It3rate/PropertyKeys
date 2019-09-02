@@ -10,7 +10,7 @@ namespace DataArcs.Graphic
         private BezierStore polygon;
 
         private FloatStore _orientation;
-        private int _pointCount;
+        private IntStore _pointCount;
         private FloatStore _starness;
         private FloatStore _roundness;
         private FloatStore _radius;
@@ -18,15 +18,15 @@ namespace DataArcs.Graphic
         public PolyShape(float radius, float orientation = 0, int pointCount = 4, float roundness = 0, float starness = 0)
         {
             Orientation = new FloatStore(1, orientation);
-            PointCount = pointCount;
+            PointCount = new IntStore(1, pointCount);
             Roundness = new FloatStore(1, roundness);
             Radius = new FloatStore(1, radius);
             Starness = new FloatStore(1, starness);
         }
-        public PolyShape(float[] radius, float[] orientation = null, int pointCount = 6, float[] roundness = null, float[] starness = null)
+        public PolyShape(float[] radius, float[] orientation = null, int[] pointCount = null, float[] roundness = null, float[] starness = null)
         {
             Orientation = (orientation == null) ? new FloatStore(1, 0f) : new FloatStore(1, orientation);
-            PointCount = pointCount;
+            PointCount = (pointCount == null) ? new IntStore(1, 4) : new IntStore(1, pointCount);
             Roundness = (roundness == null) ? new FloatStore(1, 0f) : new FloatStore(1, roundness);
             Radius = (radius == null) ? new FloatStore(1, 10f) : new FloatStore(1, radius);
             Starness = (starness == null) ? new FloatStore(1, 0f) : new FloatStore(1, starness);
@@ -46,7 +46,7 @@ namespace DataArcs.Graphic
             }
         }
 
-        public int PointCount
+        public IntStore PointCount
         {
             get => _pointCount;
             set
@@ -101,7 +101,7 @@ namespace DataArcs.Graphic
 
         public override void Draw(Graphics g, Brush brush, Pen pen, float t)
         {
-            GeneratePolyShape(Radius.CurrentT, Orientation.CurrentT, Roundness.CurrentT, Starness.CurrentT);
+            GeneratePolyShape(Radius.CurrentT, PointCount.CurrentT, Orientation.CurrentT, Roundness.CurrentT, Starness.CurrentT);
             if (brush != null)
             {
                 g.FillPath(brush, polygon.Path);
@@ -112,13 +112,14 @@ namespace DataArcs.Graphic
                 g.DrawPath(pen, polygon.Path);
             }
         }
-        public void GeneratePolyShape(float radiusT, float orientationT = 0, float roundnessT = 0, float starnessT = 0)
+        public void GeneratePolyShape(float radiusT, float pointCountT = 0, float orientationT = 0, float roundnessT = 0, float starnessT = 0)
         {
             float orientation = Orientation.GetFloatArrayAtT(orientationT)[0];
             float roundness = Roundness.GetFloatArrayAtT(roundnessT)[0];
             float radius = Radius.GetFloatArrayAtT(radiusT)[0];
             float starness = Starness.GetFloatArrayAtT(starnessT)[0];
-            polygon = GeneratePolyShape(orientation, PointCount, roundness, radius, starness);
+            int pointCount = PointCount.GetIntArrayAtT(pointCountT)[0];
+            polygon = GeneratePolyShape(orientation, pointCount, roundness, radius, starness);
         }
         public static BezierStore GeneratePolyShape(float orientation, int pointCount, float roundness, float radius, float starness)
         {

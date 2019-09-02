@@ -34,8 +34,10 @@ namespace DataArcs.Components
 
         public Circles(int version)
         {
-            graphic = new PolyShape(pointCount: 6, radius: new float[]{ 10f },
+            //todo: Rather than seed with multiples or lerp, use ranges.
+            graphic = new PolyShape(pointCount: new int[] { 6,7,8,9,10,11, 12 }, radius: new float[]{ 10f },
                 orientation: new float[] { 1f / 12f, 0f }, starness: new float[] { 0, -0.5f });
+            //graphic.PointCount.ElementCount = 6;
             SetVersion(version);
         }
 
@@ -155,6 +157,7 @@ namespace DataArcs.Components
                 float scale = 1f; //  + t * 0.2f;
                 g.ScaleTransform(scale, scale);
                 g.TranslateTransform(v[0] / scale, v[1] / scale);
+                graphic.PointCount.CurrentT = t;// 1f/12f +  t / 12f;
                 graphic.Orientation.CurrentT = t;// 1f/12f +  t / 12f;
                 graphic.Starness.CurrentT = t;// -t / 2.0f;
                 graphic.Draw(g, b, null, easedT);

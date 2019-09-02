@@ -27,6 +27,13 @@ namespace DataArcs.Stores
             ElementCount = (elementCount < 1) ? values.Length / VectorSize : elementCount;
             CalculateBounds(Values.ToFloat());
         }
+        public IntStore(int vectorSize, params int[] values) : base(vectorSize, null, null)
+        {
+            Values = values;
+            ElementCount = values.Length / VectorSize;
+            CalculateBounds(Values.ToFloat());
+        }
+
         protected override bool BoundsDataReady() => Values != null;
 
         public override GraphicsPath GetPath()
