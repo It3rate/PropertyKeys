@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -8,7 +9,7 @@ using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
-    public class IntStore : Store
+    public class IntStore : Store, IEnumerable<int>
     {
         public int[] Values { get; }
 
@@ -43,6 +44,7 @@ namespace DataArcs.Stores
         }
         public override int[] GetIntArrayAtIndex(int index)
         {
+            CurrentT = index / (float)ElementCount;
             int len = Values.Length / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
             return GetSizedValuesAt(startIndex);
@@ -50,6 +52,7 @@ namespace DataArcs.Stores
 
         public override int[] GetIntArrayAtT(float t)
         {
+            CurrentT = t;
             int index = (int) (t * ElementCount);
             return GetIntArrayAtIndex(index);
         }
@@ -82,6 +85,16 @@ namespace DataArcs.Stores
             end[1] = cols;
             int[] values = DataUtils.CombineIntArrays(start, end);
             return new IntStore(2, values, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 });
+        }
+
+        public IEnumerator<int> GetEnumerator()
+        {
+            return ((IEnumerable<int>)Values).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<int>)Values).GetEnumerator();
         }
     }
 }

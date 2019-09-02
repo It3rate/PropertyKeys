@@ -13,11 +13,12 @@ namespace DataArcs.Stores
         protected static Random rnd = new Random();
         protected static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         protected static readonly int[] DefaultStrides = new int[] { 0 }; // zero means repeating, so this is a regular one row array
-
+        
         public abstract float[] GetFloatValues { get; }
         public abstract int[] GetIntValues { get; }
         public abstract GraphicsPath GetPath();
 
+        public float CurrentT { get; set; } = 0;
         public int VectorSize { get; } = 1;
         public int ElementCount { get; set; } = 1;
         public int[] Strides { get; set; }

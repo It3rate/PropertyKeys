@@ -34,7 +34,8 @@ namespace DataArcs.Components
 
         public Circles(int version)
         {
-            graphic = new PolyShape(pointCount: 6, radius: 10f, orientation:1f/12f);
+            graphic = new PolyShape(pointCount: 6, radius: new float[]{ 10f },
+                orientation: new float[] { 1f / 12f, 0f }, starness: new float[] { 0, -0.5f });
             SetVersion(version);
         }
 
@@ -51,7 +52,7 @@ namespace DataArcs.Components
                 //graphic.Orientation = 0.5f;
                 float armLen = totalWidth / (float)(cols - 1) / 3f;
                 float height = (armLen * (float)Math.Sqrt(3)) / 2f * (rows - 1f);
-                graphic.Radius = armLen;
+                graphic.Radius = new FloatStore(1, armLen, armLen * 1.5f);
 
                 float[] start = new float[] { 150, 150,   150 + totalWidth, 150 + height };
                 var startStore = new FloatStore(2, start, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
@@ -65,7 +66,7 @@ namespace DataArcs.Components
             }
             else if (version == 2)
             {
-                graphic.Radius = 30;
+                graphic.Radius = new FloatStore(1, 30f, 60f);
                 const int count = 50;
                 const int vectorSize = 2;
                 float[] start = new float[count * vectorSize];
@@ -85,10 +86,10 @@ namespace DataArcs.Components
             }
             else if (version == 3)
             {
-                graphic.Radius = 10;
+                graphic.Radius = new FloatStore(1, 10f, 30f);
                 int vectorSize = 2;
                 float[] start = new float[] { 200, 40, 400, 200 };
-                float[] end = new float[] { 200, 200, 400, 400};
+                float[] end = new float[] { 200, 200, 400, 400 };
                 var startStore = new FloatStore(vectorSize, start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
                 var endStore = new FloatStore(vectorSize, end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
                     easingTypes: new EasingType[] { EasingType.Squared, EasingType.InverseSquared }, sampleType: SampleType.Grid);
@@ -154,8 +155,8 @@ namespace DataArcs.Components
                 float scale = 1f; //  + t * 0.2f;
                 g.ScaleTransform(scale, scale);
                 g.TranslateTransform(v[0] / scale, v[1] / scale);
-                graphic.Orientation = 1f/12f +  t / 12f;
-                graphic.Starness = -t / 2.0f;
+                graphic.Orientation.CurrentT = t;// 1f/12f +  t / 12f;
+                graphic.Starness.CurrentT = t;// -t / 2.0f;
                 graphic.Draw(g, b, null, easedT);
                 g.Restore(state);
             }

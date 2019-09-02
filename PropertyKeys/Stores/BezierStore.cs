@@ -49,6 +49,7 @@ namespace DataArcs.Stores
 
         public override float[] GetFloatArrayAtT(float t)
         {
+            CurrentT = t;
             DataUtils.GetScaledT(t, Moves.Length, out float vT, out int startIndex, out int endIndex);
             float[] a = GetFloatArrayAtIndex(startIndex);
             float[] b = GetFloatArrayAtIndex(endIndex);
@@ -81,6 +82,7 @@ namespace DataArcs.Stores
 
         public override float[] GetFloatArrayAtIndex(int index)
         {
+            CurrentT = index / (float)ElementCount;
             index = Math.Max(0, Math.Min(Moves.Length - 1, index));
             int start = 0;
             for (int i = 0; i < index; i++)

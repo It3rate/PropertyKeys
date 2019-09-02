@@ -1,5 +1,6 @@
 ﻿using DataArcs.Samplers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -9,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Stores
 {
-    public class FloatStore : Store
+    // todo: public UI access comes from a store property only (via inspection if needed). Add onChanged etc events.
+    public class FloatStore : Store, IEnumerable<float>
     {
         protected float[] Values { get; set; }
         protected BaseSampler Sampler { get; set; }
@@ -26,6 +28,13 @@ namespace DataArcs.Stores
             Sampler = BaseSampler.CreateSampler(sampleType);
             CalculateBounds(Values);
         }
+        public FloatStore(int vectorSize, params float[] values) : base(vectorSize, null, null)
+        {
+            Values = values;
+            ElementCount = values.Length / VectorSize;
+            Sampler = BaseSampler.CreateSampler(SampleType.Default);
+            CalculateBounds(Values);
+        }
         protected override bool BoundsDataReady() => Values != null;
 
         public void NudgeValuesBy(float nudge)
@@ -38,6 +47,7 @@ namespace DataArcs.Stores
 
         public override float[] GetFloatArrayAtIndex(int index)
         {
+            CurrentT = index / (float)ElementCount;
             float[] result;
             if (Sampler != null)
             {
@@ -54,6 +64,7 @@ namespace DataArcs.Stores
 
         public override float[] GetFloatArrayAtT(float t)
         {
+            CurrentT = t;
             float[] result;
             if (Sampler != null)
             {
@@ -149,6 +160,16 @@ namespace DataArcs.Stores
         public override GraphicsPath GetPath()
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerator<float> GetEnumerator()
+        {
+            return ((IEnumerable<float>)Values).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<float>)Values).GetEnumerator();
         }
     }
 }
