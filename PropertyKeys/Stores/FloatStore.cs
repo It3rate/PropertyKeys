@@ -18,6 +18,9 @@ namespace DataArcs.Stores
 
         public override float[] GetFloatValues => (float[])Values.Clone();
         public override int[] GetIntValues => Values.ToInt();
+
+        public override int InternalDataCount => Values.Length;
+
         public float[] this[int index] => GetSizedValuesAt(index);
 
         public FloatStore(int vectorSize, float[] values, int elementCount = -1, int[] dimensions = null, EasingType[] easingTypes = null,
@@ -51,7 +54,7 @@ namespace DataArcs.Stores
             float[] result;
             if (Sampler != null)
             {
-                result = Sampler.GetSample(this, index);
+                result = Sampler.GetFloatSample(this, index);
             }
             else // direct sample of data
             {
@@ -68,7 +71,7 @@ namespace DataArcs.Stores
             float[] result;
             if (Sampler != null)
             {
-                result = Sampler.GetSample(this, t);
+                result = Sampler.GetFloatSample(this, t);
             }
             else // direct sample of data
             {
@@ -85,7 +88,7 @@ namespace DataArcs.Stores
             return GetFloatArrayAtT(t).ToInt();
         }
 
-        public virtual float[] GetUnsampledValueAtT(float t)
+        public override float[] GetUnsampledValueAtT(float t)
         {
             float[] result;
             int len = Values.Length / VectorSize;
@@ -149,13 +152,6 @@ namespace DataArcs.Stores
             return CreateBox(vectorSize, rows, cols, SampleType.Hexagon);
         }
 
-        public float[] GetZeroArray() { return DataUtils.GetFloatZeroArray(VectorSize); }
-        public float[] GetMinArray() { return DataUtils.GetFloatMinArray(VectorSize); }
-        public float[] GetMaxArray() { return DataUtils.GetFloatMaxArray(VectorSize); }
-
-        public static float[] GetZeroArray(int size) { return DataUtils.GetFloatZeroArray(size); }
-        public static float[] GetMinArray(int size) { return DataUtils.GetFloatMinArray(size); }
-        public static float[] GetMaxArray(int size) { return DataUtils.GetFloatMaxArray(size); }
 
         public override GraphicsPath GetPath()
         {

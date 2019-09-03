@@ -23,7 +23,9 @@ namespace DataArcs.Stores
         public int ElementCount { get; set; } = 1;
         public int[] Strides { get; set; }
         public EasingType[] EasingTypes { get; set; }
-        
+
+        public abstract int InternalDataCount { get; }
+
         public virtual float[] MinBounds { get; protected set; }
         public virtual float[] MaxBounds { get; protected set; }
         public virtual float[] Size
@@ -51,6 +53,8 @@ namespace DataArcs.Stores
         public abstract int[] GetIntArrayAtIndex(int index);
         public abstract int[] GetIntArrayAtT(float t);
 
+        public abstract float[] GetUnsampledValueAtT(float t);
+
         protected virtual bool BoundsDataReady() => false;
         protected void CalculateBounds(float[] values)
         {
@@ -76,5 +80,12 @@ namespace DataArcs.Stores
                 }
             }
         }
+        public float[] GetZeroArray() { return DataUtils.GetFloatZeroArray(VectorSize); }
+        public float[] GetMinArray() { return DataUtils.GetFloatMinArray(VectorSize); }
+        public float[] GetMaxArray() { return DataUtils.GetFloatMaxArray(VectorSize); }
+
+        public static float[] GetZeroArray(int size) { return DataUtils.GetFloatZeroArray(size); }
+        public static float[] GetMinArray(int size) { return DataUtils.GetFloatMinArray(size); }
+        public static float[] GetMaxArray(int size) { return DataUtils.GetFloatMaxArray(size); }
     }
 }

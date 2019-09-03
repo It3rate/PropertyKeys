@@ -120,8 +120,8 @@ namespace DataArcs.Components
 
         private PropertyStore GetTestColors()
         {
-            float[] start = new float[] { 0.3f, 0.1f, 0,   1f, 1f, 0,  0, 0.15f, 1f,   0, 0.5f, 0.1f };
-            float[] end = new float[] { 0.8f, 0, 0.8f,   0, 1f, 0.1f,   0.4f, 1f, 0.1f,   0, 0, 1f };
+            float[] start = new float[] { 0.3f, 0.1f, 0.2f,   1f, 1f, 0,  0, 0.15f, 1f,   0, 0.5f, 0.1f };
+            float[] end = new float[] { 0, 0.2f, 0.7f,   0.8f, 0, 0.3f,    0.7f, 1f, 0.1f,   0.4f, 0, 1f };
             var colorStartStore = new FloatStore(3, start, sampleType: SampleType.Line);
             var colorEndStore = new FloatStore(3, end, sampleType: SampleType.Line, easingTypes: new EasingType[] { EasingType.Squared });
             return new PropertyStore(new FloatStore[] { colorStartStore, colorEndStore }, easingType: EasingType.InverseSquared);

@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Samplers
 {
-    public class LineSampler : BaseSampler
+    public class NearestSampler : BaseSampler
     {
         public override float[] GetFloatSample(Store valueStore, int index)
         {
-            float index_t = (valueStore.ElementCount > 1) ?  index / (valueStore.ElementCount - 1f) : 0f;
-            return GetFloatSample(valueStore, index_t);
+            index = Math.Max(0, Math.Min(valueStore.InternalDataCount - 1, index));
+            return valueStore.GetFloatArrayAtIndex(index);
         }
         public override float[] GetFloatSample(Store valueStore, float t)
         {
-            return valueStore.GetUnsampledValueAtT(t);
+            int index = (int)Math.Round(t * valueStore.InternalDataCount);
+            return GetFloatSample(valueStore, index);
         }
     }
 }

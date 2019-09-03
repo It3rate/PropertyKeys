@@ -13,6 +13,8 @@ namespace DataArcs.Stores
     {
         public int[] Values { get; }
 
+        public override int InternalDataCount => Values.Length;
+
         public override float[] GetFloatValues => Values.ToFloat();
         public override int[] GetIntValues => (int[])Values.Clone();
 
@@ -73,7 +75,38 @@ namespace DataArcs.Stores
             }
             return result;
         }
-
+        
+        // todo: IntStore interpolation may need to be all int based. May need an interpolate flag in general.
+        public override float[] GetUnsampledValueAtT(float t)
+        {
+            int[] result;
+            int len = Values.Length / VectorSize;
+            if (len > 1)
+            {
+                // interpolate between indexes to get virtual values from array.
+                float pos = Math.Min(1, Math.Max(0, t)) * (len - 1);
+                int startIndex = (int)Math.Floor(pos);
+                startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
+                if (pos < len - 1)
+                {
+                    float remainderT = pos - startIndex;
+                    result = GetSizedValuesAt(startIndex);
+                    int[] end = GetSizedValuesAt(startIndex + 1);
+                    float[] tempResult = result.ToFloat();
+                    DataUtils.InterpolateInto(tempResult, end.ToFloat(), remainderT);
+                    result = tempResult.ToInt();
+                }
+                else
+                {
+                    result = GetSizedValuesAt(startIndex);
+                }
+            }
+            else
+            {
+                result = GetSizedValuesAt(0);
+            }
+            return result.ToFloat();
+        }
 
         public int[] GetZeroArray() { return DataUtils.GetIntZeroArray(VectorSize); }
         public int[] GetMinArray() { return DataUtils.GetIntMinArray(VectorSize); }

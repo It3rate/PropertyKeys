@@ -9,7 +9,7 @@ namespace DataArcs.Samplers
 {
     public class HexagonSampler : BaseSampler
     {
-        public override float[] GetSample(FloatStore valueStore, int index)
+        public override float[] GetFloatSample(Store valueStore, int index)
         {
             float[] result = valueStore.GetZeroArray();
             float[] strideTs = GetStrideTsForIndex(valueStore, index);
@@ -28,7 +28,7 @@ namespace DataArcs.Samplers
             }
             return result;
         }
-        public override float[] GetSample(FloatStore valueStore, float t)
+        public override float[] GetFloatSample(Store valueStore, float t)
         {
             return valueStore.GetUnsampledValueAtT(t);
         }

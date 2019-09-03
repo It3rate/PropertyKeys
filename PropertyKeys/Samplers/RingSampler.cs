@@ -9,13 +9,13 @@ namespace DataArcs.Samplers
 {
     public class RingSampler : BaseSampler
     {
-        public override float[] GetSample(FloatStore valueStore, int index)
+        public override float[] GetFloatSample(Store valueStore, int index)
         {
             float index_t = index / (valueStore.ElementCount - 1f); // full circle
-            return GetSample(valueStore, index_t);
+            return GetFloatSample(valueStore, index_t);
         }
 
-        public override float[] GetSample(FloatStore valueStore, float t)
+        public override float[] GetFloatSample(Store valueStore, float t)
         {
             float[] result;
             float[] tl = valueStore.GetUnsampledValueAtT(0f);
