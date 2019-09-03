@@ -32,6 +32,7 @@ namespace DataArcs.Stores
         public float[] GetValuesAtIndex(int index, float t)
         {
             float[] result;
+            t = Easing.GetValueAt(t, EasingType);
 
             DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
 
@@ -46,9 +47,10 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public float[] GetValuesAtT(float index_t, float t)
+        public float[] GetValuesAtT(float indexT, float t)
         {
             float[] result;
+            t = Easing.GetValueAt(t, EasingType);
 
             DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
 
@@ -58,7 +60,7 @@ namespace DataArcs.Stores
             }
             else
             {
-                result = BlendValueAtT(ValueStores[startIndex], ValueStores[endIndex], index_t, vT);
+                result = BlendValueAtT(ValueStores[startIndex], ValueStores[endIndex], indexT, vT);
             }
             return result;
         }
@@ -66,6 +68,8 @@ namespace DataArcs.Stores
         public int GetElementCountAt(float t)
         {
             int result;
+            t = Easing.GetValueAt(t, EasingType);
+
             DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)

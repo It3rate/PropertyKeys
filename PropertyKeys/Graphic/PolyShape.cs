@@ -20,7 +20,7 @@ namespace DataArcs.Graphic
             Orientation = new FloatStore(1, orientation);
             PointCount = new IntStore(1, pointCount);
             Roundness = new FloatStore(1, roundness);
-            Radius = new FloatStore(1, radius);
+            Radius = new FloatStore(2, radius, radius);
             Starness = new FloatStore(1, starness);
         }
         public PolyShape(float[] radius, float[] orientation = null, int[] pointCount = null, float[] roundness = null, float[] starness = null)
@@ -28,7 +28,7 @@ namespace DataArcs.Graphic
             Orientation = (orientation == null) ? new FloatStore(1, 0f) : new FloatStore(1, orientation);
             PointCount = (pointCount == null) ? new IntStore(1, 4) : new IntStore(1, pointCount);
             Roundness = (roundness == null) ? new FloatStore(1, 0f) : new FloatStore(1, roundness);
-            Radius = (radius == null) ? new FloatStore(1, 10f) : new FloatStore(1, radius);
+            Radius = (radius == null) ? new FloatStore(2, 10f, 10f) : new FloatStore(2, radius);
             Starness = (starness == null) ? new FloatStore(1, 0f) : new FloatStore(1, starness);
         }
 
@@ -116,12 +116,14 @@ namespace DataArcs.Graphic
         {
             float orientation = Orientation.GetFloatArrayAtT(orientationT)[0];
             float roundness = Roundness.GetFloatArrayAtT(roundnessT)[0];
-            float radius = Radius.GetFloatArrayAtT(radiusT)[0];
+            float[] radius = Radius.GetFloatArrayAtT(radiusT);
+            float radiusX = radius[0];
+            float radiusY = radius.Length > 1 ? radius[1] : radius[0];
             float starness = Starness.GetFloatArrayAtT(starnessT)[0];
             int pointCount = PointCount.GetIntArrayAtT(pointCountT)[0];
-            polygon = GeneratePolyShape(orientation, pointCount, roundness, radius, starness);
+            polygon = GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
         }
-        public static BezierStore GeneratePolyShape(float orientation, int pointCount, float roundness, float radius, float starness)
+        public static BezierStore GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
         {
             bool hasStarness = Math.Abs(starness) > 0.001f;
             int count = hasStarness ? pointCount * 2 : pointCount;
@@ -134,15 +136,16 @@ namespace DataArcs.Graphic
             for (int i = 0; i < pointCount; i++)
             {
                 float theta = step * i + orientation * M_PIx2;
-                values[i * pointsPerStep + 0] = (float)Math.Sin(theta) * radius;
-                values[i * pointsPerStep + 1] = (float)Math.Cos(theta) * radius;
+                values[i * pointsPerStep + 0] = (float)Math.Sin(theta) * radiusX;
+                values[i * pointsPerStep + 1] = (float)Math.Cos(theta) * radiusY;
                 moves[i * pointsPerStep / 2] = (i == 0) ? BezierMove.MoveTo : BezierMove.LineTo;
                 if (hasStarness)
                 {
                     theta = (step * i + step / 2.0f) + orientation * M_PIx2;
-                    float mpRadius = (float)Math.Cos(step / 2.0) * radius;
-                    values[i * pointsPerStep + 2] = (float)Math.Sin(theta) * (mpRadius + mpRadius * starness);
-                    values[i * pointsPerStep + 3] = (float)Math.Cos(theta) * (mpRadius + mpRadius * starness);
+                    float mpRadiusX = (float)Math.Cos(step / 2.0) * radiusX;
+                    float mpRadiusY = (float)Math.Cos(step / 2.0) * radiusY;
+                    values[i * pointsPerStep + 2] = (float)Math.Sin(theta) * (mpRadiusX + mpRadiusX * starness);
+                    values[i * pointsPerStep + 3] = (float)Math.Cos(theta) * (mpRadiusY + mpRadiusY * starness);
                     moves[i * pointsPerStep / 2 + 1] = BezierMove.LineTo;
                 }
             }

@@ -35,8 +35,8 @@ namespace DataArcs.Components
         public Circles(int version)
         {
             //todo: Rather than seed with multiples or lerp, use ranges.
-            graphic = new PolyShape(pointCount: new int[] { 6,7,8,9,10,11, 12 }, radius: new float[]{ 10f },
-                orientation: new float[] { 1f / 12f, 0f }, starness: new float[] { 0, -0.5f });
+            graphic = new PolyShape(pointCount: new int[] { 6,7,8,9,10,11, 12 }, radius: new float[]{ 10f, 20f },
+                orientation: new float[] { 1f / 12f, 0.3f }, starness: new float[] { 0, -0.3f });
             //graphic.PointCount.ElementCount = 6;
             SetVersion(version);
         }
@@ -54,7 +54,7 @@ namespace DataArcs.Components
                 //graphic.Orientation = 0.5f;
                 float armLen = totalWidth / (float)(cols - 1) / 3f;
                 float height = (armLen * (float)Math.Sqrt(3)) / 2f * (rows - 1f);
-                graphic.Radius = new FloatStore(1, armLen, armLen * 1.5f);
+                graphic.Radius = new FloatStore(2, armLen, armLen, armLen, armLen * 1.5f);
 
                 float[] start = new float[] { 150, 150,   150 + totalWidth, 150 + height };
                 var startStore = new FloatStore(2, start, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
@@ -63,7 +63,7 @@ namespace DataArcs.Components
                     startStore[0][0] - growth, startStore[0][1] - growth,
                     startStore[1][0] + growth, startStore[1][1] + growth};
                 var endStore = new FloatStore(2, end, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
-                object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore, endStore }));
+                object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore, endStore }, easingType:EasingType.Linear));
                 wanders = (version == 1);
             }
             else if (version == 2)
@@ -88,13 +88,13 @@ namespace DataArcs.Components
             }
             else if (version == 3)
             {
-                graphic.Radius = new FloatStore(1, 10f, 30f);
+                graphic.Radius = new FloatStore(2, 5f, 5f, 20f, 20f);
                 int vectorSize = 2;
                 float[] start = new float[] { 200, 40, 400, 200 };
-                float[] end = new float[] { 200, 200, 400, 400 };
+                float[] end = new float[] { 100, 100, 500, 400 };
                 var startStore = new FloatStore(vectorSize, start, elementCount: 46, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
                 var endStore = new FloatStore(vectorSize, end, elementCount: 100, dimensions: new int[] { 10, 0, 0 },
-                    easingTypes: new EasingType[] { EasingType.Linear, EasingType.Linear }, sampleType: SampleType.Grid);
+                    easingTypes: new EasingType[] { EasingType.EaseCenter, EasingType.EaseCenter }, sampleType: SampleType.Grid);
 
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore,  endStore }, easingType: EasingType.Linear));
                 
@@ -160,6 +160,7 @@ namespace DataArcs.Components
                 graphic.PointCount.CurrentT = t;// 1f/12f +  t / 12f;
                 graphic.Orientation.CurrentT = t;// 1f/12f +  t / 12f;
                 graphic.Starness.CurrentT = t;// -t / 2.0f;
+                graphic.Radius.CurrentT = t;
                 graphic.Draw(g, b, null, easedT);
                 g.Restore(state);
             }
