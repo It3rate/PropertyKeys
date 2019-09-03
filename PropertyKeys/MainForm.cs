@@ -60,7 +60,7 @@ namespace DataArcs
 
         private void Tick(object sender, ElapsedEventArgs e)
         {
-            t += version == 2 ? 0.008f : 0.02f;// (e.SignalTime - curTime).Milliseconds / 3000f;
+            t += version == 2 ? 0.008f : 0.01f;// (e.SignalTime - curTime).Milliseconds / 3000f;
             curTime = e.SignalTime;
             Invalidate();
         }

@@ -92,11 +92,11 @@ namespace DataArcs.Components
                 int vectorSize = 2;
                 float[] start = new float[] { 200, 40, 400, 200 };
                 float[] end = new float[] { 200, 200, 400, 400 };
-                var startStore = new FloatStore(vectorSize, start, elementCount: 66, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
-                var endStore = new FloatStore(vectorSize, end, elementCount: 36, dimensions: new int[] { 6, 0, 0 },
-                    easingTypes: new EasingType[] { EasingType.Squared, EasingType.InverseSquared }, sampleType: SampleType.Grid);
+                var startStore = new FloatStore(vectorSize, start, elementCount: 46, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
+                var endStore = new FloatStore(vectorSize, end, elementCount: 100, dimensions: new int[] { 10, 0, 0 },
+                    easingTypes: new EasingType[] { EasingType.Linear, EasingType.Linear }, sampleType: SampleType.Grid);
 
-                object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore, startStore, endStore, endStore }, easingType: EasingType.InverseSquared));
+                object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore,  endStore }, easingType: EasingType.Linear));
                 
                 
                 wanders = false;

@@ -28,5 +28,15 @@ namespace DataArcs.Samplers
                 (float)(Math.Cos(t * 2.0f * Math.PI + Math.PI) * dy + tl[1] + dy) };
             return result;
         }
+
+        public override int[] GetIntSample(Store valueStore, int index)
+        {
+            return GetFloatSample(valueStore, index).ToInt();
+        }
+
+        public override int[] GetIntSample(Store valueStore, float t)
+        {
+            return GetFloatSample(valueStore, t).ToInt();
+        }
     }
 }

@@ -19,5 +19,15 @@ namespace DataArcs.Samplers
             int index = (int)Math.Round(t * valueStore.InternalDataCount);
             return GetFloatSample(valueStore, index);
         }
+        public override int[] GetIntSample(Store valueStore, int index)
+        {
+            index = Math.Max(0, Math.Min(valueStore.InternalDataCount - 1, index));
+            return valueStore.GetIntArrayAtIndex(index);
+        }
+
+        public override int[] GetIntSample(Store valueStore, float t)
+        {
+            return valueStore.GetIntArrayAtT(t);
+        }
     }
 }

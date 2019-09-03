@@ -44,6 +44,8 @@ namespace DataArcs.Samplers
         }
         public abstract float[] GetFloatSample(Store valueStore, int index);
         public abstract float[] GetFloatSample(Store valueStore, float t);
+        public abstract int[] GetIntSample(Store valueStore, int index);
+        public abstract int[] GetIntSample(Store valueStore, float t);
 
         public float[] GetStrideTsForIndex(Store valueStore, int index)
         {
@@ -51,7 +53,7 @@ namespace DataArcs.Samplers
         }
         public float[] GetStrideTsForT(Store valueStore, float t)
         {
-            int index = (int)(t * valueStore.ElementCount);
+            int index = (int)Math.Round(t * valueStore.ElementCount);
             float remainder = t * valueStore.ElementCount - index;
             remainder = (Math.Abs(remainder) < 0.0001) ? 0 : remainder;
 

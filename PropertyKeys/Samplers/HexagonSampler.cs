@@ -32,5 +32,15 @@ namespace DataArcs.Samplers
         {
             return valueStore.GetUnsampledValueAtT(t);
         }
+
+        public override int[] GetIntSample(Store valueStore, int index)
+        {
+            return GetFloatSample(valueStore, index).ToInt();
+        }
+
+        public override int[] GetIntSample(Store valueStore, float t)
+        {
+            return GetFloatSample(valueStore, t).ToInt();
+        }
     }
 }

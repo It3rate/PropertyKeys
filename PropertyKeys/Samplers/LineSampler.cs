@@ -11,12 +11,22 @@ namespace DataArcs.Samplers
     {
         public override float[] GetFloatSample(Store valueStore, int index)
         {
-            float index_t = (valueStore.ElementCount > 1) ?  index / (valueStore.ElementCount - 1f) : 0f;
-            return GetFloatSample(valueStore, index_t);
+            float indexT = (valueStore.ElementCount > 1) ?  index / (valueStore.ElementCount - 1f) : 0f;
+            return GetFloatSample(valueStore, indexT);
         }
         public override float[] GetFloatSample(Store valueStore, float t)
         {
             return valueStore.GetUnsampledValueAtT(t);
+        }
+
+        public override int[] GetIntSample(Store valueStore, int index)
+        {
+            return GetFloatSample(valueStore, index).ToInt();
+        }
+
+        public override int[] GetIntSample(Store valueStore, float t)
+        {
+            return GetFloatSample(valueStore, t).ToInt();
         }
     }
 }

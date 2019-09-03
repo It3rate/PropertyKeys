@@ -68,7 +68,7 @@ namespace DataArcs.Stores
 
         protected virtual int[] GetSizedValuesAt(int index)
         {
-            int[] result = GetZeroArray();
+            int[] result = GetZeroIntArray();
             if (index * VectorSize + VectorSize <= Values.Length)
             {
                 Array.Copy(Values, index * VectorSize, result, 0, VectorSize);
@@ -108,13 +108,13 @@ namespace DataArcs.Stores
             return result.ToFloat();
         }
 
-        public int[] GetZeroArray() { return DataUtils.GetIntZeroArray(VectorSize); }
-        public int[] GetMinArray() { return DataUtils.GetIntMinArray(VectorSize); }
-        public int[] GetMaxArray() { return DataUtils.GetIntMaxArray(VectorSize); }
+        public int[] GetZeroIntArray() { return DataUtils.GetIntZeroArray(VectorSize); }
+        public int[] GetMinIntArray() { return DataUtils.GetIntMinArray(VectorSize); }
+        public int[] GetMaxIntArray() { return DataUtils.GetIntMaxArray(VectorSize); }
 
-        public static int[] GetZeroArray(int size) { return DataUtils.GetIntZeroArray(size); }
-        public static int[] GetMinArray(int size) { return DataUtils.GetIntMinArray(size); }
-        public static int[] GetMaxArray(int size) { return DataUtils.GetIntMaxArray(size); }
+        public static int[] GetZeroIntArray(int size) { return DataUtils.GetIntZeroArray(size); }
+        public static int[] GetMinIntArray(int size) { return DataUtils.GetIntMinArray(size); }
+        public static int[] GetMaxIntArray(int size) { return DataUtils.GetIntMaxArray(size); }
 
 
         public static IntStore CreateGrid(int vectorSize, int rows, int cols, SampleType sampleType)
