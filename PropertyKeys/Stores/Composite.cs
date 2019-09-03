@@ -40,11 +40,24 @@ namespace DataArcs.Stores
 
         public Composite(Composite parent = null)
         {
-            Stores = new Dictionary<PropertyID, PropertyStore>();
             Parent = parent;
             Stores = new Dictionary<PropertyID, PropertyStore>();
         }
 
+        public void Step(float timeStep)
+        {
+
+        }
+        public void SetT(float t)
+        {
+            foreach (var propertyStore in Stores.Values)
+            {
+                propertyStore.CurrentT = t; // hmm, these t's need to be dynamic, but lookup will be important - or is that just functional flow?
+            }
+        }
+
+        // todo: this should probably bet get/set values for t/index by propertyID, but not access stores?
+        // Need to compose and query nested values and t's using the hierarchy eg query t for a certain location in a grid, but props can vary at different speeds (or can they?)
         public PropertyStore GetPropertyStore(PropertyID propertyID)
         {
             Stores.TryGetValue(propertyID, out PropertyStore result);

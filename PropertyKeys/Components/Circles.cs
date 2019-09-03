@@ -70,7 +70,7 @@ namespace DataArcs.Components
             }
             else if (version == 2)
             {
-                graphic.Radius = new FloatStore(1, 30f, 60f);
+                graphic.Radius = new FloatStore(2, 10f, 15f, 20f,15f);
                 const int count = 50;
                 const int vectorSize = 2;
                 float[] start = new float[count * vectorSize];

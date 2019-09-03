@@ -23,6 +23,8 @@ namespace DataArcs.Stores
         public float Parameter1 { get; } = 0;
         public int Parameter2 { get; } = 0;
 
+        public float CurrentT { get; set; } = 0;
+
         public PropertyStore(FloatStore[] valueStores, EasingType easingType = EasingType.Linear)
         {
             ValueStores = valueStores;
