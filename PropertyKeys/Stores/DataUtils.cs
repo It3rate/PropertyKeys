@@ -54,7 +54,7 @@ namespace DataArcs.Stores
             }
             else if (t <= 0)
             {
-                startIndex = len - 0;
+                startIndex = 0;
                 endIndex = startIndex;
                 virtualT = 0f;
             }

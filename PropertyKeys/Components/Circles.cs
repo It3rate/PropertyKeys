@@ -50,7 +50,7 @@ namespace DataArcs.Components
                 int cols = 10;
                 int rows = 6;
                 float totalWidth = 500f;
-                float growth = 25;
+                float growth = 125;
                 //graphic.Orientation = 0.5f;
                 float armLen = totalWidth / (float)(cols - 1) / 3f;
                 float height = (armLen * (float)Math.Sqrt(3)) / 2f * (rows - 1f);
@@ -138,10 +138,11 @@ namespace DataArcs.Components
             if (floorT % 2 == 0) t = 1.0f - t;
             float easedT = t;// Easing.GetValueAt(t, loc.EasingType);
             int count = loc.GetElementCountAt(easedT);
-            GraphicsState state;
+
             for (int i = 0; i < count; i++)
             {
-                float[] v = loc.GetValuesAtIndex(i, easedT);
+                float it = i / (float)count;
+                float[] v = loc.GetValuesAtIndex(i, easedT + it - (1f-easedT));
                 if (wander != null)
                 {
                     wander.ValueStores[0].NudgeValuesBy(0.4f);
@@ -150,10 +151,9 @@ namespace DataArcs.Components
                     v[0] += wan[0];
                     v[1] += wan[1];
                 }
-                float it = i / (float)count;
                 Color c = GraphicUtils.GetRGBColorFrom(col.GetValuesAtT(it, easedT));
                 Brush b = new SolidBrush(c);
-                state = g.Save();
+                GraphicsState state = g.Save();
                 float scale = 1f; //  + t * 0.2f;
                 g.ScaleTransform(scale, scale);
                 g.TranslateTransform(v[0] / scale, v[1] / scale);
