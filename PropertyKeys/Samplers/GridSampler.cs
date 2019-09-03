@@ -15,7 +15,7 @@ namespace DataArcs.Samplers
             float[] strideTs = GetStrideTsForIndex(valueStore, index);
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = valueStore.GetUnsampledValueAtT(strideTs[i])[i];
+                result[i] = valueStore.GetInterpolatededValueAtT(strideTs[i])[i];
             }
             return result;
         }
@@ -25,7 +25,7 @@ namespace DataArcs.Samplers
             float[] strideTs = GetStrideTsForT(valueStore, t);
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = valueStore.GetUnsampledValueAtT(strideTs[i])[i];
+                result[i] = valueStore.GetInterpolatededValueAtT(strideTs[i])[i];
             }
             return result;
         }

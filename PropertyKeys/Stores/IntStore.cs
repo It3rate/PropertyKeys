@@ -11,7 +11,7 @@ namespace DataArcs.Stores
 {
     public class IntStore : Store, IEnumerable<int>
     {
-        public int[] Values { get; }
+        protected int[] Values { get; set; }
 
         public override int InternalDataCount => Values.Length;
 
@@ -77,7 +77,7 @@ namespace DataArcs.Stores
         }
         
         // todo: IntStore interpolation may need to be all int based. May need an interpolate flag in general.
-        public override float[] GetUnsampledValueAtT(float t)
+        public override float[] GetInterpolatededValueAtT(float t)
         {
             int[] result;
             int len = Values.Length / VectorSize;
@@ -107,6 +107,25 @@ namespace DataArcs.Stores
             }
             return result.ToFloat();
         }
+
+        public override void ReplaceSamplerWithData()
+        {
+            int[] concreteValues = new int[ElementCount * VectorSize];
+            int index = 0;
+            for (int i = 0; i < concreteValues.Length; i += VectorSize)
+            {
+                int[] vals = GetIntArrayAtIndex(index);
+                for (int j = 0; j < VectorSize; j++)
+                {
+                    concreteValues[i + j] = vals[j];
+                }
+                index++;
+            }
+
+            Values = concreteValues;
+            Sampler = null;
+        }
+        
 
         public int[] GetZeroIntArray() { return DataUtils.GetIntZeroArray(VectorSize); }
         public int[] GetMinIntArray() { return DataUtils.GetIntMinArray(VectorSize); }

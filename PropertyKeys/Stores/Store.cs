@@ -10,7 +10,7 @@ namespace DataArcs.Stores
 {
     public abstract class Store
     {
-        protected static Random rnd = new Random();
+        protected static Random Rnd = new Random();
         protected static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         protected static readonly int[] DefaultStrides = new int[] { 0 }; // zero means repeating, so this is a regular one row array
         
@@ -23,6 +23,7 @@ namespace DataArcs.Stores
         public int ElementCount { get; set; } = 1;
         public int[] Strides { get; set; }
         public EasingType[] EasingTypes { get; set; }
+        protected BaseSampler Sampler { get; set; }
 
         public abstract int InternalDataCount { get; }
 
@@ -53,7 +54,8 @@ namespace DataArcs.Stores
         public abstract int[] GetIntArrayAtIndex(int index);
         public abstract int[] GetIntArrayAtT(float t);
 
-        public abstract float[] GetUnsampledValueAtT(float t);
+        public abstract float[] GetInterpolatededValueAtT(float t);
+        public abstract void ReplaceSamplerWithData();
 
         protected virtual bool BoundsDataReady() => false;
         protected void CalculateBounds(float[] values)

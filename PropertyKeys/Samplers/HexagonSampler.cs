@@ -15,7 +15,7 @@ namespace DataArcs.Samplers
             float[] strideTs = GetStrideTsForIndex(valueStore, index);
             for (int i = 0; i < result.Length; i++)
             {
-                float temp = valueStore.GetUnsampledValueAtT(strideTs[i])[i];
+                float temp = valueStore.GetInterpolatededValueAtT(strideTs[i])[i];
                 int curRow = (int)((float)index / valueStore.Strides[0]);
                 if(i == 0 && ((curRow & 1) == 1) && valueStore.Strides[0] > 0)
                 {
@@ -30,7 +30,7 @@ namespace DataArcs.Samplers
         }
         public override float[] GetFloatSample(Store valueStore, float t)
         {
-            return valueStore.GetUnsampledValueAtT(t);
+            return valueStore.GetInterpolatededValueAtT(t);
         }
 
         public override int[] GetIntSample(Store valueStore, int index)

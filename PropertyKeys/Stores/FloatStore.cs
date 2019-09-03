@@ -14,7 +14,6 @@ namespace DataArcs.Stores
     public class FloatStore : Store, IEnumerable<float>
     {
         protected float[] Values { get; set; }
-        protected BaseSampler Sampler { get; set; }
 
         public override float[] GetFloatValues => (float[])Values.Clone();
         public override int[] GetIntValues => Values.ToInt();
@@ -44,7 +43,7 @@ namespace DataArcs.Stores
         {
             for (int i = 0; i < Values.Length; i++)
             {
-                Values[i] += (float)rnd.NextDouble() * nudge - nudge / 2f;
+                Values[i] += (float)Rnd.NextDouble() * nudge - nudge / 2f;
             }
         }
 
@@ -75,7 +74,7 @@ namespace DataArcs.Stores
             }
             else // direct sample of data
             {
-                result = GetUnsampledValueAtT(t);
+                result = GetInterpolatededValueAtT(t);
             }
             return result;
         }
@@ -88,7 +87,7 @@ namespace DataArcs.Stores
             return GetFloatArrayAtT(t).ToInt();
         }
 
-        public override float[] GetUnsampledValueAtT(float t)
+        public override float[] GetInterpolatededValueAtT(float t)
         {
             float[] result;
             int len = Values.Length / VectorSize;
@@ -115,6 +114,24 @@ namespace DataArcs.Stores
                 result = GetSizedValuesAt(0);
             }
             return result;
+        }
+
+        public override void ReplaceSamplerWithData()
+        {
+            float[] concreteValues = new float[ElementCount * VectorSize];
+            int index = 0;
+            for (int i = 0; i < concreteValues.Length; i += VectorSize)
+            {
+                float[] vals = GetFloatArrayAtIndex(index);
+                for (int j = 0; j < VectorSize; j++)
+                {
+                    concreteValues[i + j] = vals[j];
+                }
+                index++;
+            }
+
+            Values = concreteValues;
+            Sampler = null;
         }
 
         protected virtual float[] GetSizedValuesAt(int index)

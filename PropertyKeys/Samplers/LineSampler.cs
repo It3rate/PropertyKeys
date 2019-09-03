@@ -16,7 +16,7 @@ namespace DataArcs.Samplers
         }
         public override float[] GetFloatSample(Store valueStore, float t)
         {
-            return valueStore.GetUnsampledValueAtT(t);
+            return valueStore.GetInterpolatededValueAtT(t);
         }
 
         public override int[] GetIntSample(Store valueStore, int index)
