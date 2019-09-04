@@ -14,19 +14,13 @@ namespace DataArcs.Stores
         protected static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         protected static readonly int[] DefaultStrides = new int[] { 0 }; // zero means repeating, so this is a regular one row array
         
+        // move to primitive class that can be float or int arrays.
         public abstract float[] GetFloatValues { get; }
         public abstract int[] GetIntValues { get; }
-        public abstract GraphicsPath GetPath();
-
         public float CurrentT { get; set; } = 0;
         public int VectorSize { get; } = 1;
         public int ElementCount { get; set; } = 1;
-        public int[] Strides { get; set; }
-        public EasingType[] EasingTypes { get; set; }
-        protected BaseSampler Sampler { get; set; }
-
         public abstract int InternalDataCount { get; }
-
         public virtual float[] MinBounds { get; protected set; }
         public virtual float[] MaxBounds { get; protected set; }
         public virtual float[] Size
@@ -41,6 +35,12 @@ namespace DataArcs.Stores
                 return result;
             }
         }
+        public EasingType[] EasingTypes { get; set; } // move to properties? No, useful for creating virtual data.
+
+        public int[] Strides { get; set; } // move to grid/hex samplers
+        protected BaseSampler Sampler { get; set; }
+        public abstract GraphicsPath GetPath(); // move to static method on Bezier store
+
 
         public Store(int vectorSize, int[] dimensions = null, EasingType[] easingTypes = null)
         {
@@ -49,6 +49,7 @@ namespace DataArcs.Stores
             EasingTypes = easingTypes ?? DefaultEasing;
         }
 
+        // these should be Vector GetValueAtIndex/T - Vector being convertible to float or int arrays.
         public abstract float[] GetFloatArrayAtIndex(int index);
         public abstract float[] GetFloatArrayAtT(float t);
         public abstract int[] GetIntArrayAtIndex(int index);
