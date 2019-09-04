@@ -63,8 +63,8 @@ namespace DataArcs.Components
                     startStore[0][0] - growth, startStore[0][1] - growth,
                     startStore[1][0] + growth, startStore[1][1] + growth};
                 var endStore = new FloatStore(2, end, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
-                startStore.ReplaceSamplerWithData();
-                endStore.ReplaceSamplerWithData();
+                startStore.HardenToData();
+                endStore.HardenToData();
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore, endStore }, easingType:EasingType.Linear));
                 wanders = (version == 1);
             }

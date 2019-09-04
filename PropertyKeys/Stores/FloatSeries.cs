@@ -11,8 +11,8 @@ namespace DataArcs.Stores
         private readonly float[] _floatValues;
         public override int DataCount => _floatValues.Length;
 
-        public FloatSeries(int vectorSize, float[] values, int virtualCount = -1, EasingType[] easingTypes = null) :
-            base(vectorSize, SeriesType.Int, (virtualCount <= 0) ? values.Length / vectorSize : virtualCount, easingTypes)
+        public FloatSeries(int vectorSize, float[] values, int virtualCount = -1) :
+            base(vectorSize, SeriesType.Int, (virtualCount <= 0) ? values.Length / vectorSize : virtualCount)
         {
             _floatValues = values;
         }
@@ -34,21 +34,6 @@ namespace DataArcs.Stores
         }
 
         public override Series GetValueAtT(float t)
-        {
-            return GetInterpolatededValueAtT(t);
-        }
-
-        public override void HardenToData()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void CalculateFrame()
-        {
-            throw new NotImplementedException();
-        }
-
-        private Series GetInterpolatededValueAtT(float t)
         {
             Series result;
             int len = DataCount / VectorSize;
@@ -75,6 +60,31 @@ namespace DataArcs.Stores
                 result = GetValueAtIndex(0);
             }
             return result;
+        }
+        
+        protected override void CalculateFrame()
+        {
+            float[] min = DataUtils.GetFloatMinArray(VectorSize);
+            float[] max = DataUtils.GetFloatMaxArray(VectorSize);
+
+            for (int i = 0; i < DataCount; i += VectorSize)
+            {
+                for (int j = 0; j < VectorSize; j++)
+                {
+                    if (_floatValues[i + j] < min[j])
+                    {
+                        min[j] = _floatValues[i + j];
+                    }
+
+                    if (_floatValues[i + j] > max[j])
+                    {
+                        max[j] = _floatValues[i + j];
+                    }
+                }
+            }
+            CachedFrame = new FloatSeries(VectorSize, DataUtils.CombineFloatArrays(min, max));
+            DataUtils.SubtractFloatArrayFrom(max, min);
+            CachedSize = new FloatSeries(VectorSize, max);
         }
 
         public override void Interpolate(Series b, float t)
@@ -105,7 +115,14 @@ namespace DataArcs.Stores
         }
         public override bool BoolValueAt(int index)
         {
-            return (index >= 0 && index < _floatValues.Length) ? (_floatValues[index] != 0) : false;
+            return (index >= 0 && index < _floatValues.Length) && Math.Abs(_floatValues[index]) < 0.0000001;
         }
+
+        public override Series GetZeroSeries() { return new FloatSeries(VectorSize, DataUtils.GetFloatZeroArray(VectorSize)); }
+        public override Series GetZeroSeries(int elementCount) { return GetZeroSeries(VectorSize, elementCount); }
+        public override Series GetMinSeries() { return new FloatSeries(VectorSize, DataUtils.GetFloatMinArray(VectorSize)); }
+        public override Series GetMaxSeries() { return new FloatSeries(VectorSize, DataUtils.GetFloatMaxArray(VectorSize)); }
+        
+        public static FloatSeries GetZeroSeries(int vectorSize, int elementCount) { return new FloatSeries(vectorSize, DataUtils.GetFloatZeroArray(vectorSize * elementCount)); }
     }
 }

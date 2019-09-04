@@ -12,8 +12,8 @@ namespace DataArcs.Stores
         private readonly int[] _intValues;
         public override int DataCount => _intValues.Length;
 
-        public IntSeries(int vectorSize, int[] values, int virtualCount = -1, EasingType[] easingTypes = null) :
-            base(vectorSize, SeriesType.Int, (virtualCount <= 0) ? values.Length / vectorSize : virtualCount, easingTypes)
+        public IntSeries(int vectorSize, int[] values, int virtualCount = -1) :
+            base(vectorSize, SeriesType.Int, (virtualCount <= 0) ? values.Length / vectorSize : virtualCount)
         {
             _intValues = values;
         }
@@ -79,14 +79,29 @@ namespace DataArcs.Stores
             }
         }
 
-        public override void HardenToData()
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void CalculateFrame()
         {
-            throw new NotImplementedException();
+            int[] min = DataUtils.GetIntMinArray(VectorSize);
+            int[] max = DataUtils.GetIntMaxArray(VectorSize);
+
+            for (int i = 0; i < DataCount; i += VectorSize)
+            {
+                for (int j = 0; j < VectorSize; j++)
+                {
+                    if (_intValues[i + j] < min[j])
+                    {
+                        min[j] = _intValues[i + j];
+                    }
+
+                    if (_intValues[i + j] > max[j])
+                    {
+                        max[j] = _intValues[i + j];
+                    }
+                }
+            }
+            CachedFrame = new IntSeries(VectorSize, DataUtils.CombineIntArrays(min, max));
+            DataUtils.SubtractIntArrayFrom(max, min);
+            CachedSize = new IntSeries(VectorSize, max);
         }
 
         public override float[] FloatValuesCopy => _intValues.ToFloat();
@@ -103,8 +118,15 @@ namespace DataArcs.Stores
         }
         public override bool BoolValueAt(int index)
         {
-            return index >= 0 && index < _intValues.Length ? _intValues[index] != 0 : false;
+            return index >= 0 && index < _intValues.Length && _intValues[index] != 0;
         }
+
+        public override Series GetZeroSeries() { return new IntSeries(VectorSize, DataUtils.GetIntZeroArray(VectorSize)); }
+        public override Series GetZeroSeries(int elementCount) { return GetZeroSeries(VectorSize, elementCount); }
+        public override Series GetMinSeries() { return new IntSeries(VectorSize, DataUtils.GetIntMinArray(VectorSize)); }
+        public override Series GetMaxSeries() { return new IntSeries(VectorSize, DataUtils.GetIntMaxArray(VectorSize)); }
+        
+        public static IntSeries GetZeroSeries(int vectorSize, int elementCount) { return new IntSeries(vectorSize, DataUtils.GetIntZeroArray(vectorSize * elementCount)); }
 
     }
 }

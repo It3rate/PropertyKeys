@@ -9,6 +9,35 @@ namespace DataArcs.Samplers
 {
     public class GridSampler : BaseSampler
     {
+        protected int[] Strides { get; }
+
+        public override Series GetValueAtIndex(Series series, int index)
+        {
+            float indexT = index / (series.DataCount - 1f); // full circle
+            return GetSeriesSample(series, Strides, indexT);
+        }
+
+        public override Series GetValueAtT(Series series, float t)
+        {
+            return GetSeriesSample(series, Strides, t);
+        }
+
+        public static Series GetSeriesSample(Series series, int[] strides, float t)
+        {
+            float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
+            float[] strideTs = GetStrideTsForT(series, strides, t);
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = series.GetValueAtT(strideTs[i]).FloatValuesCopy[i];
+            }
+
+            return Series.Create(series, result);
+        }
+
+
+
+
         public override float[] GetFloatSample(Store valueStore, int index)
         {
             float[] result = valueStore.GetZeroArray();

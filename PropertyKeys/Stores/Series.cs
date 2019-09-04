@@ -20,6 +20,9 @@ namespace DataArcs.Stores
         public SeriesType Type { get; }
         public abstract int DataCount { get; }
 
+        /// <summary>
+        /// Cached frame in four vectorSize data points, x, y, x + width, y + height.
+        /// </summary>
         public Series Frame
         {
             get
@@ -32,6 +35,9 @@ namespace DataArcs.Stores
                 return CachedFrame;
             }
         }
+        /// <summary>
+        /// Cached size in two vectorSize data points, width and height of current data.
+        /// </summary>
         public Series Size
         {
             get
@@ -44,22 +50,20 @@ namespace DataArcs.Stores
                 return CachedSize;
             }
         }
-        public EasingType[] EasingTypes { get; }
         
         protected Series CachedFrame;
         protected Series CachedSize;
 
-        protected Series(int vectorSize, SeriesType type, int virtualCount, EasingType[] easingTypes = null)
+        protected Series(int vectorSize, SeriesType type, int virtualCount)
         {
             Type = type;
             VectorSize = vectorSize;
             VirtualCount = virtualCount;
-            EasingTypes = easingTypes;
         }
 
         public abstract Series GetValueAtIndex(int index); // could be array indexer?
         public abstract Series GetValueAtT(float t);
-        public abstract void HardenToData();
+
         protected abstract void CalculateFrame();
 
         public abstract float FloatValueAt(int index);
@@ -71,8 +75,36 @@ namespace DataArcs.Stores
 
         public abstract void Interpolate(Series b, float t);
 
-        //public abstract Series GetZeroArray();
-        //public abstract Series GetMinArray();
-        //public abstract Series GetMaxArray();
+        public abstract Series GetZeroSeries();
+        public abstract Series GetZeroSeries(int elements);
+        public abstract Series GetMinSeries();
+        public abstract Series GetMaxSeries();
+
+        public static Series Create(Series series, int[] values)
+        {
+            Series result;
+            if (series.Type == SeriesType.Int)
+            {
+                result = new IntSeries(series.VectorSize, values);
+            }
+            else
+            {
+                result = new FloatSeries(series.VectorSize, values.ToFloat());
+            }
+            return result;
+        }
+        public static Series Create(Series series, float[] values)
+        {
+            Series result;
+            if (series.Type == SeriesType.Int)
+            {
+                result = new IntSeries(series.VectorSize, values.ToInt());
+            }
+            else
+            {
+                result = new FloatSeries(series.VectorSize, values);
+            }
+            return result;
+        }
     }
 }

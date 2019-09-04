@@ -13,11 +13,10 @@ namespace DataArcs.Stores
         protected static Random Rnd = new Random();
         protected static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         protected static readonly int[] DefaultStrides = new int[] { 0 }; // zero means repeating, so this is a regular one row array
-        
+
         // move to primitive class that can be float or int arrays.
         public abstract float[] GetFloatValues { get; }
         public abstract int[] GetIntValues { get; }
-        public float CurrentT { get; set; } = 0;
         public int VectorSize { get; } = 1;
         public int ElementCount { get; set; } = 1;
         public abstract int InternalDataCount { get; }
@@ -35,8 +34,9 @@ namespace DataArcs.Stores
                 return result;
             }
         }
-        public EasingType[] EasingTypes { get; set; } // move to properties? No, useful for creating virtual data.
 
+        public float CurrentT { get; set; } = 0;
+        public EasingType[] EasingTypes { get; set; } // move to properties? No, useful for creating virtual data.
         public int[] Strides { get; set; } // move to grid/hex samplers
         protected BaseSampler Sampler { get; set; }
         public abstract GraphicsPath GetPath(); // move to static method on Bezier store
@@ -56,7 +56,7 @@ namespace DataArcs.Stores
         public abstract int[] GetIntArrayAtT(float t);
 
         public abstract float[] GetInterpolatededValueAtT(float t);
-        public abstract void ReplaceSamplerWithData();
+        public abstract void HardenToData();
 
         protected virtual bool BoundsDataReady() => false;
         protected void CalculateBounds(float[] values)

@@ -122,6 +122,35 @@ namespace DataArcs.Stores
             return result;
         }
 
+        public static void SubtractFloatArrayFrom(float[] result, float[] b)
+        {
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (i < b.Length)
+                {
+                    result[i] -= b[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+        public static void SubtractIntArrayFrom(int[] result, int[] b)
+        {
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (i < b.Length)
+                {
+                    result[i] -= b[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
         public static void InterpolateInto(float[] result, float[] b, float t)
         {
             for (int i = 0; i < result.Length; i++)

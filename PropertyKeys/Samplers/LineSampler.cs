@@ -28,5 +28,15 @@ namespace DataArcs.Samplers
         {
             return GetFloatSample(valueStore, t).ToInt();
         }
+
+        public override Series GetValueAtIndex(Series series, int index)
+        {
+            return series.GetValueAtIndex(index);
+        }
+
+        public override Series GetValueAtT(Series series, float t)
+        {
+            return series.GetValueAtT(t);
+        }
     }
 }

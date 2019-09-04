@@ -108,7 +108,7 @@ namespace DataArcs.Stores
             return result.ToFloat();
         }
 
-        public override void ReplaceSamplerWithData()
+        public override void HardenToData()
         {
             int[] concreteValues = new int[ElementCount * VectorSize];
             int index = 0;
