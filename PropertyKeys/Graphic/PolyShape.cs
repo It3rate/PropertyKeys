@@ -1,4 +1,5 @@
-﻿using DataArcs.Stores;
+﻿using DataArcs.Samplers;
+using DataArcs.Stores;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -7,96 +8,97 @@ namespace DataArcs.Graphic
 {
     public class PolyShape : BaseGraphic
     {
-        private BezierStore polygon;
+        private BezierSeries Polygon { get; set; }
+        private BezierSampler Sampler { get; }
 
-        private FloatStore _orientation;
-        private IntStore _pointCount;
-        private FloatStore _starness;
-        private FloatStore _roundness;
-        private FloatStore _radius;
+        public Store Orientation { get; set; }
+        public Store PointCount { get; set; }
+        public Store Starness { get; set; }
+        public Store Roundness { get; set; }
+        public Store Radius { get; set; }
 
         public PolyShape(float radius, float orientation = 0, int pointCount = 4, float roundness = 0, float starness = 0)
         {
-            Orientation = new FloatStore(1, orientation);
-            PointCount = new IntStore(1, pointCount);
-            Roundness = new FloatStore(1, roundness);
-            Radius = new FloatStore(2, radius, radius);
-            Starness = new FloatStore(1, starness);
+            Orientation = new Store(new []{orientation});
+            PointCount = new Store(new[] { pointCount });
+            Roundness = new Store(new[] { roundness });
+            Starness = new Store(new[] { starness});
+            Radius = new Store(new FloatSeries(2, radius, radius));
         }
         public PolyShape(float[] radius, float[] orientation = null, int[] pointCount = null, float[] roundness = null, float[] starness = null)
         {
-            Orientation = (orientation == null) ? new FloatStore(1, 0f) : new FloatStore(1, orientation);
-            PointCount = (pointCount == null) ? new IntStore(1, 4) : new IntStore(1, pointCount);
-            Roundness = (roundness == null) ? new FloatStore(1, 0f) : new FloatStore(1, roundness);
-            Radius = (radius == null) ? new FloatStore(2, 10f, 10f) : new FloatStore(2, radius);
-            Starness = (starness == null) ? new FloatStore(1, 0f) : new FloatStore(1, starness);
+            Orientation = (orientation == null) ? new Store(new[] { 0f }) : new Store(orientation);
+            PointCount = (pointCount == null) ? new Store(new[] { 4 }) : new Store(pointCount);
+            Roundness = (roundness == null) ? new Store(new[] { 0f }) : new Store(roundness);
+            Starness = (starness == null) ? new Store(new[] { 1, 0f}) : new Store(starness);
+            Radius = (radius == null) ? new Store(new FloatSeries(2, 10f, 10f)) : new Store(new FloatSeries(2, radius));
         }
 
-        public FloatStore Orientation
-        {
-            get => _orientation;
-            set
-            {
-                // todo: calc isDirty flag using a separate 't' array, one for each property
-                //if (Math.Abs(_orientation - value) > DataUtils.TOLERANCE)
-                {
-                    _orientation = value;
-                    //GeneratePolyShape();
-                }
-            }
-        }
+        //public FloatStore Orientation
+        //{
+        //    get => _orientation;
+        //    set
+        //    {
+        //        // todo: calc isDirty flag using a separate 't' array, one for each property
+        //        //if (Math.Abs(_orientation - value) > DataUtils.TOLERANCE)
+        //        {
+        //            _orientation = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
-        public IntStore PointCount
-        {
-            get => _pointCount;
-            set
-            {
-                //if (Math.Abs(_pointCount - value) > DataUtils.TOLERANCE)
-                {
-                    _pointCount = value;
-                    //GeneratePolyShape();
-                }
-            }
-        }
+        //public IntStore PointCount
+        //{
+        //    get => _pointCount;
+        //    set
+        //    {
+        //        //if (Math.Abs(_pointCount - value) > DataUtils.TOLERANCE)
+        //        {
+        //            _pointCount = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
-        public FloatStore Starness
-        {
-            get => _starness;
-            set
-            {
-                //if (Math.Abs(_starness - value) > DataUtils.TOLERANCE)
-                {
-                    _starness = value;
-                    //GeneratePolyShape();
-                }
-            }
-        }
+        //public FloatStore Starness
+        //{
+        //    get => _starness;
+        //    set
+        //    {
+        //        //if (Math.Abs(_starness - value) > DataUtils.TOLERANCE)
+        //        {
+        //            _starness = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
-        public FloatStore Roundness
-        {
-            get => _roundness;
-            set
-            {
-                //if (Math.Abs(_roundness - value) > DataUtils.TOLERANCE)
-                {
-                    _roundness = value;
-                    //GeneratePolyShape();
-                }
-            }
-        }
+        //public FloatStore Roundness
+        //{
+        //    get => _roundness;
+        //    set
+        //    {
+        //        //if (Math.Abs(_roundness - value) > DataUtils.TOLERANCE)
+        //        {
+        //            _roundness = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
-        public FloatStore Radius
-        {
-            get => _radius;
-            set
-            {
-                //if (Math.Abs(_radius - value) > DataUtils.TOLERANCE)
-                {
-                    _radius = value;
-                    //GeneratePolyShape();
-                }
-            }
-        }
+        //public FloatStore Radius
+        //{
+        //    get => _radius;
+        //    set
+        //    {
+        //        //if (Math.Abs(_radius - value) > DataUtils.TOLERANCE)
+        //        {
+        //            _radius = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
 
         public override void Draw(Graphics g, Brush brush, Pen pen, float t)
@@ -104,26 +106,26 @@ namespace DataArcs.Graphic
             GeneratePolyShape(t,t,t,t,t);
             if (brush != null)
             {
-                g.FillPath(brush, polygon.Path);
+                g.FillPath(brush, Polygon.Path());
             }
 
             if (pen != null)
             {
-                g.DrawPath(pen, polygon.Path);
+                g.DrawPath(pen, Polygon.Path());
             }
         }
         public void GeneratePolyShape(float radiusT, float pointCountT = 0, float orientationT = 0, float roundnessT = 0, float starnessT = 0)
         {
-            float orientation = Orientation.GetFloatArrayAtT(orientationT)[0];
-            float roundness = Roundness.GetFloatArrayAtT(roundnessT)[0];
-            float[] radius = Radius.GetFloatArrayAtT(radiusT);
+            float orientation = Orientation.GetValueAtT(orientationT).FloatValuesCopy[0];
+            float roundness = Roundness.GetValueAtT(roundnessT).FloatValuesCopy[0];
+            float[] radius = Radius.GetValueAtT(radiusT).FloatValuesCopy;
             float radiusX = radius[0];
             float radiusY = radius.Length > 1 ? radius[1] : radius[0];
-            float starness = Starness.GetFloatArrayAtT(starnessT)[0];
-            int pointCount = PointCount.GetIntArrayAtT(pointCountT)[0];
-            polygon = GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
+            float starness = Starness.GetValueAtT(starnessT).FloatValuesCopy[0];
+            int pointCount = PointCount.GetValueAtT(pointCountT).IntValuesCopy[0];
+            Polygon = GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
         }
-        public static BezierStore GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
+        public static BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
         {
             bool hasStarness = Math.Abs(starness) > 0.001f;
             int count = hasStarness ? pointCount * 2 : pointCount;
@@ -149,7 +151,7 @@ namespace DataArcs.Graphic
                     moves[i * pointsPerStep / 2 + 1] = BezierMove.LineTo;
                 }
             }
-            return new BezierStore(values, moves);
+            return new BezierSeries(values, moves);
         }
     }
 }

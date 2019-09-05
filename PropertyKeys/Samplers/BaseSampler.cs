@@ -45,55 +45,55 @@ namespace DataArcs.Samplers
         public abstract Series GetValueAtIndex(Series series, int index);
         public abstract Series GetValueAtT(Series series, float t);
 
-        public abstract float[] GetFloatSample(Store valueStore, int index);
-        public abstract float[] GetFloatSample(Store valueStore, float t);
-        public abstract int[] GetIntSample(Store valueStore, int index);
-        public abstract int[] GetIntSample(Store valueStore, float t);
+        //public abstract float[] GetFloatSample(Store valueStore, int index);
+        //public abstract float[] GetFloatSample(Store valueStore, float t);
+        //public abstract int[] GetIntSample(Store valueStore, int index);
+        //public abstract int[] GetIntSample(Store valueStore, float t);
 
-        public float[] GetStrideTsForIndex(Store valueStore, int index)
-        {
-            return GetStrideTsForT(valueStore, (float)index / valueStore.ElementCount);
-        }
-        public float[] GetStrideTsForT(Store valueStore, float t)
-        {
-            int index = (int)Math.Round(t * valueStore.ElementCount);
-            float remainder = t * valueStore.ElementCount - index;
-            remainder = (Math.Abs(remainder) < 0.0001) ? 0 : remainder;
+        //public float[] GetStrideTsForIndex(Store valueStore, int index)
+        //{
+        //    return GetStrideTsForT(valueStore, (float)index / valueStore.ElementCount);
+        //}
+        //public float[] GetStrideTsForT(Store valueStore, float t)
+        //{
+        //    int index = (int)Math.Round(t * valueStore.ElementCount);
+        //    float remainder = t * valueStore.ElementCount - index;
+        //    remainder = (Math.Abs(remainder) < 0.0001) ? 0 : remainder;
 
-            float[] result = valueStore.GetZeroArray();
-            float dimT = 0;
-            int curSize = 1;
-            int prevSize = curSize; // prevSize allows rendering to edges of grid
-            float[] temp = valueStore.GetZeroArray();
-            // Need to sample in each dimension of the vector and completely fill the remainder once zero is hit.
-            for (int i = 0; i < result.Length; i++)
-            {
-                // first zero results in fill to end
-                bool isLast = (valueStore.Strides.Length - 1 < i) || (valueStore.Strides[i] == 0);
-                if (isLast)
-                {
-                    dimT = (index / curSize) / (float)(valueStore.ElementCount / (curSize + prevSize)) + remainder;
-                }
-                else
-                {
-                    prevSize = curSize;
-                    curSize *= valueStore.Strides[i];
-                    dimT = (index % curSize) / (float)(curSize - prevSize);
-                }
+        //    float[] result = valueStore.GetZeroArray();
+        //    float dimT = 0;
+        //    int curSize = 1;
+        //    int prevSize = curSize; // prevSize allows rendering to edges of grid
+        //    float[] temp = valueStore.GetZeroArray();
+        //    // Need to sample in each dimension of the vector and completely fill the remainder once zero is hit.
+        //    for (int i = 0; i < result.Length; i++)
+        //    {
+        //        // first zero results in fill to end
+        //        bool isLast = (valueStore.Strides.Length - 1 < i) || (valueStore.Strides[i] == 0);
+        //        if (isLast)
+        //        {
+        //            dimT = (index / curSize) / (float)(valueStore.ElementCount / (curSize + prevSize)) + remainder;
+        //        }
+        //        else
+        //        {
+        //            prevSize = curSize;
+        //            curSize *= valueStore.Strides[i];
+        //            dimT = (index % curSize) / (float)(curSize - prevSize);
+        //        }
 
-                if (i < valueStore.EasingTypes.Length)
-                {
-                    dimT = Easing.GetValueAt(dimT, valueStore.EasingTypes[i]);
-                }
-                result[i] = dimT;
+        //        if (i < valueStore.EasingTypes.Length)
+        //        {
+        //            dimT = Easing.GetValueAt(dimT, valueStore.EasingTypes[i]);
+        //        }
+        //        result[i] = dimT;
 
-                if (isLast)
-                {
-                    break;
-                }
-            }
-            return result;
-        }
+        //        if (isLast)
+        //        {
+        //            break;
+        //        }
+        //    }
+        //    return result;
+        //}
 
         public static float[] GetStrideTsForIndex(Series series, int[] strides, int index)
         {
@@ -102,8 +102,8 @@ namespace DataArcs.Samplers
         public static float[] GetStrideTsForT(Series series, int[] strides, float t)
         {
             int index = (int)Math.Round(t * series.VirtualCount);
-            float remainder = t * series.VirtualCount - index;
-            remainder = (Math.Abs(remainder) < 0.0001) ? 0 : remainder;
+            //float remainder = t * series.VirtualCount - index;
+            //remainder = (Math.Abs(remainder) < 0.0001) ? 0 : remainder;
 
             float[] result = series.GetZeroSeries().FloatValuesCopy;
             float dimT = 0;
@@ -117,7 +117,8 @@ namespace DataArcs.Samplers
                 bool isLast = (strides.Length - 1 < i) || (strides[i] == 0);
                 if (isLast)
                 {
-                    dimT = (index / curSize) / (float)(series.VirtualCount / (curSize + prevSize)) + remainder;
+                    int totalRows = series.VirtualCount / (curSize + prevSize);
+                    dimT = (int)(index / curSize) / (float)totalRows;// + remainder;
                 }
                 else
                 {

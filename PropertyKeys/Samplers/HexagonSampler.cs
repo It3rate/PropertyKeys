@@ -18,7 +18,7 @@ namespace DataArcs.Samplers
 
         public override Series GetValueAtIndex(Series series, int index)
         {
-            float indexT = index / (series.DataCount - 1f); // full circle
+            float indexT = index / (series.VirtualCount - 1f); 
             return GetSeriesSample(series, Strides, index);
         }
 
@@ -33,7 +33,7 @@ namespace DataArcs.Samplers
             float[] frame = series.Frame.FloatValuesCopy; // x0,y0...n0, x1,y1..n1
             float[] size = series.Size.FloatValuesCopy; // s0,s1...sn
 
-            float[] strideTs = GetStrideTsForT(series, strides, index);
+            float[] strideTs = GetStrideTsForIndex(series, strides, index);
 
             for (int i = 0; i < result.Length; i++)
             {
@@ -48,49 +48,44 @@ namespace DataArcs.Samplers
                     result[i] = temp;
                 }
             }
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result[i] = series.GetValueAtT(strideTs[i]).FloatValuesCopy[i];
-            }
-
+            
             return Series.Create(series, result);
         }
 
 
 
-        public override float[] GetFloatSample(Store valueStore, int index)
-        {
-            float[] result = valueStore.GetZeroArray();
-            float[] strideTs = GetStrideTsForIndex(valueStore, index);
-            for (int i = 0; i < result.Length; i++)
-            {
-                float temp = valueStore.GetInterpolatededValueAtT(strideTs[i])[i];
-                int curRow = (int)((float)index / valueStore.Strides[0]);
-                if(i == 0 && ((curRow & 1) == 1) && valueStore.Strides[0] > 0)
-                {
-                    result[i] = temp + (valueStore.Size[0] / (valueStore.Strides[0] - 1f) * 0.5f);
-                }
-                else
-                {
-                    result[i] = temp;
-                }
-            }
-            return result;
-        }
-        public override float[] GetFloatSample(Store valueStore, float t)
-        {
-            return valueStore.GetInterpolatededValueAtT(t);
-        }
+        //public override float[] GetFloatSample(Store valueStore, int index)
+        //{
+        //    float[] result = valueStore.GetZeroArray();
+        //    float[] strideTs = GetStrideTsForIndex(valueStore, index);
+        //    for (int i = 0; i < result.Length; i++)
+        //    {
+        //        float temp = valueStore.GetInterpolatededValueAtT(strideTs[i])[i];
+        //        int curRow = (int)((float)index / valueStore.Strides[0]);
+        //        if(i == 0 && ((curRow & 1) == 1) && valueStore.Strides[0] > 0)
+        //        {
+        //            result[i] = temp + (valueStore.Size[0] / (valueStore.Strides[0] - 1f) * 0.5f);
+        //        }
+        //        else
+        //        {
+        //            result[i] = temp;
+        //        }
+        //    }
+        //    return result;
+        //}
+        //public override float[] GetFloatSample(Store valueStore, float t)
+        //{
+        //    return valueStore.GetInterpolatededValueAtT(t);
+        //}
 
-        public override int[] GetIntSample(Store valueStore, int index)
-        {
-            return GetFloatSample(valueStore, index).ToInt();
-        }
+        //public override int[] GetIntSample(Store valueStore, int index)
+        //{
+        //    return GetFloatSample(valueStore, index).ToInt();
+        //}
 
-        public override int[] GetIntSample(Store valueStore, float t)
-        {
-            return GetFloatSample(valueStore, t).ToInt();
-        }
+        //public override int[] GetIntSample(Store valueStore, float t)
+        //{
+        //    return GetFloatSample(valueStore, t).ToInt();
+        //}
     }
 }

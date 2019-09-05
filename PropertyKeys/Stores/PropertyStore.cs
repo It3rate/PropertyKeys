@@ -15,7 +15,7 @@ namespace DataArcs.Stores
     }
     public class PropertyStore
     {
-        public readonly FloatStore[] ValueStores;
+        public readonly Store[] ValueStores;
         public EasingType EasingType;
 
         public CombineFunction CombineFunction { get; } = CombineFunction.Replace;
@@ -25,12 +25,13 @@ namespace DataArcs.Stores
 
         public float CurrentT { get; set; } = 0;
 
-        public PropertyStore(FloatStore[] valueStores, EasingType easingType = EasingType.Linear)
+        public PropertyStore(Store[] valueStores, EasingType easingType = EasingType.Linear)
         {
             ValueStores = valueStores;
             EasingType = easingType;
         }
-
+        
+        // todo: return series
         public float[] GetValuesAtIndex(int index, float t)
         {
             float[] result;
@@ -40,7 +41,7 @@ namespace DataArcs.Stores
 
             if (startIndex == endIndex)
             {
-                result = ValueStores[startIndex].GetFloatArrayAtIndex(index);
+                result = ValueStores[startIndex].GetValueAtIndex(index).FloatValuesCopy;
             }
             else
             {
@@ -58,7 +59,7 @@ namespace DataArcs.Stores
 
             if (startIndex == endIndex)
             {
-                result = ValueStores[startIndex].GetFloatArrayAtT(vT);
+                result = ValueStores[startIndex].GetValueAtT(vT).FloatValuesCopy;
             }
             else
             {
@@ -76,12 +77,12 @@ namespace DataArcs.Stores
 
             if (startIndex == endIndex)
             {
-                result = ValueStores[startIndex].ElementCount;
+                result = ValueStores[startIndex].VirtualCount;
             }
             else
             {
-                int sec = ValueStores[startIndex].ElementCount;
-                int eec = ValueStores[startIndex + 1].ElementCount;
+                int sec = ValueStores[startIndex].VirtualCount;
+                int eec = ValueStores[startIndex + 1].VirtualCount;
                 result = sec + (int)(vT * (eec - sec));
             }
             return result;
@@ -90,22 +91,22 @@ namespace DataArcs.Stores
 
 
 
-        public static float[] BlendValueAtIndex(FloatStore start, FloatStore end, int index, float t)
+        public static float[] BlendValueAtIndex(Store start, Store end, int index, float t)
         {
-            float[] result = start.GetFloatArrayAtIndex(index);
+            float[] result = start.GetValueAtIndex(index).FloatValuesCopy;
             if (end != null)
             {
-                float[] endAr = end.GetFloatArrayAtIndex(index);
+                float[] endAr = end.GetValueAtIndex(index).FloatValuesCopy;
                 DataUtils.InterpolateInto(result, endAr, t);
             }
             return result;
         }
-        public static float[] BlendValueAtT(FloatStore start, FloatStore end, float index_t, float t)
+        public static float[] BlendValueAtT(Store start, Store end, float indexT, float t)
         {
-            float[] result = start.GetFloatArrayAtT(index_t);
+            float[] result = start.GetValueAtT(indexT).FloatValuesCopy;
             if (end != null)
             {
-                float[] endAr = end.GetFloatArrayAtT(index_t);
+                float[] endAr = end.GetValueAtT(indexT).FloatValuesCopy;
                 DataUtils.InterpolateInto(result, endAr, t);
             }
             return result;

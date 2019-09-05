@@ -16,7 +16,7 @@ namespace DataArcs.Stores
     public abstract class Series
     {
         public int VectorSize { get; }
-        public int VirtualCount { get; }
+        public int VirtualCount { get; set; }
         public SeriesType Type { get; }
         public abstract int DataCount { get; }
 

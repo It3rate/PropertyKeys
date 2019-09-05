@@ -8,7 +8,7 @@ namespace DataArcs.Stores
 {
     public class FloatSeries : Series
     {
-        private readonly float[] _floatValues;
+        protected readonly float[] _floatValues;
         public override int DataCount => _floatValues.Length;
 
         public FloatSeries(int vectorSize, float[] values, int virtualCount = -1) :
@@ -64,8 +64,8 @@ namespace DataArcs.Stores
         
         protected override void CalculateFrame()
         {
-            float[] min = DataUtils.GetFloatMinArray(VectorSize);
-            float[] max = DataUtils.GetFloatMaxArray(VectorSize);
+            float[] min = DataUtils.GetFloatMaxArray(VectorSize);
+            float[] max = DataUtils.GetFloatMinArray(VectorSize);
 
             for (int i = 0; i < DataCount; i += VectorSize)
             {

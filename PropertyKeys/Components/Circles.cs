@@ -54,23 +54,22 @@ namespace DataArcs.Components
                 //graphic.Orientation = 0.5f;
                 float armLen = totalWidth / (float)(cols - 1) / 3f;
                 float height = (armLen * (float)Math.Sqrt(3)) / 2f * (rows - 1f);
-                graphic.Radius = new FloatStore(2, armLen, armLen, armLen, armLen * 1.5f);
+                graphic.Radius = new Store(new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f));
 
-                float[] start = new float[] { 150, 150,   150 + totalWidth, 150 + height };
-                var startStore = new FloatStore(2, start, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+                float[] start = { 150, 150,   150 + totalWidth, 150 + height };
+                BaseSampler hexSampler = new HexagonSampler(new [] { cols, 0, 0 });
+                var startStore = new Store(new FloatSeries(2, start, virtualCount: cols * rows), sampler: hexSampler);
 
-                float[] end = new float[] {
-                    startStore[0][0] - growth, startStore[0][1] - growth,
-                    startStore[1][0] + growth, startStore[1][1] + growth};
-                var endStore = new FloatStore(2, end, elementCount: cols * rows, dimensions: new int[] { cols, 0, 0 }, sampleType: SampleType.Hexagon);
+                float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
+                var endStore = new Store(new FloatSeries(2, end, virtualCount: cols * rows), sampler: hexSampler);
                 startStore.HardenToData();
                 endStore.HardenToData();
-                object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore, endStore }, easingType:EasingType.Linear));
+                object1.AddProperty(PropertyID.Location, new PropertyStore(new []{ startStore, endStore }, easingType:EasingType.Linear));
                 wanders = (version == 1);
             }
             else if (version == 2)
             {
-                graphic.Radius = new FloatStore(2, 10f, 15f, 20f,15f);
+                graphic.Radius = new Store(new FloatSeries(2, 10f, 15f, 20f, 15f));
                 const int count = 50;
                 const int vectorSize = 2;
                 float[] start = new float[count * vectorSize];
@@ -82,25 +81,27 @@ namespace DataArcs.Components
                     end[i] = start[i] + rnd.Next((int)start[i]) - start[i] / 2.0f;
                     end[i + 1] = start[i + 1] + rnd.Next(100) - 50;
                 }
-                var startStore = new FloatStore(vectorSize, start);
-                var endStore = new FloatStore(vectorSize, end);
+                var startStore = new Store(new FloatSeries(vectorSize, start));
+                var endStore = new Store(new FloatSeries(vectorSize, end));
 
-                object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore, endStore }));
+                object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }));
                 wanders = true;
             }
             else if (version == 3)
             {
-                graphic.Radius = new FloatStore(2, 5f, 5f, 20f, 20f);
+                BaseSampler ringSampler = new RingSampler();
+                BaseSampler gridSampler = new GridSampler(new[] { 10, 0, 0 });
+                graphic.Radius = new Store(new FloatSeries(2, 5f, 5f, 20f, 20f));
                 int vectorSize = 2;
                 float[] start = new float[] { 200, 40, 400, 200 };
                 float[] end = new float[] { 100, 100, 500, 400 };
-                var startStore = new FloatStore(vectorSize, start, elementCount: 46, dimensions: new int[] { 4, 0, 0 }, sampleType: SampleType.Ring);
-                var endStore = new FloatStore(vectorSize, end, elementCount: 100, dimensions: new int[] { 10, 0, 0 },
-                    easingTypes: new EasingType[] { EasingType.EaseCenter, EasingType.EaseCenter }, sampleType: SampleType.Grid);
+                var startStore = new Store(new FloatSeries(vectorSize, start, virtualCount: 46), sampler: ringSampler);
+                var endStore = new Store(new FloatSeries(vectorSize, end, virtualCount: 100),
+                    easingTypes: new EasingType[] { EasingType.EaseCenter, EasingType.EaseCenter }, sampler: gridSampler);
 
-                object1.AddProperty(PropertyID.Location, new PropertyStore(new FloatStore[] { startStore,  endStore }, easingType: EasingType.Linear));
-                
-                
+                object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }, easingType: EasingType.Linear));
+
+
                 wanders = false;
             }
 
@@ -108,13 +109,14 @@ namespace DataArcs.Components
 
             if (wanders)
             {
+                BaseSampler linearSampler = new LineSampler();
                 PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
-                int len = loc.ValueStores[0].ElementCount * 2;
-                PropertyStore  wander = new PropertyStore(new FloatStore[] {
-                new FloatStore(2, new float[len], sampleType: SampleType.Line),
-                new FloatStore(2, new float[len], sampleType: SampleType.Line)});
-                wander.ValueStores[0].ElementCount = loc.ValueStores[0].ElementCount;
-                wander.ValueStores[1].ElementCount = loc.ValueStores[1].ElementCount;
+                int len = loc.ValueStores[0].VirtualCount * 2;
+                PropertyStore  wander = new PropertyStore(new [] {
+                new Store(new FloatSeries(2, new float[len]), sampler: linearSampler),
+                new Store(new FloatSeries(2, new float[len]), sampler: linearSampler)});
+                wander.ValueStores[0].VirtualCount = loc.ValueStores[0].VirtualCount;
+                wander.ValueStores[1].VirtualCount = loc.ValueStores[1].VirtualCount;
                 object1.AddProperty(PropertyID.RandomMotion, wander);
             }
 
@@ -122,11 +124,12 @@ namespace DataArcs.Components
 
         private PropertyStore GetTestColors()
         {
+            BaseSampler linearSampler = new LineSampler();
             float[] start = new float[] { 0.3f, 0.1f, 0.2f,   1f, 1f, 0,  0, 0.15f, 1f,   0, 0.5f, 0.1f };
             float[] end = new float[] { 0, 0.2f, 0.7f,   0.8f, 0, 0.3f,    0.7f, 1f, 0.1f,   0.4f, 0, 1f };
-            var colorStartStore = new FloatStore(3, start, sampleType: SampleType.Line);
-            var colorEndStore = new FloatStore(3, end, sampleType: SampleType.Line, easingTypes: new EasingType[] { EasingType.Squared });
-            return new PropertyStore(new FloatStore[] { colorStartStore, colorEndStore }, easingType: EasingType.InverseSquared);
+            var colorStartStore = new Store(new FloatSeries(3, start), sampler:linearSampler);
+            var colorEndStore = new Store(new FloatSeries(3, end), sampler: linearSampler, easingTypes: new EasingType[] { EasingType.Squared });
+            return new PropertyStore(new Store[] { colorStartStore, colorEndStore }, easingType: EasingType.InverseSquared);
         }
 
         public void Draw(Graphics g, float t)
@@ -147,8 +150,8 @@ namespace DataArcs.Components
                 float[] v = loc.GetValuesAtIndex(i, easedT);// + it - (1f-easedT));
                 if (wander != null)
                 {
-                    wander.ValueStores[0].NudgeValuesBy(0.4f);
-                    wander.ValueStores[1].NudgeValuesBy(0.4f);
+                    //wander.ValueStores[0].NudgeValuesBy(0.4f);
+                    //wander.ValueStores[1].NudgeValuesBy(0.4f);
                     float[] wan = wander.GetValuesAtIndex(i, easedT);
                     v[0] += wan[0];
                     v[1] += wan[1];

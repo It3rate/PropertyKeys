@@ -17,7 +17,7 @@ namespace DataArcs.Components
         public int Columns { get; set; }
         public float Spacing { get; set; }
         //public PolyShape Shape { get; set; }
-        public FloatStore Locations { get; set; }
+        //public FloatStore Locations { get; set; }
 
         public Matrix Transform { get; set; }
 
@@ -39,7 +39,7 @@ namespace DataArcs.Components
             float totalHeight = (armLen * (float)Math.Sqrt(3)) / 2f * (Rows - 1f);
             //Shape.Radius = armLen + Spacing * armLen;
             float[] start = new float[] { 0, 0, totalWidth, totalHeight };
-            Locations = new FloatStore(2, start, elementCount: Columns * Columns, dimensions: new int[] { Columns, 0, 0 }, sampleType: SampleType.Hexagon);
+            //Locations = new FloatStore(2, start, elementCount: Columns * Columns, dimensions: new int[] { Columns, 0, 0 }, sampleType: SampleType.Hexagon);
         }
     }
 }

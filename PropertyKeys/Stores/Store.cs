@@ -8,7 +8,7 @@ using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
-    public abstract class Store
+    public class Store
     {
         protected static Random Rnd = new Random();
         protected static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
@@ -17,86 +17,122 @@ namespace DataArcs.Stores
         protected Series Series { get; set; }
 
         // move to primitive class that can be float or int arrays.
-        public abstract float[] GetFloatValues { get; }
-        public abstract int[] GetIntValues { get; }
-        public int VectorSize { get; } = 1;
-        public int ElementCount { get; set; } = 1;
-        public abstract int InternalDataCount { get; }
-        public virtual float[] MinBounds { get; protected set; }
-        public virtual float[] MaxBounds { get; protected set; }
-        public virtual float[] Size
-        {
-            get
-            {
-                float[] result = FloatStore.GetZeroArray(VectorSize);
-                for (int i = 0; i < VectorSize; i++)
-                {
-                    result[i] = MaxBounds[i] - MinBounds[i];
-                }
-                return result;
-            }
-        }
+        //public int VectorSize { get; } = 1;
+        //public int ElementCount { get; set; } = 1;
+        //public abstract int InternalDataCount { get; }
+        //public virtual float[] MinBounds { get; protected set; }
+        //public virtual float[] MaxBounds { get; protected set; }
+        //public virtual float[] Size
+        //{
+        //    get
+        //    {
+        //        float[] result = FloatStore.GetZeroArray(VectorSize);
+        //        for (int i = 0; i < VectorSize; i++)
+        //        {
+        //            result[i] = MaxBounds[i] - MinBounds[i];
+        //        }
+        //        return result;
+        //    }
+        //}
+        //public int[] Strides { get; set; } // move to grid/hex samplers
         
         public EasingType[] EasingTypes { get; set; } // move to properties? No, useful for creating virtual data.
-        public int[] Strides { get; set; } // move to grid/hex samplers
         protected BaseSampler Sampler { get; set; }
-        public abstract GraphicsPath GetPath(); // move to static method on Bezier store
+        public virtual GraphicsPath GetPath(){return null;} // move to static method on Bezier store
+        public int VirtualCount
+        {
+            get => Series.VirtualCount;
+            set => Series.VirtualCount = value;
+        }
 
-
-        public Store(Series series, BaseSampler sampler, EasingType[] easingTypes = null)
+        public Store(Series series, BaseSampler sampler = null, EasingType[] easingTypes = null)
         {
             Series = series;
-            Sampler = sampler;
+            Sampler = sampler ?? new LineSampler();
             EasingTypes = easingTypes ?? DefaultEasing;
+        }
+        public Store(int[] data, BaseSampler sampler = null, EasingType[] easingTypes = null) : this(new IntSeries(1, data), sampler, easingTypes) {}
+        public Store(float[] data, BaseSampler sampler = null, EasingType[] easingTypes = null) : this(new FloatSeries(1, data), sampler, easingTypes) {}
+
+        public Series GetValueAtIndex(int index)
+        {
+            Series result;
+            if (Sampler != null)
+            {
+                result = Sampler.GetValueAtIndex(Series, index);
+            }
+            else // direct sample of data
+            {
+                result = Series.GetValueAtIndex(index);
+            }
+            return result;
         }
 
-        public Store(int vectorSize, int[] dimensions = null, EasingType[] easingTypes = null)
+        public Series GetValueAtT(float t)
         {
-            VectorSize = vectorSize;
-            Strides = dimensions ?? DefaultStrides;
-            EasingTypes = easingTypes ?? DefaultEasing;
+            Series result;
+            if (Sampler != null)
+            {
+                result = Sampler.GetValueAtT(Series, t);
+            }
+            else // direct sample of data
+            {
+                result = GetValueAtT(t);
+            }
+            return result;
         }
+
+        public void HardenToData()
+        {
+        }
+
+
+        //public Store(int vectorSize, int[] dimensions = null, EasingType[] easingTypes = null)
+        //{
+        //    VectorSize = vectorSize;
+        //    Strides = dimensions ?? DefaultStrides;
+        //    EasingTypes = easingTypes ?? DefaultEasing;
+        //}
 
         // these should be Vector GetValueAtIndex/T - Vector being convertible to float or int arrays.
-        public abstract float[] GetFloatArrayAtIndex(int index);
-        public abstract float[] GetFloatArrayAtT(float t);
-        public abstract int[] GetIntArrayAtIndex(int index);
-        public abstract int[] GetIntArrayAtT(float t);
+        //public abstract float[] GetFloatArrayAtIndex(int index);
+        //public abstract float[] GetFloatArrayAtT(float t);
+        //public abstract int[] GetIntArrayAtIndex(int index);
+        //public abstract int[] GetIntArrayAtT(float t);
 
-        public abstract float[] GetInterpolatededValueAtT(float t);
-        public abstract void HardenToData();
+        //public abstract float[] GetInterpolatededValueAtT(float t);
 
-        protected virtual bool BoundsDataReady() => false;
-        protected void CalculateBounds(float[] values)
-        {
-            if (BoundsDataReady())
-            {
-                MinBounds = FloatStore.GetMaxArray(VectorSize);
-                MaxBounds = FloatStore.GetMinArray(VectorSize);
+        //protected virtual bool BoundsDataReady() => false;
+        //protected void CalculateBounds(float[] values)
+        //{
+        //    if (BoundsDataReady())
+        //    {
+        //        MinBounds = FloatStore.GetMaxArray(VectorSize);
+        //        MaxBounds = FloatStore.GetMinArray(VectorSize);
 
-                for (int i = 0; i < values.Length; i += VectorSize)
-                {
-                    for (int j = 0; j < VectorSize; j++)
-                    {
-                        if (values[i + j] < MinBounds[j])
-                        {
-                            MinBounds[j] = values[i + j];
-                        }
+        //        for (int i = 0; i < values.Length; i += VectorSize)
+        //        {
+        //            for (int j = 0; j < VectorSize; j++)
+        //            {
+        //                if (values[i + j] < MinBounds[j])
+        //                {
+        //                    MinBounds[j] = values[i + j];
+        //                }
 
-                        if (values[i + j] > MaxBounds[j])
-                        {
-                            MaxBounds[j] = values[i + j];
-                        }
-                    }
-                }
-            }
-        }
-        public float[] GetZeroArray() { return DataUtils.GetFloatZeroArray(VectorSize); }
-        public float[] GetMinArray() { return DataUtils.GetFloatMinArray(VectorSize); }
-        public float[] GetMaxArray() { return DataUtils.GetFloatMaxArray(VectorSize); }
+        //                if (values[i + j] > MaxBounds[j])
+        //                {
+        //                    MaxBounds[j] = values[i + j];
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        //public float[] GetZeroArray() { return DataUtils.GetFloatZeroArray(VectorSize); }
+        //public float[] GetMinArray() { return DataUtils.GetFloatMinArray(VectorSize); }
+        //public float[] GetMaxArray() { return DataUtils.GetFloatMaxArray(VectorSize); }
 
-        public static float[] GetZeroArray(int size) { return DataUtils.GetFloatZeroArray(size); }
-        public static float[] GetMinArray(int size) { return DataUtils.GetFloatMinArray(size); }
-        public static float[] GetMaxArray(int size) { return DataUtils.GetFloatMaxArray(size); }
+        //public static float[] GetZeroArray(int size) { return DataUtils.GetFloatZeroArray(size); }
+        //public static float[] GetMinArray(int size) { return DataUtils.GetFloatMinArray(size); }
+        //public static float[] GetMaxArray(int size) { return DataUtils.GetFloatMaxArray(size); }
     }
 }
