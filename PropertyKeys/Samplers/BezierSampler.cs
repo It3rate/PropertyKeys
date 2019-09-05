@@ -7,7 +7,7 @@ using DataArcs.Stores;
 
 namespace DataArcs.Samplers
 {
-    public class BezierSampler : BaseSampler
+    public class BezierSampler : Sampler
     {
         public override Series GetValueAtIndex(Series series, int index)
         {

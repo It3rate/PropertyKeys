@@ -57,7 +57,7 @@ namespace DataArcs.Components
                 graphic.Radius = new Store(new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f));
 
                 float[] start = { 150, 150,   150 + totalWidth, 150 + height };
-                BaseSampler hexSampler = new HexagonSampler(new [] { cols, 0, 0 });
+                Sampler hexSampler = new HexagonSampler(new [] { cols, 0, 0 });
                 var startStore = new Store(new FloatSeries(2, start, virtualCount: cols * rows), sampler: hexSampler);
 
                 float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
@@ -89,8 +89,8 @@ namespace DataArcs.Components
             }
             else if (version == 3)
             {
-                BaseSampler ringSampler = new RingSampler();
-                BaseSampler gridSampler = new GridSampler(new[] { 10, 0, 0 });
+                Sampler ringSampler = new RingSampler();
+                Sampler gridSampler = new GridSampler(new[] { 10, 0, 0 });
                 graphic.Radius = new Store(new FloatSeries(2, 5f, 5f, 20f, 20f));
                 int vectorSize = 2;
                 float[] start = new float[] { 200, 40, 400, 200 };
@@ -109,7 +109,7 @@ namespace DataArcs.Components
 
             if (wanders)
             {
-                BaseSampler linearSampler = new LineSampler();
+                Sampler linearSampler = new LineSampler();
                 PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
                 int len = loc.ValueStores[0].VirtualCount * 2;
                 PropertyStore  wander = new PropertyStore(new [] {
@@ -124,7 +124,7 @@ namespace DataArcs.Components
 
         private PropertyStore GetTestColors()
         {
-            BaseSampler linearSampler = new LineSampler();
+            Sampler linearSampler = new LineSampler();
             float[] start = new float[] { 0.3f, 0.1f, 0.2f,   1f, 1f, 0,  0, 0.15f, 1f,   0, 0.5f, 0.1f };
             float[] end = new float[] { 0, 0.2f, 0.7f,   0.8f, 0, 0.3f,    0.7f, 1f, 0.1f,   0.4f, 0, 1f };
             var colorStartStore = new Store(new FloatSeries(3, start), sampler:linearSampler);

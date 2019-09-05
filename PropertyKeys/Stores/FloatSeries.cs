@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataArcs.Stores
 {
@@ -12,12 +8,12 @@ namespace DataArcs.Stores
         public override int DataCount => _floatValues.Length;
 
         public FloatSeries(int vectorSize, float[] values, int virtualCount = -1) :
-            base(vectorSize, SeriesType.Int, (virtualCount <= 0) ? values.Length / vectorSize : virtualCount)
+            base(vectorSize, SeriesType.Float, (virtualCount <= 0) ? values.Length / vectorSize : virtualCount)
         {
             _floatValues = values;
         }
         public FloatSeries(int vectorSize, params float[] values) :
-            base(vectorSize, SeriesType.Int, values.Length / vectorSize)
+            base(vectorSize, SeriesType.Float, values.Length / vectorSize)
         {
             _floatValues = values;
         }

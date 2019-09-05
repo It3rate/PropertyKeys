@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Samplers
 {
-    public class RingSampler : BaseSampler
+    public class RingSampler : Sampler
     {
         public override Series GetValueAtIndex(Series series, int index)
         {
@@ -32,39 +32,6 @@ namespace DataArcs.Samplers
             result[1] = (float)(Math.Cos(t * 2.0f * Math.PI + Math.PI) * radiusY + frame[1] + radiusY);
             return Series.Create(series, result);
         }
-
-
-
-
-
-        //public override float[] GetFloatSample(Store valueStore, int index)
-        //{
-        //    float indexT = index / (valueStore.ElementCount - 1f); // full circle
-        //    return GetFloatSample(valueStore, indexT);
-        //}
-
-        //public override float[] GetFloatSample(Store valueStore, float t)
-        //{
-        //    float[] result;
-        //    float[] tl = valueStore.GetInterpolatededValueAtT(0f);
-        //    float[] br = valueStore.GetInterpolatededValueAtT(1f);
-
-        //    float radiusX = (br[0] - tl[0]) / 2.0f;
-        //    float radiusY = (br[1] - tl[1]) / 2.0f;
-        //    result = new float[] {
-        //        (float)(Math.Sin(t * 2.0f * Math.PI + Math.PI) * radiusX + tl[0] + radiusX),
-        //        (float)(Math.Cos(t * 2.0f * Math.PI + Math.PI) * radiusY + tl[1] + radiusY) };
-        //    return result;
-        //}
-
-        //public override int[] GetIntSample(Store valueStore, int index)
-        //{
-        //    return GetFloatSample(valueStore, index).ToInt();
-        //}
-
-        //public override int[] GetIntSample(Store valueStore, float t)
-        //{
-        //    return GetFloatSample(valueStore, t).ToInt();
-        //}
+        
     }
 }

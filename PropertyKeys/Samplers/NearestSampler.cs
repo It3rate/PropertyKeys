@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Samplers
 {
-    public class NearestSampler : BaseSampler
+    public class NearestSampler : Sampler
     {
         public override Series GetValueAtIndex(Series series, int index)
         {
@@ -21,25 +21,5 @@ namespace DataArcs.Samplers
             return series.GetValueAtIndex(index);
         }
 
-        //public override float[] GetFloatSample(Store valueStore, int index)
-        //{
-        //    index = Math.Max(0, Math.Min(valueStore.InternalDataCount - 1, index));
-        //    return valueStore.GetFloatArrayAtIndex(index);
-        //}
-        //public override float[] GetFloatSample(Store valueStore, float t)
-        //{
-        //    int index = (int)Math.Round(t * valueStore.InternalDataCount);
-        //    return GetFloatSample(valueStore, index);
-        //}
-        //public override int[] GetIntSample(Store valueStore, int index)
-        //{
-        //    index = Math.Max(0, Math.Min(valueStore.InternalDataCount - 1, index));
-        //    return valueStore.GetIntArrayAtIndex(index);
-        //}
-
-        //public override int[] GetIntSample(Store valueStore, float t)
-        //{
-        //    return valueStore.GetIntArrayAtT(t);
-        //}
     }
 }
