@@ -11,6 +11,11 @@ namespace DataArcs.Samplers
     {
         protected int[] Strides { get; }
 
+        public HexagonSampler(int[] strides)
+        {
+            Strides = strides;
+        }
+
         public override Series GetValueAtIndex(Series series, int index)
         {
             float indexT = index / (series.DataCount - 1f); // full circle

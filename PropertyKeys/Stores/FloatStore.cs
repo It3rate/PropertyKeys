@@ -27,7 +27,7 @@ namespace DataArcs.Stores
         {
             Values = values;
             ElementCount = (elementCount < 1) ? values.Length / VectorSize : elementCount; // can be larger or smaller based on sampling
-            Sampler = BaseSampler.CreateSampler(sampleType);
+            Sampler = BaseSampler.CreateSampler(sampleType, dimensions);
             CalculateBounds(Values);
         }
         public FloatStore(int vectorSize, params float[] values) : base(vectorSize, null, null)
@@ -49,7 +49,6 @@ namespace DataArcs.Stores
 
         public override float[] GetFloatArrayAtIndex(int index)
         {
-            CurrentT = index / (float)ElementCount;
             float[] result;
             if (Sampler != null)
             {
@@ -66,7 +65,6 @@ namespace DataArcs.Stores
 
         public override float[] GetFloatArrayAtT(float t)
         {
-            CurrentT = t;
             float[] result;
             if (Sampler != null)
             {

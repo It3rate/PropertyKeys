@@ -14,6 +14,8 @@ namespace DataArcs.Stores
         protected static readonly EasingType[] DefaultEasing = new EasingType[] { EasingType.Linear };
         protected static readonly int[] DefaultStrides = new int[] { 0 }; // zero means repeating, so this is a regular one row array
 
+        protected Series Series { get; set; }
+
         // move to primitive class that can be float or int arrays.
         public abstract float[] GetFloatValues { get; }
         public abstract int[] GetIntValues { get; }
@@ -34,13 +36,19 @@ namespace DataArcs.Stores
                 return result;
             }
         }
-
-        public float CurrentT { get; set; } = 0;
+        
         public EasingType[] EasingTypes { get; set; } // move to properties? No, useful for creating virtual data.
         public int[] Strides { get; set; } // move to grid/hex samplers
         protected BaseSampler Sampler { get; set; }
         public abstract GraphicsPath GetPath(); // move to static method on Bezier store
 
+
+        public Store(Series series, BaseSampler sampler, EasingType[] easingTypes = null)
+        {
+            Series = series;
+            Sampler = sampler;
+            EasingTypes = easingTypes ?? DefaultEasing;
+        }
 
         public Store(int vectorSize, int[] dimensions = null, EasingType[] easingTypes = null)
         {

@@ -101,7 +101,7 @@ namespace DataArcs.Graphic
 
         public override void Draw(Graphics g, Brush brush, Pen pen, float t)
         {
-            GeneratePolyShape(Radius.CurrentT, PointCount.CurrentT, Orientation.CurrentT, Roundness.CurrentT, Starness.CurrentT);
+            GeneratePolyShape(t,t,t,t,t);
             if (brush != null)
             {
                 g.FillPath(brush, polygon.Path);

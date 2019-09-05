@@ -159,10 +159,6 @@ namespace DataArcs.Components
                 float scale = 1f; //  + t * 0.2f;
                 g.ScaleTransform(scale, scale);
                 g.TranslateTransform(v[0] / scale, v[1] / scale);
-                graphic.PointCount.CurrentT = t;// 1f/12f +  t / 12f;
-                graphic.Orientation.CurrentT = t;// 1f/12f +  t / 12f;
-                graphic.Starness.CurrentT = t;// -t / 2.0f;
-                graphic.Radius.CurrentT = t;
                 graphic.Draw(g, b, null, easedT);
                 g.Restore(state);
             }

@@ -53,7 +53,6 @@ namespace DataArcs.Stores
         }
         public override int[] GetIntArrayAtIndex(int index)
         {
-            CurrentT = index / (float)ElementCount;
             int len = Values.Length / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
             return GetSizedValuesAt(startIndex);
@@ -61,7 +60,6 @@ namespace DataArcs.Stores
 
         public override int[] GetIntArrayAtT(float t)
         {
-            CurrentT = t;
             int index = (int) (t * ElementCount);
             return GetIntArrayAtIndex(index);
         }

@@ -19,7 +19,7 @@ namespace DataArcs.Samplers
 
     public abstract class BaseSampler
     {
-        public static BaseSampler CreateSampler(SampleType sampleType)
+        public static BaseSampler CreateSampler(SampleType sampleType, int[] strides = null)
         {
             BaseSampler result;
             switch (sampleType)
@@ -28,13 +28,13 @@ namespace DataArcs.Samplers
                     result = new LineSampler();
                     break;
                 case SampleType.Grid:
-                    result = new GridSampler();
+                    result = new GridSampler(strides);
                     break;
                 case SampleType.Ring:
                     result = new RingSampler();
                     break;
                 case SampleType.Hexagon:
-                    result = new HexagonSampler();
+                    result = new HexagonSampler(strides);
                     break;
                 default:
                     result = new LineSampler();
