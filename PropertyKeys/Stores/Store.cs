@@ -12,11 +12,11 @@ namespace DataArcs.Stores
     {
         protected static readonly EasingType[] DefaultEasing = { EasingType.Linear };
 
-        private Series Series { get; set; }
-
-        // todo: turn easing into t samplers
-        public EasingType[] EasingTypes { get; protected set; } // move to properties? No, useful for creating virtual data.
+        public virtual Series Series { get; set; }
         protected Sampler Sampler { get; set; }
+        public CombineFunction CombineFunction { get; set; }
+
+        public EasingType[] EasingTypes { get; protected set; } // move to properties? May be useful for creating virtual data. Change to t sampler.
 
         public int VirtualCount 
         {
@@ -24,30 +24,28 @@ namespace DataArcs.Stores
             set => Series.VirtualCount = value;
         }
 
-        public Store(EasingType[] easingTypes = null)
-        {
-            EasingTypes = easingTypes ?? DefaultEasing;
-        }
-        public Store(Series series, Sampler sampler = null, EasingType[] easingTypes = null)
+        protected Store(EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add) { }
+        public Store(Series series, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add)
         {
             Series = series;
             Sampler = sampler ?? new LineSampler();
             EasingTypes = easingTypes ?? DefaultEasing;
+            CombineFunction = combineFunction;
         }
-        public Store(int[] data, Sampler sampler = null, EasingType[] easingTypes = null) : this(new IntSeries(1, data), sampler, easingTypes) {}
-        public Store(float[] data, Sampler sampler = null, EasingType[] easingTypes = null) : this(new FloatSeries(1, data), sampler, easingTypes) {}
+        public Store(int[] data, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add) : this(new IntSeries(1, data), sampler, easingTypes, combineFunction) {}
+        public Store(float[] data, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add) : this(new FloatSeries(1, data), sampler, easingTypes, combineFunction) {}
 
-        public Series GetValueAtIndex(int index)
+        public virtual Series GetValueAtIndex(int index)
         {
             return Sampler != null ? Sampler.GetValueAtIndex(Series, index) : Series.GetValueAtIndex(index);
         }
 
-        public Series GetValueAtT(float t)
+        public virtual Series GetValueAtT(float t)
         {
             return Sampler != null ? Sampler.GetValueAtT(Series, t) : Series.GetValueAtT(t);
         }
 
-        public void HardenToData()
+        public virtual void HardenToData()
         {
             Series = Series.HardenToData(this);
             Sampler = null;

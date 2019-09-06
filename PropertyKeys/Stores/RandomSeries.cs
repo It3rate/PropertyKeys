@@ -84,6 +84,11 @@ namespace DataArcs.Stores
             // nothing to do as internal series calculates it's own frame.
         }
 
+        public override void Combine(Series b, CombineFunction combineFunction)
+        {
+            _series.Combine(b, combineFunction);
+        }
+
         public override float FloatAt(int index)
         {
             return _series[index];

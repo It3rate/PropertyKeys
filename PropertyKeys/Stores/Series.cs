@@ -7,6 +7,17 @@ namespace DataArcs.Stores
         Float,
         Bool,
     }
+    public enum CombineFunction
+    {
+        Replace,
+        Append,
+        Add,
+        Subtract,
+        Multiply,
+        Divide,
+        Average,
+        Interpolate,
+    }
 
     public abstract class Series
     {
@@ -75,6 +86,7 @@ namespace DataArcs.Stores
         public abstract int[] Ints { get; }
         public abstract bool[] Bools { get; }
 
+        public abstract void Combine(Series b, CombineFunction combineFunction);
         public abstract void Interpolate(Series b, float t);
 
         public abstract Series GetZeroSeries();

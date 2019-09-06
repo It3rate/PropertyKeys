@@ -115,6 +115,51 @@ namespace DataArcs.Stores
                 }
             }
         }
+
+        public override void Combine(Series b, CombineFunction combineFunction)
+        {
+            switch (combineFunction)
+            {
+                case CombineFunction.Add:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _floatValues[i] += b[i];
+                    }
+                    break;
+                case CombineFunction.Subtract:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _floatValues[i] -= b[i];
+                    }
+                    break;
+                case CombineFunction.Multiply:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _floatValues[i] *= b[i];
+                    }
+                    break;
+                case CombineFunction.Divide:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        float div = b[i];
+                        _floatValues[i] = div != 0 ? _floatValues[i] / div : _floatValues[i];
+                    }
+                    break;
+                case CombineFunction.Average:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _floatValues[i] = (_floatValues[i] + b[i]) / 2.0f;
+                    }
+                    break;
+                case CombineFunction.Replace:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _floatValues[i] = b[i];
+                    }
+                    break;
+            }
+        }
+
         public override float[] Floats => (float[])_floatValues.Clone();
         public override int[] Ints => _floatValues.ToInt();
         public override bool[] Bools => throw new NotImplementedException();

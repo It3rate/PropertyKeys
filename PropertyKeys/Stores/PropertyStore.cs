@@ -3,20 +3,9 @@ using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
-    public enum CombineFunction
-    {
-        Replace,
-        Append,
-        Add,
-        Subtract,
-        Multiply,
-        Divide,
-        Average,
-        Interpolate,
-    }
     public class PropertyStore
     {
-        public readonly Store[] Stores; // todo: Move store sequence to separate Store subclass.
+        public readonly Store[] Stores; // todo: Move store sequence to animation?
         public EasingType EasingType;
 
         public CombineFunction CombineFunction { get; } = CombineFunction.Replace;

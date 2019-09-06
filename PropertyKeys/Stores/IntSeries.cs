@@ -116,6 +116,49 @@ namespace DataArcs.Stores
             DataUtils.SubtractIntArrayFrom(max, min);
             CachedSize = new IntSeries(VectorSize, max);
         }
+        public override void Combine(Series b, CombineFunction combineFunction)
+        {
+            switch (combineFunction)
+            {
+                case CombineFunction.Add:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _intValues[i] += b.IntAt(i);
+                    }
+                    break;
+                case CombineFunction.Subtract:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _intValues[i] -= b.IntAt(i);
+                    }
+                    break;
+                case CombineFunction.Multiply:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _intValues[i] *= b.IntAt(i);
+                    }
+                    break;
+                case CombineFunction.Divide:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        int div = IntAt(i);
+                        _intValues[i] = div != 0 ? _intValues[i] / div : _intValues[i];
+                    }
+                    break;
+                case CombineFunction.Average:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _intValues[i] = (int)((_intValues[i] + b.IntAt(i)) / 2.0f);
+                    }
+                    break;
+                case CombineFunction.Replace:
+                    for (int i = 0; i < DataSize; i++)
+                    {
+                        _intValues[i] = b.IntAt(i);
+                    }
+                    break;
+            }
+        }
 
         public override float[] Floats => _intValues.ToFloat();
         public override int[] Ints => (int[])_intValues.Clone();
