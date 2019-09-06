@@ -13,7 +13,10 @@ namespace DataArcs.Stores
         public int VectorSize { get; }
         public int VirtualCount { get; set; }
         public SeriesType Type { get; }
-        public abstract int DataCount { get; }
+        /// <summary>
+        /// The raw size of the stored data array, ignores VirtualCount and VectorSize.
+        /// </summary>
+        public abstract int DataSize { get; }
 
         /// <summary>
         /// Cached frame in four vectorSize data points, x, y, x + width, y + height.

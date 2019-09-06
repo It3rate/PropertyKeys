@@ -109,15 +109,19 @@ namespace DataArcs.Components
 
             if (wanders)
             {
-                Sampler linearSampler = new LineSampler();
-                PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
-                int len = loc.ValueStores[0].VirtualCount * 2;
-                PropertyStore  wander = new PropertyStore(new [] {
-                new Store(new FloatSeries(2, new float[len]), sampler: linearSampler),
-                new Store(new FloatSeries(2, new float[len]), sampler: linearSampler)});
-                wander.ValueStores[0].VirtualCount = loc.ValueStores[0].VirtualCount;
-                wander.ValueStores[1].VirtualCount = loc.ValueStores[1].VirtualCount;
-                object1.AddProperty(PropertyID.RandomMotion, wander);
+                var rs0 = new Store(new RandomSeries(2, SeriesType.Float, 200, -1f, 1f));
+                var rs1 = new Store(new RandomSeries(2, SeriesType.Float, 200, -50f, 50f));
+                object1.AddProperty(PropertyID.RandomMotion, new PropertyStore(new Store[] { rs0, rs1 }));
+
+                //Sampler linearSampler = new LineSampler();
+                //PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
+                //int len = loc.ValueStores[0].VirtualCount * 2;
+                //PropertyStore  wander = new PropertyStore(new [] {
+                //new Store(new FloatSeries(2, new float[len]), sampler: linearSampler),
+                //new Store(new FloatSeries(2, new float[len]), sampler: linearSampler)});
+                //wander.ValueStores[0].VirtualCount = loc.ValueStores[0].VirtualCount;
+                //wander.ValueStores[1].VirtualCount = loc.ValueStores[1].VirtualCount;
+                //object1.AddProperty(PropertyID.RandomMotion, wander);
             }
 
         }

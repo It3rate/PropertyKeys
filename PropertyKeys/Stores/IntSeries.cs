@@ -5,7 +5,7 @@ namespace DataArcs.Stores
     public class IntSeries : Series
     {
         private readonly int[] _intValues;
-        public override int DataCount => _intValues.Length;
+        public override int DataSize => _intValues.Length;
 
         public IntSeries(int vectorSize, int[] values, int virtualCount = -1) :
             base(vectorSize, SeriesType.Int, (virtualCount <= 0) ? values.Length / vectorSize : virtualCount)
@@ -20,10 +20,10 @@ namespace DataArcs.Stores
 
         public override Series GetValueAtIndex(int index)
         {
-            int len = DataCount / VectorSize;
+            int len = DataSize / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
             float[] result = new float[VectorSize];
-            if (startIndex * VectorSize + VectorSize <= DataCount)
+            if (startIndex * VectorSize + VectorSize <= DataSize)
             {
                 Array.Copy(_intValues, index * VectorSize, result, 0, VectorSize);
             }
@@ -61,9 +61,9 @@ namespace DataArcs.Stores
 
         public override void Interpolate(Series b, float t)
         {
-            for (int i = 0; i < DataCount; i++)
+            for (int i = 0; i < DataSize; i++)
             {
-                if (i < b.DataCount)
+                if (i < b.DataSize)
                 {
                     _intValues[i] = (int)(_intValues[i] + (b.IntValueAt(i) - _intValues[i]) * t);
                 }
@@ -79,7 +79,7 @@ namespace DataArcs.Stores
             int[] min = DataUtils.GetIntMinArray(VectorSize);
             int[] max = DataUtils.GetIntMaxArray(VectorSize);
 
-            for (int i = 0; i < DataCount; i += VectorSize)
+            for (int i = 0; i < DataSize; i += VectorSize)
             {
                 for (int j = 0; j < VectorSize; j++)
                 {

@@ -5,7 +5,7 @@ namespace DataArcs.Stores
     public class FloatSeries : Series
     {
         protected readonly float[] _floatValues;
-        public override int DataCount => _floatValues.Length;
+        public override int DataSize => _floatValues.Length;
 
         public FloatSeries(int vectorSize, float[] values, int virtualCount = -1) :
             base(vectorSize, SeriesType.Float, (virtualCount <= 0) ? values.Length / vectorSize : virtualCount)
@@ -19,10 +19,10 @@ namespace DataArcs.Stores
         }
         public override Series GetValueAtIndex(int index)
         {
-            int len = DataCount / VectorSize;
+            int len = DataSize / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
             float[] result = new float[VectorSize];
-            if (startIndex * VectorSize + VectorSize <= DataCount)
+            if (startIndex * VectorSize + VectorSize <= DataSize)
             {
                 Array.Copy(_floatValues, index * VectorSize, result, 0, VectorSize);
             }
@@ -32,7 +32,7 @@ namespace DataArcs.Stores
         public override Series GetValueAtT(float t)
         {
             Series result;
-            int len = DataCount / VectorSize;
+            int len = DataSize / VectorSize;
             if (len > 1)
             {
                 // interpolate between indexes to get virtual values from array.
@@ -63,7 +63,7 @@ namespace DataArcs.Stores
             float[] min = DataUtils.GetFloatMaxArray(VectorSize);
             float[] max = DataUtils.GetFloatMinArray(VectorSize);
 
-            for (int i = 0; i < DataCount; i += VectorSize)
+            for (int i = 0; i < DataSize; i += VectorSize)
             {
                 for (int j = 0; j < VectorSize; j++)
                 {
@@ -85,9 +85,9 @@ namespace DataArcs.Stores
 
         public override void Interpolate(Series b, float t)
         {
-            for (int i = 0; i < DataCount; i++)
+            for (int i = 0; i < DataSize; i++)
             {
-                if (i < b.DataCount)
+                if (i < b.DataSize)
                 {
                     _floatValues[i] += (b.FloatValueAt(i) - _floatValues[i]) * t;
                 }

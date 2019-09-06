@@ -9,6 +9,7 @@ namespace DataArcs.Stores
     public class DataUtils
     {
         public const float TOLERANCE = 0.00001f;
+        public static readonly Random Random = new Random();
 
         private static readonly float[][] zeroFloatArray;
         private static readonly float[][] minFloatArray;
