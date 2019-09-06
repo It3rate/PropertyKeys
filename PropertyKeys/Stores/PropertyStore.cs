@@ -1,4 +1,5 @@
 ﻿using System;
+using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
@@ -15,7 +16,7 @@ namespace DataArcs.Stores
     }
     public class PropertyStore
     {
-        public readonly Store[] ValueStores;
+        public readonly Store[] Stores;
         public EasingType EasingType;
 
         public CombineFunction CombineFunction { get; } = CombineFunction.Replace;
@@ -25,9 +26,9 @@ namespace DataArcs.Stores
 
         public float CurrentT { get; set; } = 0;
 
-        public PropertyStore(Store[] valueStores, EasingType easingType = EasingType.Linear)
+        public PropertyStore(Store[] stores, EasingType easingType = EasingType.Linear)
         {
-            ValueStores = valueStores;
+            Stores = stores;
             EasingType = easingType;
         }
         
@@ -37,15 +38,15 @@ namespace DataArcs.Stores
             float[] result;
             t = Easing.GetValueAt(t, EasingType);
 
-            DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, Stores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
-                result = ValueStores[startIndex].GetValueAtIndex(index).FloatValuesCopy;
+                result = Stores[startIndex].GetValueAtIndex(index).FloatValuesCopy;
             }
             else
             {
-                result = BlendValueAtIndex(ValueStores[startIndex], ValueStores[endIndex], index, vT);
+                result = BlendValueAtIndex(Stores[startIndex], Stores[endIndex], index, vT);
             }
             return result;
         }
@@ -55,15 +56,15 @@ namespace DataArcs.Stores
             float[] result;
             t = Easing.GetValueAt(t, EasingType);
 
-            DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, Stores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
-                result = ValueStores[startIndex].GetValueAtT(vT).FloatValuesCopy;
+                result = Stores[startIndex].GetValueAtT(vT).FloatValuesCopy;
             }
             else
             {
-                result = BlendValueAtT(ValueStores[startIndex], ValueStores[endIndex], indexT, vT);
+                result = BlendValueAtT(Stores[startIndex], Stores[endIndex], indexT, vT);
             }
             return result;
         }
@@ -73,16 +74,16 @@ namespace DataArcs.Stores
             int result;
             t = Easing.GetValueAt(t, EasingType);
 
-            DataUtils.GetScaledT(t, ValueStores.Length, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, Stores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
-                result = ValueStores[startIndex].VirtualCount;
+                result = Stores[startIndex].VirtualCount;
             }
             else
             {
-                int sec = ValueStores[startIndex].VirtualCount;
-                int eec = ValueStores[startIndex + 1].VirtualCount;
+                int sec = Stores[startIndex].VirtualCount;
+                int eec = Stores[startIndex + 1].VirtualCount;
                 result = sec + (int)(vT * (eec - sec));
             }
             return result;

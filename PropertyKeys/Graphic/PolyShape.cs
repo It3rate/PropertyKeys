@@ -134,16 +134,16 @@ namespace DataArcs.Graphic
             float[] values = new float[count * 2];
             BezierMove[] moves = new BezierMove[count];
 
-            float step = M_PIx2 / pointCount;
+            float step = Utils.M_PIx2 / pointCount;
             for (int i = 0; i < pointCount; i++)
             {
-                float theta = step * i + orientation * M_PIx2;
+                float theta = step * i + orientation * Utils.M_PIx2;
                 values[i * pointsPerStep + 0] = (float)Math.Sin(theta) * radiusX;
                 values[i * pointsPerStep + 1] = (float)Math.Cos(theta) * radiusY;
                 moves[i * pointsPerStep / 2] = (i == 0) ? BezierMove.MoveTo : BezierMove.LineTo;
                 if (hasStarness)
                 {
-                    theta = (step * i + step / 2.0f) + orientation * M_PIx2;
+                    theta = (step * i + step / 2.0f) + orientation * Utils.M_PIx2;
                     float mpRadiusX = (float)Math.Cos(step / 2.0) * radiusX;
                     float mpRadiusY = (float)Math.Cos(step / 2.0) * radiusY;
                     values[i * pointsPerStep + 2] = (float)Math.Sin(theta) * (mpRadiusX + mpRadiusX * starness);

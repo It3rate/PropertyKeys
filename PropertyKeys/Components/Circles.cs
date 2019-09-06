@@ -115,12 +115,12 @@ namespace DataArcs.Components
 
                 //Sampler linearSampler = new LineSampler();
                 //PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
-                //int len = loc.ValueStores[0].VirtualCount * 2;
+                //int len = loc.Stores[0].VirtualCount * 2;
                 //PropertyStore  wander = new PropertyStore(new [] {
                 //new Store(new FloatSeries(2, new float[len]), sampler: linearSampler),
                 //new Store(new FloatSeries(2, new float[len]), sampler: linearSampler)});
-                //wander.ValueStores[0].VirtualCount = loc.ValueStores[0].VirtualCount;
-                //wander.ValueStores[1].VirtualCount = loc.ValueStores[1].VirtualCount;
+                //wander.Stores[0].VirtualCount = loc.Stores[0].VirtualCount;
+                //wander.Stores[1].VirtualCount = loc.Stores[1].VirtualCount;
                 //object1.AddProperty(PropertyID.RandomMotion, wander);
             }
 
@@ -145,7 +145,7 @@ namespace DataArcs.Components
             int floorT = (int)t;
             t = t - floorT;
             if (floorT % 2 == 0) t = 1.0f - t;
-            float easedT = t;// Easing.GetValueAt(t, loc.EasingType);
+            float easedT = t;// Easing.GetTAtT(t, loc.EasingType);
             int count = loc.GetElementCountAt(easedT);
 
             for (int i = 0; i < count; i++)
@@ -154,8 +154,8 @@ namespace DataArcs.Components
                 float[] v = loc.GetValuesAtIndex(i, easedT);// + it - (1f-easedT));
                 if (wander != null)
                 {
-                    //wander.ValueStores[0].NudgeValuesBy(0.4f);
-                    //wander.ValueStores[1].NudgeValuesBy(0.4f);
+                    //wander.Stores[0].NudgeValuesBy(0.4f);
+                    //wander.Stores[1].NudgeValuesBy(0.4f);
                     float[] wan = wander.GetValuesAtIndex(i, easedT);
                     v[0] += wan[0];
                     v[1] += wan[1];

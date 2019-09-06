@@ -21,5 +21,9 @@ namespace DataArcs.Samplers
             return series.GetValueAtIndex(index);
         }
 
+        public override float GetTAtT(float t)
+        {
+            return t; // t is always nearest itself.
+        }
     }
 }

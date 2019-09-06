@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using DataArcs.Stores;
 
-namespace DataArcs.Stores
+namespace DataArcs.Components
 {
     public enum PropertyID : int
     {
@@ -75,6 +72,16 @@ namespace DataArcs.Stores
         public void RemoveProperty(PropertyID id, PropertyStore propertyStore)
         {
             Stores.Remove(id);
+        }
+
+        public void Update(float t)
+        {
+
+        }
+
+        public void Draw()
+        {
+
         }
 
         public Composite CreateChild()

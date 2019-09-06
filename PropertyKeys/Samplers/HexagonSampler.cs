@@ -27,6 +27,26 @@ namespace DataArcs.Samplers
             return GetSeriesSample(series, Strides, (int)(t * series.VirtualCount));
         }
 
+        public override float GetTAtT(float t)
+        {
+            float result;
+            if (Strides[0] > 0)
+            {
+                result = Strides[0] * t;
+                int row = (int)result;
+                if ((row & 1) == 1)
+                {
+                    result += 1f / (Strides[0] - 1f) * 0.5f;
+                }
+                result -= row;
+            }
+            else
+            {
+                result = t;
+            }
+            return result;
+        }
+
         public static Series GetSeriesSample(Series series, int[] strides, int index)
         {
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);

@@ -9,16 +9,31 @@ namespace DataArcs.Samplers
 {
     public class BezierSampler : Sampler
     {
+        public BezierSeries Series;
+
+        public BezierSampler() { }
+        public BezierSampler(BezierSeries series)
+        {
+            Series = series;
+        }
+
         public override Series GetValueAtIndex(Series series, int index)
         {
+            series = series ?? Series;
             float t = index / (float)series.VirtualCount;
             return GetValueAtT(series, t);
         }
 
         public override Series GetValueAtT(Series series, float t)
         {
+            series = series ?? Series;
             BezierMove[] moves = series is BezierSeries bezierSeries ? bezierSeries.Moves : new[] { BezierMove.LineTo };
             return GetValueAtT(series, moves, t);
+        }
+
+        public override float GetTAtT(float t)
+        {
+            return Series != null ? GetValueAtT(Series, Series.Moves, t).FloatValuesCopy[0] : t;
         }
 
         public static Series GetValueAtT(Series series, BezierMove[] moves, float t)

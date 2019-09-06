@@ -19,32 +19,10 @@ namespace DataArcs.Samplers
 
     public abstract class Sampler
     {
-        public static Sampler CreateSampler(SampleType sampleType, int[] strides = null)
-        {
-            Sampler result;
-            switch (sampleType)
-            {
-                case SampleType.Line:
-                    result = new LineSampler();
-                    break;
-                case SampleType.Grid:
-                    result = new GridSampler(strides);
-                    break;
-                case SampleType.Ring:
-                    result = new RingSampler();
-                    break;
-                case SampleType.Hexagon:
-                    result = new HexagonSampler(strides);
-                    break;
-                default:
-                    result = new LineSampler();
-                    break;
-            }
-            return result;
-        }
         public abstract Series GetValueAtIndex(Series series, int index);
         public abstract Series GetValueAtT(Series series, float t);
-        
+        public abstract float GetTAtT(float t);
+
 
         protected static float[] GetStrideTsForIndex(Series series, int[] strides, int index)
         {
@@ -76,7 +54,7 @@ namespace DataArcs.Samplers
 
                 //if (i < series.EasingTypes.Length)
                 //{
-                //    dimT = Easing.GetValueAt(dimT, series.EasingTypes[i]);
+                //    dimT = Easing.GetTAtT(dimT, series.EasingTypes[i]);
                 //}
                 result[i] = dimT;
 
@@ -84,6 +62,30 @@ namespace DataArcs.Samplers
                 {
                     break;
                 }
+            }
+            return result;
+        }
+
+        public static Sampler CreateSampler(SampleType sampleType, int[] strides = null)
+        {
+            Sampler result;
+            switch (sampleType)
+            {
+                case SampleType.Line:
+                    result = new LineSampler();
+                    break;
+                case SampleType.Grid:
+                    result = new GridSampler(strides);
+                    break;
+                case SampleType.Ring:
+                    result = new RingSampler();
+                    break;
+                case SampleType.Hexagon:
+                    result = new HexagonSampler(strides);
+                    break;
+                default:
+                    result = new LineSampler();
+                    break;
             }
             return result;
         }

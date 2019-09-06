@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using DataArcs.Stores;
 
-namespace DataArcs
+namespace DataArcs.Samplers
 {
     public enum EasingType
     {
@@ -13,13 +11,30 @@ namespace DataArcs
         EaseInOut,
         EaseCenter,
     }
-    public struct Easing
+    public class Easing : Sampler
     {
         public EasingType EasingType;
 
         public Easing(EasingType easingType = EasingType.Linear)
         {
             EasingType = easingType;
+        }
+
+        public override Series GetValueAtIndex(Series series, int index)
+        {
+            float indexT = index / (float)series.VirtualCount;
+            return GetValueAtT(series, indexT);
+        }
+
+        public override Series GetValueAtT(Series series, float t)
+        {
+            t = GetValueAt(t, EasingType);
+            return series.GetValueAtT(t);
+        }
+
+        public override float GetTAtT(float t)
+        {
+            return GetValueAt(t, EasingType);
         }
 
         public static float GetValueAt(float t, EasingType easingType)
@@ -46,15 +61,10 @@ namespace DataArcs
                 case EasingType.EaseCenter:
                     float a = (t - 0.5f) * 2;
                     float sgn = a >= 0 ? 0.5f : -0.5f;
-                    result = (a*a) * sgn + 0.5f;
+                    result = (a * a) * sgn + 0.5f;
                     break;
             }
             return result;
-        }
-
-        public float GetValueAt(float t)
-        {
-            return Easing.GetValueAt(t, EasingType);
         }
     }
 }
