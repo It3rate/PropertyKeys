@@ -40,7 +40,7 @@ namespace DataArcs.Stores
 
         public Series GetValueAtT(float t)
         {
-            return Sampler != null ? Sampler.GetValueAtT(Series, t) : GetValueAtT(t);
+            return Sampler != null ? Sampler.GetValueAtT(Series, t) : Series.GetValueAtT(t);
         }
 
         public void HardenToData()

@@ -16,7 +16,7 @@ namespace DataArcs.Stores
     }
     public class PropertyStore
     {
-        public readonly Store[] Stores;
+        public readonly Store[] Stores; // todo: Move store sequence to separate Store subclass.
         public EasingType EasingType;
 
         public CombineFunction CombineFunction { get; } = CombineFunction.Replace;
