@@ -59,13 +59,31 @@ namespace DataArcs.Stores
             return result;
         }
 
+        public override Series HardenToData(Store store)
+        {
+            Series result = this;
+            int len = VirtualCount * VectorSize;
+            if (_intValues.Length != len)
+            {
+                int[] vals = new int[len];
+                for (int i = 0; i < VirtualCount; i++)
+                {
+                    int[] val = store.GetValueAtIndex(i).Ints;
+                    Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
+                }
+
+                result = new IntSeries(VectorSize, vals, VirtualCount);
+            }
+            return result;
+        }
+
         public override void Interpolate(Series b, float t)
         {
             for (int i = 0; i < DataSize; i++)
             {
                 if (i < b.DataSize)
                 {
-                    _intValues[i] = (int)(_intValues[i] + (b.IntValueAt(i) - _intValues[i]) * t);
+                    _intValues[i] = (int)(_intValues[i] + (b.IntAt(i) - _intValues[i]) * t);
                 }
                 else
                 {
@@ -99,19 +117,19 @@ namespace DataArcs.Stores
             CachedSize = new IntSeries(VectorSize, max);
         }
 
-        public override float[] FloatValuesCopy => _intValues.ToFloat();
-        public override int[] IntValuesCopy => (int[])_intValues.Clone();
-        public override bool[] BoolValuesCopy => throw new NotImplementedException();
+        public override float[] Floats => _intValues.ToFloat();
+        public override int[] Ints => (int[])_intValues.Clone();
+        public override bool[] Bools => throw new NotImplementedException();
 
-        public override float FloatValueAt(int index)
+        public override float FloatAt(int index)
         {
             return (index >= 0 && index < _intValues.Length) ? (float)_intValues[index] : 0;
         }
-        public override int IntValueAt(int index)
+        public override int IntAt(int index)
         {
             return (index >= 0 && index < _intValues.Length) ? _intValues[index] : 0;
         }
-        public override bool BoolValueAt(int index)
+        public override bool BoolAt(int index)
         {
             return index >= 0 && index < _intValues.Length && _intValues[index] != 0;
         }

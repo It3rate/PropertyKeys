@@ -50,14 +50,14 @@ namespace DataArcs.Samplers
         public static Series GetSeriesSample(Series series, int[] strides, int index)
         {
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
-            float[] frame = series.Frame.FloatValuesCopy; // x0,y0...n0, x1,y1..n1
-            float[] size = series.Size.FloatValuesCopy; // s0,s1...sn
+            //float[] frame = series.Frame.Floats; // x0,y0...n0, x1,y1..n1
+            float[] size = series.Size.Floats; // s0,s1...sn
 
             float[] strideTs = GetStrideTsForIndex(series, strides, index);
 
             for (int i = 0; i < result.Length; i++)
             {
-                float temp = series.GetValueAtT(strideTs[i]).FloatValuesCopy[i];
+                float temp = series.GetValueAtT(strideTs[i]).Floats[i];
                 int curRow = (int)((float)index / strides[0]);
                 if (i == 0 && ((curRow & 1) == 1) && strides[0] > 0)
                 {

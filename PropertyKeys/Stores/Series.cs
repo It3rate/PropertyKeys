@@ -61,15 +61,18 @@ namespace DataArcs.Stores
 
         public abstract Series GetValueAtIndex(int index); // could be array indexer?
         public abstract Series GetValueAtT(float t);
+        public abstract Series HardenToData(Store store); // return new copy as eventually everything should be immutable
 
         protected abstract void CalculateFrame();
 
-        public abstract float FloatValueAt(int index);
-        public abstract int IntValueAt(int index);
-        public abstract bool BoolValueAt(int index);
-        public abstract float[] FloatValuesCopy { get; }
-        public abstract int[] IntValuesCopy { get; }
-        public abstract bool[] BoolValuesCopy { get; }
+        public float this[int index] => FloatAt(index); // convenience indexer for float values.
+        public abstract float FloatAt(int index);
+        public abstract int IntAt(int index);
+        public abstract bool BoolAt(int index);
+
+        public abstract float[] Floats { get; }
+        public abstract int[] Ints { get; }
+        public abstract bool[] Bools { get; }
 
         public abstract void Interpolate(Series b, float t);
 

@@ -116,13 +116,13 @@ namespace DataArcs.Graphic
         }
         public void GeneratePolyShape(float radiusT, float pointCountT = 0, float orientationT = 0, float roundnessT = 0, float starnessT = 0)
         {
-            float orientation = Orientation.GetValueAtT(orientationT).FloatValuesCopy[0];
-            float roundness = Roundness.GetValueAtT(roundnessT).FloatValuesCopy[0];
-            float[] radius = Radius.GetValueAtT(radiusT).FloatValuesCopy;
+            float orientation = Orientation.GetValueAtT(orientationT)[0];
+            float roundness = Roundness.GetValueAtT(roundnessT)[0];
+            float[] radius = Radius.GetValueAtT(radiusT).Floats;
             float radiusX = radius[0];
             float radiusY = radius.Length > 1 ? radius[1] : radius[0];
-            float starness = Starness.GetValueAtT(starnessT).FloatValuesCopy[0];
-            int pointCount = PointCount.GetValueAtT(pointCountT).IntValuesCopy[0];
+            float starness = Starness.GetValueAtT(starnessT)[0];
+            int pointCount = PointCount.GetValueAtT(pointCountT).IntAt(0);
             Polygon = GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
         }
         public static BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)

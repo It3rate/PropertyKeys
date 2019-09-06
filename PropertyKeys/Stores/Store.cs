@@ -12,8 +12,10 @@ namespace DataArcs.Stores
     {
         protected static readonly EasingType[] DefaultEasing = { EasingType.Linear };
 
-        protected Series Series { get; set; }
-        public EasingType[] EasingTypes { get; set; } // move to properties? No, useful for creating virtual data.
+        private Series Series { get; set; }
+
+        // todo: turn easing into t samplers
+        public EasingType[] EasingTypes { get; protected set; } // move to properties? No, useful for creating virtual data.
         protected Sampler Sampler { get; set; }
 
         public int VirtualCount 
@@ -43,6 +45,9 @@ namespace DataArcs.Stores
 
         public void HardenToData()
         {
+            Series = Series.HardenToData(this);
+            Sampler = null;
+            EasingTypes = null;
         }
     }
 }

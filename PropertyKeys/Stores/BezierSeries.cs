@@ -63,6 +63,26 @@ namespace DataArcs.Stores
             return new FloatSeries(2, result);
         }
 
+        public override Series HardenToData(Store store)
+        {
+            Series result = this;
+            int len = VirtualCount * VectorSize;
+            if (_floatValues.Length != len)
+            {
+                float[] vals = new float[len];
+                BezierMove[] moves = new BezierMove[VirtualCount];
+                for (int i = 0; i < VirtualCount; i++)
+                {
+                    float[] val = store.GetValueAtIndex(i).Floats;
+                    Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
+                    moves[i] = (i < moves.Length) ? moves[i] : BezierMove.LineTo;
+                }
+
+                result = new BezierSeries(vals, moves);
+            }
+            return result;
+        }
+
 
         public GraphicsPath Path()
         {

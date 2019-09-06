@@ -29,8 +29,8 @@ namespace DataArcs.Samplers
         public static Series GetSeriesSample(Series series, float t)
         {
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
-            float[] frame = series.Frame.FloatValuesCopy; // x0,y0...n0, x1,y1..n1
-            float[] size = series.Size.FloatValuesCopy; // s0,s1...sn
+            float[] frame = series.Frame.Floats; // x0,y0...n0, x1,y1..n1
+            float[] size = series.Size.Floats; // s0,s1...sn
 
             float radiusX = size[0] / 2.0f;
             result[0] = (float)(Math.Sin(t * 2.0f * Utils.M_PIx2) * radiusX + frame[0] + radiusX);

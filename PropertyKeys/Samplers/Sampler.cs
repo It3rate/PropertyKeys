@@ -32,7 +32,7 @@ namespace DataArcs.Samplers
         {
             int index = (int)Math.Round(t * series.VirtualCount); // Need an index for a strided object, so discard remainder.
 
-            float[] result = series.GetZeroSeries().FloatValuesCopy;
+            float[] result = series.GetZeroSeries().Floats;
             int curSize = 1;
             int prevSize = curSize; // prevSize allows rendering to edges of grid
             // Need to sample in each dimension of the vector and completely fill the remainder once zero is hit.

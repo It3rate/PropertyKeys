@@ -49,7 +49,7 @@ namespace DataArcs.Samplers
 
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = series.GetValueAtT(strideTs[i]).FloatValuesCopy[i];
+                result[i] = series.GetValueAtT(strideTs[i])[i];
             }
 
             return Series.Create(series, result);

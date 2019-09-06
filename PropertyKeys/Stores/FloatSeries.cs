@@ -57,7 +57,25 @@ namespace DataArcs.Stores
             }
             return result;
         }
-        
+
+        public override Series HardenToData(Store store)
+        {
+            Series result = this;
+            int len = VirtualCount * VectorSize;
+            if (_floatValues.Length != len)
+            {
+                float[] vals = new float[len];
+                for (int i = 0; i < VirtualCount; i++)
+                {
+                    float[] val = store.GetValueAtIndex(i).Floats;
+                    Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
+                }
+
+                result = new FloatSeries(VectorSize, vals, VirtualCount);
+            }
+            return result;
+        }
+
         protected override void CalculateFrame()
         {
             float[] min = DataUtils.GetFloatMaxArray(VectorSize);
@@ -89,7 +107,7 @@ namespace DataArcs.Stores
             {
                 if (i < b.DataSize)
                 {
-                    _floatValues[i] += (b.FloatValueAt(i) - _floatValues[i]) * t;
+                    _floatValues[i] += (b[i] - _floatValues[i]) * t;
                 }
                 else
                 {
@@ -97,19 +115,19 @@ namespace DataArcs.Stores
                 }
             }
         }
-        public override float[] FloatValuesCopy => (float[])_floatValues.Clone();
-        public override int[] IntValuesCopy => _floatValues.ToInt();
-        public override bool[] BoolValuesCopy => throw new NotImplementedException();
+        public override float[] Floats => (float[])_floatValues.Clone();
+        public override int[] Ints => _floatValues.ToInt();
+        public override bool[] Bools => throw new NotImplementedException();
 
-        public override float FloatValueAt(int index)
+        public override float FloatAt(int index)
         {
             return (index >= 0 && index < _floatValues.Length) ? _floatValues[index] : 0;
         }
-        public override int IntValueAt(int index)
+        public override int IntAt(int index)
         {
             return (index >= 0 && index < _floatValues.Length) ? (int)_floatValues[index] : 0;
         }
-        public override bool BoolValueAt(int index)
+        public override bool BoolAt(int index)
         {
             return (index >= 0 && index < _floatValues.Length) && Math.Abs(_floatValues[index]) < 0.0000001;
         }

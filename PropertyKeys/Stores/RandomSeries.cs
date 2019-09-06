@@ -25,11 +25,12 @@ namespace DataArcs.Stores
             seed = seed == 0 ? DataUtils.Random.Next() : seed;
             _seed = seed;
             _random = new Random(_seed);
-            GenerateData();
+            _series = GenerateData();
         }
 
-        private void GenerateData()
+        private Series GenerateData()
         {
+            Series result;
             int len = VirtualCount * VectorSize;
             if (Type == SeriesType.Int)
             {
@@ -40,7 +41,7 @@ namespace DataArcs.Stores
                 {
                     data[i] = _random.Next(min, max);
                 }
-                _series = new IntSeries(VectorSize, data);
+                result = new IntSeries(VectorSize, data);
             }
             else
             {
@@ -49,8 +50,9 @@ namespace DataArcs.Stores
                 {
                     data[i] = (float)(_random.NextDouble() * (_max - _min) + _min);
                 }
-                _series = new FloatSeries(VectorSize, data);
+                result = new FloatSeries(VectorSize, data);
             }
+            return result;
         }
 
         public override int DataSize => _series.DataSize;
@@ -64,30 +66,42 @@ namespace DataArcs.Stores
         {
             return _series.GetValueAtT(t);
         }
+        
+        public override Series HardenToData(Store store)
+        {
+            Series result = this;
+            int len = VirtualCount * VectorSize;
+            if ((int)(_series.DataSize / VectorSize) != len)
+            {
+                result = GenerateData();
+            }
+            return result;
+        }
+
 
         protected override void CalculateFrame()
         {
             // nothing to do as internal series calculates it's own frame.
         }
 
-        public override float FloatValueAt(int index)
+        public override float FloatAt(int index)
         {
-            return _series.FloatValueAt(index);
+            return _series[index];
         }
 
-        public override int IntValueAt(int index)
+        public override int IntAt(int index)
         {
-            return _series.IntValueAt(index);
+            return _series.IntAt(index);
         }
 
-        public override bool BoolValueAt(int index)
+        public override bool BoolAt(int index)
         {
-            return _series.BoolValueAt(index);
+            return _series.BoolAt(index);
         }
 
-        public override float[] FloatValuesCopy => _series.FloatValuesCopy;
-        public override int[] IntValuesCopy => _series.IntValuesCopy;
-        public override bool[] BoolValuesCopy => _series.BoolValuesCopy;
+        public override float[] Floats => _series.Floats;
+        public override int[] Ints => _series.Ints;
+        public override bool[] Bools => _series.Bools;
         public override void Interpolate(Series b, float t)
         {
             _series.Interpolate(b, t);
