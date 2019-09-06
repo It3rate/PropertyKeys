@@ -1,48 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using DataArcs.Samplers;
+using DataArcs.Stores;
 
-namespace DataArcs.Stores
+namespace DataArcs.Commands
 {
-    public enum CombineFunction
+    public class InterpolationCommand : BaseCommand
     {
-        Replace,
-        Append,
-        Add,
-        Subtract,
-        Multiply,
-        Divide,
-        Average,
-        Interpolate,
-    }
-    public class PropertyStore
-    {
-        public readonly Store[] Stores; // todo: Move store sequence to separate Store subclass.
-        public EasingType EasingType;
+        public readonly Store[] Stores;
+        public readonly EasingType EasingType;
 
-        public CombineFunction CombineFunction { get; } = CombineFunction.Replace;
-        public PropertyStore Parameter0 { get; }
-        public float Parameter1 { get; } = 0;
-        public int Parameter2 { get; } = 0;
-
-        public float CurrentT { get; set; } = 0;
-
-        public PropertyStore(Store[] stores, EasingType easingType = EasingType.Linear)
+        public InterpolationCommand(Store[] stores, EasingType easingType)
         {
             Stores = stores;
             EasingType = easingType;
         }
         
+
         // todo: return series
-        public Series GetValuesAtIndex(int index, float t)
+        public float[] GetValuesAtIndex(int index, float t)
         {
-            Series result;
+            float[] result;
             t = Easing.GetValueAt(t, EasingType);
 
             DataUtils.GetScaledT(t, Stores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].GetValueAtIndex(index);
+                result = Stores[startIndex].GetValueAtIndex(index).Floats;
             }
             else
             {
@@ -51,16 +39,16 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public Series GetValuesAtT(float indexT, float t)
+        public float[] GetValuesAtT(float indexT, float t)
         {
-            Series result;
+            float[] result;
             t = Easing.GetValueAt(t, EasingType);
 
             DataUtils.GetScaledT(t, Stores.Length, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].GetValueAtT(indexT);
+                result = Stores[startIndex].GetValueAtT(vT).Floats;
             }
             else
             {
@@ -88,25 +76,24 @@ namespace DataArcs.Stores
             }
             return result;
         }
-        
 
-        public static Series BlendValueAtIndex(Store start, Store end, int index, float t)
+        public static float[] BlendValueAtIndex(Store start, Store end, int index, float t)
         {
-            Series result = start.GetValueAtIndex(index);
+            float[] result = start.GetValueAtIndex(index).Floats;
             if (end != null)
             {
-                Series endAr = end.GetValueAtIndex(index);
-                result.Interpolate(endAr, t);
+                float[] endAr = end.GetValueAtIndex(index).Floats;
+                DataUtils.InterpolateInto(result, endAr, t);
             }
             return result;
         }
-        public static Series BlendValueAtT(Store start, Store end, float indexT, float t)
+        public static float[] BlendValueAtT(Store start, Store end, float indexT, float t)
         {
-            Series result = start.GetValueAtT(indexT);
+            float[] result = start.GetValueAtT(indexT).Floats;
             if (end != null)
             {
-                Series endAr = end.GetValueAtT(indexT);
-                result.Interpolate(endAr, t);
+                float[] endAr = end.GetValueAtT(indexT).Floats;
+                DataUtils.InterpolateInto(result, endAr, t);
             }
             return result;
         }

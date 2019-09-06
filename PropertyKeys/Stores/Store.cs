@@ -24,6 +24,10 @@ namespace DataArcs.Stores
             set => Series.VirtualCount = value;
         }
 
+        public Store(EasingType[] easingTypes = null)
+        {
+            EasingTypes = easingTypes ?? DefaultEasing;
+        }
         public Store(Series series, Sampler sampler = null, EasingType[] easingTypes = null)
         {
             Series = series;

@@ -151,12 +151,12 @@ namespace DataArcs.Components
             for (int i = 0; i < count; i++)
             {
                 float it = i / (float)count;
-                float[] v = loc.GetValuesAtIndex(i, easedT);// + it - (1f-easedT));
+                float[] v = loc.GetValuesAtIndex(i, easedT).Floats;// + it - (1f-easedT));
                 if (wander != null)
                 {
                     //wander.Stores[0].NudgeValuesBy(0.4f);
                     //wander.Stores[1].NudgeValuesBy(0.4f);
-                    float[] wan = wander.GetValuesAtIndex(i, easedT);
+                    float[] wan = wander.GetValuesAtIndex(i, easedT).Floats;
                     v[0] += wan[0];
                     v[1] += wan[1];
                 }

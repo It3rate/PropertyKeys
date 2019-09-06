@@ -59,6 +59,7 @@ namespace DataArcs.Stores
             VirtualCount = virtualCount;
         }
 
+        // todo: All float t's should probably be float[] t.
         public abstract Series GetValueAtIndex(int index); // could be array indexer?
         public abstract Series GetValueAtT(float t);
         public abstract Series HardenToData(Store store); // return new copy as eventually everything should be immutable
