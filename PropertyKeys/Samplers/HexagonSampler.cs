@@ -24,7 +24,7 @@ namespace DataArcs.Samplers
 
         public override Series GetValueAtT(Series series, float t)
         {
-            return GetSeriesSample(series, Strides, (int)(t * series.VirtualCount));
+            return GetSeriesSample(series, Strides, (int)(t * (series.VirtualCount - 1)));
         }
 
         public override float GetTAtT(float t)

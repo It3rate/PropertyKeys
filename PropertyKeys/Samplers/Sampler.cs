@@ -30,8 +30,8 @@ namespace DataArcs.Samplers
         }
         protected static float[] GetStrideTsForT(Series series, int[] strides, float t)
         {
-            int index = (int)Math.Round(t * series.VirtualCount); // Need an index for a strided object, so discard remainder.
-
+            int index = (int)(t * series.VirtualCount); // Need an index for a strided object, so discard remainder.
+            //index = Math.Min(index, series.VirtualCount - 1);
             float[] result = series.GetZeroSeries().Floats;
             int curSize = 1;
             int prevSize = curSize; // prevSize allows rendering to edges of grid

@@ -3,6 +3,7 @@ using DataArcs.Stores;
 using DataArcs.Samplers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Numerics;
@@ -26,7 +27,6 @@ namespace DataArcs.Components
     {
         Composite parent0;
         Composite object1;
-        bool wanders = true;
 
         PolyShape graphic;
         Random rnd = new Random();
@@ -45,20 +45,13 @@ namespace DataArcs.Components
         public void SetVersion(int version)
         {
             object1 = new Composite();
-
-            if (wanders)
-            {
-                var rs0 = new Store(new RandomSeries(2, SeriesType.Float, 200, -1f, 1f));
-                var rs1 = new Store(new RandomSeries(2, SeriesType.Float, 200, -50f, 50f));
-                //object1.AddProperty(PropertyID.RandomMotion, new PropertyStore(new Store[] { rs0, rs1 }));
-            }
-
+            
             if (version == 0 || version == 1)
             {
                 int cols = 10;
                 int rows = 6;
                 float totalWidth = 500f;
-                float growth = 125;
+                float growth = 65;
                 //graphic.Orientation = 0.5f;
                 float armLen = totalWidth / (float)(cols - 1) / 3f;
                 float height = (armLen * (float)Math.Sqrt(3)) / 2f * (rows - 1f);
@@ -72,10 +65,8 @@ namespace DataArcs.Components
                 var endStore = new Store(new FloatSeries(2, end, virtualCount: cols * rows), sampler: hexSampler);
                 if (version == 1)
                 {
-                    Store holder = new Store(new FloatSeries(2, new float[]{0,0}, virtualCount:cols*rows));
-                    holder.HardenToData();
-                    Store randomStore = new Store(new RandomSeries(2, SeriesType.Float, rows*cols, -2f, 2f, 1111));
-                    endStore.HardenToData();
+                    Store randomStore = new Store(new RandomSeries(2, SeriesType.Float, rows - 1, -5f, 5f, 1111));
+                    //endStore.HardenToData();
                     FunctionalStore fs = new FunctionalStore(endStore, randomStore);
                     object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, fs }, easingType: EasingType.Linear));
                 }
@@ -86,7 +77,6 @@ namespace DataArcs.Components
 
                 startStore.HardenToData();
                 //endStore.HardenToData();
-                wanders = (version == 1);
             }
             else if (version == 2)
             {
@@ -106,7 +96,6 @@ namespace DataArcs.Components
                 var endStore = new Store(new FloatSeries(vectorSize, end));
 
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }));
-                wanders = true;
             }
             else if (version == 3)
             {
@@ -121,9 +110,7 @@ namespace DataArcs.Components
                     easingTypes: new EasingType[] { EasingType.EaseCenter, EasingType.EaseCenter }, sampler: gridSampler);
 
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }, easingType: EasingType.Linear));
-
-
-                wanders = false;
+                
             }
 
             object1.AddProperty(PropertyID.FillColor, GetTestColors());
@@ -155,19 +142,17 @@ namespace DataArcs.Components
             if (floorT % 2 == 0) t = 1.0f - t;
             float easedT = t;// Easing.GetTAtT(t, loc.EasingType);
             int count = loc.GetElementCountAt(easedT);
-
+            float[] v = {0,0};
             for (int i = 0; i < count; i++)
             {
-                float it = i / (float)count;
-                float[] v = loc.GetValuesAtIndex(i, easedT).Floats;// + it - (1f-easedT));
-                if (wander != null)
+                if (i == count - 1)
                 {
-                    //wander.Stores[0].NudgeValuesBy(0.4f);
-                    //wander.Stores[1].NudgeValuesBy(0.4f);
-                    float[] wan = wander.GetValuesAtIndex(i, easedT).Floats;
-                    v[0] += wan[0];
-                    v[1] += wan[1];
+                    Debug.WriteLine(v[0] + " : " + v[1]);
                 }
+                float it = i / (float)(count - 1f);
+                //float[] v = loc.GetValuesAtIndex(i, easedT).Floats;// + it - (1f-easedT));
+                v = loc.GetValuesAtT(it, easedT).Floats;
+
                 Color c = GraphicUtils.GetRGBColorFrom(col.GetValuesAtT(it, easedT));
                 Brush b = new SolidBrush(c);
                 GraphicsState state = g.Save();
