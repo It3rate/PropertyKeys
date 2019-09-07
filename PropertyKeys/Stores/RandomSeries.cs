@@ -8,7 +8,7 @@ namespace DataArcs.Stores
 {
     public class RandomSeries : Series
     {
-        private readonly Random _random;
+        private Random _random;
         private readonly int _seed;
         private readonly float _min;
         private readonly float _max;
@@ -78,6 +78,16 @@ namespace DataArcs.Stores
             return result;
         }
 
+        public override void Reset()
+        {
+            _random = new Random(_seed);
+            GenerateData();
+        }
+        public override void Update()
+        {
+            Series b = GenerateData();
+            _series.Combine(b, CombineFunction.Add);
+        }
 
         protected override void CalculateFrame()
         {

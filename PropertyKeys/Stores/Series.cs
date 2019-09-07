@@ -75,6 +75,8 @@ namespace DataArcs.Stores
         public abstract Series GetValueAtT(float t);
         public abstract Series HardenToData(Store store); // return new copy as eventually everything should be immutable
 
+        public virtual void Reset() {}
+        public virtual void Update() { }
         protected abstract void CalculateFrame();
 
         public float this[int index] => FloatAt(index); // convenience indexer for float values.

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Numerics;
+using DataArcs.Mutators;
 
 // Todo:
 // Animate composites
@@ -45,6 +46,13 @@ namespace DataArcs.Components
         {
             object1 = new Composite();
 
+            if (wanders)
+            {
+                var rs0 = new Store(new RandomSeries(2, SeriesType.Float, 200, -1f, 1f));
+                var rs1 = new Store(new RandomSeries(2, SeriesType.Float, 200, -50f, 50f));
+                //object1.AddProperty(PropertyID.RandomMotion, new PropertyStore(new Store[] { rs0, rs1 }));
+            }
+
             if (version == 0 || version == 1)
             {
                 int cols = 10;
@@ -62,9 +70,22 @@ namespace DataArcs.Components
 
                 float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
                 var endStore = new Store(new FloatSeries(2, end, virtualCount: cols * rows), sampler: hexSampler);
+                if (version == 1)
+                {
+                    Store holder = new Store(new FloatSeries(2, new float[]{0,0}, virtualCount:cols*rows));
+                    holder.HardenToData();
+                    Store randomStore = new Store(new RandomSeries(2, SeriesType.Float, rows*cols, -2f, 2f, 1111));
+                    endStore.HardenToData();
+                    FunctionalStore fs = new FunctionalStore(endStore, randomStore);
+                    object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, fs }, easingType: EasingType.Linear));
+                }
+                else
+                {
+                    object1.AddProperty(PropertyID.Location, new PropertyStore(new []{ startStore, endStore }, easingType:EasingType.Linear));
+                }
+
                 startStore.HardenToData();
-                endStore.HardenToData();
-                object1.AddProperty(PropertyID.Location, new PropertyStore(new []{ startStore, endStore }, easingType:EasingType.Linear));
+                //endStore.HardenToData();
                 wanders = (version == 1);
             }
             else if (version == 2)
@@ -107,12 +128,6 @@ namespace DataArcs.Components
 
             object1.AddProperty(PropertyID.FillColor, GetTestColors());
 
-            if (wanders)
-            {
-                var rs0 = new Store(new RandomSeries(2, SeriesType.Float, 200, -1f, 1f));
-                var rs1 = new Store(new RandomSeries(2, SeriesType.Float, 200, -50f, 50f));
-                object1.AddProperty(PropertyID.RandomMotion, new PropertyStore(new Store[] { rs0, rs1 }));
-            }
 
         }
 
@@ -131,6 +146,9 @@ namespace DataArcs.Components
             PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
             PropertyStore col = object1.GetPropertyStore(PropertyID.FillColor);
             PropertyStore wander = object1.GetPropertyStore(PropertyID.RandomMotion);
+
+            loc.Update();
+
             //t = 1f;
             int floorT = (int)t;
             t = t - floorT;

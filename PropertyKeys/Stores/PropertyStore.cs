@@ -77,7 +77,22 @@ namespace DataArcs.Stores
             }
             return result;
         }
-        
+
+        public virtual void Reset()
+        {
+            foreach (var store in Stores)
+            {
+                store.Reset();
+            }
+        }
+
+        public virtual void Update()
+        {
+            foreach (var store in Stores)
+            {
+                store.Update();
+            }
+        }
 
         public static Series BlendValueAtIndex(Store start, Store end, int index, float t)
         {

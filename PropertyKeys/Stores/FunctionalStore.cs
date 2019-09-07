@@ -9,9 +9,13 @@ namespace DataArcs.Stores
     public class FunctionalStore : Store
     {
         public readonly Store[] Stores;
-        public override Series Series => null;
+        public override Series Series => Stores[0].Series;
 
-        public FunctionalStore(Store[] stores)
+        //public FunctionalStore(Store[] stores)
+        //{
+        //    Stores = stores;
+        //}
+        public FunctionalStore(params Store[] stores)
         {
             Stores = stores;
         }
@@ -42,6 +46,20 @@ namespace DataArcs.Stores
             foreach (var store in Stores)
             {
                 store.HardenToData();
+            }
+        }
+        public override void Reset()
+        {
+            foreach (var store in Stores)
+            {
+                store.Reset();
+            }
+        }
+        public override void Update()
+        {
+            foreach (var store in Stores)
+            {
+                store.Update();
             }
         }
     }

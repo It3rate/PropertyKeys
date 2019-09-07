@@ -63,7 +63,7 @@ namespace DataArcs.Stores
             {
                 float vt = t * (len - 1f);
                 startIndex = (int)vt;
-                endIndex = startIndex + 1;
+                endIndex = Math.Min(len - 1, startIndex + 1);
                 virtualT = vt - startIndex;
             }
         }

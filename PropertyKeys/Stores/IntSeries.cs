@@ -17,15 +17,19 @@ namespace DataArcs.Stores
         {
             _intValues = values;
         }
-
+        
         public override Series GetValueAtIndex(int index)
         {
             int len = DataSize / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
             float[] result = new float[VectorSize];
-            if (startIndex * VectorSize + VectorSize <= DataSize)
+            if (startIndex * VectorSize + (VectorSize - 1) < DataSize)
             {
-                Array.Copy(_intValues, index * VectorSize, result, 0, VectorSize);
+                Array.Copy(_intValues, startIndex * VectorSize, result, 0, VectorSize);
+            }
+            else
+            {
+                Array.Copy(_intValues, DataSize - VectorSize, result, 0, VectorSize);
             }
             return new FloatSeries(VectorSize, result);
         }

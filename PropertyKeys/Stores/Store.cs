@@ -39,10 +39,13 @@ namespace DataArcs.Stores
         {
             return Sampler != null ? Sampler.GetValueAtIndex(Series, index) : Series.GetValueAtIndex(index);
         }
-
         public virtual Series GetValueAtT(float t)
         {
-            return Sampler != null ? Sampler.GetValueAtT(Series, t) : Series.GetValueAtT(t);
+            return Sampler?.GetValueAtT(Series, t) ?? Series.GetValueAtT(t);
+        }
+        public virtual float GetTatT(float t)
+        {
+            return Sampler?.GetTAtT(t) ?? Series.GetValueAtT(t)[0];
         }
 
         public virtual void HardenToData()
@@ -50,6 +53,15 @@ namespace DataArcs.Stores
             Series = Series.HardenToData(this);
             Sampler = null;
             EasingTypes = null;
+        }
+
+        public virtual void Reset()
+        {
+            Series.Reset();
+        }
+        public virtual void Update()
+        {
+            Series.Update();
         }
     }
 }

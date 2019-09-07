@@ -24,7 +24,11 @@ namespace DataArcs.Stores
             float[] result = new float[VectorSize];
             if (startIndex * VectorSize + VectorSize <= DataSize)
             {
-                Array.Copy(_floatValues, index * VectorSize, result, 0, VectorSize);
+                Array.Copy(_floatValues, startIndex * VectorSize, result, 0, VectorSize);
+            }
+            else
+            {
+                Array.Copy(_floatValues, DataSize - VectorSize, result, 0, VectorSize);
             }
             return new FloatSeries(VectorSize, result);
         }
