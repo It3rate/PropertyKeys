@@ -65,7 +65,9 @@ namespace DataArcs.Components
                 var endStore = new Store(new FloatSeries(2, end, virtualCount: cols * rows), sampler: hexSampler);
                 if (version == 1)
                 {
-                    Store randomStore = new Store(new RandomSeries(2, SeriesType.Float, rows - 1, -5f, 5f, 1111));
+                    RandomSeries rs = new RandomSeries(2, SeriesType.Float, rows * cols, -25f, 25f, 1111, CombineFunction.Multiply);
+                    Store randomStore = new Store(rs);
+                    rs.setMinMax(.93f, 1f/.93f);
                     //endStore.HardenToData();
                     FunctionalStore fs = new FunctionalStore(endStore, randomStore);
                     object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, fs }, easingType: EasingType.Linear));
@@ -133,7 +135,7 @@ namespace DataArcs.Components
             PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
             PropertyStore col = object1.GetPropertyStore(PropertyID.FillColor);
             PropertyStore wander = object1.GetPropertyStore(PropertyID.RandomMotion);
-
+            
             loc.Update();
 
             //t = 1f;

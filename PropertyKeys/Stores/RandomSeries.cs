@@ -8,23 +8,25 @@ namespace DataArcs.Stores
 {
     public class RandomSeries : Series
     {
+        private CombineFunction _combineFunction;
         private Random _random;
         private readonly int _seed;
-        private readonly float _min;
-        private readonly float _max;
+        private float _min;
+        private float _max;
 
         private Series _series;
 
         /// <summary>
         /// RandomSeries always has an actual store in order to be consistent on repeated queries.
         /// </summary>
-        public RandomSeries(int vectorSize, SeriesType type, int virtualCount, float min, float max, int seed = 0) : base(vectorSize, type, virtualCount)
+        public RandomSeries(int vectorSize, SeriesType type, int virtualCount, float min, float max, int seed = 0, CombineFunction combineFunction = CombineFunction.Add) : base(vectorSize, type, virtualCount)
         {
             _min = min;
             _max = max;
             seed = seed == 0 ? DataUtils.Random.Next() : seed;
             _seed = seed;
             _random = new Random(_seed);
+            _combineFunction = combineFunction;
             _series = GenerateData();
         }
 
@@ -86,9 +88,14 @@ namespace DataArcs.Stores
         public override void Update()
         {
             Series b = GenerateData();
-            _series.Combine(b, CombineFunction.Add);
+            _series.Combine(b, _combineFunction);
         }
 
+        public void setMinMax(float min, float max)
+        {
+            _min = min;
+            _max = max;
+        }
         protected override void CalculateFrame()
         {
             // nothing to do as internal series calculates it's own frame.
