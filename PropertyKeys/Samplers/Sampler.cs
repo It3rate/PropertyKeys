@@ -50,7 +50,7 @@ namespace DataArcs.Samplers
         {
             int[] indexes = GetDimsForIndex(series, strides, index);
             int dSize = 1;
-            int maxLen = series.VirtualCount - 1;
+            int maxLen = series.VirtualCount;// - 1;
             float[] result = new float[indexes.Length];
             for (int i = 0; i < indexes.Length; i++)
             {
@@ -69,41 +69,8 @@ namespace DataArcs.Samplers
         }
         public static float[] GetStrideTsForT(Series series, int[] strides, float t)
         {
-            int index = (int)Math.Round(t * (series.VirtualCount - 1)); // Need an index for a strided object, so discard remainder.
+            int index = (int)Math.Round(t * (series.VirtualCount)); // Need an index for a strided object, so discard remainder.
             return GetStrideTsForIndex(series, strides, index);
-            //index = Math.Min(index, series.VirtualCount - 1);
-            float[] result = series.GetZeroSeries().Floats;
-            int curSize = 1;
-            int prevSize = curSize; // prevSize allows rendering to edges of grid
-            // Need to sample in each dimension of the vector and completely fill the remainder once zero is hit.
-            for (int i = 0; i < result.Length; i++)
-            {
-                bool isLast = (strides.Length - 1 < i) || (strides[i] == 0);
-                float dimT;
-                if (isLast)
-                {
-                    int totalRows = series.VirtualCount / (curSize + prevSize);
-                    dimT = (int)(index / curSize) / (float)totalRows;
-                }
-                else
-                {
-                    prevSize = curSize;
-                    curSize *= strides[i];
-                    dimT = (index % curSize) / (float)(curSize - prevSize);
-                }
-
-                //if (i < series.EasingTypes.Length)
-                //{
-                //    dimT = Easing.GetTAtT(dimT, series.EasingTypes[i]);
-                //}
-                result[i] = dimT;
-
-                if (isLast)
-                {
-                    break;
-                }
-            }
-            return result;
         }
 
         public static Sampler CreateSampler(SampleType sampleType, int[] strides = null)

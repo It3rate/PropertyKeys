@@ -152,15 +152,15 @@ namespace DataArcs.Components
             float[] v = {0,0};
             for (int i = 0; i < count; i++)
             {
-                //if (i > 5 && i < 9)//count - 1)
-                //{
-                //    float itx = i / (float)(count - 1f );
-                //    //var vx = Sampler.GetDimsForIndex(loc.Stores[1].Series, new[] { 10, 0 }, i);
-                //    var vx = Sampler.GetStrideTsForT(loc.Stores[0].Series, new[] { 10, 0 }, itx);
-                //    //var vx = v = loc.GetValuesAtT(itx, easedT).Floats;
-                //    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
-                //}
-                float it = i / (float)(count - 1f);
+                if (i > 51 && i < 54)//count - 1)
+                {
+                    float itx = i / (float)(count);
+                    //var vx = Sampler.GetDimsForIndex(loc.Stores[1].Series, new[] { 10, 0 }, i);
+                    //var vx = Sampler.GetStrideTsForT(loc.Stores[0].Series, new[] { 10, 0 }, itx);
+                    var vx = v = loc.GetValuesAtT(itx, easedT).Floats;
+                    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
+                }
+                float it = i / (float)(count);
                 //float[] v = loc.GetValuesAtIndex(i, easedT).Floats;// + it - (1f-easedT));
                 v = loc.GetValuesAtT(it, easedT).Floats;
 
