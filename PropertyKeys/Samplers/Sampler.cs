@@ -24,13 +24,53 @@ namespace DataArcs.Samplers
         public abstract float GetTAtT(float t);
 
 
-        protected static float[] GetStrideTsForIndex(Series series, int[] strides, int index)
+        public static int[] GetDimsForIndex(Series series, int[] strides, int index)
         {
-            return GetStrideTsForT(series, strides, (float)index / series.VirtualCount);
+            int count = index; // series.VirtualCount - 1;
+            int slot = 0;
+            int dSize = 1;
+            for (int i = 0; i < strides.Length; i++)
+            {
+                if (strides[i] > 0)
+                {
+                    dSize *= strides[i];
+                    slot++;
+                }
+            }
+            int[] result = new int[slot + 1];
+            for (int i = slot; i >= 0; i--)
+            {
+                result[i] = count / dSize;
+                count -= result[i] * dSize;
+                if (i > 0) { dSize /= strides[i - 1]; }
+            }
+            return result;
         }
-        protected static float[] GetStrideTsForT(Series series, int[] strides, float t)
+        public static float[] GetStrideTsForIndex(Series series, int[] strides, int index)
         {
-            int index = (int)(t * series.VirtualCount); // Need an index for a strided object, so discard remainder.
+            int[] indexes = GetDimsForIndex(series, strides, index);
+            int dSize = 1;
+            int maxLen = series.VirtualCount - 1;
+            float[] result = new float[indexes.Length];
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                if(i < strides.Length && strides[i] > 0)
+                {
+                    result[i] = indexes[i] / (float)(strides[i] - 1);
+                    dSize *= strides[i];
+                }
+                else
+                {
+                    result[i] = (float)(indexes[i] / Math.Floor(maxLen / (float)dSize));
+                    break;
+                }
+            }
+            return result;
+        }
+        public static float[] GetStrideTsForT(Series series, int[] strides, float t)
+        {
+            int index = (int)Math.Round(t * (series.VirtualCount - 1)); // Need an index for a strided object, so discard remainder.
+            return GetStrideTsForIndex(series, strides, index);
             //index = Math.Min(index, series.VirtualCount - 1);
             float[] result = series.GetZeroSeries().Floats;
             int curSize = 1;

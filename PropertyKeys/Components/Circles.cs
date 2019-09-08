@@ -45,20 +45,25 @@ namespace DataArcs.Components
         public void SetVersion(int version)
         {
             object1 = new Composite();
-            
+
+            Series test = new FloatSeries(1, new float[4], 11);
+            int[] testr = Sampler.GetDimsForIndex(test, new int[] { 3 }, 4);
+            float[] testf = Sampler.GetStrideTsForIndex(test, new int[] { 3 }, 4);
+            Debug.WriteLine(testr.ToString());
+
             if (version == 0 || version == 1)
             {
                 int cols = 10;
-                int rows = 6;
+                int rows =10;
                 float totalWidth = 500f;
-                float growth = 65;
+                float growth = 60;
                 //graphic.Orientation = 0.5f;
                 float armLen = totalWidth / (float)(cols - 1) / 3f;
                 float height = (armLen * (float)Math.Sqrt(3)) / 2f * (rows - 1f);
                 graphic.Radius = new Store(new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f));
 
                 float[] start = { 150, 150,   150 + totalWidth, 150 + height };
-                Sampler hexSampler = new HexagonSampler(new [] { cols, 0, 0 });
+                Sampler hexSampler = new HexagonSampler(new [] { cols, 0});
                 var startStore = new Store(new FloatSeries(2, start, virtualCount: cols * rows), sampler: hexSampler);
 
                 float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
@@ -74,10 +79,10 @@ namespace DataArcs.Components
                 }
                 else
                 {
-                    object1.AddProperty(PropertyID.Location, new PropertyStore(new []{ startStore, endStore }, easingType:EasingType.Linear));
+                    object1.AddProperty(PropertyID.Location, new PropertyStore(new []{ startStore, endStore }));
                 }
 
-                startStore.HardenToData();
+                //startStore.HardenToData();
                 //endStore.HardenToData();
             }
             else if (version == 2)
@@ -107,7 +112,7 @@ namespace DataArcs.Components
                 int vectorSize = 2;
                 float[] start = new float[] { 200, 40, 400, 200 };
                 float[] end = new float[] { 100, 100, 500, 400 };
-                var startStore = new Store(new FloatSeries(vectorSize, start, virtualCount: 46), sampler: ringSampler);
+                var startStore = new Store(new FloatSeries(vectorSize, start, virtualCount: 100), sampler: ringSampler);
                 var endStore = new Store(new FloatSeries(vectorSize, end, virtualCount: 100),
                     easingTypes: new EasingType[] { EasingType.EaseCenter, EasingType.EaseCenter }, sampler: gridSampler);
 
@@ -147,10 +152,14 @@ namespace DataArcs.Components
             float[] v = {0,0};
             for (int i = 0; i < count; i++)
             {
-                if (i == count - 1)
-                {
-                    Debug.WriteLine(v[0] + " : " + v[1]);
-                }
+                //if (i > 5 && i < 9)//count - 1)
+                //{
+                //    float itx = i / (float)(count - 1f );
+                //    //var vx = Sampler.GetDimsForIndex(loc.Stores[1].Series, new[] { 10, 0 }, i);
+                //    var vx = Sampler.GetStrideTsForT(loc.Stores[0].Series, new[] { 10, 0 }, itx);
+                //    //var vx = v = loc.GetValuesAtT(itx, easedT).Floats;
+                //    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
+                //}
                 float it = i / (float)(count - 1f);
                 //float[] v = loc.GetValuesAtIndex(i, easedT).Floats;// + it - (1f-easedT));
                 v = loc.GetValuesAtT(it, easedT).Floats;
