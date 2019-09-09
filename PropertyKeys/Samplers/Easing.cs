@@ -31,7 +31,7 @@ namespace DataArcs.Samplers
         public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
         {
             t = GetValueAt(t, EasingType);
-            return series.GetValueAtT(t, virtualCount);
+            return series.GetValueAtT(t);
         }
 
         public override float GetTAtT(float t)

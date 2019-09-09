@@ -73,21 +73,20 @@ namespace DataArcs.Stores
         }
 
         // todo: All float t's should probably be float[] t.
-        public abstract Series GetDataAtIndex(int index, int virtualCount = -1);
-        public virtual Series GetValueAtVirtualIndex(int index, int virtualCount = -1)
+        public abstract Series GetDataAtIndex(int index);
+        public virtual Series GetValueAtVirtualIndex(int index)
         {
-            virtualCount = (virtualCount == -1) ? VirtualCount : virtualCount;
-            float indexT = index / (virtualCount - 1f);
+            float indexT = index / (VirtualCount - 1f);
             return GetValueAtT(indexT);
         }
-        public virtual Series GetValueAtT(float t, int virtualCount = -1)
+        public virtual Series GetValueAtT(float t)
         {
             Series result;
             int len = DataSize / VectorSize;
-            if (virtualCount > -1)
-            {
-                t *= VirtualCount / (float)virtualCount;
-            }
+            //if (virtualCount > -1)
+            //{
+            //    t *= virtualCount / (float)VirtualCount;
+            //}
 
             if (t >= 1)
             {
@@ -102,8 +101,8 @@ namespace DataArcs.Stores
                 if (pos < len - 1)
                 {
                     float remainderT = pos - startIndex;
-                    result = GetDataAtIndex(startIndex, virtualCount);
-                    Series end = GetDataAtIndex(startIndex + 1, virtualCount);
+                    result = GetDataAtIndex(startIndex);
+                    Series end = GetDataAtIndex(startIndex + 1);
                     result.Interpolate(end, remainderT);
                 }
                 else
