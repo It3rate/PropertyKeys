@@ -161,5 +161,48 @@ namespace DataArcs.Stores
             }
             return result;
         }
+
+        public static bool IsEqual(Series a, Series b)
+        {
+            bool result = true;
+            if(a.GetType() == b.GetType() && a.VirtualCount == b.VirtualCount && a.VectorSize == b.VectorSize)
+            {
+                for (int i = 0; i < a.VirtualCount; i++)
+                {
+                    if(a.Type == SeriesType.Float)
+                    {
+                        float delta = 0.0001f;
+                        float[] ar = a.GetValueAtVirtualIndex(i).Floats;
+                        float[] br = b.GetValueAtVirtualIndex(i).Floats;
+                        for (int j = 0; j < ar.Length; j++)
+                        {
+                            if(Math.Abs(ar[j] - br[j]) > delta)
+                            {
+                                result = false;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int[] ar = a.GetValueAtVirtualIndex(i).Ints;
+                        int[] br = b.GetValueAtVirtualIndex(i).Ints;
+                        for (int j = 0; j < ar.Length; j++)
+                        {
+                            if (ar[j] != br[j])
+                            {
+                                result = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                result = false;
+            }
+            return result;
+        }
     }
 }

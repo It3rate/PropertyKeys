@@ -83,7 +83,7 @@ namespace DataArcs.Tests
             ArraysEqual(new float[] { 0, 0 }, sample, delta);
             sample = Sampler.GetStrideTsForT(series, strides, 0);
             ArraysEqual(new float[] { 0, 0 }, sample, delta);
-            sample = Sampler.GetStrideTsForT(series, strides, 0.01f);
+            sample = Sampler.GetStrideTsForT(series, strides, 1f / len);
             ArraysEqual(new float[] { 1f/cl, 0 }, sample, delta);
             sample = Sampler.GetStrideTsForT(series, strides, 9f / len);
             ArraysEqual(new float[] { 1f, 0 }, sample, delta);

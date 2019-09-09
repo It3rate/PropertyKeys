@@ -18,7 +18,7 @@ namespace DataArcs.Samplers
 
         public override Series GetValueAtIndex(Series series, int index)
         {
-            float indexT = index / (series.VirtualCount); 
+            float indexT = index / (series.VirtualCount - 1); 
             return GetSeriesSample(series, Strides, index);
         }
 
@@ -55,7 +55,7 @@ namespace DataArcs.Samplers
             
             for (int i = 0; i < result.Length; i++)
             {
-                float temp = series.GetValueAtT(strideTs[i] + 1f/(strides[0]*2f)).Floats[i];
+                float temp = series.GetValueAtT(strideTs[i]).Floats[i];
                 int curRow = (int)((float)index / strides[0]);
                 if (i == 0 && ((curRow & 1) == 1) && strides[0] > 0)
                 {
