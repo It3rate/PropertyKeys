@@ -115,7 +115,7 @@ namespace DataArcs.Components
                 var startStore = new Store(new FloatSeries(vectorSize, start, virtualCount: 100), sampler: ringSampler);
                 var endStore = new Store(new FloatSeries(vectorSize, end, virtualCount: 100),
                     easingTypes: new EasingType[] { EasingType.EaseCenter, EasingType.EaseCenter }, sampler: gridSampler);
-
+                endStore.HardenToData();
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }, easingType: EasingType.Linear));
                 
             }
@@ -152,7 +152,7 @@ namespace DataArcs.Components
             float[] v = {0,0};
             for (int i = 0; i < count; i++)
             {
-                if (i > 51 && i < 54)//count - 1)
+                if (i > 25 && i < 62)//count - 1)
                 {
                     float itx = i / (float)(count);
                     //var vx = Sampler.GetDimsForIndex(loc.Stores[1].Series, new[] { 10, 0 }, i);

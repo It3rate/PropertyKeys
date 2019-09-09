@@ -50,7 +50,7 @@ namespace DataArcs.Samplers
         {
             int[] indexes = GetDimsForIndex(series, strides, index);
             int dSize = 1;
-            int maxLen = series.VirtualCount;// - 1;
+            int maxLen = series.VirtualCount - 1;
             float[] result = new float[indexes.Length];
             for (int i = 0; i < indexes.Length; i++)
             {

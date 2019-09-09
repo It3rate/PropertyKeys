@@ -18,7 +18,7 @@ namespace DataArcs.Samplers
 
         public override Series GetValueAtIndex(Series series, int index)
         {
-            float indexT = index / (series.VirtualCount);
+            float indexT = index / (float)series.VirtualCount;
             return GetSeriesSample(series, Strides, indexT);
         }
 

@@ -69,7 +69,7 @@ namespace DataArcs.Stores
             return _series.GetValueAtT(t);
         }
         
-        public override Series HardenToData(Store store)
+        public override Series HardenToData(Store store = null)
         {
             Series result = this;
             int len = VirtualCount * VectorSize;

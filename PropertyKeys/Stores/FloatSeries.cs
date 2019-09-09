@@ -37,13 +37,17 @@ namespace DataArcs.Stores
         {
             Series result;
             int len = DataSize / VectorSize;
-            if (len > 1)
+            if(t >= 1)
+            {
+                result = GetValueAtIndex(len - 1);
+            }
+            else if (len > 1)
             {
                 // interpolate between indexes to get virtual values from array.
-                float pos = Math.Min(1, Math.Max(0, t)) * (len - 1);
-                int startIndex = (int)Math.Floor(pos);
+                float pos = Math.Min(1, Math.Max(0, t)) * (len - 1f);
+                int startIndex = (int)pos;
                 startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
-                if (pos < len - 1)
+                if (startIndex < len - 1)
                 {
                     float remainderT = pos - startIndex;
                     result = GetValueAtIndex(startIndex);
@@ -62,7 +66,7 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public override Series HardenToData(Store store)
+        public override Series HardenToData(Store store = null)
         {
             Series result = this;
             int len = VirtualCount * VectorSize;
@@ -71,7 +75,7 @@ namespace DataArcs.Stores
                 float[] vals = new float[len];
                 for (int i = 0; i < VirtualCount; i++)
                 {
-                    float[] val = store.GetValueAtIndex(i).Floats;
+                    float[] val = store == null ? GetValueAtIndex(i).Floats : store.GetValueAtIndex(i).Floats;
                     Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
                 }
 

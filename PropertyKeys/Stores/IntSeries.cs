@@ -63,7 +63,7 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public override Series HardenToData(Store store)
+        public override Series HardenToData(Store store = null)
         {
             Series result = this;
             int len = VirtualCount * VectorSize;
@@ -72,7 +72,7 @@ namespace DataArcs.Stores
                 int[] vals = new int[len];
                 for (int i = 0; i < VirtualCount; i++)
                 {
-                    int[] val = store.GetValueAtIndex(i).Ints;
+                    int[] val = store == null ? GetValueAtIndex(i).Ints : store.GetValueAtIndex(i).Ints;
                     Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
                 }
 

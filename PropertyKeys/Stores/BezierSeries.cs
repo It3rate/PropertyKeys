@@ -63,7 +63,7 @@ namespace DataArcs.Stores
             return new FloatSeries(2, result);
         }
 
-        public override Series HardenToData(Store store)
+        public override Series HardenToData(Store store = null)
         {
             Series result = this;
             int len = VirtualCount * VectorSize;
@@ -73,7 +73,7 @@ namespace DataArcs.Stores
                 BezierMove[] moves = new BezierMove[VirtualCount];
                 for (int i = 0; i < VirtualCount; i++)
                 {
-                    float[] val = store.GetValueAtIndex(i).Floats;
+                    float[] val = store == null ? GetValueAtIndex(i).Floats : store.GetValueAtIndex(i).Floats;
                     Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
                     moves[i] = (i < moves.Length) ? moves[i] : BezierMove.LineTo;
                 }
