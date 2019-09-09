@@ -33,6 +33,12 @@ namespace DataArcs.Stores
             }
             return new FloatSeries(VectorSize, result);
         }
+        public override void SetDataAtIndex(int index, Series series)
+        {
+            int len = DataSize / VectorSize;
+            int startIndex = Math.Min(len - 1, Math.Max(0, index));
+            Array.Copy(series.Floats, 0, _floatValues, startIndex * VectorSize, VectorSize);
+        }
 
         public override Series HardenToData(Store store = null)
         {

@@ -60,7 +60,22 @@ namespace DataArcs.Stores
             int size = MoveSize[(int)Moves[index]];
             float[] result = new float[size];
             Array.Copy(_floatValues, start, result, 0, size);
-            return new FloatSeries(2, result);
+            return new BezierSeries(result, new []{ Moves[index] });
+        }
+        public override void SetDataAtIndex(int index, Series series)
+        {
+            index = Math.Max(0, Math.Min(Moves.Length - 1, index));
+            int start = 0;
+            for (int i = 0; i < index; i++)
+            {
+                start += MoveSize[(int)Moves[i]];
+            }
+            int size = MoveSize[(int)Moves[index]];
+            Array.Copy(series.Floats, 0, _floatValues, index * VectorSize, VectorSize);
+            if(series is BezierSeries)
+            {
+                Moves[index] = ((BezierSeries)series).Moves[0];
+            }
         }
 
         public override Series HardenToData(Store store = null)

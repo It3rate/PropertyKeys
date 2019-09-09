@@ -63,6 +63,10 @@ namespace DataArcs.Stores
         {
             return _series.GetDataAtIndex(index);
         }
+        public override void SetDataAtIndex(int index, Series series)
+        {
+            _series.SetDataAtIndex(index, series);
+        }
 
         public override Series GetValueAtT(float t)
         {

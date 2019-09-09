@@ -74,6 +74,8 @@ namespace DataArcs.Stores
 
         // todo: All float t's should probably be float[] t.
         public abstract Series GetDataAtIndex(int index);
+        public abstract void SetDataAtIndex(int index, Series series);
+
         public virtual Series GetValueAtVirtualIndex(int index)
         {
             float indexT = index / (VirtualCount - 1f);
@@ -138,6 +140,19 @@ namespace DataArcs.Stores
         public abstract Series GetZeroSeries(int elements);
         public abstract Series GetMinSeries();
         public abstract Series GetMaxSeries();
+
+        public virtual void Shuffle()
+        {
+            for (int i = 0; i < DataSize; i++)
+            {
+                int a = DataUtils.Random.Next(DataSize);
+                int b = DataUtils.Random.Next(DataSize);
+                Series sa = GetDataAtIndex(a);
+                Series sb = GetDataAtIndex(b);
+                SetDataAtIndex(a, sb);
+                SetDataAtIndex(b, sa);
+            }
+        }
 
         public static Series Create(Series series, int[] values)
         {

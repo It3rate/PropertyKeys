@@ -62,7 +62,7 @@ namespace DataArcs.Components
                 var startStore = new Store(new FloatSeries(2, start, virtualCount: cols * rows), sampler: hexSampler);
 
                 float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
-                var endStore = new Store(new FloatSeries(2, end, virtualCount: 66), sampler: hexSampler);
+                var endStore = new Store(new FloatSeries(2, end, virtualCount: rows * cols), sampler: hexSampler);
                 if (version == 1)
                 {
                     RandomSeries rs = new RandomSeries(2, SeriesType.Float, rows * cols, -25f, 25f, 1111, CombineFunction.Multiply);
@@ -77,8 +77,9 @@ namespace DataArcs.Components
                     object1.AddProperty(PropertyID.Location, new PropertyStore(new []{ startStore, endStore }));
                 }
 
-                //startStore.HardenToData();
-                //endStore.HardenToData();
+                startStore.HardenToData();
+                endStore.HardenToData();
+                //endStore.Series.Shuffle();
             }
             else if (version == 2)
             {
