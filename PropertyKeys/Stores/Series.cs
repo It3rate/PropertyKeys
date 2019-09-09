@@ -91,7 +91,7 @@ namespace DataArcs.Stores
             else if (len > 1)
             {
                 // interpolate between indexes to get virtual values from array.
-                float pos = Math.Min(1, Math.Max(0, t)) * (len - 1f);
+                float pos = Math.Min(1, Math.Max(0, t)) * (float)(len - 1f);
                 int startIndex = (int)Math.Floor(pos);
                 startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
                 if (pos < len - 1)

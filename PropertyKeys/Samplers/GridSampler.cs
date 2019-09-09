@@ -18,13 +18,14 @@ namespace DataArcs.Samplers
 
         public override Series GetValueAtIndex(Series series, int index)
         {
-            float indexT = index / (float)series.VirtualCount;
-            return GetSeriesSample(series, Strides, indexT);
+            index = Math.Max(0, Math.Min(series.VirtualCount - 1, index));
+            return GetSeriesSample(series, Strides, index);
         }
 
         public override Series GetValueAtT(Series series, float t)
         {
-            return GetSeriesSample(series, Strides, t);
+            t = Math.Max(0, Math.Min(1f, t));
+            return GetSeriesSample(series, Strides, (int)Math.Round(t * (series.VirtualCount - 1f)));
         }
 
         public override float GetTAtT(float t)
@@ -42,10 +43,10 @@ namespace DataArcs.Samplers
             return result;
         }
 
-        public static Series GetSeriesSample(Series series, int[] strides, float t)
+        public static Series GetSeriesSample(Series series, int[] strides, int index)
         {
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
-            float[] strideTs = GetStrideTsForT(series, strides, t);
+            float[] strideTs = GetStrideTsForIndex(series, strides, index);
 
             for (int i = 0; i < result.Length; i++)
             {
