@@ -20,16 +20,18 @@ namespace DataArcs.Samplers
             EasingType = easingType;
         }
 
-        public override Series GetValueAtIndex(Series series, int index)
+        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
         {
-            float indexT = index / (float)series.VirtualCount;
-            return GetValueAtT(series, indexT);
+            // todo: check if this virtualCount assignment should happen in easing at this point or pass through.
+            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
+            float indexT = index / (float)virtualCount;
+            return GetValueAtT(series, indexT, virtualCount);
         }
 
-        public override Series GetValueAtT(Series series, float t)
+        public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
         {
             t = GetValueAt(t, EasingType);
-            return series.GetValueAtT(t);
+            return series.GetValueAtT(t, virtualCount);
         }
 
         public override float GetTAtT(float t)

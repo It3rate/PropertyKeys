@@ -17,18 +17,20 @@ namespace DataArcs.Samplers
             Series = series;
         }
 
-        public override Series GetValueAtIndex(Series series, int index)
+        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
         {
+            // todo: check if this virtualCount assignment should happen in beziers at this point or pass through.
+            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             series = series ?? Series;
-            float t = index / (float)series.VirtualCount;
-            return GetValueAtT(series, t);
+            float t = index / (float)virtualCount;
+            return GetValueAtT(series, t, virtualCount);
         }
 
-        public override Series GetValueAtT(Series series, float t)
+        public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
         {
             series = series ?? Series;
             BezierMove[] moves = series is BezierSeries bezierSeries ? bezierSeries.Moves : new[] { BezierMove.LineTo };
-            return GetValueAtT(series, moves, t);
+            return GetValueAtT(series, moves, t, virtualCount);
         }
 
         public override float GetTAtT(float t)
@@ -36,9 +38,14 @@ namespace DataArcs.Samplers
             return Series != null ? GetValueAtT(Series, Series.Moves, t)[0] : t;
         }
 
-        public static Series GetValueAtT(Series series, BezierMove[] moves, float t)
+        public static Series GetValueAtT(Series series, BezierMove[] moves, float t, int virtualCount = -1)
         {
-            DataUtils.GetScaledT(t, series.VirtualCount, out float vT, out int startIndex, out int endIndex);
+            if (virtualCount > -1)
+            {
+                t *= (series.VirtualCount / (float)virtualCount);
+            }
+            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
+            DataUtils.GetScaledT(t, virtualCount, out float vT, out int startIndex, out int endIndex);
             float[] a = series.GetDataAtIndex(startIndex).Floats;// GetFloatArrayAtIndex(startIndex);
             float[] b = series.GetDataAtIndex(endIndex).Floats;// GetFloatArrayAtIndex(endIndex);
             int p0Index = startIndex == endIndex ? 0 : a.Length - 2; // start from last point unless at start or end.

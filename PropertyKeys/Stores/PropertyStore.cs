@@ -22,7 +22,7 @@ namespace DataArcs.Stores
         }
         
         // todo: return series
-        public Series GetValuesAtIndex(int index, float t)
+        public Series GetValuesAtIndex(int index, float t, int virtualCount = -1)
         {
             Series result;
             t = Easing.GetValueAt(t, EasingType);
@@ -31,16 +31,16 @@ namespace DataArcs.Stores
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].GetValueAtIndex(index);
+                result = Stores[startIndex].GetValueAtIndex(index, virtualCount);
             }
             else
             {
-                result = BlendValueAtIndex(Stores[startIndex], Stores[endIndex], index, vT);
+                result = BlendValueAtIndex(Stores[startIndex], Stores[endIndex], index, vT, virtualCount);
             }
             return result;
         }
 
-        public Series GetValuesAtT(float indexT, float t)
+        public Series GetValuesAtT(float indexT, float t, int virtualCount = -1)
         {
             Series result;
             t = Easing.GetValueAt(t, EasingType);
@@ -49,11 +49,11 @@ namespace DataArcs.Stores
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].GetValueAtT(indexT);
+                result = Stores[startIndex].GetValueAtT(indexT, virtualCount);
             }
             else
             {
-                result = BlendValueAtT(Stores[startIndex], Stores[endIndex], indexT, vT);
+                result = BlendValueAtT(Stores[startIndex], Stores[endIndex], indexT, vT, virtualCount);
             }
             return result;
         }
@@ -94,22 +94,22 @@ namespace DataArcs.Stores
             }
         }
 
-        public static Series BlendValueAtIndex(Store start, Store end, int index, float t)
+        public static Series BlendValueAtIndex(Store start, Store end, int index, float t, int virtualCount = -1)
         {
-            Series result = start.GetValueAtIndex(index);
+            Series result = start.GetValueAtIndex(index, virtualCount);
             if (end != null)
             {
-                Series endAr = end.GetValueAtIndex(index);
+                Series endAr = end.GetValueAtIndex(index, virtualCount);
                 result.Interpolate(endAr, t);
             }
             return result;
         }
-        public static Series BlendValueAtT(Store start, Store end, float indexT, float t)
+        public static Series BlendValueAtT(Store start, Store end, float indexT, float t, int virtualCount = -1)
         {
-            Series result = start.GetValueAtT(indexT);
+            Series result = start.GetValueAtT(indexT, virtualCount);
             if (end != null)
             {
-                Series endAr = end.GetValueAtT(indexT);
+                Series endAr = end.GetValueAtT(indexT, virtualCount);
                 result.Interpolate(endAr, t);
             }
             return result;

@@ -9,15 +9,21 @@ namespace DataArcs.Samplers
 {
     public class RingSampler : Sampler
     {
-        public override Series GetValueAtIndex(Series series, int index)
+        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
         {
-            float indexT = index / (series.VirtualCount - 1f); // full circle
-            return GetSeriesSample(series, indexT);
+            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
+            float indexT = index / (virtualCount - 1f); // full circle
+            return GetSeriesSample(series, indexT, virtualCount);
         }
 
-        public override Series GetValueAtT(Series series, float t)
+        public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
         {
-            return GetSeriesSample(series, t);
+            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
+            if (virtualCount > -1)
+            {
+                t *= series.VirtualCount / (float)virtualCount;
+            }
+            return GetSeriesSample(series, t, virtualCount);
         }
 
         public override float GetTAtT(float t)
@@ -26,7 +32,7 @@ namespace DataArcs.Samplers
         }
 
 
-        public static Series GetSeriesSample(Series series, float t)
+        public static Series GetSeriesSample(Series series, float t, int virtualCount = -1)
         {
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
             float[] frame = series.Frame.Floats; // x0,y0...n0, x1,y1..n1

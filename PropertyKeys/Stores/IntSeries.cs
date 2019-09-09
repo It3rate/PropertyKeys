@@ -18,9 +18,13 @@ namespace DataArcs.Stores
             _intValues = values;
         }
         
-        public override Series GetDataAtIndex(int index)
+        public override Series GetDataAtIndex(int index, int virtualCount = -1)
         {
             int len = DataSize / VectorSize;
+            if (virtualCount > -1)
+            {
+                index = (int)(index * (VirtualCount / (float)virtualCount));
+            }
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
             int[] result = new int[VectorSize];
             if (startIndex * VectorSize + (VectorSize - 1) < DataSize)

@@ -35,13 +35,13 @@ namespace DataArcs.Stores
         public Store(int[] data, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add) : this(new IntSeries(1, data), sampler, easingTypes, combineFunction) {}
         public Store(float[] data, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add) : this(new FloatSeries(1, data), sampler, easingTypes, combineFunction) {}
 
-        public virtual Series GetValueAtIndex(int index)
+        public virtual Series GetValueAtIndex(int index, int virtualCount = -1)
         {
-            return Sampler != null ? Sampler.GetValueAtIndex(Series, index) : Series.GetDataAtIndex(index);
+            return Sampler != null ? Sampler.GetValueAtIndex(Series, index, virtualCount) : Series.GetDataAtIndex(index, virtualCount);
         }
-        public virtual Series GetValueAtT(float t)
+        public virtual Series GetValueAtT(float t, int virtualCount = -1)
         {
-            return Sampler?.GetValueAtT(Series, t) ?? Series.GetValueAtT(t);
+            return Sampler?.GetValueAtT(Series, t, virtualCount) ?? Series.GetValueAtT(t, virtualCount);
         }
         public virtual float GetTatT(float t)
         {

@@ -46,11 +46,6 @@ namespace DataArcs.Components
         {
             object1 = new Composite();
 
-            Series test = new FloatSeries(1, new float[4], 11);
-            int[] testr = Sampler.GetDimsForIndex(test, new int[] { 3 }, 4);
-            float[] testf = Sampler.GetStrideTsForIndex(test, new int[] { 3 }, 4);
-            Debug.WriteLine(testr.ToString());
-
             if (version == 0 || version == 1)
             {
                 int cols = 10;
@@ -67,7 +62,7 @@ namespace DataArcs.Components
                 var startStore = new Store(new FloatSeries(2, start, virtualCount: cols * rows), sampler: hexSampler);
 
                 float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
-                var endStore = new Store(new FloatSeries(2, end, virtualCount: cols * rows), sampler: hexSampler);
+                var endStore = new Store(new FloatSeries(2, end, virtualCount: 66), sampler: hexSampler);
                 if (version == 1)
                 {
                     RandomSeries rs = new RandomSeries(2, SeriesType.Float, rows * cols, -25f, 25f, 1111, CombineFunction.Multiply);
@@ -82,8 +77,8 @@ namespace DataArcs.Components
                     object1.AddProperty(PropertyID.Location, new PropertyStore(new []{ startStore, endStore }));
                 }
 
-                startStore.HardenToData();
-                endStore.HardenToData();
+                //startStore.HardenToData();
+                //endStore.HardenToData();
             }
             else if (version == 2)
             {
@@ -113,7 +108,7 @@ namespace DataArcs.Components
                 float[] start = new float[] { 200, 40, 400, 200 };
                 float[] end = new float[] { 100, 100, 500, 400 };
                 var startStore = new Store(new FloatSeries(vectorSize, start, virtualCount: 100), sampler: ringSampler);
-                var endStore = new Store(new FloatSeries(vectorSize, end, virtualCount: 100),
+                var endStore = new Store(new FloatSeries(vectorSize, end, virtualCount: 50),
                     easingTypes: new EasingType[] { EasingType.EaseCenter, EasingType.EaseCenter }, sampler: gridSampler);
                 endStore.HardenToData();
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }, easingType: EasingType.Linear));
@@ -159,7 +154,7 @@ namespace DataArcs.Components
                 //    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
                 //}
                 float it = i / (float)(count - 1f);
-                v = loc.GetValuesAtT(it, easedT).Floats;
+                v = loc.GetValuesAtT(it, easedT, count).Floats;
 
                 Color c = GraphicUtils.GetRGBColorFrom(col.GetValuesAtT(it, easedT));
                 Brush b = new SolidBrush(c);

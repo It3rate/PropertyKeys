@@ -9,14 +9,14 @@ namespace DataArcs.Samplers
 {
     public class LineSampler : Sampler
     {
-        public override Series GetValueAtIndex(Series series, int index)
+        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
         {
-            return series.GetDataAtIndex(index);
+            return series.GetDataAtIndex(index, virtualCount);
         }
 
-        public override Series GetValueAtT(Series series, float t)
+        public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
         {
-            return series.GetValueAtT(t);
+            return series.GetValueAtT(t, virtualCount);
         }
 
         public override float GetTAtT(float t)

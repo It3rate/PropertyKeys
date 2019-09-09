@@ -43,14 +43,19 @@ namespace DataArcs.Stores
             Moves = moves;
         }
 
-        public override Series GetValueAtT(float t)
+        public override Series GetValueAtT(float t, int virtualCount = -1)
         {
-            int index = (int)(t * VirtualCount);
+            virtualCount = (virtualCount == -1) ? VirtualCount : virtualCount;
+            int index = (int)(t * virtualCount);
             return GetDataAtIndex(index);
         }
 
-        public override Series GetDataAtIndex(int index)
+        public override Series GetDataAtIndex(int index, int virtualCount = -1)
         {
+            if (virtualCount > -1)
+            {
+                index = (int)(index * (VirtualCount / (float)virtualCount));
+            }
             index = Math.Max(0, Math.Min(Moves.Length - 1, index));
             int start = 0;
             for (int i = 0; i < index; i++)

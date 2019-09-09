@@ -16,16 +16,19 @@ namespace DataArcs.Samplers
             Strides = strides;
         }
 
-        public override Series GetValueAtIndex(Series series, int index)
+        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
         {
-            index = Math.Max(0, Math.Min(series.VirtualCount - 1, index));
+            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
+            index = Math.Max(0, Math.Min(virtualCount - 1, index));
             return GetSeriesSample(series, Strides, index);
         }
 
-        public override Series GetValueAtT(Series series, float t)
+        public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
         {
+            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             t = Math.Max(0, Math.Min(1f, t));
-            return GetSeriesSample(series, Strides, (int)Math.Round(t * (series.VirtualCount - 1f)));
+            int index = (int)Math.Round(t * (virtualCount - 1f));
+            return GetSeriesSample(series, Strides, index, virtualCount);
         }
 
         public override float GetTAtT(float t)
@@ -48,11 +51,12 @@ namespace DataArcs.Samplers
             return result;
         }
 
-        public static Series GetSeriesSample(Series series, int[] strides, int index)
+        public static Series GetSeriesSample(Series series, int[] strides, int index, int virtualCount = -1)
         {
+            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
             float[] size = series.Size.Floats; // s0,s1...sn
-            float[] strideTs = GetStrideTsForIndex(series, strides, index);
+            float[] strideTs = GetStrideTsForIndex(virtualCount, strides, index);
             
             for (int i = 0; i < result.Length; i++)
             {

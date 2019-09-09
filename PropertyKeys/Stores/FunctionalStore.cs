@@ -19,23 +19,23 @@ namespace DataArcs.Stores
         {
             Stores = stores;
         }
-        public override Series GetValueAtIndex(int index)
+        public override Series GetValueAtIndex(int index, int virtualCount = -1)
         {
-            Series series = Stores[0].GetValueAtIndex(index);
+            Series series = Stores[0].GetValueAtIndex(index, virtualCount);
             for (int i = 1; i < Stores.Length; i++)
             {
-                Series b = Stores[i].GetValueAtIndex(index);
+                Series b = Stores[i].GetValueAtIndex(index, virtualCount);
                 series.Combine(b, Stores[i].CombineFunction);
             }
             return series;
         }
 
-        public override Series GetValueAtT(float t)
+        public override Series GetValueAtT(float t, int virtualCount = -1)
         {
-            Series series = Stores[0].GetValueAtT(t);
+            Series series = Stores[0].GetValueAtT(t, virtualCount);
             for (int i = 1; i < Stores.Length; i++)
             {
-                Series b = Stores[i].GetValueAtT(t);
+                Series b = Stores[i].GetValueAtT(t, virtualCount);
                 series.Combine(b, Stores[i].CombineFunction);
             }
             return series;

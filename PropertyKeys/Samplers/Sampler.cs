@@ -19,14 +19,14 @@ namespace DataArcs.Samplers
 
     public abstract class Sampler
     {
-        public abstract Series GetValueAtIndex(Series series, int index);
-        public abstract Series GetValueAtT(Series series, float t);
+        public abstract Series GetValueAtIndex(Series series, int index, int virtualCount = -1);
+        public abstract Series GetValueAtT(Series series, float t, int virtualCount = -1);
         public abstract float GetTAtT(float t);
 
 
-        public static int[] GetDimsForIndex(Series series, int[] strides, int index)
+        public static int[] GetDimsForIndex(int virtualCount, int[] strides, int index)
         {
-            int count = Math.Max(0, Math.Min(series.VirtualCount - 1, index));
+            int count = Math.Max(0, Math.Min(virtualCount - 1, index));
             int slot = 0;
             int dSize = 1;
             for (int i = 0; i < strides.Length; i++)
@@ -46,11 +46,11 @@ namespace DataArcs.Samplers
             }
             return result;
         }
-        public static float[] GetStrideTsForIndex(Series series, int[] strides, int index)
+        public static float[] GetStrideTsForIndex(int virtualCount, int[] strides, int index)
         {
-            int[] indexes = GetDimsForIndex(series, strides, index);
+            int[] indexes = GetDimsForIndex(virtualCount, strides, index);
             int dSize = 1;
-            int maxLen = series.VirtualCount - 1;
+            int maxLen = virtualCount - 1;
             float[] result = new float[indexes.Length];
             for (int i = 0; i < indexes.Length; i++)
             {
@@ -67,10 +67,10 @@ namespace DataArcs.Samplers
             }
             return result;
         }
-        public static float[] GetStrideTsForT(Series series, int[] strides, float t)
+        public static float[] GetStrideTsForT(int virtualCount, int[] strides, float t)
         {
-            int index = (int)(t * (series.VirtualCount - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
-            return GetStrideTsForIndex(series, strides, index);
+            int index = (int)(t * (virtualCount - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
+            return GetStrideTsForIndex(virtualCount, strides, index);
         }
 
         public static Sampler CreateSampler(SampleType sampleType, int[] strides = null)
