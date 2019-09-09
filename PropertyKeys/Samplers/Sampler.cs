@@ -26,7 +26,7 @@ namespace DataArcs.Samplers
 
         public static int[] GetDimsForIndex(Series series, int[] strides, int index)
         {
-            int count = index; // series.VirtualCount - 1;
+            int count = Math.Max(0, Math.Min(series.VirtualCount - 1, index));
             int slot = 0;
             int dSize = 1;
             for (int i = 0; i < strides.Length; i++)
@@ -69,7 +69,7 @@ namespace DataArcs.Samplers
         }
         public static float[] GetStrideTsForT(Series series, int[] strides, float t)
         {
-            int index = (int)Math.Round(t * (series.VirtualCount)); // Need an index for a strided object, so discard remainder.
+            int index = (int)(t * (series.VirtualCount - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
             return GetStrideTsForIndex(series, strides, index);
         }
 

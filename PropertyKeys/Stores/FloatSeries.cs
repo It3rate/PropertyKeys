@@ -17,7 +17,7 @@ namespace DataArcs.Stores
         {
             _floatValues = values;
         }
-        public override Series GetValueAtIndex(int index)
+        public override Series GetDataAtIndex(int index)
         {
             int len = DataSize / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
@@ -33,39 +33,6 @@ namespace DataArcs.Stores
             return new FloatSeries(VectorSize, result);
         }
 
-        public override Series GetValueAtT(float t)
-        {
-            Series result;
-            int len = DataSize / VectorSize;
-            if(t >= 1)
-            {
-                result = GetValueAtIndex(len - 1);
-            }
-            else if (len > 1)
-            {
-                // interpolate between indexes to get virtual values from array.
-                float pos = Math.Min(1, Math.Max(0, t)) * (len - 1f);
-                int startIndex = (int)pos;
-                startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
-                if (startIndex < len - 1)
-                {
-                    float remainderT = pos - startIndex;
-                    result = GetValueAtIndex(startIndex);
-                    Series end = GetValueAtIndex(startIndex + 1);
-                    result.Interpolate(end, remainderT);
-                }
-                else
-                {
-                    result = GetValueAtIndex(startIndex);
-                }
-            }
-            else
-            {
-                result = GetValueAtIndex(0);
-            }
-            return result;
-        }
-
         public override Series HardenToData(Store store = null)
         {
             Series result = this;
@@ -75,7 +42,7 @@ namespace DataArcs.Stores
                 float[] vals = new float[len];
                 for (int i = 0; i < VirtualCount; i++)
                 {
-                    float[] val = store == null ? GetValueAtIndex(i).Floats : store.GetValueAtIndex(i).Floats;
+                    float[] val = store == null ? GetDataAtIndex(i).Floats : store.GetValueAtIndex(i).Floats;
                     Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
                 }
 

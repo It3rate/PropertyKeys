@@ -39,8 +39,8 @@ namespace DataArcs.Samplers
         public static Series GetValueAtT(Series series, BezierMove[] moves, float t)
         {
             DataUtils.GetScaledT(t, series.VirtualCount, out float vT, out int startIndex, out int endIndex);
-            float[] a = series.GetValueAtIndex(startIndex).Floats;// GetFloatArrayAtIndex(startIndex);
-            float[] b = series.GetValueAtIndex(endIndex).Floats;// GetFloatArrayAtIndex(endIndex);
+            float[] a = series.GetDataAtIndex(startIndex).Floats;// GetFloatArrayAtIndex(startIndex);
+            float[] b = series.GetDataAtIndex(endIndex).Floats;// GetFloatArrayAtIndex(endIndex);
             int p0Index = startIndex == endIndex ? 0 : a.Length - 2; // start from last point unless at start or end.
             int p2Index = b.Length - 2;
             BezierMove moveType = startIndex < moves.Length ? moves[startIndex] : BezierMove.LineTo;

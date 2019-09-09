@@ -59,9 +59,9 @@ namespace DataArcs.Stores
 
         public override int DataSize => _series.DataSize;
 
-        public override Series GetValueAtIndex(int index)
+        public override Series GetDataAtIndex(int index)
         {
-            return _series.GetValueAtIndex(index);
+            return _series.GetDataAtIndex(index);
         }
 
         public override Series GetValueAtT(float t)

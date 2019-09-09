@@ -46,10 +46,10 @@ namespace DataArcs.Stores
         public override Series GetValueAtT(float t)
         {
             int index = (int)(t * VirtualCount);
-            return GetValueAtIndex(index);
+            return GetDataAtIndex(index);
         }
 
-        public override Series GetValueAtIndex(int index)
+        public override Series GetDataAtIndex(int index)
         {
             index = Math.Max(0, Math.Min(Moves.Length - 1, index));
             int start = 0;
@@ -73,7 +73,7 @@ namespace DataArcs.Stores
                 BezierMove[] moves = new BezierMove[VirtualCount];
                 for (int i = 0; i < VirtualCount; i++)
                 {
-                    float[] val = store == null ? GetValueAtIndex(i).Floats : store.GetValueAtIndex(i).Floats;
+                    float[] val = store == null ? GetDataAtIndex(i).Floats : store.GetValueAtIndex(i).Floats;
                     Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
                     moves[i] = (i < moves.Length) ? moves[i] : BezierMove.LineTo;
                 }

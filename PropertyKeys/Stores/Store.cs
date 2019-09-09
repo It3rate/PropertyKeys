@@ -37,7 +37,7 @@ namespace DataArcs.Stores
 
         public virtual Series GetValueAtIndex(int index)
         {
-            return Sampler != null ? Sampler.GetValueAtIndex(Series, index) : Series.GetValueAtIndex(index);
+            return Sampler != null ? Sampler.GetValueAtIndex(Series, index) : Series.GetDataAtIndex(index);
         }
         public virtual Series GetValueAtT(float t)
         {

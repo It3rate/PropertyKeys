@@ -18,11 +18,11 @@ namespace DataArcs.Stores
             _intValues = values;
         }
         
-        public override Series GetValueAtIndex(int index)
+        public override Series GetDataAtIndex(int index)
         {
             int len = DataSize / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
-            float[] result = new float[VectorSize];
+            int[] result = new int[VectorSize];
             if (startIndex * VectorSize + (VectorSize - 1) < DataSize)
             {
                 Array.Copy(_intValues, startIndex * VectorSize, result, 0, VectorSize);
@@ -31,36 +31,7 @@ namespace DataArcs.Stores
             {
                 Array.Copy(_intValues, DataSize - VectorSize, result, 0, VectorSize);
             }
-            return new FloatSeries(VectorSize, result);
-        }
-
-        public override Series GetValueAtT(float t)
-        {
-            Series result;
-            int len = _intValues.Length / VectorSize;
-            if (len > 1)
-            {
-                // interpolate between indexes to get virtual values from array.
-                float pos = Math.Min(1, Math.Max(0, t)) * (len - 1);
-                int startIndex = (int)Math.Floor(pos);
-                startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
-                if (pos < len - 1)
-                {
-                    float remainderT = pos - startIndex;
-                    result = GetValueAtIndex(startIndex);
-                    Series end = GetValueAtIndex(startIndex + 1);
-                    result.Interpolate(end, remainderT);
-                }
-                else
-                {
-                    result = GetValueAtIndex(startIndex);
-                }
-            }
-            else
-            {
-                result = GetValueAtIndex(0);
-            }
-            return result;
+            return new IntSeries(VectorSize, result);
         }
 
         public override Series HardenToData(Store store = null)
@@ -72,7 +43,7 @@ namespace DataArcs.Stores
                 int[] vals = new int[len];
                 for (int i = 0; i < VirtualCount; i++)
                 {
-                    int[] val = store == null ? GetValueAtIndex(i).Ints : store.GetValueAtIndex(i).Ints;
+                    int[] val = store == null ? GetDataAtIndex(i).Ints : store.GetValueAtIndex(i).Ints;
                     Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
                 }
 

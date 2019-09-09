@@ -11,7 +11,7 @@ namespace DataArcs.Samplers
     {
         public override Series GetValueAtIndex(Series series, int index)
         {
-            return series.GetValueAtIndex(index);
+            return series.GetDataAtIndex(index);
         }
 
         public override Series GetValueAtT(Series series, float t)

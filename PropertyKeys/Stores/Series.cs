@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace DataArcs.Stores
 {
     public enum SeriesType
@@ -71,8 +73,45 @@ namespace DataArcs.Stores
         }
 
         // todo: All float t's should probably be float[] t.
-        public abstract Series GetValueAtIndex(int index); // could be array indexer?
-        public abstract Series GetValueAtT(float t);
+        public abstract Series GetDataAtIndex(int index);
+        public virtual Series GetValueAtVirtualIndex(int index)
+        {
+            float indexT = index / (VirtualCount - 1f);
+            return GetValueAtT(indexT);
+        }
+        public virtual Series GetValueAtT(float t)
+        {
+            Series result;
+            int len = DataSize / VectorSize;
+
+            if (t >= 1)
+            {
+                result = GetDataAtIndex(len - 1);
+            }
+            else if (len > 1)
+            {
+                // interpolate between indexes to get virtual values from array.
+                float pos = Math.Min(1, Math.Max(0, t)) * (len - 1f);
+                int startIndex = (int)Math.Floor(pos);
+                startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
+                if (pos < len - 1)
+                {
+                    float remainderT = pos - startIndex;
+                    result = GetDataAtIndex(startIndex);
+                    Series end = GetDataAtIndex(startIndex + 1);
+                    result.Interpolate(end, remainderT);
+                }
+                else
+                {
+                    result = GetDataAtIndex(startIndex);
+                }
+            }
+            else
+            {
+                result = GetDataAtIndex(0);
+            }
+            return result;
+        }
         public abstract Series HardenToData(Store store = null); // return new copy as eventually everything should be immutable
 
         public virtual void Reset() {}
