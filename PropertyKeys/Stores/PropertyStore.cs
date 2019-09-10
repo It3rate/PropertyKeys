@@ -86,11 +86,11 @@ namespace DataArcs.Stores
             }
         }
 
-        public virtual void Update()
+        public virtual void Update(float time)
         {
             foreach (var store in Stores)
             {
-                store.Update();
+                store.Update(time);
             }
         }
 

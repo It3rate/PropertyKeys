@@ -55,11 +55,11 @@ namespace DataArcs.Stores
                 store.Reset();
             }
         }
-        public override void Update()
+        public override void Update(float time)
         {
             foreach (var store in Stores)
             {
-                store.Update();
+                store.Update(time);
             }
         }
     }

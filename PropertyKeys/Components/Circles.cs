@@ -62,12 +62,14 @@ namespace DataArcs.Components
                 var startStore = new Store(new FloatSeries(2, start, virtualCount: cols * rows), sampler: hexSampler);
 
                 float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
-                var endStore = new Store(new FloatSeries(2, end, virtualCount: rows * cols), sampler: hexSampler);
+                var endStore = new Store(new FloatSeries(2, end, virtualCount: rows * cols+11), sampler: hexSampler);
                 if (version == 1)
                 {
-                    RandomSeries rs = new RandomSeries(2, SeriesType.Float, rows * cols, -25f, 25f, 1111, CombineFunction.Multiply);
+                    startStore.VirtualCount = rows * cols;
+                    endStore.VirtualCount = rows * cols;
+                    RandomSeries rs = new RandomSeries(2, SeriesType.Float, rows * cols, -3f, 3f, 1111, CombineFunction.Add);
                     Store randomStore = new Store(rs);
-                    rs.setMinMax(.93f, 1f/.93f);
+                   // rs.setMinMax(.98f, 1f/.98f);
                     //endStore.HardenToData();
                     FunctionalStore fs = new FunctionalStore(endStore, randomStore);
                     object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, fs }, easingType: EasingType.Linear));
@@ -77,8 +79,8 @@ namespace DataArcs.Components
                     object1.AddProperty(PropertyID.Location, new PropertyStore(new []{ startStore, endStore }));
                 }
 
-                startStore.HardenToData();
-                endStore.HardenToData();
+                //startStore.HardenToData();
+                //endStore.HardenToData();
                 //endStore.Series.Shuffle();
             }
             else if (version == 2)
@@ -133,12 +135,11 @@ namespace DataArcs.Components
 
         public void Draw(Graphics g, float t)
         {
+            object1.Update(t);
             PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
             PropertyStore col = object1.GetPropertyStore(PropertyID.FillColor);
             PropertyStore wander = object1.GetPropertyStore(PropertyID.RandomMotion);
             
-            loc.Update();
-
             //t = 1f;
             int floorT = (int)t;
             t = t - floorT;

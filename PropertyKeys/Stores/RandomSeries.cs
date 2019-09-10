@@ -89,7 +89,7 @@ namespace DataArcs.Stores
             _random = new Random(_seed);
             GenerateData();
         }
-        public override void Update()
+        public override void Update(float time)
         {
             Series b = GenerateData();
             _series.Combine(b, _combineFunction);

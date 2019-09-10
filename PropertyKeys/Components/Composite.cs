@@ -74,9 +74,12 @@ namespace DataArcs.Components
             Stores.Remove(id);
         }
 
-        public void Update(float t)
+        public virtual void Update(float time)
         {
-
+            foreach (var store in Stores.Values)
+            {
+                store.Update(time);
+            }
         }
 
         public void Draw()

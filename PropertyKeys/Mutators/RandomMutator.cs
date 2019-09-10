@@ -16,9 +16,9 @@ namespace DataArcs.Mutators
             RandomSeries = (RandomSeries)Store.Series;
         }
 
-        public override void Update(float t)
+        public override void Update(float time)
         {
-            RandomSeries.Update();
+            RandomSeries.Update(time);
         }
 
         public override void Reset()

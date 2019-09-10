@@ -59,9 +59,9 @@ namespace DataArcs.Stores
         {
             Series.Reset();
         }
-        public virtual void Update()
+        public virtual void Update(float time)
         {
-            Series.Update();
+            Series.Update(time);
         }
     }
 }
