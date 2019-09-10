@@ -27,8 +27,7 @@ namespace DataArcs.Components
     {
         Composite parent0;
         Composite object1;
-
-        PolyShape graphic;
+        
         Random rnd = new Random();
 
         public const int versionCount = 4;
@@ -36,8 +35,6 @@ namespace DataArcs.Components
         public Circles(int version)
         {
             //todo: Rather than seed with multiples or lerp, use ranges.
-            graphic = new PolyShape(pointCount: new int[] { 6,7,8,9,10,11, 12 }, radius: new float[]{ 10f, 20f },
-                orientation: new float[] { 1f / 12f, 0.3f }, starness: new float[] { 0, -0.3f });
             //graphic.PointCount.ElementCount = 6;
             SetVersion(version);
         }
@@ -45,6 +42,8 @@ namespace DataArcs.Components
         public void SetVersion(int version)
         {
             object1 = new Composite();
+            PolyShape graphic = new PolyShape(pointCount: new int[] { 6, 7, 8, 9, 10, 11, 12 }, radius: new float[] { 10f, 20f },
+                orientation: new float[] { 1f / 12f, 0.3f }, starness: new float[] { 0, -0.3f });
 
             if (version == 0 || version == 1)
             {
@@ -99,8 +98,11 @@ namespace DataArcs.Components
                 }
                 var startStore = new Store(new FloatSeries(vectorSize, start));
                 var endStore = new Store(new FloatSeries(vectorSize, end));
+                endStore.HardenToData();
+                endStore.Series.Shuffle();
 
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }));
+                object1.shouldShuffle = true;
             }
             else if (version == 3)
             {
@@ -119,7 +121,7 @@ namespace DataArcs.Components
             }
 
             object1.AddProperty(PropertyID.FillColor, GetTestColors());
-
+            object1.Graphic = graphic;
 
         }
 
@@ -136,38 +138,7 @@ namespace DataArcs.Components
         public void Draw(Graphics g, float t)
         {
             object1.Update(t);
-            PropertyStore loc = object1.GetPropertyStore(PropertyID.Location);
-            PropertyStore col = object1.GetPropertyStore(PropertyID.FillColor);
-            PropertyStore wander = object1.GetPropertyStore(PropertyID.RandomMotion);
-            
-            //t = 1f;
-            int floorT = (int)t;
-            t = t - floorT;
-            if (floorT % 2 == 0) t = 1.0f - t;
-            float easedT = t;// Easing.GetTAtT(t, loc.EasingType);
-            int count = loc.GetElementCountAt(easedT);
-            float[] v = {0,0};
-            for (int i = 0; i < count; i++)
-            {
-                //if (i > 88 && i < 111)//count - 1)
-                //{
-                //    float itx = i / (float)(count - 1f);
-                //    var vx = v = loc.GetValuesAtT(itx, easedT).Floats;
-                //    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
-                //}
-                float it = i / (float)(count - 1f);
-                v = loc.GetValuesAtT(it, easedT, count).Floats;
-
-                Color c = GraphicUtils.GetRGBColorFrom(col.GetValuesAtT(it, easedT));
-                Brush b = new SolidBrush(c);
-                GraphicsState state = g.Save();
-                float scale = 1f; //  + t * 0.2f;
-                g.ScaleTransform(scale, scale);
-                g.TranslateTransform(v[0] / scale, v[1] / scale);
-                graphic.Draw(g, b, null, easedT);
-                g.Restore(state);
-            }
-            //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
+            object1.Draw(g);
         }
     }
 }

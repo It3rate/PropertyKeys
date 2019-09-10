@@ -6,7 +6,7 @@ using System.Drawing.Drawing2D;
 
 namespace DataArcs.Graphic
 {
-    public class PolyShape : BaseGraphic
+    public class PolyShape : GraphicBase
     {
         private BezierSeries Polygon { get; set; }
         private BezierSampler Sampler { get; }

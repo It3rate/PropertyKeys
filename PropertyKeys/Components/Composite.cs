@@ -1,4 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using DataArcs.Graphic;
 using DataArcs.Stores;
 
 namespace DataArcs.Components
@@ -20,6 +24,7 @@ namespace DataArcs.Components
         Easing,
         SampleType,
 
+        Graphic,
         Starness,
         Roundness,
         Radius,
@@ -30,6 +35,7 @@ namespace DataArcs.Components
     public class Composite
     {
         private Dictionary<PropertyID, PropertyStore> Stores { get; }
+        public GraphicBase Graphic { get; set; }
         /// <summary>
         /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
         /// </summary>
@@ -74,16 +80,54 @@ namespace DataArcs.Components
             Stores.Remove(id);
         }
 
+        private float t;
+        public bool shouldShuffle; // basis for switching to events
         public virtual void Update(float time)
         {
             foreach (var store in Stores.Values)
             {
                 store.Update(time);
             }
+
+            int floorT = (int)time;
+            t = time - floorT;
+            if (floorT % 2 == 0) t = 1.0f - t;
+            if(t <= 0.005f && shouldShuffle)
+            {
+                GetPropertyStore(PropertyID.Location).Stores[1].Series.Shuffle();
+            }
         }
 
-        public void Draw()
+        public void Draw(Graphics g)
         {
+            PropertyStore loc = GetPropertyStore(PropertyID.Location);
+            PropertyStore col = GetPropertyStore(PropertyID.FillColor);
+            PropertyStore wander = GetPropertyStore(PropertyID.RandomMotion);
+
+            float easedT = t;// Easing.GetTAtT(t, loc.EasingType);
+            int count = loc.GetElementCountAt(easedT);
+            float[] v = { 0, 0 };
+            for (int i = 0; i < count; i++)
+            {
+                //if (i > 88 && i < 111)//count - 1)
+                //{
+                //    float itx = i / (float)(count - 1f);
+                //    var vx = v = loc.GetValuesAtT(itx, easedT).Floats;
+                //    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
+                //}
+                float it = i / (float)(count - 1f);
+                v = loc.GetValuesAtT(it, easedT, count).Floats;
+
+                Color c = GraphicUtils.GetRGBColorFrom(col.GetValuesAtT(it, easedT));
+                Brush b = new SolidBrush(c);
+                GraphicsState state = g.Save();
+                float scale = 1f; //  + t * 0.2f;
+                g.ScaleTransform(scale, scale);
+                g.TranslateTransform(v[0] / scale, v[1] / scale);
+                Graphic.Draw(g, b, null, easedT);
+                g.Restore(state);
+            }
+            //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
 
         }
 
