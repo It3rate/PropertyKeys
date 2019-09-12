@@ -1,13 +1,7 @@
-﻿using DataArcs.Graphic;
-using DataArcs.Stores;
-using DataArcs.Samplers;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+using DataArcs.Graphic;
+using DataArcs.Samplers;
 
 namespace DataArcs.Components
 {
@@ -15,6 +9,7 @@ namespace DataArcs.Components
     {
         public int Rows { get; set; }
         public int Columns { get; set; }
+
         public float Spacing { get; set; }
         //public FloatStore Locations { get; set; }
 
@@ -36,11 +31,11 @@ namespace DataArcs.Components
         {
             //Shape = new PolyShape(pointCount: 6, radius: 10f, orientation: 1f / 12f);
 
-            float totalWidth = 1f;
-            float armLen = totalWidth / (float)(Columns - 1) / 3f;
-            float totalHeight = (armLen * (float)Math.Sqrt(3)) / 2f * (Rows - 1f);
+            var totalWidth = 1f;
+            var armLen = totalWidth / (float) (Columns - 1) / 3f;
+            var totalHeight = armLen * (float) Math.Sqrt(3) / 2f * (Rows - 1f);
             //Shape.Radius = armLen + Spacing * armLen;
-            float[] start = new float[] { 0, 0, totalWidth, totalHeight };
+            var start = new float[] {0, 0, totalWidth, totalHeight};
             //Locations = new FloatStore(2, start, elementCount: Columns * Columns, dimensions: new int[] { Columns, 0, 0 }, sampleType: SampleType.Hexagon);
         }
     }

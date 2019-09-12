@@ -1,11 +1,4 @@
-﻿using DataArcs.Stores;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataArcs.Samplers
+﻿namespace DataArcs.Samplers
 {
     public class LineSampler : Sampler
     {

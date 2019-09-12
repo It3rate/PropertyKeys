@@ -1,9 +1,4 @@
-﻿using DataArcs.Stores;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using DataArcs.Series;
 
 namespace DataArcs.Samplers
@@ -19,18 +14,17 @@ namespace DataArcs.Samplers
 
         public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
         {
-            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
+            virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
             index = Math.Max(0, Math.Min(virtualCount - 1, index));
             return GetSeriesSample(series, Strides, index);
         }
 
         public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
         {
-            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
+            virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
             t = Math.Max(0, Math.Min(1f, t));
-            int index = (int)Math.Round(t * (virtualCount - 1f));
+            var index = (int) Math.Round(t * (virtualCount - 1f));
             return GetSeriesSample(series, Strides, index, virtualCount);
-
         }
 
         public override float GetTAtT(float t)
@@ -45,22 +39,20 @@ namespace DataArcs.Samplers
             {
                 result = t;
             }
+
             return result;
         }
 
-        public static Series.Series GetSeriesSample(Series.Series series, int[] strides, int index, int virtualCount = -1)
+        public static Series.Series GetSeriesSample(Series.Series series, int[] strides, int index,
+            int virtualCount = -1)
         {
-            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
-            float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
-            float[] strideTs = GetStrideTsForIndex(virtualCount, strides, index);
+            virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
+            var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
+            var strideTs = GetStrideTsForIndex(virtualCount, strides, index);
 
-            for (int i = 0; i < result.Length; i++)
-            {
-                result[i] = series.GetValueAtT(strideTs[i])[i];
-            }
+            for (var i = 0; i < result.Length; i++) result[i] = series.GetValueAtT(strideTs[i])[i];
 
             return SeriesUtils.Create(series, result);
         }
-
     }
 }

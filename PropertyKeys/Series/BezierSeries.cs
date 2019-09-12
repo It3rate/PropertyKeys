@@ -20,75 +20,69 @@ namespace DataArcs.Series
     /// </summary>
     public class BezierSeries : FloatSeries
     {
-        public static readonly int[] MoveSize = new int[] { 2, 2, 4, 6, 0 };
+        public static readonly int[] MoveSize = new int[] {2, 2, 4, 6, 0};
 
         public BezierMove[] Moves { get; }
 
-        public BezierSeries(float[] values, BezierMove[] moves = null) : base(2, values, moves?.Length ?? values.Length / 2)
+        public BezierSeries(float[] values, BezierMove[] moves = null) : base(2, values,
+            moves?.Length ?? values.Length / 2)
         {
             // default to polyline if moves is empty
             if (moves == null)
             {
-                int len = values.Length / 2;
+                var len = values.Length / 2;
                 moves = new BezierMove[len];
-                for (int i = 0; i < len; i++)
-                {
-                    moves[i] = BezierMove.LineTo;
-                }
+                for (var i = 0; i < len; i++) moves[i] = BezierMove.LineTo;
             }
+
             Moves = moves;
         }
 
         public override Series GetValueAtT(float t)
         {
-            int index = (int)(t * VirtualCount);
+            var index = (int) (t * VirtualCount);
             return GetSeriesAtIndex(index);
         }
+
         public override Series GetSeriesAtIndex(int index)
         {
             index = Math.Max(0, Math.Min(Moves.Length - 1, index));
-            int start = 0;
-            for (int i = 0; i < index; i++)
-            {
-                start += MoveSize[(int)Moves[i]];
-            }
-            int size = MoveSize[(int)Moves[index]];
-            float[] result = new float[size];
+            var start = 0;
+            for (var i = 0; i < index; i++) start += MoveSize[(int) Moves[i]];
+            var size = MoveSize[(int) Moves[index]];
+            var result = new float[size];
             Array.Copy(_floatValues, start, result, 0, size);
-            return new BezierSeries(result, new []{ Moves[index] });
+            return new BezierSeries(result, new[] {Moves[index]});
         }
+
         public override void SetSeriesAtIndex(int index, Series series)
         {
             index = Math.Max(0, Math.Min(Moves.Length - 1, index));
-            int start = 0;
-            for (int i = 0; i < index; i++)
-            {
-                start += MoveSize[(int)Moves[i]];
-            }
-            int size = MoveSize[(int)Moves[index]];
+            var start = 0;
+            for (var i = 0; i < index; i++) start += MoveSize[(int) Moves[i]];
+            var size = MoveSize[(int) Moves[index]];
             Array.Copy(series.FloatData, 0, _floatValues, index * VectorSize, VectorSize);
-            if(series is BezierSeries)
-            {
-                Moves[index] = ((BezierSeries)series).Moves[0];
-            }
+            if (series is BezierSeries) Moves[index] = ((BezierSeries) series).Moves[0];
         }
+
         public override Series HardenToData(Store store = null)
         {
             Series result = this;
-            int len = VirtualCount * VectorSize;
+            var len = VirtualCount * VectorSize;
             if (_floatValues.Length != len)
             {
-                float[] vals = new float[len];
-                BezierMove[] moves = new BezierMove[VirtualCount];
-                for (int i = 0; i < VirtualCount; i++)
+                var vals = new float[len];
+                var moves = new BezierMove[VirtualCount];
+                for (var i = 0; i < VirtualCount; i++)
                 {
-                    float[] val = store == null ? GetSeriesAtIndex(i).FloatData : store.GetValueAtIndex(i).FloatData;
+                    var val = store == null ? GetSeriesAtIndex(i).FloatData : store.GetValueAtIndex(i).FloatData;
                     Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
-                    moves[i] = (i < moves.Length) ? moves[i] : BezierMove.LineTo;
+                    moves[i] = i < moves.Length ? moves[i] : BezierMove.LineTo;
                 }
 
                 result = new BezierSeries(vals, moves);
             }
+
             return result;
         }
 
@@ -98,7 +92,7 @@ namespace DataArcs.Series
             path.FillMode = FillMode.Alternate;
             float posX = 0;
             float posY = 0;
-            int index = 0;
+            var index = 0;
             foreach (var moveType in Moves)
             {
                 switch (moveType)
@@ -114,14 +108,14 @@ namespace DataArcs.Series
                         break;
                     case BezierMove.QuadTo:
                         // must convert to cubic for gdi
-                        float cx = _floatValues[index];
-                        float cy = _floatValues[index + 1];
-                        float a1x = _floatValues[index + 2];
-                        float a1y = _floatValues[index + 3];
-                        float c1x = (cx - posX) * 2 / 3 + posX;
-                        float c1y = (cy - posY) * 2 / 3 + posY;
-                        float c2x = a1x - (a1x - cx) * 2 / 3;
-                        float c2y = a1y - (a1y - cy) * 2 / 3;
+                        var cx = _floatValues[index];
+                        var cy = _floatValues[index + 1];
+                        var a1x = _floatValues[index + 2];
+                        var a1y = _floatValues[index + 3];
+                        var c1x = (cx - posX) * 2 / 3 + posX;
+                        var c1y = (cy - posY) * 2 / 3 + posY;
+                        var c2x = a1x - (a1x - cx) * 2 / 3;
+                        var c2y = a1y - (a1y - cy) * 2 / 3;
                         path.AddBezier(posX, posY, c1x, c1y, c2x, c2y, a1x, a1y);
                         posX = a1x;
                         posY = a1y;
@@ -139,7 +133,8 @@ namespace DataArcs.Series
                         path.CloseFigure();
                         break;
                 }
-                index += MoveSize[(int)moveType];
+
+                index += MoveSize[(int) moveType];
             }
 
             return path;

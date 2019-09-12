@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataArcs.Stores;
+using DataArcs.Series;
 
 namespace DataArcs.Samplers
 {
@@ -14,10 +10,11 @@ namespace DataArcs.Samplers
 
         public RandomSampler(int seed = 0)
         {
-            seed = seed == 0 ? DataUtils.Random.Next() : seed;
+            seed = seed == 0 ? SeriesUtils.Random.Next() : seed;
             _seed = seed;
             _random = seed == 0 ? new Random() : new Random(seed);
         }
+
         public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
         {
             index = _random.Next(0, index);
@@ -26,13 +23,13 @@ namespace DataArcs.Samplers
 
         public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
         {
-            t = (float)_random.NextDouble() * t;
+            t = (float) _random.NextDouble() * t;
             return series.GetValueAtT(t);
         }
 
         public override float GetTAtT(float t)
         {
-            return (float)_random.NextDouble() * t;
+            return (float) _random.NextDouble() * t;
         }
     }
 }

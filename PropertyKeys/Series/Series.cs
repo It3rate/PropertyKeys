@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using DataArcs.Stores;
 
 namespace DataArcs.Series
@@ -10,6 +9,7 @@ namespace DataArcs.Series
         Float,
         Bool,
     }
+
     public enum CombineFunction
     {
         Replace,
@@ -27,6 +27,7 @@ namespace DataArcs.Series
         public int VectorSize { get; }
         public int VirtualCount { get; set; }
         public SeriesType Type { get; }
+
         /// <summary>
         /// The raw size of the stored data array, ignores VirtualCount and VectorSize.
         /// </summary>
@@ -39,14 +40,12 @@ namespace DataArcs.Series
         {
             get
             {
-                if (CachedFrame == null)
-                {
-                    CalculateFrame();
-                }
+                if (CachedFrame == null) CalculateFrame();
 
                 return CachedFrame;
             }
         }
+
         /// <summary>
         /// Cached size in two vectorSize data points, width and height of current data.
         /// </summary>
@@ -54,15 +53,12 @@ namespace DataArcs.Series
         {
             get
             {
-                if (CachedSize == null)
-                {
-                    CalculateFrame();
-                }
+                if (CachedSize == null) CalculateFrame();
 
                 return CachedSize;
             }
         }
-        
+
         protected Series CachedFrame;
         protected Series CachedSize;
 
@@ -73,23 +69,33 @@ namespace DataArcs.Series
             VirtualCount = virtualCount;
         }
 
-        public virtual void Reset() {}
-        public virtual void Update(float time) { }
+        public virtual void Reset()
+        {
+        }
+
+        public virtual void Update(float time)
+        {
+        }
+
         protected abstract void CalculateFrame();
-        public abstract Series HardenToData(Store store = null); // return new copy as eventually everything should be immutable
+
+        public abstract Series
+            HardenToData(Store store = null); // return new copy as eventually everything should be immutable
 
         public abstract Series GetSeriesAtIndex(int index);
         public abstract void SetSeriesAtIndex(int index, Series series);
+
         public virtual Series GetValueAtVirtualIndex(int index)
         {
-            float indexT = index / (VirtualCount - 1f);
+            var indexT = index / (VirtualCount - 1f);
             return GetValueAtT(indexT);
         }
+
         // todo: All float t's should probably be float[] t.
         public virtual Series GetValueAtT(float t)
         {
             Series result;
-            int len = DataSize / VectorSize;
+            var len = DataSize / VectorSize;
             //if (virtualCount > -1)
             //{
             //    t *= virtualCount / (float)VirtualCount;
@@ -102,14 +108,14 @@ namespace DataArcs.Series
             else if (len > 1)
             {
                 // interpolate between indexes to get virtual values from array.
-                float pos = Math.Min(1, Math.Max(0, t)) * (float)(len - 1f);
-                int startIndex = (int)Math.Floor(pos);
+                var pos = Math.Min(1, Math.Max(0, t)) * (float) (len - 1f);
+                var startIndex = (int) Math.Floor(pos);
                 startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
                 if (pos < len - 1)
                 {
-                    float remainderT = pos - startIndex;
+                    var remainderT = pos - startIndex;
                     result = GetSeriesAtIndex(startIndex);
-                    Series end = GetSeriesAtIndex(startIndex + 1);
+                    var end = GetSeriesAtIndex(startIndex + 1);
                     result.InterpolateInto(end, remainderT);
                 }
                 else
@@ -121,6 +127,7 @@ namespace DataArcs.Series
             {
                 result = GetSeriesAtIndex(0);
             }
+
             return result;
         }
 
@@ -140,6 +147,5 @@ namespace DataArcs.Series
         public abstract Series GetZeroSeries(int elements);
         public abstract Series GetMinSeries();
         public abstract Series GetMaxSeries();
-
     }
 }

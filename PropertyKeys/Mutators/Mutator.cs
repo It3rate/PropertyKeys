@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataArcs.Stores;
+﻿using DataArcs.Stores;
 
 namespace DataArcs.Mutators
 {
@@ -18,9 +12,20 @@ namespace DataArcs.Mutators
             Store.HardenToData();
         }
 
-        public virtual Series.Series GetValueAtIndex(Series.Series series, int index) => Store.GetValueAtIndex(index);
-        public virtual Series.Series GetValueAtT(Series.Series series, float t) => Store.GetValueAtT(t);
-        public virtual float GetTAtT(float t) => Store.GetTatT(t);
+        public virtual Series.Series GetValueAtIndex(Series.Series series, int index)
+        {
+            return Store.GetValueAtIndex(index);
+        }
+
+        public virtual Series.Series GetValueAtT(Series.Series series, float t)
+        {
+            return Store.GetValueAtT(t);
+        }
+
+        public virtual float GetTAtT(float t)
+        {
+            return Store.GetTatT(t);
+        }
 
         public abstract void Update(float t);
         public abstract void Reset();

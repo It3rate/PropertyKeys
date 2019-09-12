@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataArcs.Stores;
+﻿using System.Drawing;
 
 namespace DataArcs.Graphic
 {
@@ -16,21 +10,23 @@ namespace DataArcs.Graphic
             switch (a.VirtualCount * a.VectorSize)
             {
                 case 1:
-                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[0] * 255), (int)(a[0] * 255));
+                    result = Color.FromArgb(255, (int) (a[0] * 255), (int) (a[0] * 255), (int) (a[0] * 255));
                     break;
                 case 2:
-                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[1] * 255), 0);
+                    result = Color.FromArgb(255, (int) (a[0] * 255), (int) (a[1] * 255), 0);
                     break;
                 case 3:
-                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[1] * 255), (int)(a[2] * 255));
+                    result = Color.FromArgb(255, (int) (a[0] * 255), (int) (a[1] * 255), (int) (a[2] * 255));
                     break;
                 case 4:
-                    result = Color.FromArgb((int)(a[3] * 255), (int)(a[0] * 255), (int)(a[1] * 255), (int)(a[2] * 255));
+                    result = Color.FromArgb((int) (a[3] * 255), (int) (a[0] * 255), (int) (a[1] * 255),
+                        (int) (a[2] * 255));
                     break;
                 default:
                     result = Color.Red;
                     break;
             }
+
             return result;
         }
 
@@ -40,21 +36,23 @@ namespace DataArcs.Graphic
             switch (a.Length)
             {
                 case 1:
-                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[0] * 255), (int)(a[0] * 255));
+                    result = Color.FromArgb(255, (int) (a[0] * 255), (int) (a[0] * 255), (int) (a[0] * 255));
                     break;
                 case 2:
-                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[1] * 255), 0);
+                    result = Color.FromArgb(255, (int) (a[0] * 255), (int) (a[1] * 255), 0);
                     break;
                 case 3:
-                    result = Color.FromArgb(255, (int)(a[0] * 255), (int)(a[1] * 255), (int)(a[2] * 255));
+                    result = Color.FromArgb(255, (int) (a[0] * 255), (int) (a[1] * 255), (int) (a[2] * 255));
                     break;
                 case 4:
-                    result = Color.FromArgb((int)(a[3] * 255), (int)(a[0] * 255), (int)(a[1] * 255), (int)(a[2] * 255));
+                    result = Color.FromArgb((int) (a[3] * 255), (int) (a[0] * 255), (int) (a[1] * 255),
+                        (int) (a[2] * 255));
                     break;
                 default:
                     result = Color.Red;
                     break;
             }
+
             return result;
         }
     }

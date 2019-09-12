@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using DataArcs.Graphic;
@@ -33,10 +32,12 @@ namespace DataArcs.Components
 
         Custom = 0x1000,
     }
+
     public class Composite
     {
         private Dictionary<PropertyID, PropertyStore> Stores { get; }
         public GraphicBase Graphic { get; set; }
+
         /// <summary>
         /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
         /// </summary>
@@ -50,25 +51,21 @@ namespace DataArcs.Components
 
         public void Step(float timeStep)
         {
-
         }
+
         public void SetT(float t)
         {
             foreach (var propertyStore in Stores.Values)
-            {
-                propertyStore.CurrentT = t; // hmm, these t's need to be dynamic, but lookup will be important - or is that just functional flow?
-            }
+                propertyStore.CurrentT =
+                    t; // hmm, these t's need to be dynamic, but lookup will be important - or is that just functional flow?
         }
 
         // todo: this should probably bet get/set values for t/index by propertyID, but not access stores?
         // Need to compose and query nested values and t's using the hierarchy eg query t for a certain location in a grid, but props can vary at different speeds (or can they?)
         public PropertyStore GetPropertyStore(PropertyID propertyID)
         {
-            Stores.TryGetValue(propertyID, out PropertyStore result);
-            if(result == null && Parent != null)
-            {
-                result = Parent.GetPropertyStore(propertyID);
-            }
+            Stores.TryGetValue(propertyID, out var result);
+            if (result == null && Parent != null) result = Parent.GetPropertyStore(propertyID);
             return result;
         }
 
@@ -76,6 +73,7 @@ namespace DataArcs.Components
         {
             Stores.Add(id, propertyStore);
         }
+
         public void RemoveProperty(PropertyID id, PropertyStore propertyStore)
         {
             Stores.Remove(id);
@@ -83,32 +81,27 @@ namespace DataArcs.Components
 
         private float t;
         public bool shouldShuffle; // basis for switching to events
+
         public virtual void Update(float time)
         {
-            foreach (var store in Stores.Values)
-            {
-                store.Update(time);
-            }
+            foreach (var store in Stores.Values) store.Update(time);
 
-            int floorT = (int)time;
+            var floorT = (int) time;
             t = time - floorT;
             if (floorT % 2 == 0) t = 1.0f - t;
-            if(t <= 0.005f && shouldShuffle)
-            {
-                SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].Series);
-            }
+            if (t <= 0.005f && shouldShuffle) SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].Series);
         }
 
         public void Draw(Graphics g)
         {
-            PropertyStore loc = GetPropertyStore(PropertyID.Location);
-            PropertyStore col = GetPropertyStore(PropertyID.FillColor);
-            PropertyStore wander = GetPropertyStore(PropertyID.RandomMotion);
+            var loc = GetPropertyStore(PropertyID.Location);
+            var col = GetPropertyStore(PropertyID.FillColor);
+            var wander = GetPropertyStore(PropertyID.RandomMotion);
 
-            float easedT = t;// Easing.GetTAtT(t, loc.EasingType);
-            int count = loc.GetElementCountAt(easedT);
-            float[] v = { 0, 0 };
-            for (int i = 0; i < count; i++)
+            var easedT = t; // Easing.GetTAtT(t, loc.EasingType);
+            var count = loc.GetElementCountAt(easedT);
+            float[] v = {0, 0};
+            for (var i = 0; i < count; i++)
             {
                 //if (i > 88 && i < 111)//count - 1)
                 //{
@@ -116,20 +109,20 @@ namespace DataArcs.Components
                 //    var vx = v = loc.GetValuesAtT(itx, easedT).FloatData;
                 //    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
                 //}
-                float it = i / (float)(count - 1f);
+                var it = i / (float) (count - 1f);
                 v = loc.GetValuesAtT(it, easedT, count).FloatData;
 
-                Color c = GraphicUtils.GetRGBColorFrom(col.GetValuesAtT(it, easedT));
+                var c = GraphicUtils.GetRGBColorFrom(col.GetValuesAtT(it, easedT));
                 Brush b = new SolidBrush(c);
-                GraphicsState state = g.Save();
-                float scale = 1f; //  + t * 0.2f;
+                var state = g.Save();
+                var scale = 1f; //  + t * 0.2f;
                 g.ScaleTransform(scale, scale);
                 g.TranslateTransform(v[0] / scale, v[1] / scale);
                 Graphic.Draw(g, b, null, easedT);
                 g.Restore(state);
             }
-            //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
 
+            //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
         }
 
         public Composite CreateChild()

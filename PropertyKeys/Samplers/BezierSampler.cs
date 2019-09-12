@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataArcs.Series;
-using DataArcs.Stores;
+﻿using DataArcs.Series;
 
 namespace DataArcs.Samplers
 {
@@ -12,7 +6,10 @@ namespace DataArcs.Samplers
     {
         public BezierSeries Series;
 
-        public BezierSampler() { }
+        public BezierSampler()
+        {
+        }
+
         public BezierSampler(BezierSeries series)
         {
             Series = series;
@@ -21,16 +18,16 @@ namespace DataArcs.Samplers
         public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
         {
             // todo: check if this virtualCount assignment should happen in beziers at this point or pass through.
-            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
+            virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
             series = series ?? Series;
-            float t = index / (float)virtualCount;
+            var t = index / (float) virtualCount;
             return GetValueAtT(series, t, virtualCount);
         }
 
         public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
         {
             series = series ?? Series;
-            BezierMove[] moves = series is BezierSeries bezierSeries ? bezierSeries.Moves : new[] { BezierMove.LineTo };
+            var moves = series is BezierSeries bezierSeries ? bezierSeries.Moves : new[] {BezierMove.LineTo};
             return GetValueAtT(series, moves, t, virtualCount);
         }
 
@@ -39,21 +36,19 @@ namespace DataArcs.Samplers
             return Series != null ? GetValueAtT(Series, Series.Moves, t)[0] : t;
         }
 
-        public static Series.Series GetValueAtT(Series.Series series, BezierMove[] moves, float t, int virtualCount = -1)
+        public static Series.Series GetValueAtT(Series.Series series, BezierMove[] moves, float t,
+            int virtualCount = -1)
         {
-            if (virtualCount > -1)
-            {
-                t *= (series.VirtualCount / (float)virtualCount);
-            }
-            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
-            DataUtils.GetScaledT(t, virtualCount, out float vT, out int startIndex, out int endIndex);
-            float[] a = series.GetSeriesAtIndex(startIndex).FloatData;// GetFloatArrayAtIndex(startIndex);
-            float[] b = series.GetSeriesAtIndex(endIndex).FloatData;// GetFloatArrayAtIndex(endIndex);
-            int p0Index = startIndex == endIndex ? 0 : a.Length - 2; // start from last point unless at start or end.
-            int p2Index = b.Length - 2;
-            BezierMove moveType = startIndex < moves.Length ? moves[startIndex] : BezierMove.LineTo;
-            float[] result = { 0, 0 };
-            float it = 1f - t;
+            if (virtualCount > -1) t *= series.VirtualCount / (float) virtualCount;
+            virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
+            SeriesUtils.GetScaledT(t, virtualCount, out var vT, out var startIndex, out var endIndex);
+            var a = series.GetSeriesAtIndex(startIndex).FloatData; // GetFloatArrayAtIndex(startIndex);
+            var b = series.GetSeriesAtIndex(endIndex).FloatData; // GetFloatArrayAtIndex(endIndex);
+            var p0Index = startIndex == endIndex ? 0 : a.Length - 2; // start from last point unless at start or end.
+            var p2Index = b.Length - 2;
+            var moveType = startIndex < moves.Length ? moves[startIndex] : BezierMove.LineTo;
+            float[] result = {0, 0};
+            var it = 1f - t;
             switch (moveType)
             {
                 case BezierMove.MoveTo:
@@ -73,8 +68,8 @@ namespace DataArcs.Samplers
                     result = b;
                     break;
             }
+
             return new FloatSeries(2, result);
         }
-        
     }
 }

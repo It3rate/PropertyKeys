@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataArcs.Commands
 {
@@ -17,24 +14,22 @@ namespace DataArcs.Commands
         {
         }
 
-        public int Count { get { return stack.Count; } }
+        public int Count => stack.Count;
 
         public bool CanUndo()
         {
             return index > 0;
         }
+
         public bool CanRedo()
         {
-            return (stack.Count > 0) && (index < stack.Count);
+            return stack.Count > 0 && index < stack.Count;
         }
 
         public void Do(ICommand item)
         {
             // delete any potential redo items
-            if (stack.Count > index)
-            {
-                stack.RemoveRange(index, stack.Count - index);
-            }
+            if (stack.Count > index) stack.RemoveRange(index, stack.Count - index);
 
             stack.Add(item);
             item.Execute();
@@ -47,34 +42,38 @@ namespace DataArcs.Commands
                 //MainForm.CurrentStage.HasSaveableChanges = true;
             }
         }
+
         public bool Undo()
         {
-            bool result = false;
+            var result = false;
             if (CanUndo())
             {
                 index--;
                 stack[index].UnExecute();
                 result = true;
             }
+
             OnUndoStackChanged(this, EventArgs.Empty);
             return result;
         }
+
         public bool Redo()
         {
-            bool result = false;
+            var result = false;
             if (CanRedo())
             {
                 stack[index].Execute();
                 index++;
                 result = true;
             }
+
             OnUndoStackChanged(this, EventArgs.Empty);
             return result;
         }
 
         public ICommand Peek()
         {
-            return (stack.Count > 0 && index > 0) ? stack[index - 1] : null;
+            return stack.Count > 0 && index > 0 ? stack[index - 1] : null;
         }
 
         public bool CanRepeat()
@@ -84,17 +83,16 @@ namespace DataArcs.Commands
 
         public IRepeatableCommand[] GetRepeatables()
         {
-            List<IRepeatableCommand> commands = new List<IRepeatableCommand>();
-            int i = index - 1;
+            var commands = new List<IRepeatableCommand>();
+            var i = index - 1;
             while (i >= 0 && stack[i] is IRepeatableCommand)
             {
-                commands.Add(((IRepeatableCommand)stack[i]).GetRepeatCommand());
+                commands.Add(((IRepeatableCommand) stack[i]).GetRepeatCommand());
                 if (stack[i] is IRepeatableCommand) // || stack[i] is DuplicateSelectedCommand)
-                {
                     break;
-                }
                 i--;
             }
+
             commands.Reverse();
             return commands.ToArray();
         }

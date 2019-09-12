@@ -1,6 +1,4 @@
-﻿using DataArcs.Stores;
-
-namespace DataArcs.Samplers
+﻿namespace DataArcs.Samplers
 {
     public enum EasingType
     {
@@ -11,6 +9,7 @@ namespace DataArcs.Samplers
         EaseInOut,
         EaseCenter,
     }
+
     public class Easing : Sampler
     {
         public EasingType EasingType;
@@ -23,8 +22,8 @@ namespace DataArcs.Samplers
         public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
         {
             // todo: check if this virtualCount assignment should happen in easing at this point or pass through.
-            virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
-            float indexT = index / (float)virtualCount;
+            virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
+            var indexT = index / (float) virtualCount;
             return GetValueAtT(series, indexT, virtualCount);
         }
 
@@ -41,7 +40,7 @@ namespace DataArcs.Samplers
 
         public static float GetValueAt(float t, EasingType easingType)
         {
-            float result = t;
+            var result = t;
             switch (easingType)
             {
                 case EasingType.None:
@@ -54,18 +53,19 @@ namespace DataArcs.Samplers
                     result = t * t;
                     break;
                 case EasingType.InverseSquared:
-                    result = 1f - (t * t);
+                    result = 1f - t * t;
                     break;
                 case EasingType.EaseInOut:
                     //result = (t < 0.5f) ? 2f * (t * t) : 2f * t * (1f - t) + 0.5f;
-                    result = (t * t) * (3f - 2f * t);
+                    result = t * t * (3f - 2f * t);
                     break;
                 case EasingType.EaseCenter:
-                    float a = (t - 0.5f) * 2;
-                    float sgn = a >= 0 ? 0.5f : -0.5f;
-                    result = (a * a) * sgn + 0.5f;
+                    var a = (t - 0.5f) * 2;
+                    var sgn = a >= 0 ? 0.5f : -0.5f;
+                    result = a * a * sgn + 0.5f;
                     break;
             }
+
             return result;
         }
     }
