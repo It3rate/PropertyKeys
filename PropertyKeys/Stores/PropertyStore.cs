@@ -1,98 +1,113 @@
 ﻿using System;
+using System.Collections.Generic;
 using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
     public class PropertyStore
     {
-        public readonly Store[] Stores; // todo: Move store sequence to animation?
-        public EasingType EasingType;
-
-        public CombineFunction CombineFunction { get; } = CombineFunction.Replace;
-        public PropertyStore Parameter0 { get; }
-        public float Parameter1 { get; } = 0;
-        public int Parameter2 { get; } = 0;
-
+        private readonly List<Store> _stores;
         public float CurrentT { get; set; } = 0;
 
-        public PropertyStore(Store[] stores, EasingType easingType = EasingType.Linear)
+        public PropertyStore(params Store[] stores)
         {
-            Stores = stores;
-            EasingType = easingType;
+            _stores = new List<Store>(stores);
         }
-        
-        // todo: return series
+
+        public Store this[int index]
+        {
+            get => _stores[index];
+            set => _stores[index] = value;
+        }
+
+        public void Add(Store item)
+        {
+            _stores.Add(item);
+        }
+        public void Insert(int index, Store item)
+        {
+            if (index >= 0 && index < _stores.Count)
+            {
+                _stores.Insert(index, item);
+            }
+        }
+        public bool Remove(Store item)
+        {
+            return _stores.Remove(item);
+        }
+        public void RemoveAt(int index)
+        {
+            if (index >= 0 && index < _stores.Count)
+            {
+                _stores.RemoveAt(index);
+            }
+        }
+        public virtual void Reset()
+        {
+            foreach (var store in _stores)
+            {
+                store.Reset();
+            }
+        }
+        public virtual void Update(float time)
+        {
+            foreach (var store in _stores)
+            {
+                store.Update(time);
+            }
+        }
+
         public Series GetValuesAtIndex(int index, float t, int virtualCount = -1)
         {
             Series result;
-            t = Easing.GetValueAt(t, EasingType);
 
-            DataUtils.GetScaledT(t, Stores.Length, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, _stores.Count, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].GetValueAtIndex(index, virtualCount);
+                result = _stores[startIndex].GetValueAtIndex(index, virtualCount);
             }
             else
             {
-                result = BlendValueAtIndex(Stores[startIndex], Stores[endIndex], index, vT, virtualCount);
+                result = BlendValueAtIndex(_stores[startIndex], _stores[endIndex], index, vT, virtualCount);
             }
             return result;
         }
-
         public Series GetValuesAtT(float indexT, float t, int virtualCount = -1)
         {
             Series result;
-            t = Easing.GetValueAt(t, EasingType);
 
-            DataUtils.GetScaledT(t, Stores.Length, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, _stores.Count, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].GetValueAtT(indexT, virtualCount);
+                result = _stores[startIndex].GetValueAtT(indexT, virtualCount);
             }
             else
             {
-                result = BlendValueAtT(Stores[startIndex], Stores[endIndex], indexT, vT, virtualCount);
+                result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT, virtualCount);
             }
             return result;
         }
-
         public int GetElementCountAt(float t)
         {
             int result;
-            t = Easing.GetValueAt(t, EasingType);
 
-            DataUtils.GetScaledT(t, Stores.Length, out float vT, out int startIndex, out int endIndex);
+            DataUtils.GetScaledT(t, _stores.Count, out float vT, out int startIndex, out int endIndex);
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].VirtualCount;
+                result = _stores[startIndex].VirtualCount;
             }
             else
             {
-                int sec = Stores[startIndex].VirtualCount;
-                int eec = Stores[startIndex + 1].VirtualCount;
+                int sec = _stores[startIndex].VirtualCount;
+                int eec = _stores[startIndex + 1].VirtualCount;
                 result = sec + (int)(vT * (eec - sec));
             }
             return result;
         }
 
-        public virtual void Reset()
-        {
-            foreach (var store in Stores)
-            {
-                store.Reset();
-            }
-        }
-
-        public virtual void Update(float time)
-        {
-            foreach (var store in Stores)
-            {
-                store.Update(time);
-            }
-        }
 
         public static Series BlendValueAtIndex(Store start, Store end, int index, float t, int virtualCount = -1)
         {
@@ -100,7 +115,7 @@ namespace DataArcs.Stores
             if (end != null)
             {
                 Series endAr = end.GetValueAtIndex(index, virtualCount);
-                result.Interpolate(endAr, t);
+                result.InterpolateInto(endAr, t);
             }
             return result;
         }
@@ -110,7 +125,7 @@ namespace DataArcs.Stores
             if (end != null)
             {
                 Series endAr = end.GetValueAtT(indexT, virtualCount);
-                result.Interpolate(endAr, t);
+                result.InterpolateInto(endAr, t);
             }
             return result;
         }

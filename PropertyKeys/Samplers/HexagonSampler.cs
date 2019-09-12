@@ -72,7 +72,7 @@ namespace DataArcs.Samplers
                 }
             }
             
-            return Series.Create(series, result);
+            return SeriesUtils.Create(series, result);
         }
 
     }

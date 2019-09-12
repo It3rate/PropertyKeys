@@ -81,7 +81,7 @@ namespace DataArcs.Stores
             DataUtils.SubtractFloatArrayFrom(max, min);
             CachedSize = new FloatSeries(VectorSize, max);
         }
-        public override void Interpolate(Series b, float t)
+        public override void InterpolateInto(Series b, float t)
         {
             for (int i = 0; i < DataSize; i++)
             {
@@ -95,7 +95,7 @@ namespace DataArcs.Stores
                 }
             }
         }
-        public override void Combine(Series b, CombineFunction combineFunction)
+        public override void CombineInto(Series b, CombineFunction combineFunction)
         {
             switch (combineFunction)
             {
@@ -143,7 +143,7 @@ namespace DataArcs.Stores
         public override int[] IntData => _floatValues.ToInt();
         public override bool[] BoolData => throw new NotImplementedException();
 
-        public float this[int index] => FloatDataAt(index);
+        //public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
         public override float FloatDataAt(int index)
         {
             return (index >= 0 && index < _floatValues.Length) ? _floatValues[index] : 0;
@@ -158,10 +158,9 @@ namespace DataArcs.Stores
         }
 
         public override Series GetZeroSeries() { return new FloatSeries(VectorSize, DataUtils.GetFloatZeroArray(VectorSize)); }
-        public override Series GetZeroSeries(int elementCount) { return GetZeroSeries(VectorSize, elementCount); }
+        public override Series GetZeroSeries(int elementCount) { return SeriesUtils.GetZeroFloatSeries(VectorSize, elementCount); }
         public override Series GetMinSeries() { return new FloatSeries(VectorSize, DataUtils.GetFloatMinArray(VectorSize)); }
         public override Series GetMaxSeries() { return new FloatSeries(VectorSize, DataUtils.GetFloatMaxArray(VectorSize)); }
         
-        public static FloatSeries GetZeroSeries(int vectorSize, int elementCount) { return new FloatSeries(vectorSize, DataUtils.GetFloatZeroArray(vectorSize * elementCount)); }
-    }
+   }
 }

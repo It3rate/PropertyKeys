@@ -58,7 +58,7 @@ namespace DataArcs.Samplers
                 result[i] = series.GetValueAtT(strideTs[i])[i];
             }
 
-            return Series.Create(series, result);
+            return SeriesUtils.Create(series, result);
         }
 
     }

@@ -109,7 +109,7 @@ namespace DataArcs.Stores
                     float remainderT = pos - startIndex;
                     result = GetSeriesAtIndex(startIndex);
                     Series end = GetSeriesAtIndex(startIndex + 1);
-                    result.Interpolate(end, remainderT);
+                    result.InterpolateInto(end, remainderT);
                 }
                 else
                 {
@@ -132,95 +132,13 @@ namespace DataArcs.Stores
         public abstract int[] IntData { get; }
         public abstract bool[] BoolData { get; }
 
-        public abstract void Combine(Series b, CombineFunction combineFunction);
-        public abstract void Interpolate(Series b, float t);
+        public abstract void CombineInto(Series b, CombineFunction combineFunction);
+        public abstract void InterpolateInto(Series b, float t);
 
         public abstract Series GetZeroSeries();
         public abstract Series GetZeroSeries(int elements);
         public abstract Series GetMinSeries();
         public abstract Series GetMaxSeries();
 
-        public virtual void Shuffle()
-        {
-            for (int i = 0; i < DataSize; i++)
-            {
-                int a = DataUtils.Random.Next(DataSize);
-                int b = DataUtils.Random.Next(DataSize);
-                Series sa = GetSeriesAtIndex(a);
-                Series sb = GetSeriesAtIndex(b);
-                SetSeriesAtIndex(a, sb);
-                SetSeriesAtIndex(b, sa);
-            }
-        }
-
-        public static Series Create(Series series, int[] values)
-        {
-            Series result;
-            if (series.Type == SeriesType.Int)
-            {
-                result = new IntSeries(series.VectorSize, values);
-            }
-            else
-            {
-                result = new FloatSeries(series.VectorSize, values.ToFloat());
-            }
-            return result;
-        }
-        public static Series Create(Series series, float[] values)
-        {
-            Series result;
-            if (series.Type == SeriesType.Int)
-            {
-                result = new IntSeries(series.VectorSize, values.ToInt());
-            }
-            else
-            {
-                result = new FloatSeries(series.VectorSize, values);
-            }
-            return result;
-        }
-
-        public static bool IsEqual(Series a, Series b)
-        {
-            bool result = true;
-            if(a.GetType() == b.GetType() && a.VirtualCount == b.VirtualCount && a.VectorSize == b.VectorSize)
-            {
-                for (int i = 0; i < a.VirtualCount; i++)
-                {
-                    if(a.Type == SeriesType.Float)
-                    {
-                        float delta = 0.0001f;
-                        float[] ar = a.GetValueAtVirtualIndex(i).FloatData;
-                        float[] br = b.GetValueAtVirtualIndex(i).FloatData;
-                        for (int j = 0; j < ar.Length; j++)
-                        {
-                            if(Math.Abs(ar[j] - br[j]) > delta)
-                            {
-                                result = false;
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        int[] ar = a.GetValueAtVirtualIndex(i).IntData;
-                        int[] br = b.GetValueAtVirtualIndex(i).IntData;
-                        for (int j = 0; j < ar.Length; j++)
-                        {
-                            if (ar[j] != br[j])
-                            {
-                                result = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                result = false;
-            }
-            return result;
-        }
     }
 }

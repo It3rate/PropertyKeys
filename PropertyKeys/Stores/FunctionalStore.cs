@@ -25,7 +25,7 @@ namespace DataArcs.Stores
             for (int i = 1; i < Stores.Length; i++)
             {
                 Series b = Stores[i].GetValueAtIndex(index, virtualCount);
-                series.Combine(b, Stores[i].CombineFunction);
+                series.CombineInto(b, Stores[i].CombineFunction);
             }
             return series;
         }
@@ -36,7 +36,7 @@ namespace DataArcs.Stores
             for (int i = 1; i < Stores.Length; i++)
             {
                 Series b = Stores[i].GetValueAtT(t, virtualCount);
-                series.Combine(b, Stores[i].CombineFunction);
+                series.CombineInto(b, Stores[i].CombineFunction);
             }
             return series;
         }

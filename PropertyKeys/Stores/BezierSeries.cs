@@ -48,7 +48,6 @@ namespace DataArcs.Stores
             int index = (int)(t * VirtualCount);
             return GetSeriesAtIndex(index);
         }
-
         public override Series GetSeriesAtIndex(int index)
         {
             index = Math.Max(0, Math.Min(Moves.Length - 1, index));
@@ -77,7 +76,6 @@ namespace DataArcs.Stores
                 Moves[index] = ((BezierSeries)series).Moves[0];
             }
         }
-
         public override Series HardenToData(Store store = null)
         {
             Series result = this;
@@ -97,7 +95,6 @@ namespace DataArcs.Stores
             }
             return result;
         }
-
 
         public GraphicsPath Path()
         {

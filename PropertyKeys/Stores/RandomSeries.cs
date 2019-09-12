@@ -92,7 +92,7 @@ namespace DataArcs.Stores
         public override void Update(float time)
         {
             Series b = GenerateData();
-            _series.Combine(b, _combineFunction);
+            _series.CombineInto(b, _combineFunction);
         }
 
         public void setMinMax(float min, float max)
@@ -105,9 +105,9 @@ namespace DataArcs.Stores
             // nothing to do as internal series calculates it's own frame.
         }
 
-        public override void Combine(Series b, CombineFunction combineFunction)
+        public override void CombineInto(Series b, CombineFunction combineFunction)
         {
-            _series.Combine(b, combineFunction);
+            _series.CombineInto(b, combineFunction);
         }
 
         public override float FloatDataAt(int index)
@@ -128,9 +128,9 @@ namespace DataArcs.Stores
         public override float[] FloatData => _series.FloatData;
         public override int[] IntData => _series.IntData;
         public override bool[] BoolData => _series.BoolData;
-        public override void Interpolate(Series b, float t)
+        public override void InterpolateInto(Series b, float t)
         {
-            _series.Interpolate(b, t);
+            _series.InterpolateInto(b, t);
         }
 
         public override Series GetZeroSeries()

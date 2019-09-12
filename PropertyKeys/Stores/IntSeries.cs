@@ -58,7 +58,7 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public override void Interpolate(Series b, float t)
+        public override void InterpolateInto(Series b, float t)
         {
             for (int i = 0; i < DataSize; i++)
             {
@@ -97,7 +97,7 @@ namespace DataArcs.Stores
             DataUtils.SubtractIntArrayFrom(max, min);
             CachedSize = new IntSeries(VectorSize, max);
         }
-        public override void Combine(Series b, CombineFunction combineFunction)
+        public override void CombineInto(Series b, CombineFunction combineFunction)
         {
             switch (combineFunction)
             {
@@ -159,11 +159,8 @@ namespace DataArcs.Stores
         }
 
         public override Series GetZeroSeries() { return new IntSeries(VectorSize, DataUtils.GetIntZeroArray(VectorSize)); }
-        public override Series GetZeroSeries(int elementCount) { return GetZeroSeries(VectorSize, elementCount); }
+        public override Series GetZeroSeries(int elementCount) { return SeriesUtils.GetZeroIntSeries(VectorSize, elementCount); }
         public override Series GetMinSeries() { return new IntSeries(VectorSize, DataUtils.GetIntMinArray(VectorSize)); }
         public override Series GetMaxSeries() { return new IntSeries(VectorSize, DataUtils.GetIntMaxArray(VectorSize)); }
-        
-        public static IntSeries GetZeroSeries(int vectorSize, int elementCount) { return new IntSeries(vectorSize, DataUtils.GetIntZeroArray(vectorSize * elementCount)); }
-
     }
 }

@@ -49,6 +49,7 @@ namespace DataArcs.Components
             {
                 int cols = 10;
                 int rows =10;
+
                 float totalWidth = 500f;
                 float growth = 60;
                 //graphic.Orientation = 0.5f;
@@ -71,7 +72,7 @@ namespace DataArcs.Components
                    // rs.setMinMax(.98f, 1f/.98f);
                     //endStore.HardenToData();
                     FunctionalStore fs = new FunctionalStore(endStore, randomStore);
-                    object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, fs }, easingType: EasingType.Linear));
+                    object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, fs }));
                 }
                 else
                 {
@@ -99,7 +100,7 @@ namespace DataArcs.Components
                 var startStore = new Store(new FloatSeries(vectorSize, start));
                 var endStore = new Store(new FloatSeries(vectorSize, end));
                 endStore.HardenToData();
-                endStore.Series.Shuffle();
+                SeriesUtils.Shuffle(endStore.Series);
 
                 object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }));
                 object1.shouldShuffle = true;
@@ -116,7 +117,7 @@ namespace DataArcs.Components
                 var endStore = new Store(new FloatSeries(vectorSize, end, virtualCount: 50),
                     easingTypes: new EasingType[] { EasingType.EaseCenter, EasingType.EaseCenter }, sampler: gridSampler);
                 endStore.HardenToData();
-                object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }, easingType: EasingType.Linear));
+                object1.AddProperty(PropertyID.Location, new PropertyStore(new Store[] { startStore, endStore }));
                 
             }
 
@@ -132,7 +133,7 @@ namespace DataArcs.Components
             float[] end = new float[] { 0, 0.2f, 0.7f,   0.8f, 0, 0.3f,    0.7f, 1f, 0.1f,   0.4f, 0, 1f };
             var colorStartStore = new Store(new FloatSeries(3, start), sampler:linearSampler);
             var colorEndStore = new Store(new FloatSeries(3, end), sampler: linearSampler, easingTypes: new EasingType[] { EasingType.Squared });
-            return new PropertyStore(new Store[] { colorStartStore, colorEndStore }, easingType: EasingType.InverseSquared);
+            return new PropertyStore(new Store[] { colorStartStore, colorEndStore });
         }
 
         public void Draw(Graphics g, float t)

@@ -42,7 +42,7 @@ namespace DataArcs.Samplers
             result[0] = (float)(Math.Sin(t * 2.0f * Math.PI + Math.PI) * radiusX + frame[0] + radiusX);
             float radiusY = size[1] / 2.0f;
             result[1] = (float)(Math.Cos(t * 2.0f * Math.PI + Math.PI) * radiusY + frame[1] + radiusY);
-            return Series.Create(series, result);
+            return SeriesUtils.Create(series, result);
         }
         
     }

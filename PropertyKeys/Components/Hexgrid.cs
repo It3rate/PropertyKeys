@@ -16,8 +16,10 @@ namespace DataArcs.Components
         public int Rows { get; set; }
         public int Columns { get; set; }
         public float Spacing { get; set; }
-        //public PolyShape Shape { get; set; }
         //public FloatStore Locations { get; set; }
+
+        private PolyShape graphic;
+        private HexagonSampler sampler;
 
         public Matrix Transform { get; set; }
 

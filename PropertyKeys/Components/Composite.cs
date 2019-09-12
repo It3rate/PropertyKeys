@@ -94,7 +94,7 @@ namespace DataArcs.Components
             if (floorT % 2 == 0) t = 1.0f - t;
             if(t <= 0.005f && shouldShuffle)
             {
-                GetPropertyStore(PropertyID.Location).Stores[1].Series.Shuffle();
+                SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].Series);
             }
         }
 
