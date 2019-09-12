@@ -26,7 +26,10 @@ namespace DataArcs.Stores
 
         public void Insert(int index, Store item)
         {
-            if (index >= 0 && index < _stores.Count) _stores.Insert(index, item);
+            if (index >= 0 && index < _stores.Count)
+            {
+                _stores.Insert(index, item);
+            }
         }
 
         public bool Remove(Store item)
@@ -36,7 +39,10 @@ namespace DataArcs.Stores
 
         public void RemoveAt(int index)
         {
-            if (index >= 0 && index < _stores.Count) _stores.RemoveAt(index);
+            if (index >= 0 && index < _stores.Count)
+            {
+                _stores.RemoveAt(index);
+            }
         }
 
         public virtual void Reset()
@@ -56,9 +62,14 @@ namespace DataArcs.Stores
             SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
 
             if (startIndex == endIndex)
+            {
                 result = _stores[startIndex].GetValueAtIndex(index, virtualCount);
+            }
             else
+            {
                 result = BlendValueAtIndex(_stores[startIndex], _stores[endIndex], index, vT, virtualCount);
+            }
+
             return result;
         }
 
@@ -69,9 +80,14 @@ namespace DataArcs.Stores
             SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
 
             if (startIndex == endIndex)
+            {
                 result = _stores[startIndex].GetValueAtT(indexT, virtualCount);
+            }
             else
+            {
                 result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT, virtualCount);
+            }
+
             return result;
         }
 

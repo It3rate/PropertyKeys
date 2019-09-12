@@ -71,7 +71,11 @@ namespace DataArcs.Series
         {
             Series result = this;
             var len = VirtualCount * VectorSize;
-            if ((int) (_series.DataSize / VectorSize) != len) result = GenerateData();
+            if ((int) (_series.DataSize / VectorSize) != len)
+            {
+                result = GenerateData();
+            }
+
             return result;
         }
 

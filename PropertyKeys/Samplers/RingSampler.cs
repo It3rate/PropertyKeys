@@ -15,7 +15,11 @@ namespace DataArcs.Samplers
         public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
         {
             virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
-            if (virtualCount > -1) t *= series.VirtualCount / (float) virtualCount;
+            if (virtualCount > -1)
+            {
+                t *= series.VirtualCount / (float) virtualCount;
+            }
+
             return GetSeriesSample(series, t, virtualCount);
         }
 

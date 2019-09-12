@@ -36,7 +36,10 @@ namespace DataArcs.Samplers
             {
                 result[i] = count / dSize;
                 count -= result[i] * dSize;
-                if (i > 0) dSize /= strides[i - 1];
+                if (i > 0)
+                {
+                    dSize /= strides[i - 1];
+                }
             }
 
             return result;

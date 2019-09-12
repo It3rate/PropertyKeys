@@ -29,7 +29,10 @@ namespace DataArcs.Commands
         public void Do(ICommand item)
         {
             // delete any potential redo items
-            if (stack.Count > index) stack.RemoveRange(index, stack.Count - index);
+            if (stack.Count > index)
+            {
+                stack.RemoveRange(index, stack.Count - index);
+            }
 
             stack.Add(item);
             item.Execute();
@@ -89,7 +92,10 @@ namespace DataArcs.Commands
             {
                 commands.Add(((IRepeatableCommand) stack[i]).GetRepeatCommand());
                 if (stack[i] is IRepeatableCommand) // || stack[i] is DuplicateSelectedCommand)
+                {
                     break;
+                }
+
                 i--;
             }
 

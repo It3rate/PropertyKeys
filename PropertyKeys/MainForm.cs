@@ -46,7 +46,11 @@ namespace DataArcs
         private void B0_Click(object sender, EventArgs e)
         {
             version++;
-            if (version >= Circles.versionCount) version = 0;
+            if (version >= Circles.versionCount)
+            {
+                version = 0;
+            }
+
             circles = new Circles(version);
         }
 

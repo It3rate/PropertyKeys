@@ -39,7 +39,11 @@ namespace DataArcs.Samplers
         public static Series.Series GetValueAtT(Series.Series series, BezierMove[] moves, float t,
             int virtualCount = -1)
         {
-            if (virtualCount > -1) t *= series.VirtualCount / (float) virtualCount;
+            if (virtualCount > -1)
+            {
+                t *= series.VirtualCount / (float) virtualCount;
+            }
+
             virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
             SeriesUtils.GetScaledT(t, virtualCount, out var vT, out var startIndex, out var endIndex);
             var a = series.GetSeriesAtIndex(startIndex).FloatData; // GetFloatArrayAtIndex(startIndex);

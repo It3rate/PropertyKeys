@@ -26,9 +26,14 @@ namespace DataArcs.Series
             var startIndex = Math.Min(len - 1, Math.Max(0, index));
             var result = new int[VectorSize];
             if (startIndex * VectorSize + (VectorSize - 1) < DataSize)
+            {
                 Array.Copy(_intValues, startIndex * VectorSize, result, 0, VectorSize);
+            }
             else
+            {
                 Array.Copy(_intValues, DataSize - VectorSize, result, 0, VectorSize);
+            }
+
             return new IntSeries(VectorSize, result);
         }
 
@@ -62,9 +67,13 @@ namespace DataArcs.Series
         {
             for (var i = 0; i < DataSize; i++)
                 if (i < b.DataSize)
+                {
                     _intValues[i] = (int) (_intValues[i] + (b.IntDataAt(i) - _intValues[i]) * t);
+                }
                 else
+                {
                     break;
+                }
         }
 
         protected override void CalculateFrame()
@@ -75,9 +84,15 @@ namespace DataArcs.Series
             for (var i = 0; i < DataSize; i += VectorSize)
             for (var j = 0; j < VectorSize; j++)
             {
-                if (_intValues[i + j] < min[j]) min[j] = _intValues[i + j];
+                if (_intValues[i + j] < min[j])
+                {
+                    min[j] = _intValues[i + j];
+                }
 
-                if (_intValues[i + j] > max[j]) max[j] = _intValues[i + j];
+                if (_intValues[i + j] > max[j])
+                {
+                    max[j] = _intValues[i + j];
+                }
             }
 
             CachedFrame = new IntSeries(VectorSize, SeriesUtils.CombineIntArrays(min, max));

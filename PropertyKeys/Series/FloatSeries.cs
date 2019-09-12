@@ -26,9 +26,14 @@ namespace DataArcs.Series
             var startIndex = Math.Min(len - 1, Math.Max(0, index));
             var result = new float[VectorSize];
             if (startIndex * VectorSize + VectorSize <= DataSize)
+            {
                 Array.Copy(_floatValues, startIndex * VectorSize, result, 0, VectorSize);
+            }
             else
+            {
                 Array.Copy(_floatValues, DataSize - VectorSize, result, 0, VectorSize);
+            }
+
             return new FloatSeries(VectorSize, result);
         }
 
@@ -66,9 +71,15 @@ namespace DataArcs.Series
             for (var i = 0; i < DataSize; i += VectorSize)
             for (var j = 0; j < VectorSize; j++)
             {
-                if (_floatValues[i + j] < min[j]) min[j] = _floatValues[i + j];
+                if (_floatValues[i + j] < min[j])
+                {
+                    min[j] = _floatValues[i + j];
+                }
 
-                if (_floatValues[i + j] > max[j]) max[j] = _floatValues[i + j];
+                if (_floatValues[i + j] > max[j])
+                {
+                    max[j] = _floatValues[i + j];
+                }
             }
 
             CachedFrame = new FloatSeries(VectorSize, SeriesUtils.CombineFloatArrays(min, max));
@@ -80,9 +91,13 @@ namespace DataArcs.Series
         {
             for (var i = 0; i < DataSize; i++)
                 if (i < b.DataSize)
+                {
                     _floatValues[i] += (b[i] - _floatValues[i]) * t;
+                }
                 else
+                {
                     break;
+                }
         }
 
         public override void CombineInto(Series b, CombineFunction combineFunction)

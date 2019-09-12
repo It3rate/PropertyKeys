@@ -34,7 +34,11 @@ namespace DataArcs.Samplers
             {
                 result = Strides[0] * t;
                 var row = (int) result;
-                if ((row & 1) == 1) result += 1f / (Strides[0] - 1f) * 0.5f;
+                if ((row & 1) == 1)
+                {
+                    result += 1f / (Strides[0] - 1f) * 0.5f;
+                }
+
                 result -= row;
             }
             else
@@ -58,9 +62,13 @@ namespace DataArcs.Samplers
                 var temp = series.GetValueAtT(strideTs[i]).FloatData[i];
                 var curRow = (int) ((float) index / strides[0]);
                 if (i == 0 && (curRow & 1) == 1 && strides[0] > 0)
+                {
                     result[i] = temp + size[0] / (strides[0] - 1f) * 0.5f;
+                }
                 else
+                {
                     result[i] = temp;
+                }
             }
 
             return SeriesUtils.Create(series, result);

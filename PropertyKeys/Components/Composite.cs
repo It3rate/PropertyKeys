@@ -65,7 +65,11 @@ namespace DataArcs.Components
         public PropertyStore GetPropertyStore(PropertyID propertyID)
         {
             Stores.TryGetValue(propertyID, out var result);
-            if (result == null && Parent != null) result = Parent.GetPropertyStore(propertyID);
+            if (result == null && Parent != null)
+            {
+                result = Parent.GetPropertyStore(propertyID);
+            }
+
             return result;
         }
 
@@ -88,8 +92,15 @@ namespace DataArcs.Components
 
             var floorT = (int) time;
             t = time - floorT;
-            if (floorT % 2 == 0) t = 1.0f - t;
-            if (t <= 0.005f && shouldShuffle) SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].Series);
+            if (floorT % 2 == 0)
+            {
+                t = 1.0f - t;
+            }
+
+            if (t <= 0.005f && shouldShuffle)
+            {
+                SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].Series);
+            }
         }
 
         public void Draw(Graphics g)

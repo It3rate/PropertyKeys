@@ -8,9 +8,13 @@ namespace DataArcs.Series
         {
             for (var i = 0; i < result.Length; i++)
                 if (i < b.Length)
+                {
                     result[i] += (b[i] - result[i]) * t;
+                }
                 else
+                {
                     break;
+                }
         }
 
         public static void Shuffle(Series series)
@@ -31,9 +35,14 @@ namespace DataArcs.Series
         {
             Series result;
             if (series.Type == SeriesType.Int)
+            {
                 result = new IntSeries(series.VectorSize, values);
+            }
             else
+            {
                 result = new FloatSeries(series.VectorSize, values.ToFloat());
+            }
+
             return result;
         }
 
@@ -41,9 +50,14 @@ namespace DataArcs.Series
         {
             Series result;
             if (series.Type == SeriesType.Int)
+            {
                 result = new IntSeries(series.VectorSize, values.ToInt());
+            }
             else
+            {
                 result = new FloatSeries(series.VectorSize, values);
+            }
+
             return result;
         }
 
@@ -51,6 +65,7 @@ namespace DataArcs.Series
         {
             var result = true;
             if (a.GetType() == b.GetType() && a.VirtualCount == b.VirtualCount && a.VectorSize == b.VectorSize)
+            {
                 for (var i = 0; i < a.VirtualCount; i++)
                     if (a.Type == SeriesType.Float)
                     {
@@ -75,8 +90,11 @@ namespace DataArcs.Series
                                 break;
                             }
                     }
+            }
             else
+            {
                 result = false;
+            }
 
             return result;
         }
@@ -226,18 +244,26 @@ namespace DataArcs.Series
         {
             for (var i = 0; i < result.Length; i++)
                 if (i < b.Length)
+                {
                     result[i] -= b[i];
+                }
                 else
+                {
                     break;
+                }
         }
 
         public static void SubtractIntArrayFrom(int[] result, int[] b)
         {
             for (var i = 0; i < result.Length; i++)
                 if (i < b.Length)
+                {
                     result[i] -= b[i];
+                }
                 else
+                {
                     break;
+                }
         }
     }
 

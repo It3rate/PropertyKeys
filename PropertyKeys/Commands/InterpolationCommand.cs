@@ -25,9 +25,14 @@ namespace DataArcs.Commands
             SeriesUtils.GetScaledT(t, Stores.Length, out var vT, out var startIndex, out var endIndex);
 
             if (startIndex == endIndex)
+            {
                 result = Stores[startIndex].GetValueAtIndex(index).FloatData;
+            }
             else
+            {
                 result = BlendValueAtIndex(Stores[startIndex], Stores[endIndex], index, vT);
+            }
+
             return result;
         }
 
@@ -39,9 +44,14 @@ namespace DataArcs.Commands
             SeriesUtils.GetScaledT(t, Stores.Length, out var vT, out var startIndex, out var endIndex);
 
             if (startIndex == endIndex)
+            {
                 result = Stores[startIndex].GetValueAtT(vT).FloatData;
+            }
             else
+            {
                 result = BlendValueAtT(Stores[startIndex], Stores[endIndex], indexT, vT);
+            }
+
             return result;
         }
 

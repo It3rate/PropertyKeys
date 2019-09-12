@@ -62,7 +62,10 @@ namespace DataArcs.Series
             for (var i = 0; i < index; i++) start += MoveSize[(int) Moves[i]];
             var size = MoveSize[(int) Moves[index]];
             Array.Copy(series.FloatData, 0, _floatValues, index * VectorSize, VectorSize);
-            if (series is BezierSeries) Moves[index] = ((BezierSeries) series).Moves[0];
+            if (series is BezierSeries)
+            {
+                Moves[index] = ((BezierSeries) series).Moves[0];
+            }
         }
 
         public override Series HardenToData(Store store = null)

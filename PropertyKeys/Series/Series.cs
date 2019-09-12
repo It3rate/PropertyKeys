@@ -40,7 +40,10 @@ namespace DataArcs.Series
         {
             get
             {
-                if (CachedFrame == null) CalculateFrame();
+                if (CachedFrame == null)
+                {
+                    CalculateFrame();
+                }
 
                 return CachedFrame;
             }
@@ -53,7 +56,10 @@ namespace DataArcs.Series
         {
             get
             {
-                if (CachedSize == null) CalculateFrame();
+                if (CachedSize == null)
+                {
+                    CalculateFrame();
+                }
 
                 return CachedSize;
             }
