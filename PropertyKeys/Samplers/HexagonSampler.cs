@@ -55,12 +55,12 @@ namespace DataArcs.Samplers
         {
             virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
-            float[] size = series.Size.Floats; // s0,s1...sn
+            float[] size = series.Size.FloatData; // s0,s1...sn
             float[] strideTs = GetStrideTsForIndex(virtualCount, strides, index);
             
             for (int i = 0; i < result.Length; i++)
             {
-                float temp = series.GetValueAtT(strideTs[i]).Floats[i];
+                float temp = series.GetValueAtT(strideTs[i]).FloatData[i];
                 int curRow = (int)((float)index / strides[0]);
                 if (i == 0 && ((curRow & 1) == 1) && strides[0] > 0)
                 {

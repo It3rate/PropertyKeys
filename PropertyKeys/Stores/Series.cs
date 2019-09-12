@@ -72,15 +72,19 @@ namespace DataArcs.Stores
             VirtualCount = virtualCount;
         }
 
-        // todo: All float t's should probably be float[] t.
-        public abstract Series GetDataAtIndex(int index);
-        public abstract void SetDataAtIndex(int index, Series series);
+        public virtual void Reset() {}
+        public virtual void Update(float time) { }
+        protected abstract void CalculateFrame();
+        public abstract Series HardenToData(Store store = null); // return new copy as eventually everything should be immutable
 
+        public abstract Series GetSeriesAtIndex(int index);
+        public abstract void SetSeriesAtIndex(int index, Series series);
         public virtual Series GetValueAtVirtualIndex(int index)
         {
             float indexT = index / (VirtualCount - 1f);
             return GetValueAtT(indexT);
         }
+        // todo: All float t's should probably be float[] t.
         public virtual Series GetValueAtT(float t)
         {
             Series result;
@@ -92,7 +96,7 @@ namespace DataArcs.Stores
 
             if (t >= 1)
             {
-                result = GetDataAtIndex(len - 1);
+                result = GetSeriesAtIndex(len - 1);
             }
             else if (len > 1)
             {
@@ -103,35 +107,30 @@ namespace DataArcs.Stores
                 if (pos < len - 1)
                 {
                     float remainderT = pos - startIndex;
-                    result = GetDataAtIndex(startIndex);
-                    Series end = GetDataAtIndex(startIndex + 1);
+                    result = GetSeriesAtIndex(startIndex);
+                    Series end = GetSeriesAtIndex(startIndex + 1);
                     result.Interpolate(end, remainderT);
                 }
                 else
                 {
-                    result = GetDataAtIndex(startIndex);
+                    result = GetSeriesAtIndex(startIndex);
                 }
             }
             else
             {
-                result = GetDataAtIndex(0);
+                result = GetSeriesAtIndex(0);
             }
             return result;
         }
-        public abstract Series HardenToData(Store store = null); // return new copy as eventually everything should be immutable
 
-        public virtual void Reset() {}
-        public virtual void Update(float time) { }
-        protected abstract void CalculateFrame();
+        public float this[int index] => FloatDataAt(index); // convenience indexer for float values.
+        public abstract float FloatDataAt(int index);
+        public abstract int IntDataAt(int index);
+        public abstract bool BoolDataAt(int index);
 
-        public float this[int index] => FloatAt(index); // convenience indexer for float values.
-        public abstract float FloatAt(int index);
-        public abstract int IntAt(int index);
-        public abstract bool BoolAt(int index);
-
-        public abstract float[] Floats { get; }
-        public abstract int[] Ints { get; }
-        public abstract bool[] Bools { get; }
+        public abstract float[] FloatData { get; }
+        public abstract int[] IntData { get; }
+        public abstract bool[] BoolData { get; }
 
         public abstract void Combine(Series b, CombineFunction combineFunction);
         public abstract void Interpolate(Series b, float t);
@@ -147,10 +146,10 @@ namespace DataArcs.Stores
             {
                 int a = DataUtils.Random.Next(DataSize);
                 int b = DataUtils.Random.Next(DataSize);
-                Series sa = GetDataAtIndex(a);
-                Series sb = GetDataAtIndex(b);
-                SetDataAtIndex(a, sb);
-                SetDataAtIndex(b, sa);
+                Series sa = GetSeriesAtIndex(a);
+                Series sb = GetSeriesAtIndex(b);
+                SetSeriesAtIndex(a, sb);
+                SetSeriesAtIndex(b, sa);
             }
         }
 
@@ -191,8 +190,8 @@ namespace DataArcs.Stores
                     if(a.Type == SeriesType.Float)
                     {
                         float delta = 0.0001f;
-                        float[] ar = a.GetValueAtVirtualIndex(i).Floats;
-                        float[] br = b.GetValueAtVirtualIndex(i).Floats;
+                        float[] ar = a.GetValueAtVirtualIndex(i).FloatData;
+                        float[] br = b.GetValueAtVirtualIndex(i).FloatData;
                         for (int j = 0; j < ar.Length; j++)
                         {
                             if(Math.Abs(ar[j] - br[j]) > delta)
@@ -204,8 +203,8 @@ namespace DataArcs.Stores
                     }
                     else
                     {
-                        int[] ar = a.GetValueAtVirtualIndex(i).Ints;
-                        int[] br = b.GetValueAtVirtualIndex(i).Ints;
+                        int[] ar = a.GetValueAtVirtualIndex(i).IntData;
+                        int[] br = b.GetValueAtVirtualIndex(i).IntData;
                         for (int j = 0; j < ar.Length; j++)
                         {
                             if (ar[j] != br[j])

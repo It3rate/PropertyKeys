@@ -30,7 +30,7 @@ namespace DataArcs.Commands
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].GetValueAtIndex(index).Floats;
+                result = Stores[startIndex].GetValueAtIndex(index).FloatData;
             }
             else
             {
@@ -48,7 +48,7 @@ namespace DataArcs.Commands
 
             if (startIndex == endIndex)
             {
-                result = Stores[startIndex].GetValueAtT(vT).Floats;
+                result = Stores[startIndex].GetValueAtT(vT).FloatData;
             }
             else
             {
@@ -79,20 +79,20 @@ namespace DataArcs.Commands
 
         public static float[] BlendValueAtIndex(Store start, Store end, int index, float t)
         {
-            float[] result = start.GetValueAtIndex(index).Floats;
+            float[] result = start.GetValueAtIndex(index).FloatData;
             if (end != null)
             {
-                float[] endAr = end.GetValueAtIndex(index).Floats;
+                float[] endAr = end.GetValueAtIndex(index).FloatData;
                 DataUtils.InterpolateInto(result, endAr, t);
             }
             return result;
         }
         public static float[] BlendValueAtT(Store start, Store end, float indexT, float t)
         {
-            float[] result = start.GetValueAtT(indexT).Floats;
+            float[] result = start.GetValueAtT(indexT).FloatData;
             if (end != null)
             {
-                float[] endAr = end.GetValueAtT(indexT).Floats;
+                float[] endAr = end.GetValueAtT(indexT).FloatData;
                 DataUtils.InterpolateInto(result, endAr, t);
             }
             return result;

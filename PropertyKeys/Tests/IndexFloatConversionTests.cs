@@ -147,13 +147,13 @@ namespace DataArcs.Tests
         {
             //series_1_40 = new FloatSeries(1, new float[] { 1f, 2f, 11f, 22f }, virtualCount: 31);
             float sample;
-            sample = series_1_31.GetDataAtIndex(-10)[0];
+            sample = series_1_31.GetSeriesAtIndex(-10)[0];
             Assert.AreEqual(1f, sample, delta);
-            sample = series_1_31.GetDataAtIndex(0)[0];
+            sample = series_1_31.GetSeriesAtIndex(0)[0];
             Assert.AreEqual(1f, sample, delta);
-            sample = series_1_31.GetDataAtIndex(3)[0];
+            sample = series_1_31.GetSeriesAtIndex(3)[0];
             Assert.AreEqual(22f, sample, delta);
-            sample = series_1_31.GetDataAtIndex(99)[0];
+            sample = series_1_31.GetSeriesAtIndex(99)[0];
             Assert.AreEqual(22f, sample, delta);
 
             sample = series_1_31.GetValueAtVirtualIndex(-10)[0];
@@ -185,23 +185,23 @@ namespace DataArcs.Tests
         {
             //series_2 = new FloatSeries(2, 10f, 20f, 110f, 220f, 310f, 420f);
             float[] sample;
-            sample = series_2.GetValueAtT(-10f).Floats;
+            sample = series_2.GetValueAtT(-10f).FloatData;
             ArraysEqual(new float[] { 10f, 20f }, sample, delta);
-            sample = series_2.GetValueAtT(0f).Floats;
+            sample = series_2.GetValueAtT(0f).FloatData;
             ArraysEqual(new float[] { 10f, 20f }, sample, delta);
 
-            sample = series_2.GetValueAtT(0.25f).Floats;
+            sample = series_2.GetValueAtT(0.25f).FloatData;
             ArraysEqual(new float[] { 60f, 120f }, sample, delta);
-            sample = series_2.GetValueAtT(0.5f).Floats;
+            sample = series_2.GetValueAtT(0.5f).FloatData;
             ArraysEqual(new float[] { 110f, 220f }, sample, delta);
-            sample = series_2.GetValueAtT(0.75f).Floats;
+            sample = series_2.GetValueAtT(0.75f).FloatData;
             ArraysEqual(new float[] { 210f, 320f }, sample, delta);
 
-            sample = series_2.GetValueAtT(1f).Floats;
+            sample = series_2.GetValueAtT(1f).FloatData;
             ArraysEqual(new float[] { 310f, 420f }, sample, delta);
-            sample = series_2.GetValueAtT(1.1f).Floats;
+            sample = series_2.GetValueAtT(1.1f).FloatData;
             ArraysEqual(new float[] { 310f, 420f }, sample, delta);
-            sample = series_2.GetValueAtT(10f).Floats;
+            sample = series_2.GetValueAtT(10f).FloatData;
             ArraysEqual(new float[] { 310f, 420f }, sample, delta);
 
             //float testSample = series_2.GetValueAtT(1f / 3f)[0];

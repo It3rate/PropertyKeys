@@ -12,13 +12,13 @@ namespace DataArcs.Samplers
         public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
         {
             index = Math.Max(0, Math.Min(series.DataSize - 1, index));
-            return series.GetDataAtIndex(index);
+            return series.GetSeriesAtIndex(index);
         }
 
         public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
         {
             int index = (int)Math.Round(t * series.DataSize);
-            return series.GetDataAtIndex(index);
+            return series.GetSeriesAtIndex(index);
         }
 
         public override float GetTAtT(float t)

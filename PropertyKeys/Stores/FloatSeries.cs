@@ -18,7 +18,7 @@ namespace DataArcs.Stores
             _floatValues = values;
         }
 
-        public override Series GetDataAtIndex(int index)
+        public override Series GetSeriesAtIndex(int index)
         {
             int len = DataSize / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
@@ -33,11 +33,11 @@ namespace DataArcs.Stores
             }
             return new FloatSeries(VectorSize, result);
         }
-        public override void SetDataAtIndex(int index, Series series)
+        public override void SetSeriesAtIndex(int index, Series series)
         {
             int len = DataSize / VectorSize;
             int startIndex = Math.Min(len - 1, Math.Max(0, index));
-            Array.Copy(series.Floats, 0, _floatValues, startIndex * VectorSize, VectorSize);
+            Array.Copy(series.FloatData, 0, _floatValues, startIndex * VectorSize, VectorSize);
         }
 
         public override Series HardenToData(Store store = null)
@@ -49,7 +49,7 @@ namespace DataArcs.Stores
                 float[] vals = new float[len];
                 for (int i = 0; i < VirtualCount; i++)
                 {
-                    float[] val = store == null ? GetDataAtIndex(i).Floats : store.GetValueAtIndex(i).Floats;
+                    float[] val = store == null ? GetSeriesAtIndex(i).FloatData : store.GetValueAtIndex(i).FloatData;
                     Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
                 }
 
@@ -57,7 +57,6 @@ namespace DataArcs.Stores
             }
             return result;
         }
-
         protected override void CalculateFrame()
         {
             float[] min = DataUtils.GetFloatMaxArray(VectorSize);
@@ -82,7 +81,6 @@ namespace DataArcs.Stores
             DataUtils.SubtractFloatArrayFrom(max, min);
             CachedSize = new FloatSeries(VectorSize, max);
         }
-
         public override void Interpolate(Series b, float t)
         {
             for (int i = 0; i < DataSize; i++)
@@ -97,7 +95,6 @@ namespace DataArcs.Stores
                 }
             }
         }
-
         public override void Combine(Series b, CombineFunction combineFunction)
         {
             switch (combineFunction)
@@ -142,19 +139,20 @@ namespace DataArcs.Stores
             }
         }
 
-        public override float[] Floats => (float[])_floatValues.Clone();
-        public override int[] Ints => _floatValues.ToInt();
-        public override bool[] Bools => throw new NotImplementedException();
+        public override float[] FloatData => (float[])_floatValues.Clone();
+        public override int[] IntData => _floatValues.ToInt();
+        public override bool[] BoolData => throw new NotImplementedException();
 
-        public override float FloatAt(int index)
+        public float this[int index] => FloatDataAt(index);
+        public override float FloatDataAt(int index)
         {
             return (index >= 0 && index < _floatValues.Length) ? _floatValues[index] : 0;
         }
-        public override int IntAt(int index)
+        public override int IntDataAt(int index)
         {
             return (index >= 0 && index < _floatValues.Length) ? (int)_floatValues[index] : 0;
         }
-        public override bool BoolAt(int index)
+        public override bool BoolDataAt(int index)
         {
             return (index >= 0 && index < _floatValues.Length) && Math.Abs(_floatValues[index]) < 0.0000001;
         }

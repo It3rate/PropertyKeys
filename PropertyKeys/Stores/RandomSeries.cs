@@ -59,13 +59,13 @@ namespace DataArcs.Stores
 
         public override int DataSize => _series.DataSize;
 
-        public override Series GetDataAtIndex(int index)
+        public override Series GetSeriesAtIndex(int index)
         {
-            return _series.GetDataAtIndex(index);
+            return _series.GetSeriesAtIndex(index);
         }
-        public override void SetDataAtIndex(int index, Series series)
+        public override void SetSeriesAtIndex(int index, Series series)
         {
-            _series.SetDataAtIndex(index, series);
+            _series.SetSeriesAtIndex(index, series);
         }
 
         public override Series GetValueAtT(float t)
@@ -110,24 +110,24 @@ namespace DataArcs.Stores
             _series.Combine(b, combineFunction);
         }
 
-        public override float FloatAt(int index)
+        public override float FloatDataAt(int index)
         {
             return _series[index];
         }
 
-        public override int IntAt(int index)
+        public override int IntDataAt(int index)
         {
-            return _series.IntAt(index);
+            return _series.IntDataAt(index);
         }
 
-        public override bool BoolAt(int index)
+        public override bool BoolDataAt(int index)
         {
-            return _series.BoolAt(index);
+            return _series.BoolDataAt(index);
         }
 
-        public override float[] Floats => _series.Floats;
-        public override int[] Ints => _series.Ints;
-        public override bool[] Bools => _series.Bools;
+        public override float[] FloatData => _series.FloatData;
+        public override int[] IntData => _series.IntData;
+        public override bool[] BoolData => _series.BoolData;
         public override void Interpolate(Series b, float t)
         {
             _series.Interpolate(b, t);

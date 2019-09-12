@@ -112,11 +112,11 @@ namespace DataArcs.Components
                 //if (i > 88 && i < 111)//count - 1)
                 //{
                 //    float itx = i / (float)(count - 1f);
-                //    var vx = v = loc.GetValuesAtT(itx, easedT).Floats;
+                //    var vx = v = loc.GetValuesAtT(itx, easedT).FloatData;
                 //    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
                 //}
                 float it = i / (float)(count - 1f);
-                v = loc.GetValuesAtT(it, easedT, count).Floats;
+                v = loc.GetValuesAtT(it, easedT, count).FloatData;
 
                 Color c = GraphicUtils.GetRGBColorFrom(col.GetValuesAtT(it, easedT));
                 Brush b = new SolidBrush(c);

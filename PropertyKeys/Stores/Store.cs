@@ -15,9 +15,7 @@ namespace DataArcs.Stores
         public virtual Series Series { get; set; }
         protected Sampler Sampler { get; set; }
         public CombineFunction CombineFunction { get; set; }
-
         public EasingType[] EasingTypes { get; protected set; } // move to properties? May be useful for creating virtual data. Change to t sampler.
-
         public int VirtualCount 
         {
             get => Series.VirtualCount;
@@ -35,9 +33,24 @@ namespace DataArcs.Stores
         public Store(int[] data, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add) : this(new IntSeries(1, data), sampler, easingTypes, combineFunction) {}
         public Store(float[] data, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add) : this(new FloatSeries(1, data), sampler, easingTypes, combineFunction) {}
 
+        public virtual void Reset()
+        {
+            Series.Reset();
+        }
+        public virtual void Update(float time)
+        {
+            Series.Update(time);
+        }
+        public virtual void HardenToData()
+        {
+            Series = Series.HardenToData(this);
+            Sampler = null;
+            EasingTypes = null;
+        }
+
         public virtual Series GetValueAtIndex(int index, int virtualCount = -1)
         {
-            return Sampler != null ? Sampler.GetValueAtIndex(Series, index, virtualCount) : Series.GetDataAtIndex(index);
+            return Sampler != null ? Sampler.GetValueAtIndex(Series, index, virtualCount) : Series.GetSeriesAtIndex(index);
         }
         public virtual Series GetValueAtT(float t, int virtualCount = -1)
         {
@@ -48,20 +61,5 @@ namespace DataArcs.Stores
             return Sampler?.GetTAtT(t) ?? Series.GetValueAtT(t)[0];
         }
 
-        public virtual void HardenToData()
-        {
-            Series = Series.HardenToData(this);
-            Sampler = null;
-            EasingTypes = null;
-        }
-
-        public virtual void Reset()
-        {
-            Series.Reset();
-        }
-        public virtual void Update(float time)
-        {
-            Series.Update(time);
-        }
     }
 }
