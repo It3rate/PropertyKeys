@@ -1,6 +1,8 @@
-﻿namespace DataArcs.Samplers
+﻿using DataArcs.SeriesData;
+
+namespace DataArcs.Samplers
 {
-	public enum EasingType
+    public enum EasingType
 	{
 		None = 0,
 		Linear,
@@ -19,7 +21,7 @@
 			EasingType = easingType;
 		}
 
-		public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
+		public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
 		{
 			// todo: check if this virtualCount assignment should happen in easing at this point or pass through.
 			virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
@@ -27,7 +29,7 @@
 			return GetValueAtT(series, indexT, virtualCount);
 		}
 
-		public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
+		public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
 		{
 			t = GetValueAt(t, EasingType);
 			return series.GetValueAtT(t);

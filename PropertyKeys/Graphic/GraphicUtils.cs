@@ -1,10 +1,11 @@
 ﻿using System.Drawing;
+using DataArcs.SeriesData;
 
 namespace DataArcs.Graphic
 {
 	public class GraphicUtils
 	{
-		public static Color GetRGBColorFrom(Series.Series a)
+		public static Color GetRGBColorFrom(Series a)
 		{
 			Color result;
 			switch (a.VirtualCount * a.VectorSize)

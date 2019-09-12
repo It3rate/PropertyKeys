@@ -2,7 +2,7 @@
 using System.Drawing.Drawing2D;
 using DataArcs.Stores;
 
-namespace DataArcs.Series
+namespace DataArcs.SeriesData
 {
 	// maybe store all values as quadratic, allowing easier blending?
 	// try blending with len/angle from zero vs interpolate points.

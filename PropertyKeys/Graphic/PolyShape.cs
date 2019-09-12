@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using DataArcs.Samplers;
-using DataArcs.Series;
+using DataArcs.SeriesData;
 using DataArcs.Stores;
 
 namespace DataArcs.Graphic

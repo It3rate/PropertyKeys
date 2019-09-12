@@ -1,5 +1,5 @@
 using DataArcs.Samplers;
-using DataArcs.Series;
+using DataArcs.SeriesData;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DataArcs.Tests
@@ -23,7 +23,7 @@ namespace DataArcs.Tests
 		[TestMethod]
 		public void TestGetDimsForIndex()
 		{
-			Series.Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
+			Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
 			int[] strides = {10};
 			int[] sample;
 			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, -3);
@@ -49,7 +49,7 @@ namespace DataArcs.Tests
 		[TestMethod]
 		public void TestGetStrideTsForIndex()
 		{
-			Series.Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
+			Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
 			int[] strides = {10};
 			var cl = strides[0] - 1f;
 			float[] sample;
@@ -78,7 +78,7 @@ namespace DataArcs.Tests
 		[TestMethod]
 		public void TestGetStrideTsForT()
 		{
-			Series.Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
+			Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
 			int[] strides = {10};
 			var cl = strides[0] - 1f;
 			var len = series.VirtualCount - 1f;

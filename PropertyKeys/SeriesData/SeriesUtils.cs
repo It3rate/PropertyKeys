@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DataArcs.Series
+namespace DataArcs.SeriesData
 {
 	public class SeriesUtils
 	{

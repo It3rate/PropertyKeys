@@ -1,5 +1,5 @@
 ﻿using DataArcs.Samplers;
-using DataArcs.Series;
+using DataArcs.SeriesData;
 using DataArcs.Stores;
 
 namespace DataArcs.Commands

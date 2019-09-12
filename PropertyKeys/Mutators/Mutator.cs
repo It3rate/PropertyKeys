@@ -1,4 +1,5 @@
 ﻿using DataArcs.Stores;
+using DataArcs.SeriesData;
 
 namespace DataArcs.Mutators
 {
@@ -12,12 +13,12 @@ namespace DataArcs.Mutators
 			Store.HardenToData();
 		}
 
-		public virtual Series.Series GetValueAtIndex(Series.Series series, int index)
+		public virtual Series GetValueAtIndex(Series series, int index)
 		{
 			return Store.GetSeriesAtIndex(index);
 		}
 
-		public virtual Series.Series GetValueAtT(Series.Series series, float t)
+		public virtual Series GetValueAtT(Series series, float t)
 		{
 			return Store.GetSeriesAtT(t);
 		}

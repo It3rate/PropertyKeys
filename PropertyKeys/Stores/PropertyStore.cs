@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
-using DataArcs.Series;
+using DataArcs.SeriesData;
 
 namespace DataArcs.Stores
 {
-	public class PropertyStore
+	public class PropertyStore 
 	{
-		private readonly List<Store> _stores;
-		public float CurrentT { get; set; } = 0;
+		private readonly List<IStore> _stores;
+        public float CurrentT { get; set; } = 0;
 
-		public PropertyStore(params Store[] stores)
+		public PropertyStore(params IStore[] stores)
 		{
-			_stores = new List<Store>(stores);
+			_stores = new List<IStore>(stores);
 		}
 
-		public Store this[int index]
+		public IStore this[int index]
 		{
 			get => _stores[index];
 			set => _stores[index] = value;
@@ -24,7 +24,7 @@ namespace DataArcs.Stores
 			_stores.Add(item);
 		}
 
-		public void Insert(int index, Store item)
+		public void Insert(int index, IStore item)
 		{
 			if (index >= 0 && index < _stores.Count)
 			{
@@ -32,7 +32,7 @@ namespace DataArcs.Stores
 			}
 		}
 
-		public bool Remove(Store item)
+		public bool Remove(IStore item)
 		{
 			return _stores.Remove(item);
 		}
@@ -61,9 +61,9 @@ namespace DataArcs.Stores
 			}
 		}
 
-		public Series.Series GetSeriesAtIndex(int index, float t, int virtualCount = -1)
+		public Series GetSeriesAtIndex(int index, float t, int virtualCount = -1)
 		{
-			Series.Series result;
+			Series result;
 
 			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
 
@@ -79,9 +79,9 @@ namespace DataArcs.Stores
 			return result;
 		}
 
-		public Series.Series GetSeriesAtT(float indexT, float t, int virtualCount = -1)
+		public Series GetSeriesAtT(float indexT, float t, int virtualCount = -1)
 		{
-			Series.Series result;
+			Series result;
 
 			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
 
@@ -118,7 +118,7 @@ namespace DataArcs.Stores
 		}
 
 
-		public static Series.Series BlendValueAtIndex(Store start, Store end, int index, float t, int virtualCount = -1)
+		public static Series BlendValueAtIndex(IStore start, IStore end, int index, float t, int virtualCount = -1)
 		{
 			var result = start.GetSeriesAtIndex(index, virtualCount);
 			if (end != null)
@@ -130,7 +130,7 @@ namespace DataArcs.Stores
 			return result;
 		}
 
-		public static Series.Series BlendValueAtT(Store start, Store end, float indexT, float t, int virtualCount = -1)
+		public static Series BlendValueAtT(IStore start, IStore end, float indexT, float t, int virtualCount = -1)
 		{
 			var result = start.GetSeriesAtT(indexT, virtualCount);
 			if (end != null)

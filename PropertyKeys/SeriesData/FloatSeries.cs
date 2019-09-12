@@ -1,7 +1,7 @@
 ﻿using System;
 using DataArcs.Stores;
 
-namespace DataArcs.Series
+namespace DataArcs.SeriesData
 {
 	public class FloatSeries : Series
 	{
@@ -149,6 +149,7 @@ namespace DataArcs.Series
 					{
 						_floatValues[i] = b[i];
 					}
+
 					break;
 			}
 		}

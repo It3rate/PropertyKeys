@@ -1,5 +1,5 @@
 ﻿using System;
-using DataArcs.Series;
+using DataArcs.SeriesData;
 
 namespace DataArcs.Samplers
 {
@@ -15,13 +15,13 @@ namespace DataArcs.Samplers
 			_random = seed == 0 ? new Random() : new Random(seed);
 		}
 
-		public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
+		public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
 		{
 			index = _random.Next(0, index);
 			return series.GetSeriesAtIndex(index);
 		}
 
-		public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
+		public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
 		{
 			t = (float) _random.NextDouble() * t;
 			return series.GetValueAtT(t);

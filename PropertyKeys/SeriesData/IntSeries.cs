@@ -1,7 +1,7 @@
 ﻿using System;
 using DataArcs.Stores;
 
-namespace DataArcs.Series
+namespace DataArcs.SeriesData
 {
 	public class IntSeries : Series
 	{

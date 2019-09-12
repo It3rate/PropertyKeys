@@ -1,38 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using DataArcs.Graphic;
-using DataArcs.Series;
+using DataArcs.SeriesData;
 using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-	public enum PropertyID : int
-	{
-		None = 0,
-		Shape,
-		Transform,
-		Location,
-		Size,
-		Scale,
-		Rotation,
-		FillColor,
-		PenColor,
-		T,
-		StartTime,
-		Duration,
-		Easing,
-		SampleType,
-
-		Graphic,
-		Starness,
-		Roundness,
-		Radius,
-		RandomMotion,
-
-		Custom = 0x1000,
-	}
-
 	public class Composite
 	{
 		private Dictionary<PropertyID, PropertyStore> Stores { get; }
@@ -47,18 +20,6 @@ namespace DataArcs.Components
 		{
 			Parent = parent;
 			Stores = new Dictionary<PropertyID, PropertyStore>();
-		}
-
-		public void Step(float timeStep)
-		{
-		}
-
-		public void SetT(float t)
-		{
-			foreach (var propertyStore in Stores.Values)
-			{
-				propertyStore.CurrentT = t; // hmm, these t's need to be dynamic, but lookup will be important - or is that just functional flow?
-			}
 		}
 
 		// todo: this should probably bet get/set values for t/index by propertyID, but not access stores?
@@ -103,7 +64,7 @@ namespace DataArcs.Components
 
 			if (t <= 0.005f && shouldShuffle)
 			{
-				SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].Series);
+				SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].GetSeries(0));
 			}
 		}
 
@@ -144,5 +105,33 @@ namespace DataArcs.Components
 		{
 			return new Composite(this);
 		}
+	}
+
+	public enum PropertyID : int
+	{
+		None = 0,
+		TModifier,
+
+		Shape,
+		Transform,
+		Location,
+		Size,
+		Scale,
+		Rotation,
+		FillColor,
+		PenColor,
+		T,
+		StartTime,
+		Duration,
+		Easing,
+		SampleType,
+
+		Graphic,
+		Starness,
+		Roundness,
+		Radius,
+		RandomMotion,
+
+		Custom = 0x1000,
 	}
 }

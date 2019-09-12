@@ -2,7 +2,7 @@
 using System.Drawing;
 using DataArcs.Graphic;
 using DataArcs.Samplers;
-using DataArcs.Series;
+using DataArcs.SeriesData;
 using DataArcs.Stores;
 
 // Todo:
@@ -97,7 +97,7 @@ namespace DataArcs.Components
 				var startStore = new Store(new FloatSeries(vectorSize, start));
 				var endStore = new Store(new FloatSeries(vectorSize, end));
 				endStore.HardenToData();
-				SeriesUtils.Shuffle(endStore.Series);
+				SeriesUtils.Shuffle(endStore.GetSeries(0));
 
 				object1.AddProperty(PropertyID.Location, new PropertyStore(startStore, endStore));
 				object1.shouldShuffle = true;
