@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Numerics;
 using DataArcs.Mutators;
+using DataArcs.Series;
 
 // Todo:
 // Animate composites

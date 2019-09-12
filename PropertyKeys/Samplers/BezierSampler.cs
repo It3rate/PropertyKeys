@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataArcs.Series;
 using DataArcs.Stores;
 
 namespace DataArcs.Samplers
@@ -17,7 +18,7 @@ namespace DataArcs.Samplers
             Series = series;
         }
 
-        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
+        public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
         {
             // todo: check if this virtualCount assignment should happen in beziers at this point or pass through.
             virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
@@ -26,7 +27,7 @@ namespace DataArcs.Samplers
             return GetValueAtT(series, t, virtualCount);
         }
 
-        public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
+        public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
         {
             series = series ?? Series;
             BezierMove[] moves = series is BezierSeries bezierSeries ? bezierSeries.Moves : new[] { BezierMove.LineTo };
@@ -38,7 +39,7 @@ namespace DataArcs.Samplers
             return Series != null ? GetValueAtT(Series, Series.Moves, t)[0] : t;
         }
 
-        public static Series GetValueAtT(Series series, BezierMove[] moves, float t, int virtualCount = -1)
+        public static Series.Series GetValueAtT(Series.Series series, BezierMove[] moves, float t, int virtualCount = -1)
         {
             if (virtualCount > -1)
             {

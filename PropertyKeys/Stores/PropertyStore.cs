@@ -57,9 +57,9 @@ namespace DataArcs.Stores
             }
         }
 
-        public Series GetValuesAtIndex(int index, float t, int virtualCount = -1)
+        public Series.Series GetValuesAtIndex(int index, float t, int virtualCount = -1)
         {
-            Series result;
+            Series.Series result;
 
             DataUtils.GetScaledT(t, _stores.Count, out float vT, out int startIndex, out int endIndex);
 
@@ -73,9 +73,9 @@ namespace DataArcs.Stores
             }
             return result;
         }
-        public Series GetValuesAtT(float indexT, float t, int virtualCount = -1)
+        public Series.Series GetValuesAtT(float indexT, float t, int virtualCount = -1)
         {
-            Series result;
+            Series.Series result;
 
             DataUtils.GetScaledT(t, _stores.Count, out float vT, out int startIndex, out int endIndex);
 
@@ -109,22 +109,22 @@ namespace DataArcs.Stores
         }
 
 
-        public static Series BlendValueAtIndex(Store start, Store end, int index, float t, int virtualCount = -1)
+        public static Series.Series BlendValueAtIndex(Store start, Store end, int index, float t, int virtualCount = -1)
         {
-            Series result = start.GetValueAtIndex(index, virtualCount);
+            Series.Series result = start.GetValueAtIndex(index, virtualCount);
             if (end != null)
             {
-                Series endAr = end.GetValueAtIndex(index, virtualCount);
+                Series.Series endAr = end.GetValueAtIndex(index, virtualCount);
                 result.InterpolateInto(endAr, t);
             }
             return result;
         }
-        public static Series BlendValueAtT(Store start, Store end, float indexT, float t, int virtualCount = -1)
+        public static Series.Series BlendValueAtT(Store start, Store end, float indexT, float t, int virtualCount = -1)
         {
-            Series result = start.GetValueAtT(indexT, virtualCount);
+            Series.Series result = start.GetValueAtT(indexT, virtualCount);
             if (end != null)
             {
-                Series endAr = end.GetValueAtT(indexT, virtualCount);
+                Series.Series endAr = end.GetValueAtT(indexT, virtualCount);
                 result.InterpolateInto(endAr, t);
             }
             return result;

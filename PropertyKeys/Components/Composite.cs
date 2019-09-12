@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using DataArcs.Graphic;
+using DataArcs.Series;
 using DataArcs.Stores;
 
 namespace DataArcs.Components

@@ -4,19 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataArcs.Series;
 
 namespace DataArcs.Samplers
 {
     public class RingSampler : Sampler
     {
-        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
+        public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
         {
             virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             float indexT = index / (virtualCount - 1f); // full circle
             return GetSeriesSample(series, indexT, virtualCount);
         }
 
-        public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
+        public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
         {
             virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             if (virtualCount > -1)
@@ -32,7 +33,7 @@ namespace DataArcs.Samplers
         }
 
 
-        public static Series GetSeriesSample(Series series, float t, int virtualCount = -1)
+        public static Series.Series GetSeriesSample(Series.Series series, float t, int virtualCount = -1)
         {
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);
             float[] frame = series.Frame.FloatData; // x0,y0...n0, x1,y1..n1

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataArcs.Samplers;
+using DataArcs.Stores;
 
-namespace DataArcs.Stores
+namespace DataArcs.Series
 {
     // maybe store all values as quadratic, allowing easier blending?
     // try blending with len/angle from zero vs interpolate points.

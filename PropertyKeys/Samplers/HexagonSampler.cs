@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataArcs.Series;
 
 namespace DataArcs.Samplers
 {
@@ -16,14 +17,14 @@ namespace DataArcs.Samplers
             Strides = strides;
         }
 
-        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
+        public override Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1)
         {
             virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             index = Math.Max(0, Math.Min(virtualCount - 1, index));
             return GetSeriesSample(series, Strides, index);
         }
 
-        public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
+        public override Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1)
         {
             virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             t = Math.Max(0, Math.Min(1f, t));
@@ -51,7 +52,7 @@ namespace DataArcs.Samplers
             return result;
         }
 
-        public static Series GetSeriesSample(Series series, int[] strides, int index, int virtualCount = -1)
+        public static Series.Series GetSeriesSample(Series.Series series, int[] strides, int index, int virtualCount = -1)
         {
             virtualCount = (virtualCount == -1) ? series.VirtualCount : virtualCount;
             float[] result = DataUtils.GetFloatZeroArray(series.VectorSize);

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Samplers;
+using DataArcs.Series;
 
 namespace DataArcs.Stores
 {
@@ -12,7 +13,7 @@ namespace DataArcs.Stores
     {
         protected static readonly EasingType[] DefaultEasing = { EasingType.Linear };
 
-        public virtual Series Series { get; set; }
+        public virtual Series.Series Series { get; set; }
         protected Sampler Sampler { get; set; }
         public CombineFunction CombineFunction { get; set; }
         public EasingType[] EasingTypes { get; protected set; } // move to properties? May be useful for creating virtual data. Change to t sampler.
@@ -23,7 +24,7 @@ namespace DataArcs.Stores
         }
 
         protected Store(EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add) { }
-        public Store(Series series, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add)
+        public Store(Series.Series series, Sampler sampler = null, EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add)
         {
             Series = series;
             Sampler = sampler ?? new LineSampler();
@@ -48,11 +49,11 @@ namespace DataArcs.Stores
             EasingTypes = null;
         }
 
-        public virtual Series GetValueAtIndex(int index, int virtualCount = -1)
+        public virtual Series.Series GetValueAtIndex(int index, int virtualCount = -1)
         {
             return Sampler != null ? Sampler.GetValueAtIndex(Series, index, virtualCount) : Series.GetSeriesAtIndex(index);
         }
-        public virtual Series GetValueAtT(float t, int virtualCount = -1)
+        public virtual Series.Series GetValueAtT(float t, int virtualCount = -1)
         {
             return Sampler?.GetValueAtT(Series, t, virtualCount) ?? Series.GetValueAtT(t);
         }

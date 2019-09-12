@@ -19,8 +19,8 @@ namespace DataArcs.Samplers
 
     public abstract class Sampler
     {
-        public abstract Series GetValueAtIndex(Series series, int index, int virtualCount = -1);
-        public abstract Series GetValueAtT(Series series, float t, int virtualCount = -1);
+        public abstract Series.Series GetValueAtIndex(Series.Series series, int index, int virtualCount = -1);
+        public abstract Series.Series GetValueAtT(Series.Series series, float t, int virtualCount = -1);
         public abstract float GetTAtT(float t);
 
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataArcs.Series;
 
 namespace DataArcs.Tests
 {
@@ -75,8 +76,8 @@ namespace DataArcs.Tests
         {
             var startStore = new Store(series_1, sampler: sampler);
 
-            Series sample;
-            Series expected;
+            Series.Series sample;
+            Series.Series expected;
             float len = series_1.VirtualCount - 1f;
 
             sample = sampler.GetValueAtT(series_1, 0);
@@ -105,8 +106,8 @@ namespace DataArcs.Tests
         {
             var startStore = new Store(series_1, sampler: sampler);
 
-            Series sample;
-            Series expected;
+            Series.Series sample;
+            Series.Series expected;
             sample = sampler.GetValueAtIndex(series_1, 0);
             expected = new FloatSeries(2, new[] { 150f, 150f });
             Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
@@ -133,8 +134,8 @@ namespace DataArcs.Tests
         public void HexagonSamplerByT_1()
         {
             int[] strides = { 10, 0 };
-            Series sample;
-            Series expected;
+            Series.Series sample;
+            Series.Series expected;
             float len = series_1.VirtualCount - 1f;
             HexagonSampler sampler = new HexagonSampler(strides);
 
@@ -194,8 +195,8 @@ namespace DataArcs.Tests
         public void HexagonSamplerByIndex_1()
         {
             int[] strides = { 10, 0 };
-            Series sample;
-            Series expected;
+            Series.Series sample;
+            Series.Series expected;
             HexagonSampler sampler = new HexagonSampler(strides);
 
             // odd rows are offset to make hex grid, by 5.555 in this case.

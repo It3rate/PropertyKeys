@@ -9,7 +9,7 @@ namespace DataArcs.Stores
     public class FunctionalStore : Store
     {
         public readonly Store[] Stores;
-        public override Series Series => Stores[0].Series;
+        public override Series.Series Series => Stores[0].Series;
 
         //public FunctionalStore(Store[] stores)
         //{
@@ -19,23 +19,23 @@ namespace DataArcs.Stores
         {
             Stores = stores;
         }
-        public override Series GetValueAtIndex(int index, int virtualCount = -1)
+        public override Series.Series GetValueAtIndex(int index, int virtualCount = -1)
         {
-            Series series = Stores[0].GetValueAtIndex(index, virtualCount);
+            Series.Series series = Stores[0].GetValueAtIndex(index, virtualCount);
             for (int i = 1; i < Stores.Length; i++)
             {
-                Series b = Stores[i].GetValueAtIndex(index, virtualCount);
+                Series.Series b = Stores[i].GetValueAtIndex(index, virtualCount);
                 series.CombineInto(b, Stores[i].CombineFunction);
             }
             return series;
         }
 
-        public override Series GetValueAtT(float t, int virtualCount = -1)
+        public override Series.Series GetValueAtT(float t, int virtualCount = -1)
         {
-            Series series = Stores[0].GetValueAtT(t, virtualCount);
+            Series.Series series = Stores[0].GetValueAtT(t, virtualCount);
             for (int i = 1; i < Stores.Length; i++)
             {
-                Series b = Stores[i].GetValueAtT(t, virtualCount);
+                Series.Series b = Stores[i].GetValueAtT(t, virtualCount);
                 series.CombineInto(b, Stores[i].CombineFunction);
             }
             return series;

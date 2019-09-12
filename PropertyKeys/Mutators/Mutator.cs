@@ -18,8 +18,8 @@ namespace DataArcs.Mutators
             Store.HardenToData();
         }
 
-        public virtual Series GetValueAtIndex(Series series, int index) => Store.GetValueAtIndex(index);
-        public virtual Series GetValueAtT(Series series, float t) => Store.GetValueAtT(t);
+        public virtual Series.Series GetValueAtIndex(Series.Series series, int index) => Store.GetValueAtIndex(index);
+        public virtual Series.Series GetValueAtT(Series.Series series, float t) => Store.GetValueAtT(t);
         public virtual float GetTAtT(float t) => Store.GetTatT(t);
 
         public abstract void Update(float t);

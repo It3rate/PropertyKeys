@@ -1,7 +1,8 @@
 ﻿
 using System;
+using DataArcs.Stores;
 
-namespace DataArcs.Stores
+namespace DataArcs.Series
 {
     public enum SeriesType
     {

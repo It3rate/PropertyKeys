@@ -10,7 +10,7 @@ namespace DataArcs.Graphic
 {
     public class GraphicUtils
     {
-        public static Color GetRGBColorFrom(Series a)
+        public static Color GetRGBColorFrom(Series.Series a)
         {
             Color result;
             switch (a.VirtualCount * a.VectorSize)
