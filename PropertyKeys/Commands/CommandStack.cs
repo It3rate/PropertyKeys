@@ -3,104 +3,104 @@ using System.Collections.Generic;
 
 namespace DataArcs.Commands
 {
-    public class CommandStack
-    {
-        public event EventHandler OnUndoStackChanged;
+	public class CommandStack
+	{
+		public event EventHandler OnUndoStackChanged;
 
-        private List<ICommand> stack = new List<ICommand>();
-        private int index = 0;
+		private List<ICommand> stack = new List<ICommand>();
+		private int index = 0;
 
-        public CommandStack()
-        {
-        }
+		public CommandStack()
+		{
+		}
 
-        public int Count => stack.Count;
+		public int Count => stack.Count;
 
-        public bool CanUndo()
-        {
-            return index > 0;
-        }
+		public bool CanUndo()
+		{
+			return index > 0;
+		}
 
-        public bool CanRedo()
-        {
-            return stack.Count > 0 && index < stack.Count;
-        }
+		public bool CanRedo()
+		{
+			return stack.Count > 0 && index < stack.Count;
+		}
 
-        public void Do(ICommand item)
-        {
-            // delete any potential redo items
-            if (stack.Count > index)
-            {
-                stack.RemoveRange(index, stack.Count - index);
-            }
+		public void Do(ICommand item)
+		{
+			// delete any potential redo items
+			if (stack.Count > index)
+			{
+				stack.RemoveRange(index, stack.Count - index);
+			}
 
-            stack.Add(item);
-            item.Execute();
+			stack.Add(item);
+			item.Execute();
 
-            index = stack.Count;
-            OnUndoStackChanged(this, EventArgs.Empty);
+			index = stack.Count;
+			OnUndoStackChanged(this, EventArgs.Empty);
 
-            if (item is ISaveableCommand)
-            {
-                //MainForm.CurrentStage.HasSaveableChanges = true;
-            }
-        }
+			if (item is ISaveableCommand)
+			{
+				//MainForm.CurrentStage.HasSaveableChanges = true;
+			}
+		}
 
-        public bool Undo()
-        {
-            var result = false;
-            if (CanUndo())
-            {
-                index--;
-                stack[index].UnExecute();
-                result = true;
-            }
+		public bool Undo()
+		{
+			var result = false;
+			if (CanUndo())
+			{
+				index--;
+				stack[index].UnExecute();
+				result = true;
+			}
 
-            OnUndoStackChanged(this, EventArgs.Empty);
-            return result;
-        }
+			OnUndoStackChanged(this, EventArgs.Empty);
+			return result;
+		}
 
-        public bool Redo()
-        {
-            var result = false;
-            if (CanRedo())
-            {
-                stack[index].Execute();
-                index++;
-                result = true;
-            }
+		public bool Redo()
+		{
+			var result = false;
+			if (CanRedo())
+			{
+				stack[index].Execute();
+				index++;
+				result = true;
+			}
 
-            OnUndoStackChanged(this, EventArgs.Empty);
-            return result;
-        }
+			OnUndoStackChanged(this, EventArgs.Empty);
+			return result;
+		}
 
-        public ICommand Peek()
-        {
-            return stack.Count > 0 && index > 0 ? stack[index - 1] : null;
-        }
+		public ICommand Peek()
+		{
+			return stack.Count > 0 && index > 0 ? stack[index - 1] : null;
+		}
 
-        public bool CanRepeat()
-        {
-            return stack.Count > 0 && stack[index] is IRepeatableCommand;
-        }
+		public bool CanRepeat()
+		{
+			return stack.Count > 0 && stack[index] is IRepeatableCommand;
+		}
 
-        public IRepeatableCommand[] GetRepeatables()
-        {
-            var commands = new List<IRepeatableCommand>();
-            var i = index - 1;
-            while (i >= 0 && stack[i] is IRepeatableCommand)
-            {
-                commands.Add(((IRepeatableCommand) stack[i]).GetRepeatCommand());
-                if (stack[i] is IRepeatableCommand) // || stack[i] is DuplicateSelectedCommand)
-                {
-                    break;
-                }
+		public IRepeatableCommand[] GetRepeatables()
+		{
+			var commands = new List<IRepeatableCommand>();
+			var i = index - 1;
+			while (i >= 0 && stack[i] is IRepeatableCommand)
+			{
+				commands.Add(((IRepeatableCommand) stack[i]).GetRepeatCommand());
+				if (stack[i] is IRepeatableCommand) // || stack[i] is DuplicateSelectedCommand)
+				{
+					break;
+				}
 
-                i--;
-            }
+				i--;
+			}
 
-            commands.Reverse();
-            return commands.ToArray();
-        }
-    }
+			commands.Reverse();
+			return commands.ToArray();
+		}
+	}
 }

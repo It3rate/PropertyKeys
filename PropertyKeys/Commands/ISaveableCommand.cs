@@ -1,7 +1,7 @@
 ﻿namespace DataArcs.Commands
 {
-    public interface ISaveableCommand : ICommand
-    {
-        //void MarkSaveableChanges();
-    }
+	public interface ISaveableCommand : ICommand
+	{
+		//void MarkSaveableChanges();
+	}
 }

@@ -1,7 +1,7 @@
 ﻿namespace DataArcs.Commands
 {
-    public interface IRepeatableCommand : ICommand
-    {
-        IRepeatableCommand GetRepeatCommand();
-    }
+	public interface IRepeatableCommand : ICommand
+	{
+		IRepeatableCommand GetRepeatCommand();
+	}
 }
