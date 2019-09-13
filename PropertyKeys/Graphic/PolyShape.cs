@@ -30,81 +30,90 @@ namespace DataArcs.Graphic
 		public PolyShape(float[] radius, float[] orientation = null, int[] pointCount = null, float[] roundness = null,
 			float[] starness = null)
 		{
-			Orientation = orientation == null ? new Store(new[] {0f}) : new Store(orientation);
-			PointCount = pointCount == null ? new Store(new[] {4}) : new Store(pointCount);
-			Roundness = roundness == null ? new Store(new[] {0f}) : new Store(roundness);
-			Starness = starness == null ? new Store(new[] {1, 0f}) : new Store(starness);
+			Orientation = orientation == null ? new Store(new[] { 0f }) : new Store(orientation);
+			PointCount = pointCount == null ? new Store(new[] { 4 }) : new Store(pointCount);
+			Roundness = roundness == null ? new Store(new[] { 0f }) : new Store(roundness);
+			Starness = starness == null ? new Store(new[] { 1, 0f }) : new Store(starness);
+			Radius = radius == null ? new Store(new FloatSeries(2, 10f, 10f)) : new Store(new FloatSeries(2, radius));
+		}
+		public PolyShape(float[] radius, float[] orientation = null, float[] pointCount = null, float[] roundness = null,
+			float[] starness = null)
+		{
+			Orientation = orientation == null ? new Store(new[] { 0f }) : new Store(orientation);
+			PointCount = pointCount == null ? new Store(new[] { 4 }) : new Store(pointCount);
+			Roundness = roundness == null ? new Store(new[] { 0f }) : new Store(roundness);
+			Starness = starness == null ? new Store(new[] { 1, 0f }) : new Store(starness);
 			Radius = radius == null ? new Store(new FloatSeries(2, 10f, 10f)) : new Store(new FloatSeries(2, radius));
 		}
 
-		//public FloatStore Orientation
-		//{
-		//    get => _orientation;
-		//    set
-		//    {
-		//        // todo: calc isDirty flag using a separate 't' array, one for each property
-		//        //if (Math.Abs(_orientation - value) > SeriesUtils.TOLERANCE)
-		//        {
-		//            _orientation = value;
-		//            //GeneratePolyShape();
-		//        }
-		//    }
-		//}
+        //public FloatStore Orientation
+        //{
+        //    get => _orientation;
+        //    set
+        //    {
+        //        // todo: calc isDirty flag using a separate 't' array, one for each property
+        //        //if (Math.Abs(_orientation - value) > SeriesUtils.TOLERANCE)
+        //        {
+        //            _orientation = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
-		//public IntStore PointCount
-		//{
-		//    get => _pointCount;
-		//    set
-		//    {
-		//        //if (Math.Abs(_pointCount - value) > SeriesUtils.TOLERANCE)
-		//        {
-		//            _pointCount = value;
-		//            //GeneratePolyShape();
-		//        }
-		//    }
-		//}
+        //public IntStore PointCount
+        //{
+        //    get => _pointCount;
+        //    set
+        //    {
+        //        //if (Math.Abs(_pointCount - value) > SeriesUtils.TOLERANCE)
+        //        {
+        //            _pointCount = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
-		//public FloatStore Starness
-		//{
-		//    get => _starness;
-		//    set
-		//    {
-		//        //if (Math.Abs(_starness - value) > SeriesUtils.TOLERANCE)
-		//        {
-		//            _starness = value;
-		//            //GeneratePolyShape();
-		//        }
-		//    }
-		//}
+        //public FloatStore Starness
+        //{
+        //    get => _starness;
+        //    set
+        //    {
+        //        //if (Math.Abs(_starness - value) > SeriesUtils.TOLERANCE)
+        //        {
+        //            _starness = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
-		//public FloatStore Roundness
-		//{
-		//    get => _roundness;
-		//    set
-		//    {
-		//        //if (Math.Abs(_roundness - value) > SeriesUtils.TOLERANCE)
-		//        {
-		//            _roundness = value;
-		//            //GeneratePolyShape();
-		//        }
-		//    }
-		//}
+        //public FloatStore Roundness
+        //{
+        //    get => _roundness;
+        //    set
+        //    {
+        //        //if (Math.Abs(_roundness - value) > SeriesUtils.TOLERANCE)
+        //        {
+        //            _roundness = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
-		//public FloatStore Radius
-		//{
-		//    get => _radius;
-		//    set
-		//    {
-		//        //if (Math.Abs(_radius - value) > SeriesUtils.TOLERANCE)
-		//        {
-		//            _radius = value;
-		//            //GeneratePolyShape();
-		//        }
-		//    }
-		//}
+        //public FloatStore Radius
+        //{
+        //    get => _radius;
+        //    set
+        //    {
+        //        //if (Math.Abs(_radius - value) > SeriesUtils.TOLERANCE)
+        //        {
+        //            _radius = value;
+        //            //GeneratePolyShape();
+        //        }
+        //    }
+        //}
 
 
-		public override void Draw(Graphics g, Brush brush, Pen pen, float t)
+        public override void Draw(Graphics g, Brush brush, Pen pen, float t)
 		{
 			GeneratePolyShape(t, t, t, t, t);
 			if (brush != null)

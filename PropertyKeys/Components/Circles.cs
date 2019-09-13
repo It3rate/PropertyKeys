@@ -35,7 +35,7 @@ namespace DataArcs.Components
 			SetVersion(version);
 		}
 
-		private Store easeStore;
+		private Store easeStore; // to animation eventually
 		private int version;
 		public void SetVersion(int ver)
 		{
@@ -44,7 +44,7 @@ namespace DataArcs.Components
 				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseCenter), CombineFunction.Multiply, CombineTarget.T) :
 				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOutQuart), CombineFunction.Multiply, CombineTarget.T);
             object1 = new Composite();
-			var graphic = new PolyShape(pointCount: new int[] {6, 7, 8, 9, 10, 11, 12}, radius: new float[] {10f, 20f},
+			var graphic = new PolyShape(pointCount: new float[] {6f, 7f, 8f, 9f, 10f, 10.99f}, radius: new float[] {10f, 20f},
 				orientation: new float[] {1f / 12f, 0.3f}, starness: new float[] {0, -0.3f});
 
 			if (version == 0 || version == 1)
@@ -110,11 +110,12 @@ namespace DataArcs.Components
 			}
 			else if (version == 3)
 			{
+				graphic.PointCount = new Store(new float[]{3f,5.9f});
 				Sampler ringSampler = new RingSampler();
 				Sampler gridSampler = new GridSampler(new[] {15, 0, 0});
 				graphic.Radius = new Store(new FloatSeries(2, 5f, 5f, 15f, 15f));
 				var vectorSize = 2;
-				var start = new float[] {200, 40, 400, 200};
+				var start = new float[] {100, 100, 500, 400};
 				var end = new float[] {100, 100, 500, 400};
 				var startStore = new Store(new FloatSeries(vectorSize, start, 150), ringSampler);
 				var endStore = new Store(new FloatSeries(vectorSize, end, 150), gridSampler);
