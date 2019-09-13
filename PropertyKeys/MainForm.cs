@@ -20,7 +20,7 @@ namespace DataArcs
 		private DateTime curTime;
 		private float t = 0;
 
-		private int version = 0;
+		private int version = 3;
 
 		public MainForm()
 		{

@@ -44,10 +44,10 @@ namespace DataArcs.Components
 		{
 			Stores.Remove(id);
 		}
-
-		private float t;
+		
 		public bool shouldShuffle; // basis for switching to events
 
+		private float t;
 		public virtual void Update(float time)
 		{
 			foreach (var store in Stores.Values)
@@ -55,17 +55,12 @@ namespace DataArcs.Components
 				store.Update(time);
 			}
 
-			var floorT = (int) time;
-			t = time - floorT;
-			if (floorT % 2 == 0)
-			{
-				t = 1.0f - t;
-			}
-
-			if (t <= 0.005f && shouldShuffle)
+			if (time <= 0.005f && shouldShuffle)
 			{
 				SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].GetSeries(0));
 			}
+
+			t = time;
 		}
 
 		public void Draw(Graphics g)

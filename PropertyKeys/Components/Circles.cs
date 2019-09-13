@@ -35,9 +35,15 @@ namespace DataArcs.Components
 			SetVersion(version);
 		}
 
-		public void SetVersion(int version)
+		private Store easeStore;
+		private int version;
+		public void SetVersion(int ver)
 		{
-			object1 = new Composite();
+			version = ver;
+			easeStore = version == 2 ?
+				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseCenter), CombineFunction.Multiply, CombineTarget.T) :
+				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOutQuart), CombineFunction.Multiply, CombineTarget.T);
+            object1 = new Composite();
 			var graphic = new PolyShape(pointCount: new int[] {6, 7, 8, 9, 10, 11, 12}, radius: new float[] {10f, 20f},
 				orientation: new float[] {1f / 12f, 0.3f}, starness: new float[] {0, -0.3f});
 
@@ -58,7 +64,7 @@ namespace DataArcs.Components
 				var startStore = new Store(new FloatSeries(2, start, cols * rows), hexSampler);
 
 				float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
-				var endStore = new Store(new FloatSeries(2, end, rows * cols + 11), hexSampler);
+				var endStore = new Store(new FloatSeries(2, end, rows * cols), hexSampler);
 				if (version == 1)
 				{
 					startStore.VirtualCount = rows * cols;
@@ -105,16 +111,16 @@ namespace DataArcs.Components
 			else if (version == 3)
 			{
 				Sampler ringSampler = new RingSampler();
-				Sampler gridSampler = new GridSampler(new[] {10, 0, 0});
-				graphic.Radius = new Store(new FloatSeries(2, 5f, 5f, 20f, 20f));
+				Sampler gridSampler = new GridSampler(new[] {15, 0, 0});
+				graphic.Radius = new Store(new FloatSeries(2, 5f, 5f, 15f, 15f));
 				var vectorSize = 2;
 				var start = new float[] {200, 40, 400, 200};
 				var end = new float[] {100, 100, 500, 400};
-				var startStore = new Store(new FloatSeries(vectorSize, start, 100), ringSampler);
-				var endStore = new Store(new FloatSeries(vectorSize, end, 50),
-					easingTypes: new EasingType[] {EasingType.EaseCenter, EasingType.EaseCenter}, sampler: gridSampler);
-				endStore.HardenToData();
-				object1.AddProperty(PropertyID.Location, new PropertyStore(startStore, endStore));
+				var startStore = new Store(new FloatSeries(vectorSize, start, 150), ringSampler);
+				var endStore = new Store(new FloatSeries(vectorSize, end, 150), gridSampler);
+				//var fnStore = new FunctionalStore(startStore, endStore);
+				//endStore.HardenToData();
+				object1.AddProperty(PropertyID.Location, new PropertyStore( startStore, endStore));
 			}
 
 			object1.AddProperty(PropertyID.FillColor, GetTestColors());
@@ -128,12 +134,21 @@ namespace DataArcs.Components
 			var end = new float[] {0, 0.2f, 0.7f, 0.8f, 0, 0.3f, 0.7f, 1f, 0.1f, 0.4f, 0, 1f};
 			var colorStartStore = new Store(new FloatSeries(3, start), linearSampler);
 			var colorEndStore =
-				new Store(new FloatSeries(3, end), linearSampler, new EasingType[] {EasingType.Squared});
+				new Store(new FloatSeries(3, end), linearSampler);
 			return new PropertyStore(colorStartStore, colorEndStore);
 		}
 
-		public void Draw(Graphics g, float t)
+		public void Draw(Graphics g, float time)
 		{
+			time = (version == 2) ? time * 3f : time;
+			var floorT = (int)time;
+			float t = time - floorT;
+			if (floorT % 2 == 0)
+			{
+				t = 1.0f - t;
+			}
+
+			t = easeStore.GetSeriesAtT(t)[0];
 			object1.Update(t);
 			object1.Draw(g);
 		}

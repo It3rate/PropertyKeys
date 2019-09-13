@@ -10,18 +10,6 @@ namespace DataArcs.SeriesData
 		Bool,
 	}
 
-	public enum CombineFunction
-	{
-		Replace,
-		Append,
-		Add,
-		Subtract,
-		Multiply,
-		Divide,
-		Average,
-		Interpolate,
-	}
-
 	public abstract class Series
 	{
 		public int VectorSize { get; }

@@ -8,44 +8,35 @@ namespace DataArcs.Stores
 		private Series _series;
 
 		public CombineFunction CombineFunction { get; set; }
-		public int VirtualCount
+		public CombineTarget CombineTarget { get; set; }
+        public int VirtualCount
 		{
 			get => _series.VirtualCount;
 			set => _series.VirtualCount = value;
 		}
 
 		protected Sampler Sampler { get; set; }
+		
 
-		public EasingType[]
-			EasingTypes { get; protected set; } // move to properties? May be useful for creating virtual data. Change to t sampler.
-
-
-		protected Store(EasingType[] easingTypes = null, CombineFunction combineFunction = CombineFunction.Add)
-		{
-		}
-
-		public Store(Series series, Sampler sampler = null, EasingType[] easingTypes = null,
-			CombineFunction combineFunction = CombineFunction.Add)
+		public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, CombineTarget combineTarget = CombineTarget.Destination)
 		{
 			_series = series;
 			Sampler = sampler ?? new LineSampler();
-			EasingTypes = easingTypes ?? new []{EasingType.Linear};
 			CombineFunction = combineFunction;
-		}
+			CombineTarget = combineTarget;
+        }
 
-		public Store(int[] data, Sampler sampler = null, EasingType[] easingTypes = null,
-			CombineFunction combineFunction = CombineFunction.Add) : this(new IntSeries(1, data), sampler, easingTypes,
-			combineFunction)
+		public Store(int[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) :
+			this(new IntSeries(1, data), sampler, combineFunction)
+
 		{
 		}
+		public Store(float[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) :
+			this(new FloatSeries(1, data), sampler, combineFunction)
 
-		public Store(float[] data, Sampler sampler = null, EasingType[] easingTypes = null,
-			CombineFunction combineFunction = CombineFunction.Add) : this(new FloatSeries(1, data), sampler,
-			easingTypes, combineFunction)
 		{
 		}
-
-		public Series GetSeries(int index) => _series;
+        public Series GetSeries(int index) => _series;
 
 		public virtual void Reset()
 		{
@@ -61,7 +52,6 @@ namespace DataArcs.Stores
 		{
 			_series = _series.HardenToData(this);
 			Sampler = null;
-			EasingTypes = null;
 		}
 
 		public virtual Series GetSeriesAtIndex(int index, int virtualCount = -1)

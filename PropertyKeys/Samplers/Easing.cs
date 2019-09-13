@@ -1,8 +1,10 @@
 ﻿using DataArcs.SeriesData;
+using System;
 
 namespace DataArcs.Samplers
 {
-    public enum EasingType
+
+	public enum EasingType
 	{
 		None = 0,
 		Linear,
@@ -10,7 +12,8 @@ namespace DataArcs.Samplers
 		InverseSquared,
 		EaseInOut,
 		EaseCenter,
-	}
+		EaseInOutQuart,
+    }
 
 	public class Easing : Sampler
 	{
@@ -53,20 +56,24 @@ namespace DataArcs.Samplers
 					break;
 				case EasingType.Squared:
 					result = t * t;
-					break;
+                    break;
 				case EasingType.InverseSquared:
 					result = 1f - t * t;
 					break;
 				case EasingType.EaseInOut:
-					//result = (t < 0.5f) ? 2f * (t * t) : 2f * t * (1f - t) + 0.5f;
-					result = t * t * (3f - 2f * t);
+					result = t * t *  (3f - 2f * t);
 					break;
 				case EasingType.EaseCenter:
 					var a = (t - 0.5f) * 2;
 					var sgn = a >= 0 ? 0.5f : -0.5f;
 					result = a * a * sgn + 0.5f;
 					break;
-			}
+				case EasingType.EaseInOutQuart:
+                    result = t < 0.5f ?
+						(float)(8.0 * t * t * t * t) :
+						(float)(1.0 - Math.Pow(-2.0 * t + 2.0, 4) / 2.0);
+					break;
+            }
 
 			return result;
 		}
