@@ -7,6 +7,6 @@ namespace DataArcs.Adapters.Geometry
     {
 	    public static float X(this Series series) => series.FloatDataAt(0);
 
-	    public static float Y(this Series series) => series.FloatDataAt(Math.Min(1, series.DataSize));
+	    public static float Y(this Series series) => series.FloatDataAt(Math.Min(1, series.DataSize - 1));
     }
 }
