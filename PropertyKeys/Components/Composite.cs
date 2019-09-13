@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using DataArcs.Adapters;
+using DataArcs.Adapters.Color;
+using DataArcs.Adapters.Geometry;
 using DataArcs.Graphic;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
@@ -67,29 +70,20 @@ namespace DataArcs.Components
 		{
 			var loc = GetPropertyStore(PropertyID.Location);
 			var col = GetPropertyStore(PropertyID.FillColor);
-			var wander = GetPropertyStore(PropertyID.RandomMotion);
-
-			var easedT = t; // Easing.GetTAtT(t, loc.EasingType);
-			var count = loc.GetElementCountAt(easedT);
-			float[] v = {0, 0};
+			
+			var count = loc.GetElementCountAt(t);
 			for (var i = 0; i < count; i++)
 			{
-				//if (i > 88 && i < 111)//count - 1)
-				//{
-				//    float itx = i / (float)(count - 1f);
-				//    var vx = v = loc.GetSeriesAtT(itx, easedT).FloatData;
-				//    Debug.WriteLine(i + "::" + vx[0] + " : " + vx[1]);
-				//}
 				var it = i / (float) (count - 1f);
-				v = loc.GetSeriesAtT(it, easedT, count).FloatData;
+				Series v = loc.GetSeriesAtT(it, t, count);
 
-				var c = GraphicUtils.GetRGBColorFrom(col.GetSeriesAtT(it, easedT));
+				var c = col.GetSeriesAtT(it, t).RGB();
 				Brush b = new SolidBrush(c);
 				var state = g.Save();
 				var scale = 1f; //  + t * 0.2f;
 				g.ScaleTransform(scale, scale);
-				g.TranslateTransform(v[0] / scale, v[1] / scale);
-				Graphic.Draw(g, b, null, easedT);
+				g.TranslateTransform(v.X() / scale, v.Y() / scale);
+				Graphic.Draw(g, b, null, t);
 				g.Restore(state);
 			}
 

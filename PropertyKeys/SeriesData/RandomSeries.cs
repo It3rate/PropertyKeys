@@ -10,13 +10,12 @@ namespace DataArcs.SeriesData
 		private readonly int _seed;
 		private float _min;
 		private float _max;
-
 		private Series _series;
 
 		/// <summary>
-		/// RandomSeries always has an actual store in order to be consistent on repeated queries.
-		/// </summary>
-		public RandomSeries(int vectorSize, SeriesType type, int virtualCount, float min, float max, int seed = 0,
+        /// RandomSeries always has an actual store in order to be consistent on repeated queries.
+        /// </summary>
+        public RandomSeries(int vectorSize, SeriesType type, int virtualCount, float min, float max, int seed = 0,
 			CombineFunction combineFunction = CombineFunction.Add) : base(vectorSize, type, virtualCount)
 		{
 			_min = min;
@@ -158,5 +157,13 @@ namespace DataArcs.SeriesData
 		{
 			return _series.GetMaxSeries();
 		}
-	}
+		public override Series Copy()
+		{
+			RandomSeries result = new RandomSeries(VectorSize, Type, VirtualCount, _min, _max, _seed);
+			result.CachedFrame = CachedFrame;
+			result.CachedSize = CachedSize;
+			result._series = _series.Copy();
+			return result;
+		}
+    }
 }

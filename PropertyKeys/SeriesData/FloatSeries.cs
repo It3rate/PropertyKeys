@@ -46,7 +46,7 @@ namespace DataArcs.SeriesData
 
 		public override Series HardenToData(Store store = null)
 		{
-			Series result = this;
+			Series result;
 			var len = VirtualCount * VectorSize;
 			if (_floatValues.Length != len)
 			{
@@ -58,6 +58,10 @@ namespace DataArcs.SeriesData
 				}
 
 				result = new FloatSeries(VectorSize, vals, VirtualCount);
+			}
+			else
+			{
+				result = this.Copy();
 			}
 
 			return result;
@@ -192,6 +196,14 @@ namespace DataArcs.SeriesData
 		public override Series GetMaxSeries()
 		{
 			return new FloatSeries(VectorSize, SeriesUtils.GetFloatMaxArray(VectorSize));
+		}
+
+		public override Series Copy()
+		{
+			FloatSeries result = new FloatSeries(VectorSize, FloatData, VirtualCount);
+			result.CachedFrame = CachedFrame;
+			result.CachedSize = CachedSize;
+			return result;
 		}
 	}
 }

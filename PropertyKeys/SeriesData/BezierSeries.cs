@@ -20,7 +20,8 @@ namespace DataArcs.SeriesData
 	/// </summary>
 	public class BezierSeries : FloatSeries
 	{
-		public static readonly int[] MoveSize = new int[] {2, 2, 4, 6, 0};
+
+        public static readonly int[] MoveSize = new int[] {2, 2, 4, 6, 0};
 
 		public BezierMove[] Moves { get; }
 
@@ -153,5 +154,12 @@ namespace DataArcs.SeriesData
 
 			return path;
 		}
-	}
+		public override Series Copy()
+		{
+			BezierSeries result = new BezierSeries(FloatData, (BezierMove[])Moves.Clone());
+			result.CachedFrame = CachedFrame;
+			result.CachedSize = CachedSize;
+			return result;
+		}
+    }
 }

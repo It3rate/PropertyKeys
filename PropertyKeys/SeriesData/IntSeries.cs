@@ -192,5 +192,13 @@ namespace DataArcs.SeriesData
 		{
 			return new IntSeries(VectorSize, SeriesUtils.GetIntMaxArray(VectorSize));
 		}
-	}
+
+		public override Series Copy()
+		{
+			IntSeries result = new IntSeries(VectorSize, IntData, VirtualCount);
+			result.CachedFrame = CachedFrame;
+			result.CachedSize = CachedSize;
+			return result;
+		}
+    }
 }

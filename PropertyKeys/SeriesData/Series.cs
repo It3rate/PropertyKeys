@@ -12,7 +12,7 @@ namespace DataArcs.SeriesData
 
 	public abstract class Series
 	{
-		public int VectorSize { get; }
+		public int VectorSize { get; set;  }
 		public int VirtualCount { get; set; }
 		public SeriesType Type { get; }
 
@@ -73,8 +73,7 @@ namespace DataArcs.SeriesData
 
 		protected abstract void CalculateFrame();
 
-		public abstract Series
-			HardenToData(Store store = null); // return new copy as eventually everything should be immutable
+		public abstract Series HardenToData(Store store = null); // return new copy as eventually everything should be immutable
 
 		public abstract Series GetSeriesAtIndex(int index);
 		public abstract void SetSeriesAtIndex(int index, Series series);
@@ -84,16 +83,25 @@ namespace DataArcs.SeriesData
 			var indexT = index / (VirtualCount - 1f);
 			return GetValueAtT(indexT);
 		}
+		public virtual Series GetValueAtVirtualIndex(int index, int vectorSize)
+		{
+			var indexT = index / (VirtualCount - 1f);
+			Series result = GetValueAtT(indexT);
+			if (result.VectorSize != vectorSize)
+			{
+				result.VectorSize = 1;
+				result.VirtualCount = vectorSize;
+				result.HardenToData();
+				result.VectorSize = vectorSize;
+			}
+			return result;
+		}
 
-		// todo: All float t's should probably be float[] t.
-		public virtual Series GetValueAtT(float t)
+        // todo: All float t's should probably be float[] t.
+        public virtual Series GetValueAtT(float t)
 		{
 			Series result;
 			var len = DataSize / VectorSize;
-			//if (virtualCount > -1)
-			//{
-			//    t *= virtualCount / (float)VirtualCount;
-			//}
 
 			if (t >= 1)
 			{
@@ -141,5 +149,7 @@ namespace DataArcs.SeriesData
 		public abstract Series GetZeroSeries(int elements);
 		public abstract Series GetMinSeries();
 		public abstract Series GetMaxSeries();
+
+		public abstract Series Copy();
 	}
 }
