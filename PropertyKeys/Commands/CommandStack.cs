@@ -7,7 +7,14 @@ namespace DataArcs.Commands
 	{
 		public event EventHandler OnUndoStackChanged;
 
-		private List<ICommand> stack = new List<ICommand>();
+		// Sorted on start times.
+		private SortedList<int, CommandList> _allCommands = new SortedList<int, CommandList>();
+
+		private List<ICommand> ToAddCommands = new List<ICommand>();
+		private List<ICommand> ToRemoveCommands = new List<ICommand>();
+		private List<ICommand> ToDeleteCommands = new List<ICommand>();
+
+        private List<ICommand> stack = new List<ICommand>();
 		private int index = 0;
 
 		public CommandStack()

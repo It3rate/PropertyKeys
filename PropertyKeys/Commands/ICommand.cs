@@ -4,7 +4,10 @@ namespace DataArcs.Commands
 {
 	public interface ICommand
 	{
-		void Execute();
+		int StartTime { get; }
+		int EndTime { get; }
+
+        void Execute();
 		void UnExecute();
 
 		void Update(float time);

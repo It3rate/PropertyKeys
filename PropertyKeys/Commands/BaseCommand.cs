@@ -5,6 +5,9 @@ namespace DataArcs.Commands
 {
 	public abstract class BaseCommand : ICommand
 	{
+		public int StartTime { get; }
+		public int EndTime { get; }
+
 		public void Execute()
 		{
 			throw new NotImplementedException();
