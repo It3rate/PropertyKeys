@@ -11,7 +11,7 @@ namespace DataArcs.SeriesData
 		Bool,
 	}
 
-    public abstract class Series : IEnumerable, IEnumerator
+    public abstract class Series : IEnumerable
     {
         public int VectorSize { get; set; }
         public int VirtualCount { get; set; }
@@ -154,26 +154,35 @@ namespace DataArcs.SeriesData
 
         public abstract Series Copy();
 
-        #region Enumeration
-        public Series this[int index] => GetValueAtVirtualIndex(index); 
-        private int _position;
-        public bool MoveNext()
-        {
-            _position++;
-            return (_position < VirtualCount);
-        }
-
-        public object Current => this[_position];
-
-        public void Reset()
-        {
-            _position = 0;
-        }
-
+#region Enumeration
+        public Series this[int index] => GetValueAtVirtualIndex(index);
         public IEnumerator GetEnumerator()
         {
-            return (IEnumerator)this;
+            return new SeriesEnumerator(this);
+        }
+
+        private class SeriesEnumerator : IEnumerator
+        {
+            private Series _instance;
+            private int _position = -1;
+            public SeriesEnumerator(Series instance)
+            {
+                _instance = instance;
+            }
+            public bool MoveNext()
+            {
+                _position++;
+                return (_position < _instance.VirtualCount);
+            }
+
+            public object Current => _instance[_position];
+
+            public void Reset()
+            {
+                _position = 0;
+            }
         }
 #endregion
+
     }
 }

@@ -5,7 +5,7 @@ namespace DataArcs.Stores
 {
 	public class PropertyStore 
 	{
-		private readonly List<IStore> _stores;
+		public readonly List<IStore> _stores;
         public float CurrentT { get; set; } = 0;
 
 		public PropertyStore(params IStore[] stores)

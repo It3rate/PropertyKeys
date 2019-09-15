@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace DataArcs.Stores
 {
-	public interface IStore : IEnumerable, IEnumerator
+	public interface IStore : IEnumerable
     {
 		CombineFunction CombineFunction { get; set; }
 		CombineTarget CombineTarget { get; set; }

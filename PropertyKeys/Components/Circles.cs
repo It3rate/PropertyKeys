@@ -53,6 +53,8 @@ namespace DataArcs.Components
 			{
 				var cols = 10;
 				var rows = 10;
+                Store items = new IntSeries(1, new int[] { 0, rows * cols - 1 }, virtualCount: rows * cols).Store;
+                object1.AddProperty(PropertyID.Items, new PropertyStore(new Store[] { items }));
 
 				var totalWidth = 500f;
 				float growth = 60;
@@ -69,8 +71,6 @@ namespace DataArcs.Components
 				var endStore = new Store(new FloatSeries(2, end, rows * cols), hexSampler);
 				if (version == 1)
 				{
-					startStore.VirtualCount = rows * cols;
-					endStore.VirtualCount = rows * cols;
 					var randomStore = new RandomSeries(2, SeriesType.Float, rows * cols, -3f, 3f, 1111, CombineFunction.Add).Store;
 					// rs.setMinMax(.98f, 1f/.98f);
 					//endStore.HardenToData();
@@ -110,8 +110,13 @@ namespace DataArcs.Components
 				object1.shouldShuffle = true;
 			}
 			else if (version == 3)
-			{
-				graphic.PointCount = new float[]{3f,5.9f}.ToStore();
+            {
+                IntSeries itemData = new IntSeries(1, new int[] { 0, 149 }, virtualCount: 150);
+                itemData = (IntSeries)itemData.HardenToData();
+                Store items = itemData.Store;
+                object1.AddProperty(PropertyID.Items, new PropertyStore(new Store[] { items }));
+
+                graphic.PointCount = new float[]{3f,5.9f}.ToStore();
 				Sampler ringSampler = new RingSampler();
 				Sampler gridSampler = new GridSampler(new[] {15, 0, 0});
 				graphic.Radius = new FloatSeries(2, 5f, 5f, 15f, 15f).Store;

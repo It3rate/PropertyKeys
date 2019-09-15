@@ -2,7 +2,7 @@
 
 namespace DataArcs.Adapters.Color
 {
-    public static class SeriesExtension
+    public static class ColorAdapter
     {
         public static float Red(this Series series)
         {
@@ -20,10 +20,7 @@ namespace DataArcs.Adapters.Color
         {
             return series.FloatDataAt(3);
         }
-    }
 
-    public static class ColorAdapter
-    {
         public static System.Drawing.Color RGB(this Series a)
 	    {
 		    System.Drawing.Color result;

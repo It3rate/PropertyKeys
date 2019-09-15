@@ -53,7 +53,7 @@ namespace DataArcs.SeriesData
 				var vals = new int[len];
 				for (var i = 0; i < VirtualCount; i++)
 				{
-					var val = store == null ? GetDataAtIndex(i).IntData : store.GetSeriesAtIndex(i).IntData;
+					var val = store == null ? GetValueAtVirtualIndex(i).IntData : store.GetSeriesAtIndex(i).IntData;
 					Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
 				}
 
@@ -69,7 +69,7 @@ namespace DataArcs.SeriesData
 			{
 				if (i < b.DataSize)
 				{
-					_intValues[i] = (int) (_intValues[i] + (b.IntDataAt(i) - _intValues[i]) * t);
+					_intValues[i] = (int) Math.Round(_intValues[i] + (b.IntDataAt(i) - _intValues[i]) * t);
 				}
 				else
 				{

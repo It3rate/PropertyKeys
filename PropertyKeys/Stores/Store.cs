@@ -56,9 +56,10 @@ namespace DataArcs.Stores
 
 		public virtual Series GetSeriesAtIndex(int index, int virtualCount = -1)
 		{
+            virtualCount = (virtualCount == -1) ? VirtualCount : virtualCount;
 			return Sampler != null
 				? Sampler.GetValueAtIndex(_series, index, virtualCount)
-				: _series.GetDataAtIndex(index);
+				: _series.GetValueAtVirtualIndex(index);
 		}
 
 		public virtual Series GetSeriesAtT(float t, int virtualCount = -1)
@@ -71,26 +72,34 @@ namespace DataArcs.Stores
 			return Sampler?.GetTAtT(t) ?? _series.GetValueAtT(t).FloatDataAt(0);
         }
 
-        #region Enumeration
         public Series this[int index] => GetSeriesAtIndex(index);
-        private int _position;
-        public bool MoveNext()
-        {
-            _position++;
-            return (_position < VirtualCount);
-        }
-
-        public object Current => this[_position];
-
-        public void Reset()
-        {
-            _position = 0;
-        }
-
+        #region Enumeration
         public IEnumerator GetEnumerator()
         {
-            return (IEnumerator)this;
+            return new StoreEnumerator(this);
         }
+        private class StoreEnumerator : IEnumerator
+        {
+            private Store _instance;
+            private int _position = -1;
+            public StoreEnumerator(Store instance)
+            {
+                _instance = instance;
+            }
+            public bool MoveNext()
+            {
+                _position++;
+                return (_position < _instance.VirtualCount);
+            }
+
+            public object Current => _instance[_position];
+
+            public void Reset()
+            {
+                _position = 0;
+            }
+        }
+
         #endregion
     }
 }

@@ -73,29 +73,46 @@ namespace DataArcs.Components
 
 		public void Draw(Graphics g)
 		{
+            var items = GetPropertyStore(PropertyID.Items);
+            if(items != null)
+            {
+                IStore itemStore = items._stores[0];
+                foreach (Series index in itemStore)
+                {
+                    DrawAtIndex(index.IntDataAt(0), itemStore.VirtualCount, g);
+                }
+            }
+            else
+            {
+                var count = GetPropertyStore(PropertyID.Location).GetElementCountAt(t);
+                for (var i = 0; i < count; i++)
+                {
+                    DrawAtIndex(i, count, g);
+                }
+            }
+
+
+            //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
+        }
+        public void DrawAtIndex(int index, int count, Graphics g)
+        {
 			var loc = GetPropertyStore(PropertyID.Location);
 			var col = GetPropertyStore(PropertyID.FillColor);
-			
-			var count = loc.GetElementCountAt(t);
-			for (var i = 0; i < count; i++)
-			{
-				var it = i / (count - 1f);
-				Series v = loc.GetSeriesAtT(it, t, count); // should t be calculated externally and skip count? or count a property
+            var it = index / (count - 1f);
+            Series v = loc.GetSeriesAtT(it, t, count); // should t be calculated externally and skip count? or count a property
 
-				var c = col.GetSeriesAtT(it, t).RGB();
-				Brush b = new SolidBrush(c);
-				var state = g.Save();
-				var scale = 1f; //  + t * 0.2f;
-				g.ScaleTransform(scale, scale);
-				g.TranslateTransform(v.X() / scale, v.Y() / scale);
-				Graphic.Draw(g, b, null, t);
-				g.Restore(state);
-			}
+            var c = col.GetSeriesAtT(it, t).RGB();
+            Brush b = new SolidBrush(c);
+            var state = g.Save();
+            var scale = 1f; //  + t * 0.2f;
+            g.ScaleTransform(scale, scale);
+            g.TranslateTransform(v.X() / scale, v.Y() / scale);
+            Graphic.Draw(g, b, null, t);
+            g.Restore(state);
+        }
 
-			//g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
-		}
 
-		public Composite CreateChild()
+        public Composite CreateChild()
 		{
 			return new Composite(this);
 		}
