@@ -20,7 +20,7 @@ namespace DataArcs.SeriesData
 			_floatValues = values;
 		}
 
-		public override Series GetSeriesAtIndex(int index)
+		public override Series GetDataAtIndex(int index)
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
@@ -37,7 +37,7 @@ namespace DataArcs.SeriesData
 			return new FloatSeries(VectorSize, result);
 		}
 
-		public override void SetSeriesAtIndex(int index, Series series)
+		public override void SetDataAtIndex(int index, Series series)
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
@@ -53,7 +53,7 @@ namespace DataArcs.SeriesData
 				var vals = new float[len];
 				for (var i = 0; i < VirtualCount; i++)
 				{
-					var val = store == null ? GetSeriesAtIndex(i).FloatData : store.GetSeriesAtIndex(i).FloatData;
+					var val = store == null ? GetDataAtIndex(i).FloatData : store.GetSeriesAtIndex(i).FloatData;
 					Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
 				}
 
@@ -99,7 +99,7 @@ namespace DataArcs.SeriesData
 			{
 				if (i < b.DataSize)
 				{
-					_floatValues[i] += (b[i] - _floatValues[i]) * t;
+					_floatValues[i] += (b.FloatDataAt(i) - _floatValues[i]) * t;
 				}
 				else
 				{
@@ -115,28 +115,28 @@ namespace DataArcs.SeriesData
 				case CombineFunction.Add:
 					for (var i = 0; i < DataSize; i++)
 					{
-						_floatValues[i] += b[i];
+						_floatValues[i] += b.FloatDataAt(i);
 					}
 
 					break;
 				case CombineFunction.Subtract:
 					for (var i = 0; i < DataSize; i++)
 					{
-						_floatValues[i] -= b[i];
+						_floatValues[i] -= b.FloatDataAt(i);
 					}
 
 					break;
 				case CombineFunction.Multiply:
 					for (var i = 0; i < DataSize; i++)
 					{
-						_floatValues[i] *= b[i];
+						_floatValues[i] *= b.FloatDataAt(i);
 					}
 
 					break;
 				case CombineFunction.Divide:
 					for (var i = 0; i < DataSize; i++)
 					{
-						var div = b[i];
+						var div = b.FloatDataAt(i);
 						_floatValues[i] = div != 0 ? _floatValues[i] / div : _floatValues[i];
 					}
 
@@ -144,14 +144,14 @@ namespace DataArcs.SeriesData
 				case CombineFunction.Average:
 					for (var i = 0; i < DataSize; i++)
 					{
-						_floatValues[i] = (_floatValues[i] + b[i]) / 2.0f;
+						_floatValues[i] = (_floatValues[i] + b.FloatDataAt(i)) / 2.0f;
 					}
 
 					break;
 				case CombineFunction.Replace:
 					for (var i = 0; i < DataSize; i++)
 					{
-						_floatValues[i] = b[i];
+						_floatValues[i] = b.FloatDataAt(i);
 					}
 
 					break;

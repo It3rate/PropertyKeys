@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataArcs.Stores;
+using System;
 
 namespace DataArcs.SeriesData
 {
@@ -26,10 +27,10 @@ namespace DataArcs.SeriesData
 			{
 				var a = Random.Next(len);
 				var b = Random.Next(len);
-				var sa = series.GetSeriesAtIndex(a);
-				var sb = series.GetSeriesAtIndex(b);
-				series.SetSeriesAtIndex(a, sb);
-				series.SetSeriesAtIndex(b, sa);
+				var sa = series.GetDataAtIndex(a);
+				var sb = series.GetDataAtIndex(b);
+				series.SetDataAtIndex(a, sb);
+				series.SetDataAtIndex(b, sa);
 			}
 		}
 
@@ -298,11 +299,28 @@ namespace DataArcs.SeriesData
 		public static float[] ToFloat(this int[] values)
 		{
 			return Array.ConvertAll(values, x => (float) x);
-		}
+        }
+        public static Series ToSeries(this int[] values)
+        {
+            return new IntSeries(1, values);
+        }
+        public static Store ToStore(this int[] values)
+        {
+            return new Store(values.ToSeries());
+        }
 
-		public static int[] ToInt(this float[] values)
+        public static int[] ToInt(this float[] values)
 		{
 			return Array.ConvertAll(values, x => (int) x);
-		}
-	}
+        }
+
+        public static Series ToSeries(this float[] values)
+        {
+            return new FloatSeries(1, values);
+        }
+        public static Store ToStore(this float[] values)
+        {
+            return new Store(values.ToSeries());
+        }
+    }
 }

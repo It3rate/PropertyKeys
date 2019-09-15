@@ -14,10 +14,15 @@ namespace DataArcs.Components
 		private Dictionary<PropertyID, PropertyStore> Stores { get; }
 		public GraphicBase Graphic { get; set; }
 
-		/// <summary>
-		/// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
-		/// </summary>
-		public Composite Parent { get; set; }
+        public IntSeries Items { get; set; }
+
+        private Series _location;
+        private Series _color;
+
+        /// <summary>
+        /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
+        /// </summary>
+        public Composite Parent { get; set; }
 
 		public Composite(Composite parent = null)
 		{
@@ -74,8 +79,8 @@ namespace DataArcs.Components
 			var count = loc.GetElementCountAt(t);
 			for (var i = 0; i < count; i++)
 			{
-				var it = i / (float) (count - 1f);
-				Series v = loc.GetSeriesAtT(it, t, count);
+				var it = i / (count - 1f);
+				Series v = loc.GetSeriesAtT(it, t, count); // should t be calculated externally and skip count? or count a property
 
 				var c = col.GetSeriesAtT(it, t).RGB();
 				Brush b = new SolidBrush(c);
@@ -101,6 +106,7 @@ namespace DataArcs.Components
 		None = 0,
 		TModifier,
 
+        Items,
 		Shape,
 		Transform,
 		Location,

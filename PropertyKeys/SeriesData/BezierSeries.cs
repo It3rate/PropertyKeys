@@ -45,10 +45,10 @@ namespace DataArcs.SeriesData
 		public override Series GetValueAtT(float t)
 		{
 			var index = (int) (t * VirtualCount);
-			return GetSeriesAtIndex(index);
+			return GetDataAtIndex(index);
 		}
 
-		public override Series GetSeriesAtIndex(int index)
+		public override Series GetDataAtIndex(int index)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 			var start = 0;
@@ -63,7 +63,7 @@ namespace DataArcs.SeriesData
 			return new BezierSeries(result, new[] {Moves[index]});
 		}
 
-		public override void SetSeriesAtIndex(int index, Series series)
+		public override void SetDataAtIndex(int index, Series series)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 			var start = 0;
@@ -90,7 +90,7 @@ namespace DataArcs.SeriesData
 				var moves = new BezierMove[VirtualCount];
 				for (var i = 0; i < VirtualCount; i++)
 				{
-					var val = store == null ? GetSeriesAtIndex(i).FloatData : store.GetSeriesAtIndex(i).FloatData;
+					var val = store == null ? GetDataAtIndex(i).FloatData : store.GetSeriesAtIndex(i).FloatData;
 					Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
 					moves[i] = i < moves.Length ? moves[i] : BezierMove.LineTo;
 				}

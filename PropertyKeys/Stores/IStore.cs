@@ -1,9 +1,10 @@
 ﻿using DataArcs.SeriesData;
+using System.Collections;
 
 namespace DataArcs.Stores
 {
-	public interface IStore
-	{
+	public interface IStore : IEnumerable, IEnumerator
+    {
 		CombineFunction CombineFunction { get; set; }
 		CombineTarget CombineTarget { get; set; }
 
@@ -11,7 +12,7 @@ namespace DataArcs.Stores
 
 		Series GetSeries(int index);
 
-		void Reset();
+		void ResetData();
 		void Update(float time);
 		void HardenToData();
 

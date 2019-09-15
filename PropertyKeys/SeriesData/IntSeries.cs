@@ -20,7 +20,7 @@ namespace DataArcs.SeriesData
 			_intValues = values;
 		}
 
-		public override Series GetSeriesAtIndex(int index)
+		public override Series GetDataAtIndex(int index)
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
@@ -37,7 +37,7 @@ namespace DataArcs.SeriesData
 			return new IntSeries(VectorSize, result);
 		}
 
-		public override void SetSeriesAtIndex(int index, Series series)
+		public override void SetDataAtIndex(int index, Series series)
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
@@ -53,7 +53,7 @@ namespace DataArcs.SeriesData
 				var vals = new int[len];
 				for (var i = 0; i < VirtualCount; i++)
 				{
-					var val = store == null ? GetSeriesAtIndex(i).IntData : store.GetSeriesAtIndex(i).IntData;
+					var val = store == null ? GetDataAtIndex(i).IntData : store.GetSeriesAtIndex(i).IntData;
 					Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
 				}
 

@@ -18,9 +18,9 @@ namespace DataArcs.Mutators
 			RandomSeries.Update(time);
 		}
 
-		public override void Reset()
+		public override void ResetData()
 		{
-			RandomSeries.Reset();
+			RandomSeries.ResetData();
 		}
 	}
 }

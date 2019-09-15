@@ -29,6 +29,6 @@ namespace DataArcs.Mutators
 		}
 
 		public abstract void Update(float t);
-		public abstract void Reset();
+		public abstract void ResetData();
 	}
 }

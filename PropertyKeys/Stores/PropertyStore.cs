@@ -45,11 +45,11 @@ namespace DataArcs.Stores
 			}
 		}
 
-		public virtual void Reset()
+		public virtual void ResetData()
 		{
 			foreach (var store in _stores)
 			{
-				store.Reset();
+				store.ResetData();
 			}
 		}
 

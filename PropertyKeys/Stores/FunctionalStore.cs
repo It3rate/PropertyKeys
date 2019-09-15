@@ -1,4 +1,5 @@
 ﻿using DataArcs.SeriesData;
+using System.Collections;
 
 namespace DataArcs.Stores
 {
@@ -52,7 +53,7 @@ namespace DataArcs.Stores
 			{
 				if (store.CombineTarget == CombineTarget.T)
 				{
-					t = store.GetSeriesAtT(t)[0];
+					t = store.GetSeriesAtT(t).FloatDataAt(0);
 				}
 				else if(series != null)
 				{
@@ -80,11 +81,11 @@ namespace DataArcs.Stores
 			}
 		}
 
-		public void Reset()
+		public void ResetData()
 		{
 			foreach (var store in Stores)
 			{
-				store.Reset();
+				store.ResetData();
 			}
 		}
 
@@ -94,6 +95,27 @@ namespace DataArcs.Stores
 			{
 				store.Update(time);
 			}
-		}
-	}
+        }
+        #region Enumeration
+        public Series this[int index] => GetSeriesAtIndex(index);
+        private int _position;
+        public bool MoveNext()
+        {
+            _position++;
+            return (_position < VirtualCount);
+        }
+
+        public object Current => this[_position];
+
+        public void Reset()
+        {
+            _position = 0;
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return (IEnumerator)this;
+        }
+        #endregion
+    }
 }

@@ -59,14 +59,14 @@ namespace DataArcs.SeriesData
 
 		public override int DataSize => _series.DataSize;
 
-		public override Series GetSeriesAtIndex(int index)
+		public override Series GetDataAtIndex(int index)
 		{
-			return _series.GetSeriesAtIndex(index);
+			return _series.GetDataAtIndex(index);
 		}
 
-		public override void SetSeriesAtIndex(int index, Series series)
+		public override void SetDataAtIndex(int index, Series series)
 		{
-			_series.SetSeriesAtIndex(index, series);
+			_series.SetDataAtIndex(index, series);
 		}
 
 		public override Series GetValueAtT(float t)
@@ -86,7 +86,7 @@ namespace DataArcs.SeriesData
 			return result;
 		}
 
-		public override void Reset()
+		public override void ResetData()
 		{
 			_random = new Random(_seed);
 			GenerateData();
@@ -116,7 +116,7 @@ namespace DataArcs.SeriesData
 
 		public override float FloatDataAt(int index)
 		{
-			return _series[index];
+			return _series.FloatDataAt(index);
 		}
 
 		public override int IntDataAt(int index)

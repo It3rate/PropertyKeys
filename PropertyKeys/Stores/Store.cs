@@ -1,5 +1,6 @@
 ﻿using DataArcs.Samplers;
 using DataArcs.SeriesData;
+using System.Collections;
 
 namespace DataArcs.Stores
 {
@@ -16,7 +17,6 @@ namespace DataArcs.Stores
 		}
 
 		protected Sampler Sampler { get; set; }
-		
 
 		public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, CombineTarget combineTarget = CombineTarget.Destination)
 		{
@@ -38,9 +38,9 @@ namespace DataArcs.Stores
 		}
         public Series GetSeries(int index) => _series;
 
-		public virtual void Reset()
+		public virtual void ResetData()
 		{
-			_series.Reset();
+			_series.ResetData();
 		}
 
 		public virtual void Update(float time)
@@ -58,7 +58,7 @@ namespace DataArcs.Stores
 		{
 			return Sampler != null
 				? Sampler.GetValueAtIndex(_series, index, virtualCount)
-				: _series.GetSeriesAtIndex(index);
+				: _series.GetDataAtIndex(index);
 		}
 
 		public virtual Series GetSeriesAtT(float t, int virtualCount = -1)
@@ -68,7 +68,29 @@ namespace DataArcs.Stores
 
 		public virtual float GetTatT(float t)
 		{
-			return Sampler?.GetTAtT(t) ?? _series.GetValueAtT(t)[0];
-		}
-	}
+			return Sampler?.GetTAtT(t) ?? _series.GetValueAtT(t).FloatDataAt(0);
+        }
+
+        #region Enumeration
+        public Series this[int index] => GetSeriesAtIndex(index);
+        private int _position;
+        public bool MoveNext()
+        {
+            _position++;
+            return (_position < VirtualCount);
+        }
+
+        public object Current => this[_position];
+
+        public void Reset()
+        {
+            _position = 0;
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return (IEnumerator)this;
+        }
+        #endregion
+    }
 }

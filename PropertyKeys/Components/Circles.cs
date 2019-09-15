@@ -44,10 +44,12 @@ namespace DataArcs.Components
 				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseCenter), CombineFunction.Multiply, CombineTarget.T) :
 				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOutQuart), CombineFunction.Multiply, CombineTarget.T);
             object1 = new Composite();
-			var graphic = new PolyShape(pointCount: new float[] {6f, 7f, 8f, 9f, 10f, 10.99f}, radius: new float[] {10f, 20f},
+			var graphic = new PolyShape( radius: new float[] {10f, 20f},
 				orientation: new float[] {1f / 12f, 0.3f}, starness: new float[] {0, -0.3f});
+            Store points = new FloatSeries(1, new float[] { 6.0f, 10.99f }, 6).Store;
+            graphic.PointCount = points;
 
-			if (version == 0 || version == 1)
+            if (version == 0 || version == 1)
 			{
 				var cols = 10;
 				var rows = 10;
@@ -57,7 +59,7 @@ namespace DataArcs.Components
 				//graphic.Orientation = 0.5f;
 				var armLen = totalWidth / (float) (cols - 1) / 3f;
 				var height = armLen * (float) Math.Sqrt(3) / 2f * (rows - 1f);
-				graphic.Radius = new Store(new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f));
+				graphic.Radius = new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f).Store;
 
 				float[] start = {150, 150, 150 + totalWidth, 150 + height};
 				Sampler hexSampler = new HexagonSampler(new[] {cols, 0});
@@ -69,8 +71,7 @@ namespace DataArcs.Components
 				{
 					startStore.VirtualCount = rows * cols;
 					endStore.VirtualCount = rows * cols;
-					var rs = new RandomSeries(2, SeriesType.Float, rows * cols, -3f, 3f, 1111, CombineFunction.Add);
-					var randomStore = new Store(rs);
+					var randomStore = new RandomSeries(2, SeriesType.Float, rows * cols, -3f, 3f, 1111, CombineFunction.Add).Store;
 					// rs.setMinMax(.98f, 1f/.98f);
 					//endStore.HardenToData();
 					var fs = new FunctionalStore(endStore, randomStore);
@@ -87,7 +88,7 @@ namespace DataArcs.Components
 			}
 			else if (version == 2)
 			{
-				graphic.Radius = new Store(new FloatSeries(2, 10f, 15f, 20f, 15f));
+				graphic.Radius = new FloatSeries(2, 10f, 15f, 20f, 15f).Store;
 				const int count = 50;
 				const int vectorSize = 2;
 				var start = new float[count * vectorSize];
@@ -100,8 +101,8 @@ namespace DataArcs.Components
 					end[i + 1] = start[i + 1] + rnd.Next(100) - 50;
 				}
 
-				var startStore = new Store(new FloatSeries(vectorSize, start));
-				var endStore = new Store(new FloatSeries(vectorSize, end));
+				var startStore = new FloatSeries(vectorSize, start).Store;
+				var endStore = new FloatSeries(vectorSize, end).Store;
 				endStore.HardenToData();
 				SeriesUtils.Shuffle(endStore.GetSeries(0));
 
@@ -110,10 +111,10 @@ namespace DataArcs.Components
 			}
 			else if (version == 3)
 			{
-				graphic.PointCount = new Store(new float[]{3f,5.9f});
+				graphic.PointCount = new float[]{3f,5.9f}.ToStore();
 				Sampler ringSampler = new RingSampler();
 				Sampler gridSampler = new GridSampler(new[] {15, 0, 0});
-				graphic.Radius = new Store(new FloatSeries(2, 5f, 5f, 15f, 15f));
+				graphic.Radius = new FloatSeries(2, 5f, 5f, 15f, 15f).Store;
 				var vectorSize = 2;
 				var start = new float[] {100, 100, 500, 400};
 				var end = new float[] {100, 100, 500, 400};
@@ -149,7 +150,7 @@ namespace DataArcs.Components
 				t = 1.0f - t;
 			}
 
-			t = easeStore.GetSeriesAtT(t)[0];
+			t = easeStore.GetSeriesAtT(t).FloatDataAt(0);
 			object1.Update(t);
 			object1.Draw(g);
 		}
