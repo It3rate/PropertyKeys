@@ -26,23 +26,7 @@ namespace DataArcs.Samplers
 			var index = (int) Math.Round(t * (virtualCount - 1f));
 			return GetSeriesSample(series, Strides, index, virtualCount);
 		}
-
-		public override float GetTAtT(float t)
-		{
-			float result;
-			if (Strides[0] > 0)
-			{
-				result = Strides[0] * t;
-				result -= (int) result;
-			}
-			else
-			{
-				result = t;
-			}
-
-			return result;
-		}
-
+		
 		public static Series GetSeriesSample(Series series, int[] strides, int index,
 			int virtualCount = -1)
 		{

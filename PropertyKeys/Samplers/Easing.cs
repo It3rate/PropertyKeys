@@ -62,11 +62,6 @@ namespace DataArcs.Samplers
 			return series.GetValueAtT(t);
 		}
 
-		public override float GetTAtT(float t)
-		{
-			return GetValueAt(t, EasingType);
-		}
-
 		public static float GetValueAt(float t, EasingType easingType)
 		{
 			// influence https://stackoverflow.com/questions/4900069/how-to-make-inline-functions-in-c-sharp

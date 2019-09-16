@@ -16,10 +16,5 @@ namespace DataArcs.Samplers
 			var index = (int) Math.Round(t * series.DataSize);
 			return series.GetDataAtIndex(index);
 		}
-
-		public override float GetTAtT(float t)
-		{
-			return t; // t is always nearest itself.
-		}
 	}
 }

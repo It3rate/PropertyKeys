@@ -30,12 +30,7 @@ namespace DataArcs.Samplers
 			var moves = series is BezierSeries bezierSeries ? bezierSeries.Moves : new[] {BezierMove.LineTo};
 			return GetValueAtT(series, moves, t, virtualCount);
 		}
-
-		public override float GetTAtT(float t)
-		{
-			return Series != null ? GetValueAtT(Series, Series.Moves, t).FloatDataAt(0) : t;
-		}
-
+		
 		public static Series GetValueAtT(Series series, BezierMove[] moves, float t,
 			int virtualCount = -1)
 		{

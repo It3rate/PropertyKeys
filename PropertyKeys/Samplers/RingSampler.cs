@@ -22,12 +22,7 @@ namespace DataArcs.Samplers
 
 			return GetSeriesSample(series, t, virtualCount);
 		}
-
-		public override float GetTAtT(float t)
-		{
-			return (float) (Math.Sin(t * 2.0f * Utils.M_PIx2) / Math.PI);
-		}
-
+		
 
 		public static Series GetSeriesSample(Series series, float t, int virtualCount = -1)
 		{

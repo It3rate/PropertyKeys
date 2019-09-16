@@ -51,12 +51,12 @@ namespace DataArcs.Stores
 			return GetSeriesAtT(t, CurrentT, virtualCount);
 		}
 
-		public override void Update(float time)
+		public override void Update(float deltaTime)
 		{
-			CurrentT = time;
+			CurrentT = deltaTime;
 			foreach (var store in _stores)
 			{
-				store.Update(time);
+				store.Update(deltaTime);
 			}
 		}
 

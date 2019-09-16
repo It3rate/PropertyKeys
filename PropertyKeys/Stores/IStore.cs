@@ -14,14 +14,14 @@ namespace DataArcs.Stores
 		Series GetSeries(int index);
 		Series GetSeriesAtIndex(int index, int virtualCount = -1);
 		Series GetSeriesAtT(float t, int virtualCount = -1);
-		void Update(float time);
+		void Update(float deltaTime);
 		void ResetData();
 		void HardenToData();
     }
 
     public class IStoreEnumerator : IEnumerator
     {
-        private IStore _instance;
+        private readonly IStore _instance;
         private int _position = -1;
         public IStoreEnumerator(IStore instance)
         {

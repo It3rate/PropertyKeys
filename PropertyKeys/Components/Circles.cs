@@ -159,7 +159,7 @@ namespace DataArcs.Components
 			}
 
 			t = easeStore.GetSeriesAtT(t).FloatDataAt(0);
-			object1.Update(t);
+			object1.Update(time, t);
 			object1.Draw(g);
 		}
 	}

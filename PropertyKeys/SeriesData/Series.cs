@@ -8,6 +8,7 @@ namespace DataArcs.SeriesData
 	{
 		Int,
 		Float,
+		Parametric,
 		Bool,
 	}
 

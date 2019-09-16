@@ -24,8 +24,14 @@ namespace DataArcs.Components
 
         public abstract IStore GetStore(PropertyId propertyId);
         public abstract void GetDefinedStores(HashSet<PropertyId> ids);
-        public abstract void Update(float time);
+        public abstract void Update(float currentTime, float deltaTime);
         public abstract CompositeBase CreateChild();
+		
+        public virtual Series GetSeriesAtT(PropertyId propertyId, float t, int virtualCount = -1)
+        {
+	        var store = GetStore(propertyId);
+	        return store != null ? store.GetSeriesAtT(t, virtualCount) : SeriesUtils.GetZeroFloatSeries(1, 0);
+        }
 
         public virtual void Draw(Graphics g)
         {
@@ -51,15 +57,13 @@ namespace DataArcs.Components
         }
         public void DrawAtIndex(int index, int count, Graphics g)
         {
-            var loc = GetStore(PropertyId.Location);
-            var col = GetStore(PropertyId.FillColor);
             var it = index / (count - 1f);
-            Series v = loc.GetSeriesAtT(it, count);
+            Series v = GetSeriesAtT(PropertyId.Location, it, count);
+            var c = GetSeriesAtT(PropertyId.FillColor, it).RGB();
 
-            var c = col.GetSeriesAtT(it).RGB();
             Brush b = new SolidBrush(c);
             var state = g.Save();
-            var scale = 1f; //  + t * 0.2f;
+            var scale = 1f;// + it * 0.8f;
             g.ScaleTransform(scale, scale);
             g.TranslateTransform(v.X() / scale, v.Y() / scale);
             Graphic.Draw(g, b, null, CurrentT);

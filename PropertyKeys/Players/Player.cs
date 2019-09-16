@@ -11,25 +11,27 @@ namespace DataArcs.Players
 {
     public class Player
     {
+	    public static DateTime StartTime { get; }
+	    static Player() { StartTime = DateTime.Now;}
+
 		private Dictionary<int, CompositeBase> _elements = new Dictionary<int, CompositeBase>();
 
 		private Form _display;
         private Timer _timer;
-        private DateTime _startTime;
+        private DateTime _lastTime;
         private DateTime _currentTime;
 
-		public Player(Form display)
+        public Player(Form display)
 		{
 			_display = display;
 			Initialize();
 		}
 
         private void Initialize()
-		{
-			_startTime = DateTime.Now;
-			_currentTime = DateTime.Now;
+        {
+	        _lastTime = new DateTime(0);
 
-			_timer = new Timer();
+            _timer = new Timer();
 			_timer.Elapsed += Tick;
 			_timer.Interval = 8;
 			_timer.Enabled = true;
@@ -58,12 +60,19 @@ namespace DataArcs.Players
 
         private void Tick(object sender, ElapsedEventArgs e)
         {
+	        if (_lastTime.Ticks == 0)
+	        {
+		        _lastTime = e.SignalTime;
+	        }
             _currentTime = e.SignalTime;
+
 	        foreach (var element in _elements.Values)
 	        {
-		        element.Update((float)(_currentTime - _startTime).TotalMilliseconds);
+		        element.Update((float)TimeSpan.FromTicks(_currentTime.Ticks).TotalMilliseconds, (float)(_currentTime - _lastTime).TotalMilliseconds);
 	        }
 	        _display.Invalidate();
+
+	        _lastTime = _currentTime;
         }
 
         private void OnDraw(object sender, PaintEventArgs e)

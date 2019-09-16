@@ -26,10 +26,5 @@ namespace DataArcs.Samplers
 			t = (float) _random.NextDouble() * t;
 			return series.GetValueAtT(t);
 		}
-
-		public override float GetTAtT(float t)
-		{
-			return (float) _random.NextDouble() * t;
-		}
 	}
 }

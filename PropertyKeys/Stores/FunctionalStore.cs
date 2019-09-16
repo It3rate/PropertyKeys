@@ -57,11 +57,11 @@ namespace DataArcs.Stores
 			return series;
 		}
 
-        public override void Update(float time)
+        public override void Update(float deltaTime)
 		{
 			foreach (var store in Stores)
 			{
-				store.Update(time);
+				store.Update(deltaTime);
 			}
         }
 

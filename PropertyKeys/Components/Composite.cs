@@ -59,25 +59,25 @@ namespace DataArcs.Components
 
 		public bool shouldShuffle; // basis for switching to events
 
-		public override void Update(float time)
+		public override void Update(float currentTime, float deltaTime)
 		{
 			foreach (var store in _stores.Values)
 			{
-				store.Update(time);
+				store.Update(deltaTime);
 			}
 
-            if (time <= 0.05f && shouldShuffle)
+            if (deltaTime <= 0.05f && shouldShuffle)
             {
                 SeriesUtils.Shuffle(((BlendStore)GetStore(PropertyId.Location))[1].GetSeries(0));
             }
-            if (time > 0.99 && shouldShuffle)
+            if (deltaTime > 0.99 && shouldShuffle)
             {
                 Series s = ((BlendStore)GetStore(PropertyId.Location))[0].GetSeries(0);
                 RandomSeries rs = (RandomSeries)s;
                 rs.Seed = rs.Seed + 1;
             }
 
-            CurrentT = time;
+            CurrentT = deltaTime;
         }
 
         public override CompositeBase CreateChild()

@@ -56,9 +56,9 @@ namespace DataArcs.Stores
 			return Sampler?.GetValueAtT(_series, t, virtualCount) ?? _series.GetValueAtT(t);
 		}
 
-		public override void Update(float time)
+		public override void Update(float deltaTime)
 		{
-			_series.Update(time);
+			_series.Update(deltaTime);
 		}
 
         public override void ResetData()
