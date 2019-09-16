@@ -9,15 +9,9 @@ using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-	public class Composite
+	public class Composite : CompositeBase
 	{
-		private Dictionary<PropertyID, IStore> Stores { get; }
-		public GraphicBase Graphic { get; set; }
-
-        public IntSeries Items { get; set; }
-
-        private Series _location;
-        private Series _color;
+		private Dictionary<PropertyID, IStore> _stores { get; }
 
         /// <summary>
         /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
@@ -27,14 +21,12 @@ namespace DataArcs.Components
 		public Composite(Composite parent = null)
 		{
 			Parent = parent;
-			Stores = new Dictionary<PropertyID, IStore>();
+			_stores = new Dictionary<PropertyID, IStore>();
 		}
-
-		// todo: this should probably bet get/set values for t/index by propertyID, but not access stores?
-		// Need to compose and query nested values and t's using the hierarchy eg query t for a certain location in a grid, but props can vary at different speeds (or can they?)
-		public IStore GetStore(PropertyID propertyID)
+        
+		public override IStore GetStore(PropertyID propertyID)
 		{
-			Stores.TryGetValue(propertyID, out var result);
+			_stores.TryGetValue(propertyID, out var result);
 			if (result == null && Parent != null)
 			{
 				result = Parent.GetStore(propertyID);
@@ -42,23 +34,34 @@ namespace DataArcs.Components
 
 			return result;
 		}
-
+        
 		public void AddProperty(PropertyID id, BlendStore propertyStore)
 		{
-			Stores.Add(id, propertyStore);
+			_stores.Add(id, propertyStore);
 		}
 
 		public void RemoveProperty(PropertyID id, BlendStore propertyStore)
 		{
-			Stores.Remove(id);
+			_stores.Remove(id);
 		}
 		
+        public override void GetDefinedProperties(HashSet<PropertyID> ids)
+        {
+            foreach (var item in _stores.Keys)
+            {
+                ids.Add(item);
+            }
+            if(Parent != null)
+            {
+                Parent.GetDefinedProperties(ids);
+            }
+        }
+
 		public bool shouldShuffle; // basis for switching to events
 
-		private float t;
-		public virtual void Update(float time)
+		public override void Update(float time)
 		{
-			foreach (var store in Stores.Values)
+			foreach (var store in _stores.Values)
 			{
 				store.Update(time);
 			}
@@ -74,54 +77,15 @@ namespace DataArcs.Components
                 rs.Seed = rs.Seed + 1;
             }
 
-            t = time;
-		}
-
-		public void Draw(Graphics g)
-		{
-            var itemStore = GetStore(PropertyID.Items);
-            if(itemStore != null)
-            {
-                foreach (Series series in itemStore)
-                {
-                    DrawAtIndex(series.IntDataAt(0), itemStore.VirtualCount, g);
-                }
-            }
-            else
-            {
-                var count = 50;// GetStore(PropertyID.Location).GetElementCountAt(t);
-                for (var i = 0; i < count; i++)
-                {
-                    DrawAtIndex(i, count, g);
-                }
-            }
-
-
-            //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
+            CurrentT = time;
         }
-        public void DrawAtIndex(int index, int count, Graphics g)
+
+        public override CompositeBase CreateChild()
         {
-            var loc = GetStore(PropertyID.Location);
-            var col = GetStore(PropertyID.FillColor);
-            var it = index / (count - 1f);
-            Series v = loc.GetSeriesAtT(it, count); 
-
-            var c = col.GetSeriesAtT(it).RGB();
-            Brush b = new SolidBrush(c);
-            var state = g.Save();
-            var scale = 1f; //  + t * 0.2f;
-            g.ScaleTransform(scale, scale);
-            g.TranslateTransform(v.X() / scale, v.Y() / scale);
-            Graphic.Draw(g, b, null, t);
-            g.Restore(state);
+            return new Composite(this);
         }
 
-
-        public Composite CreateChild()
-		{
-			return new Composite(this);
-		}
-	}
+    }
 
 	public enum PropertyID : int
 	{
