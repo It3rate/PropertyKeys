@@ -13,7 +13,7 @@ namespace DataArcs.Transitions
         private float _delay;
         private float _startTime;
         private float _duration;
-        private Dictionary<PropertyID, BlendStore> _blends = new Dictionary<PropertyID, BlendStore>();
+        private Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
         public Composite Start { get; }
         public Composite End { get; }
@@ -31,8 +31,8 @@ namespace DataArcs.Transitions
         private void GenerateBlends()
         {
             _blends.Clear();
-            HashSet<PropertyID> commonKeys = new HashSet<PropertyID>();
-            HashSet<PropertyID> endKeys = new HashSet<PropertyID>();
+            HashSet<PropertyId> commonKeys = new HashSet<PropertyId>();
+            HashSet<PropertyId> endKeys = new HashSet<PropertyId>();
             Start.GetDefinedProperties(commonKeys);
             End.GetDefinedProperties(endKeys);
             commonKeys.IntersectWith(endKeys);
@@ -51,17 +51,17 @@ namespace DataArcs.Transitions
             }
         }
 
-        public override IStore GetStore(PropertyID propertyID)
+        public override IStore GetStore(PropertyId propertyId)
         {
             IStore result;
-            if (_blends.ContainsKey(propertyID))
+            if (_blends.ContainsKey(propertyId))
             {
-                result = _blends[propertyID];
+                result = _blends[propertyId];
             }
             else
             {
-                result = Start.GetStore(propertyID);
-                IStore end = End.GetStore(propertyID);
+                result = Start.GetStore(propertyId);
+                IStore end = End.GetStore(propertyId);
                 if (result == null)
                 {
                     result = end;
@@ -74,7 +74,7 @@ namespace DataArcs.Transitions
             return result;
         }
 
-        public override void GetDefinedProperties(HashSet<PropertyID> ids)
+        public override void GetDefinedProperties(HashSet<PropertyId> ids)
         {
             Start.GetDefinedProperties(ids);
             End.GetDefinedProperties(ids);

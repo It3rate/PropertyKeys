@@ -11,17 +11,25 @@ namespace DataArcs.Components
 {
     public abstract class CompositeBase
     {
-        protected float CurrentT { get; set; }
+	    private static int _idCounter = 1;
+
+	    public int Id { get;}
+	    protected float CurrentT { get; set; }
         public GraphicBase Graphic { get; set; } // will become store props or something
 
-        public abstract IStore GetStore(PropertyID propertyID);
-        public abstract void GetDefinedProperties(HashSet<PropertyID> ids);
+        protected CompositeBase()
+        {
+	        Id = _idCounter++;
+        }
+
+        public abstract IStore GetStore(PropertyId propertyId);
+        public abstract void GetDefinedProperties(HashSet<PropertyId> ids);
         public abstract void Update(float time);
         public abstract CompositeBase CreateChild();
 
         public virtual void Draw(Graphics g)
         {
-            var itemStore = GetStore(PropertyID.Items);
+            var itemStore = GetStore(PropertyId.Items);
             if (itemStore != null)
             {
                 foreach (Series series in itemStore)
@@ -31,7 +39,7 @@ namespace DataArcs.Components
             }
             else
             {
-                var count = 50;// GetStore(PropertyID.Location).GetElementCountAt(t);
+                var count = 50;// GetStore(PropertyId.Location).GetElementCountAt(t);
                 for (var i = 0; i < count; i++)
                 {
                     DrawAtIndex(i, count, g);
@@ -43,8 +51,8 @@ namespace DataArcs.Components
         }
         public void DrawAtIndex(int index, int count, Graphics g)
         {
-            var loc = GetStore(PropertyID.Location);
-            var col = GetStore(PropertyID.FillColor);
+            var loc = GetStore(PropertyId.Location);
+            var col = GetStore(PropertyId.FillColor);
             var it = index / (count - 1f);
             Series v = loc.GetSeriesAtT(it, count);
 

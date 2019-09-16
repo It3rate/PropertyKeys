@@ -25,9 +25,7 @@ namespace DataArcs.Components
 		private Store easeStore; // to animation eventually
 		private int version;
 		public const int versionCount = 4;
-
 		private Random rnd = new Random();
-
 
 		public Circles(int version)
 		{
@@ -53,7 +51,7 @@ namespace DataArcs.Components
 				var cols = 10;
 				var rows = 10;
                 Store items = new IntSeries(1, new int[] { 0, rows * cols - 1 }, virtualCount: rows * cols).Store;
-                object1.AddProperty(PropertyID.Items, new BlendStore(items));
+                object1.AddProperty(PropertyId.Items, new BlendStore(items));
 
 				var totalWidth = 500f;
 				float growth = 60;
@@ -75,11 +73,11 @@ namespace DataArcs.Components
 					// rs.setMinMax(.98f, 1f/.98f);
 					//endStore.HardenToData();
 					var fs = new FunctionalStore(endStore, randomStore);
-					object1.AddProperty(PropertyID.Location, new BlendStore(startStore, fs));
+					object1.AddProperty(PropertyId.Location, new BlendStore(startStore, fs));
 				}
 				else
 				{
-					object1.AddProperty(PropertyID.Location, new BlendStore(startStore, endStore));
+					object1.AddProperty(PropertyId.Location, new BlendStore(startStore, endStore));
 				}
 
 				//startStore.HardenToData();
@@ -110,7 +108,7 @@ namespace DataArcs.Components
 				//endStore.HardenToData();
 				//SeriesUtils.Shuffle(endStore.GetSeries(0));
 
-				object1.AddProperty(PropertyID.Location, new BlendStore(startStore, endStore));
+				object1.AddProperty(PropertyId.Location, new BlendStore(startStore, endStore));
 				object1.shouldShuffle = true;
 			}
 			else if (version == 3)
@@ -119,7 +117,7 @@ namespace DataArcs.Components
                 itemData = (IntSeries)itemData.HardenToData();
                 SeriesUtils.Shuffle(itemData);
                 Store items = itemData.Store;
-                object1.AddProperty(PropertyID.Items, new BlendStore(new Store[] { items }));
+                object1.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
 
                 graphic.PointCount = new float[]{3f,5.9f}.ToStore();
 				Sampler ringSampler = new RingSampler();
@@ -132,10 +130,10 @@ namespace DataArcs.Components
 				var endStore = new Store(new FloatSeries(vectorSize, end, 150), gridSampler);
 				//var fnStore = new FunctionalStore(startStore, endStore);
 				//endStore.HardenToData();
-				object1.AddProperty(PropertyID.Location, new BlendStore( startStore, endStore));
+				object1.AddProperty(PropertyId.Location, new BlendStore( startStore, endStore));
 			}
 
-			object1.AddProperty(PropertyID.FillColor, GetTestColors());
+			object1.AddProperty(PropertyId.FillColor, GetTestColors());
 			object1.Graphic = graphic;
 		}
 

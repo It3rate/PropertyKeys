@@ -25,7 +25,6 @@ namespace DataArcs
 		public MainForm()
 		{
 			InitializeComponent();
-
 			DoubleBuffered = true;
 
 			var b0 = new Button();
@@ -41,9 +40,16 @@ namespace DataArcs
 			timer.Elapsed += Tick;
 			timer.Interval = 8;
 			timer.Enabled = true;
+            this.Paint += MainForm_Paint;
 		}
 
-		private void B0_Click(object sender, EventArgs e)
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+	        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+	        circles.Draw(e.Graphics, t);
+        }
+
+        private void B0_Click(object sender, EventArgs e)
 		{
 			version++;
 			if (version >= Circles.versionCount)
@@ -61,11 +67,11 @@ namespace DataArcs
 			Invalidate();
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
-			base.OnPaint(e);
-			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			circles.Draw(e.Graphics, t);
-		}
+		//protected override void OnPaint(PaintEventArgs e)
+		//{
+		//	base.OnPaint(e);
+		//	e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+		//	circles.Draw(e.Graphics, t);
+		//}
 	}
 }

@@ -11,7 +11,7 @@ namespace DataArcs.Components
 {
 	public class Composite : CompositeBase
 	{
-		private Dictionary<PropertyID, IStore> _stores { get; }
+		private Dictionary<PropertyId, IStore> _stores { get; }
 
         /// <summary>
         /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
@@ -21,31 +21,31 @@ namespace DataArcs.Components
 		public Composite(Composite parent = null)
 		{
 			Parent = parent;
-			_stores = new Dictionary<PropertyID, IStore>();
+			_stores = new Dictionary<PropertyId, IStore>();
 		}
         
-		public override IStore GetStore(PropertyID propertyID)
+		public override IStore GetStore(PropertyId propertyId)
 		{
-			_stores.TryGetValue(propertyID, out var result);
+			_stores.TryGetValue(propertyId, out var result);
 			if (result == null && Parent != null)
 			{
-				result = Parent.GetStore(propertyID);
+				result = Parent.GetStore(propertyId);
 			}
 
 			return result;
 		}
         
-		public void AddProperty(PropertyID id, BlendStore propertyStore)
+		public void AddProperty(PropertyId id, BlendStore propertyStore)
 		{
 			_stores.Add(id, propertyStore);
 		}
 
-		public void RemoveProperty(PropertyID id, BlendStore propertyStore)
+		public void RemoveProperty(PropertyId id, BlendStore propertyStore)
 		{
 			_stores.Remove(id);
 		}
 		
-        public override void GetDefinedProperties(HashSet<PropertyID> ids)
+        public override void GetDefinedProperties(HashSet<PropertyId> ids)
         {
             foreach (var item in _stores.Keys)
             {
@@ -68,11 +68,11 @@ namespace DataArcs.Components
 
             if (time <= 0.05f && shouldShuffle)
             {
-                SeriesUtils.Shuffle(((BlendStore)GetStore(PropertyID.Location))._stores[1].GetSeries(0));
+                SeriesUtils.Shuffle(((BlendStore)GetStore(PropertyId.Location))._stores[1].GetSeries(0));
             }
             if (time > 0.99 && shouldShuffle)
             {
-                Series s = ((BlendStore)GetStore(PropertyID.Location))._stores[0].GetSeries(0);
+                Series s = ((BlendStore)GetStore(PropertyId.Location))._stores[0].GetSeries(0);
                 RandomSeries rs = (RandomSeries)s;
                 rs.Seed = rs.Seed + 1;
             }
@@ -87,7 +87,7 @@ namespace DataArcs.Components
 
     }
 
-	public enum PropertyID : int
+	public enum PropertyId : int
 	{
 		None = 0,
 		TModifier,
