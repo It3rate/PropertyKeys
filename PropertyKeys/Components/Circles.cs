@@ -21,12 +21,13 @@ namespace DataArcs.Components
 {
 	public class Circles
 	{
-		private Composite parent0;
 		private Composite object1;
+		private Store easeStore; // to animation eventually
+		private int version;
+		public const int versionCount = 4;
 
 		private Random rnd = new Random();
 
-		public const int versionCount = 4;
 
 		public Circles(int version)
 		{
@@ -35,14 +36,12 @@ namespace DataArcs.Components
 			SetVersion(version);
 		}
 
-		private Store easeStore; // to animation eventually
-		private int version;
 		public void SetVersion(int ver)
 		{
 			version = ver;
 			easeStore = version == 2 ?
 				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.SmoothStep4), CombineFunction.Multiply, CombineTarget.T) :
-				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.InverseBellCurve4), CombineFunction.Multiply, CombineTarget.T);
+				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
             object1 = new Composite();
 			var graphic = new PolyShape( radius: new float[] {10f, 20f},
 				orientation: new float[] {1f / 12f, 0.3f}, starness: new float[] {0, -0.3f});

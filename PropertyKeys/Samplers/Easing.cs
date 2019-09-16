@@ -31,7 +31,12 @@ namespace DataArcs.Samplers
         InverseSquared,
 		EaseInOut,
 		EaseCenter,
-		EaseInOutQuart,
+
+		EaseInOut2,
+		EaseInOut3,
+		EaseInOut4,
+		EaseInOut5,
+		EaseInOut6,
     }
 
 	public class Easing : Sampler
@@ -147,19 +152,31 @@ namespace DataArcs.Samplers
 					var sgn = a >= 0 ? 0.5f : -0.5f;
 					result = a * a * sgn + 0.5f;
 					break;
-				case EasingType.EaseInOutQuart:
-                    result = t < 0.5f ?
-						(float)(8.0 * t * t * t * t) :
-						(float)(1.0 - Math.Pow(-2.0 * t + 2.0, 4) / 2.0);
+
+				case EasingType.EaseInOut2:
+					result = InOut(2, t);
+					break;
+				case EasingType.EaseInOut3:
+					result = InOut(3, t);
+					break;
+				case EasingType.EaseInOut4:
+					result = InOut(4, t);
+					break;
+				case EasingType.EaseInOut5:
+					result = InOut(5, t);
+					break;
+				case EasingType.EaseInOut6:
+					result = InOut(6, t);
 					break;
             }
 
 			return result;
 		}
 
+
 		private static float Pow(int pow, float t)
 		{
-			float result = t;
+            float result = t;
 			for (int i = 1; i < pow; i++)
 			{
 				result *= t;
@@ -171,6 +188,8 @@ namespace DataArcs.Samplers
 			t = 1f - t;
 			return 1f - Pow(pow, t);
 		}
+
+		private static float InOut(int pow, float t) => t < 0.5f ? Pow(pow - 1, 2) * Pow(pow, t) : 1f - Pow(pow, -2f * t + 2f) / 2f;
         private static float Mix(float a, float b, float weightB, float t) => t * (a + weightB * (b - a));// (1f - weightB) * a + weightB * b;
         private static float CrossFade(float a, float b, float t) => a + t * (b - a);
         private static float CrossFade(EasingType easingTypeA, EasingType easingTypeB, float t) => CrossFade( GetValueAt(t, easingTypeA), GetValueAt(t, easingTypeB), t);
