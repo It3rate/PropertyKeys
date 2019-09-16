@@ -41,8 +41,8 @@ namespace DataArcs.Components
 		{
 			version = ver;
 			easeStore = version == 2 ?
-				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseCenter), CombineFunction.Multiply, CombineTarget.T) :
-				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOutQuart), CombineFunction.Multiply, CombineTarget.T);
+				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.SmoothStep4), CombineFunction.Multiply, CombineTarget.T) :
+				new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.InverseBellCurve4), CombineFunction.Multiply, CombineTarget.T);
             object1 = new Composite();
 			var graphic = new PolyShape( radius: new float[] {10f, 20f},
 				orientation: new float[] {1f / 12f, 0.3f}, starness: new float[] {0, -0.3f});
@@ -54,7 +54,7 @@ namespace DataArcs.Components
 				var cols = 10;
 				var rows = 10;
                 Store items = new IntSeries(1, new int[] { 0, rows * cols - 1 }, virtualCount: rows * cols).Store;
-                object1.AddProperty(PropertyID.Items, new BlendStore(new Store[] { items }));
+                object1.AddProperty(PropertyID.Items, new BlendStore(items));
 
 				var totalWidth = 500f;
 				float growth = 60;

@@ -8,8 +8,27 @@ namespace DataArcs.Samplers
 	{
 		None = 0,
 		Linear,
-		Squared,
-		InverseSquared,
+		SmoothStart2,
+		SmoothStart3,
+		SmoothStart4,
+		SmoothStart5,
+		SmoothStart6,
+		SmoothStop2,
+		SmoothStop3,
+		SmoothStop4,
+		SmoothStop5,
+		SmoothStop6,
+		SmoothStep2,
+		SmoothStep3,
+		SmoothStep4,
+		SmoothStep5,
+		SmoothStep6,
+
+		BellCurve4,
+		BellCurve6,
+		InverseBellCurve4,
+		InverseBellCurve6,
+        InverseSquared,
 		EaseInOut,
 		EaseCenter,
 		EaseInOutQuart,
@@ -45,7 +64,9 @@ namespace DataArcs.Samplers
 
 		public static float GetValueAt(float t, EasingType easingType)
 		{
-			var result = t;
+			// influence https://stackoverflow.com/questions/4900069/how-to-make-inline-functions-in-c-sharp
+            var result = t;
+			float it = 1f - t;
 			switch (easingType)
 			{
 				case EasingType.None:
@@ -54,10 +75,68 @@ namespace DataArcs.Samplers
 				case EasingType.Linear:
 					result = t;
 					break;
-				case EasingType.Squared:
-					result = t * t;
+				case EasingType.SmoothStart2:
+					result = Pow(2, t);
+					break;
+				case EasingType.SmoothStart3:
+					result = Pow(3, t);
                     break;
-				case EasingType.InverseSquared:
+				case EasingType.SmoothStart4:
+					result = Pow(4, t);
+                    break;
+				case EasingType.SmoothStart5:
+					result = Pow(5, t);
+                    break;
+				case EasingType.SmoothStart6:
+					result = Pow(6, t);
+                    break;
+                case EasingType.SmoothStop2:
+	                result = FlipPow(2, t);
+					break;
+				case EasingType.SmoothStop3:
+					result = FlipPow(3, t);
+                    break;
+				case EasingType.SmoothStop4:
+					result = FlipPow(4, t);
+                    break;
+				case EasingType.SmoothStop5:
+					result = FlipPow(5, t);
+                    break;
+				case EasingType.SmoothStop6:
+					result = FlipPow(6, t);
+					break;
+
+				case EasingType.SmoothStep2:
+					result = CrossFade(EasingType.SmoothStart2, EasingType.SmoothStop2, t);
+					break;
+				case EasingType.SmoothStep3:
+					result = CrossFade(EasingType.SmoothStart3, EasingType.SmoothStop3, t);
+					break;
+				case EasingType.SmoothStep4:
+					result = CrossFade(EasingType.SmoothStart4, EasingType.SmoothStop4, t);
+					break;
+				case EasingType.SmoothStep5:
+					result = CrossFade(EasingType.SmoothStart5, EasingType.SmoothStop5, t);
+					break;
+				case EasingType.SmoothStep6:
+					result = CrossFade(EasingType.SmoothStart6, EasingType.SmoothStop6, t);
+					break;
+
+				case EasingType.BellCurve4:
+					result = Mult(EasingType.SmoothStop2, EasingType.SmoothStart2, t);
+					break;
+				case EasingType.BellCurve6:
+					result = Mult(EasingType.SmoothStop3, EasingType.SmoothStart3, t);
+					break;
+				case EasingType.InverseBellCurve4:
+					result = 1f - Mult(EasingType.SmoothStop2, EasingType.SmoothStart2, t);
+					break;
+				case EasingType.InverseBellCurve6:
+					result = 1f - Mult(EasingType.SmoothStop3, EasingType.SmoothStart3, t);
+					break;
+
+
+                case EasingType.InverseSquared:
 					result = 1f - t * t;
 					break;
 				case EasingType.EaseInOut:
@@ -76,6 +155,42 @@ namespace DataArcs.Samplers
             }
 
 			return result;
+		}
+
+		private static float Pow(int pow, float t)
+		{
+			float result = t;
+			for (int i = 1; i < pow; i++)
+			{
+				result *= t;
+			}
+			return result;
+		}
+		private static float FlipPow(int pow, float t)
+		{
+			t = 1f - t;
+			return 1f - Pow(pow, t);
+		}
+        private static float Mix(float a, float b, float weightB, float t) => t * (a + weightB * (b - a));// (1f - weightB) * a + weightB * b;
+        private static float CrossFade(float a, float b, float t) => a + t * (b - a);
+        private static float CrossFade(EasingType easingTypeA, EasingType easingTypeB, float t) => CrossFade( GetValueAt(t, easingTypeA), GetValueAt(t, easingTypeB), t);
+        private static float Scale(EasingType easingType, float t) => t * GetValueAt(t, easingType);
+        private static float Scale(EasingType easingType, int pow, float t) => Scale(easingType, Pow(pow, t));
+        private static float ReverseScale(EasingType easingType, float t) => (1f - t) * GetValueAt(t, easingType);
+        private static float ReverseScale(EasingType easingType, int pow, float t) => ReverseScale(easingType, Pow(pow, t));
+        private static float Mult(EasingType easingTypeA, EasingType easingTypeB, float t) => GetValueAt(t, easingTypeA) * GetValueAt(t, easingTypeB);
+
+
+        private static float FakePow(float a, float pow)
+		{
+			float result = a;
+			pow -= 1f;
+			while (pow > 1)
+			{
+				result *= a;
+				pow -= 1f;
+			}
+            return result * pow + result * a * (1f - pow);
 		}
 	}
 }
