@@ -67,12 +67,7 @@ namespace DataArcs.Stores
 			}
 			return series;
 		}
-
-        public float GetTatT(float t)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        
         public void HardenToData()
 		{
 			foreach (var store in Stores)
@@ -96,26 +91,12 @@ namespace DataArcs.Stores
 				store.Update(time);
 			}
         }
-        #region Enumeration
+
         public Series this[int index] => GetSeriesAtIndex(index);
-        private int _position;
-        public bool MoveNext()
-        {
-            _position++;
-            return (_position < VirtualCount);
-        }
-
-        public object Current => this[_position];
-
-        public void Reset()
-        {
-            _position = 0;
-        }
 
         public IEnumerator GetEnumerator()
         {
-            return (IEnumerator)this;
+            return new IStoreEnumerator(this);
         }
-        #endregion
     }
 }

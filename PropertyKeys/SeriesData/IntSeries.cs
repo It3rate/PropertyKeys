@@ -41,7 +41,7 @@ namespace DataArcs.SeriesData
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
-			Array.Copy(series.FloatData, 0, _intValues, startIndex * VectorSize, VectorSize);
+			Array.Copy(series.IntData, 0, _intValues, startIndex * VectorSize, VectorSize);
 		}
 
 		public override Series HardenToData(Store store = null)

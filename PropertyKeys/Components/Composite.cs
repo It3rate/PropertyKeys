@@ -11,7 +11,7 @@ namespace DataArcs.Components
 {
 	public class Composite
 	{
-		private Dictionary<PropertyID, PropertyStore> Stores { get; }
+		private Dictionary<PropertyID, IStore> Stores { get; }
 		public GraphicBase Graphic { get; set; }
 
         public IntSeries Items { get; set; }
@@ -27,28 +27,28 @@ namespace DataArcs.Components
 		public Composite(Composite parent = null)
 		{
 			Parent = parent;
-			Stores = new Dictionary<PropertyID, PropertyStore>();
+			Stores = new Dictionary<PropertyID, IStore>();
 		}
 
 		// todo: this should probably bet get/set values for t/index by propertyID, but not access stores?
 		// Need to compose and query nested values and t's using the hierarchy eg query t for a certain location in a grid, but props can vary at different speeds (or can they?)
-		public PropertyStore GetPropertyStore(PropertyID propertyID)
+		public IStore GetStore(PropertyID propertyID)
 		{
 			Stores.TryGetValue(propertyID, out var result);
 			if (result == null && Parent != null)
 			{
-				result = Parent.GetPropertyStore(propertyID);
+				result = Parent.GetStore(propertyID);
 			}
 
 			return result;
 		}
 
-		public void AddProperty(PropertyID id, PropertyStore propertyStore)
+		public void AddProperty(PropertyID id, BlendStore propertyStore)
 		{
 			Stores.Add(id, propertyStore);
 		}
 
-		public void RemoveProperty(PropertyID id, PropertyStore propertyStore)
+		public void RemoveProperty(PropertyID id, BlendStore propertyStore)
 		{
 			Stores.Remove(id);
 		}
@@ -63,28 +63,33 @@ namespace DataArcs.Components
 				store.Update(time);
 			}
 
-			if (time <= 0.005f && shouldShuffle)
-			{
-				SeriesUtils.Shuffle(GetPropertyStore(PropertyID.Location)[1].GetSeries(0));
-			}
+            if (time <= 0.05f && shouldShuffle)
+            {
+                SeriesUtils.Shuffle(((BlendStore)GetStore(PropertyID.Location))._stores[1].GetSeries(0));
+            }
+            if (time > 0.99 && shouldShuffle)
+            {
+                Series s = ((BlendStore)GetStore(PropertyID.Location))._stores[0].GetSeries(0);
+                RandomSeries rs = (RandomSeries)s;
+                rs.Seed = rs.Seed + 1;
+            }
 
-			t = time;
+            t = time;
 		}
 
 		public void Draw(Graphics g)
 		{
-            var items = GetPropertyStore(PropertyID.Items);
-            if(items != null)
+            var itemStore = GetStore(PropertyID.Items);
+            if(itemStore != null)
             {
-                IStore itemStore = items._stores[0];
-                foreach (Series index in itemStore)
+                foreach (Series series in itemStore)
                 {
-                    DrawAtIndex(index.IntDataAt(0), itemStore.VirtualCount, g);
+                    DrawAtIndex(series.IntDataAt(0), itemStore.VirtualCount, g);
                 }
             }
             else
             {
-                var count = GetPropertyStore(PropertyID.Location).GetElementCountAt(t);
+                var count = 50;// GetStore(PropertyID.Location).GetElementCountAt(t);
                 for (var i = 0; i < count; i++)
                 {
                     DrawAtIndex(i, count, g);
@@ -96,12 +101,12 @@ namespace DataArcs.Components
         }
         public void DrawAtIndex(int index, int count, Graphics g)
         {
-			var loc = GetPropertyStore(PropertyID.Location);
-			var col = GetPropertyStore(PropertyID.FillColor);
+            var loc = GetStore(PropertyID.Location);
+            var col = GetStore(PropertyID.FillColor);
             var it = index / (count - 1f);
-            Series v = loc.GetSeriesAtT(it, t, count); // should t be calculated externally and skip count? or count a property
+            Series v = loc.GetSeriesAtT(it, count); 
 
-            var c = col.GetSeriesAtT(it, t).RGB();
+            var c = col.GetSeriesAtT(it).RGB();
             Brush b = new SolidBrush(c);
             var state = g.Save();
             var scale = 1f; //  + t * 0.2f;

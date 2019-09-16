@@ -19,10 +19,31 @@ namespace DataArcs.Stores
 		Series GetSeriesAtIndex(int index, int virtualCount = -1);
 
 		Series GetSeriesAtT(float t, int virtualCount = -1);
-		float GetTatT(float t);
-	}
+    }
 
-	public enum CombineFunction
+    public class IStoreEnumerator : IEnumerator
+    {
+        private IStore _instance;
+        private int _position = -1;
+        public IStoreEnumerator(IStore instance)
+        {
+            _instance = instance;
+        }
+        public bool MoveNext()
+        {
+            _position++;
+            return (_position < _instance.VirtualCount);
+        }
+
+        public object Current => _instance.GetSeriesAtIndex(_position);
+
+        public void Reset()
+        {
+            _position = 0;
+        }
+    }
+
+    public enum CombineFunction
 	{
 		Replace,
 		Append,
@@ -32,12 +53,15 @@ namespace DataArcs.Stores
 		Divide,
 		Average,
 		Interpolate,
-		MultiplyT,
+        ContinuousAdd,
+
+        MultiplyT,
 	}
 
 	public enum CombineTarget
 	{
 		T,
-		Destination,
-	}
+        Destination,
+        ContinuousSelf,
+    }
 }

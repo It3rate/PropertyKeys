@@ -23,11 +23,6 @@ namespace DataArcs.Mutators
 			return Store.GetSeriesAtT(t);
 		}
 
-		public virtual float GetTAtT(float t)
-		{
-			return Store.GetTatT(t);
-		}
-
 		public abstract void Update(float t);
 		public abstract void ResetData();
 	}
