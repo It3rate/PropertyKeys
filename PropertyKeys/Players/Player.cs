@@ -39,13 +39,13 @@ namespace DataArcs.Players
 
         public void AddElement(CompositeBase composite)
         {
-	        _elements.Add(composite.Id, composite);
+	        _elements.Add(composite.CompositeId, composite);
         }
         public void RemoveElement(CompositeBase composite)
         {
-	        if (_elements.ContainsKey(composite.Id))
+	        if (_elements.ContainsKey(composite.CompositeId))
 	        {
-		        _elements.Remove(composite.Id);
+		        _elements.Remove(composite.CompositeId);
 	        }
         }
         public void RemoveElementById(int id)

@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace DataArcs.Commands
 {
-	public abstract class BaseCommand : ICommand
+	public abstract class CommandBase : ICommand
 	{
 		public int StartTime { get; }
 		public int EndTime { get; }

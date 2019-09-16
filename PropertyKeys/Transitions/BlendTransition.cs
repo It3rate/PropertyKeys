@@ -33,12 +33,15 @@ namespace DataArcs.Transitions
             _blends.Clear();
             HashSet<PropertyId> commonKeys = new HashSet<PropertyId>();
             HashSet<PropertyId> endKeys = new HashSet<PropertyId>();
-            Start.GetDefinedProperties(commonKeys);
-            End.GetDefinedProperties(endKeys);
+            Start.GetDefinedStores(commonKeys);
+            End.GetDefinedStores(endKeys);
             commonKeys.IntersectWith(endKeys);
             foreach (var key in commonKeys)
             {
-                _blends.Add(key, (BlendStore)GetStore(key));
+	            if (Start.GetStore(key).StoreId != End.GetStore(key).StoreId)
+	            {
+					_blends.Add(key, (BlendStore)GetStore(key));
+	            }
             }
         }
 
@@ -74,10 +77,10 @@ namespace DataArcs.Transitions
             return result;
         }
 
-        public override void GetDefinedProperties(HashSet<PropertyId> ids)
+        public override void GetDefinedStores(HashSet<PropertyId> ids)
         {
-            Start.GetDefinedProperties(ids);
-            End.GetDefinedProperties(ids);
+            Start.GetDefinedStores(ids);
+            End.GetDefinedStores(ids);
         }
 
         public override CompositeBase CreateChild()

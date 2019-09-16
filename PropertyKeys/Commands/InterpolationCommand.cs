@@ -4,7 +4,7 @@ using DataArcs.Stores;
 
 namespace DataArcs.Commands
 {
-	public class InterpolationCommand : BaseCommand
+	public class InterpolationCommand : CommandBase
 	{
 		public readonly Store[] Stores;
 		public readonly EasingType EasingType;

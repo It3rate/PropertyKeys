@@ -3,37 +3,26 @@ using System.Collections;
 
 namespace DataArcs.Stores
 {
-	public class FunctionalStore : IStore
+	public class FunctionalStore : StoreBase
     {
 		public readonly Store[] Stores;
+
+		public override int VirtualCount
+		{
+			get => GetNonTStore().VirtualCount;
+			set => GetNonTStore().VirtualCount = value;
+		}
 		
 		public FunctionalStore(params Store[] stores)
 		{
 			Stores = stores;
 		}
 
-		public Series GetSeries(int index) => Stores[index].GetSeries(0);
+        public Series this[int index] => GetSeriesAtIndex(index);
 
-		public CombineFunction CombineFunction { get; set; }
-		public CombineTarget CombineTarget { get; set; }
-		public int VirtualCount
-		{
-			get => GetNonTStore().VirtualCount;
-			set => GetNonTStore().VirtualCount = value;
-		}
+		public override Series GetSeries(int index) => Stores[index].GetSeries(0);
 
-		private Store GetNonTStore()
-		{
-			Store result = Stores[0];
-			int index = 1;
-			while (result.CombineTarget == CombineTarget.T && index < Stores.Length)
-			{
-				result = Stores[index];
-			}
-			return result;
-		}
-
-		public Series GetSeriesAtIndex(int index, int virtualCount = -1)
+        public override Series GetSeriesAtIndex(int index, int virtualCount = -1)
 		{
 			var series = Stores[0].GetSeriesAtIndex(index, virtualCount);
 			for (var i = 1; i < Stores.Length; i++)
@@ -45,7 +34,7 @@ namespace DataArcs.Stores
 			return series;
 		}
 
-		public Series GetSeriesAtT(float t, int virtualCount = -1)
+        public override Series GetSeriesAtT(float t, int virtualCount = -1)
 		{
 			Series series = null;
 			//var series = Stores[0].GetSeriesAtT(t, virtualCount);
@@ -67,24 +56,8 @@ namespace DataArcs.Stores
 			}
 			return series;
 		}
-        
-        public void HardenToData()
-		{
-			foreach (var store in Stores)
-			{
-				store.HardenToData();
-			}
-		}
 
-		public void ResetData()
-		{
-			foreach (var store in Stores)
-			{
-				store.ResetData();
-			}
-		}
-
-		public void Update(float time)
+        public override void Update(float time)
 		{
 			foreach (var store in Stores)
 			{
@@ -92,11 +65,31 @@ namespace DataArcs.Stores
 			}
         }
 
-        public Series this[int index] => GetSeriesAtIndex(index);
+        public override void ResetData()
+		{
+			foreach (var store in Stores)
+			{
+				store.ResetData();
+			}
+		}
 
-        public IEnumerator GetEnumerator()
-        {
-            return new IStoreEnumerator(this);
-        }
+        public override void HardenToData()
+		{
+			foreach (var store in Stores)
+			{
+				store.HardenToData();
+			}
+		}
+
+		private Store GetNonTStore()
+		{
+			Store result = Stores[0];
+			int index = 1;
+			while (result.CombineTarget == CombineTarget.T && index < Stores.Length)
+			{
+				result = Stores[index];
+			}
+			return result;
+		}
     }
 }

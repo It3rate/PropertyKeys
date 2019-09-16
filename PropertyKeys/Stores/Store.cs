@@ -4,13 +4,11 @@ using System.Collections;
 
 namespace DataArcs.Stores
 {
-	public class Store : IStore
+	public class Store : StoreBase
     {
 		private Series _series;
-
-		public CombineFunction CombineFunction { get; set; }
-		public CombineTarget CombineTarget { get; set; }
-        public int VirtualCount
+		
+        public override int VirtualCount
 		{
 			get => _series.VirtualCount;
 			set => _series.VirtualCount = value;
@@ -31,30 +29,21 @@ namespace DataArcs.Stores
 
 		{
 		}
+
 		public Store(float[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) :
 			this(new FloatSeries(1, data), sampler, combineFunction)
 
 		{
 		}
-        public Series GetSeries(int index) => _series;
 
-		public virtual void ResetData()
-		{
-			_series.ResetData();
-		}
+		public Series this[int index] => GetSeriesAtIndex(index);
 
-		public virtual void Update(float time)
-		{
-			_series.Update(time);
-		}
+        public override Series GetSeries(int index)
+        {
+            return _series;
+        }
 
-		public virtual void HardenToData()
-		{
-			_series = _series.HardenToData(this);
-			Sampler = null;
-		}
-
-		public virtual Series GetSeriesAtIndex(int index, int virtualCount = -1)
+		public override Series GetSeriesAtIndex(int index, int virtualCount = -1)
 		{
             virtualCount = (virtualCount == -1) ? VirtualCount : virtualCount;
 			return Sampler != null
@@ -62,18 +51,28 @@ namespace DataArcs.Stores
 				: _series.GetValueAtVirtualIndex(index);
 		}
 
-		public virtual Series GetSeriesAtT(float t, int virtualCount = -1)
+		public override Series GetSeriesAtT(float t, int virtualCount = -1)
 		{
 			return Sampler?.GetValueAtT(_series, t, virtualCount) ?? _series.GetValueAtT(t);
 		}
-        
+
+		public override void Update(float time)
+		{
+			_series.Update(time);
+		}
+
+        public override void ResetData()
+		{
+			_series.ResetData();
+		}
+
+		public override void HardenToData()
+		{
+			_series = _series.HardenToData(this);
+			Sampler = null;
+		}
 
 
-        public Series this[int index] => GetSeriesAtIndex(index);
-
-        public IEnumerator GetEnumerator()
-        {
-            return new IStoreEnumerator(this);
-        }
+		
     }
 }

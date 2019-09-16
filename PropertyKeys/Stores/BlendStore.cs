@@ -5,15 +5,13 @@ using DataArcs.SeriesData;
 
 namespace DataArcs.Stores
 {
-	public class BlendStore : IStore
-	{
-		public readonly List<IStore> _stores;
+	public class BlendStore : StoreBase
+    {
+		private readonly List<IStore> _stores;
         public float CurrentT { get; set; } = 0;
-        public CombineFunction CombineFunction { get; set; }
-        public CombineTarget CombineTarget { get; set; }
 
         private int _virtualCount = -1;
-        public int VirtualCount
+        public override int VirtualCount
         {
             get
             {
@@ -24,10 +22,7 @@ namespace DataArcs.Stores
                 }
                 return result;
             }
-            set
-            {
-                _virtualCount = value;
-            }
+            set => _virtualCount = value;
         }
 
         public BlendStore(params IStore[] stores)
@@ -41,7 +36,47 @@ namespace DataArcs.Stores
 			set => _stores[index] = value;
 		}
 
-		public void Add(Store item)
+		public override Series GetSeries(int index)
+		{
+			return GetSeriesAtIndex(index, CurrentT);
+		}
+
+		public override Series GetSeriesAtIndex(int index, int virtualCount = -1)
+		{
+			return GetSeriesAtIndex(index, CurrentT, virtualCount);
+		}
+
+		public override Series GetSeriesAtT(float t, int virtualCount = -1)
+		{
+			return GetSeriesAtT(t, CurrentT, virtualCount);
+		}
+
+		public override void Update(float time)
+		{
+			CurrentT = time;
+			foreach (var store in _stores)
+			{
+				store.Update(time);
+			}
+		}
+
+		public override void ResetData()
+		{
+			foreach (var store in _stores)
+			{
+				store.ResetData();
+			}
+		}
+
+        public override void HardenToData()
+		{
+			foreach (var store in _stores)
+			{
+				store.HardenToData();
+			}
+		}
+
+        public void Add(Store item)
 		{
 			_stores.Add(item);
 		}
@@ -64,23 +99,6 @@ namespace DataArcs.Stores
 			if (index >= 0 && index < _stores.Count)
 			{
 				_stores.RemoveAt(index);
-			}
-		}
-
-		public virtual void ResetData()
-		{
-			foreach (var store in _stores)
-			{
-				store.ResetData();
-			}
-		}
-
-		public virtual void Update(float time)
-		{
-            CurrentT = time;
-			foreach (var store in _stores)
-			{
-				store.Update(time);
 			}
 		}
 
@@ -164,32 +182,5 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public Series GetSeries(int index)
-        {
-            return GetSeriesAtIndex(index, CurrentT);
-        }
-
-        public void HardenToData()
-        {
-            foreach (var store in _stores)
-            {
-                store.HardenToData();
-            }
-        }
-
-        public Series GetSeriesAtIndex(int index, int virtualCount = -1)
-        {
-            return GetSeriesAtIndex(index, CurrentT, virtualCount);
-        }
-
-        public Series GetSeriesAtT(float t, int virtualCount = -1)
-        { 
-            return GetSeriesAtT(t, CurrentT, virtualCount);
-        }
-        
-        public IEnumerator GetEnumerator()
-        {
-            return new IStoreEnumerator(this);
-        }
     }
 }

@@ -13,17 +13,17 @@ namespace DataArcs.Components
     {
 	    private static int _idCounter = 1;
 
-	    public int Id { get;}
+	    public int CompositeId { get;}
 	    protected float CurrentT { get; set; }
         public GraphicBase Graphic { get; set; } // will become store props or something
 
         protected CompositeBase()
         {
-	        Id = _idCounter++;
+	        CompositeId = _idCounter++;
         }
 
         public abstract IStore GetStore(PropertyId propertyId);
-        public abstract void GetDefinedProperties(HashSet<PropertyId> ids);
+        public abstract void GetDefinedStores(HashSet<PropertyId> ids);
         public abstract void Update(float time);
         public abstract CompositeBase CreateChild();
 
@@ -65,7 +65,34 @@ namespace DataArcs.Components
             Graphic.Draw(g, b, null, CurrentT);
             g.Restore(state);
         }
+    }
 
+    public enum PropertyId : int // will change to local render defined, combo of type and property
+    {
+	    None = 0,
+	    TModifier,
 
+	    Items,
+	    Shape,
+	    Transform,
+	    Location,
+	    Size,
+	    Scale,
+	    Rotation,
+	    FillColor,
+	    PenColor,
+	    T,
+	    StartTime,
+	    Duration,
+	    Easing,
+	    SampleType,
+
+	    Graphic,
+	    Starness,
+	    Roundness,
+	    Radius,
+	    RandomMotion,
+
+	    Custom = 0x1000,
     }
 }

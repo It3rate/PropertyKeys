@@ -45,7 +45,7 @@ namespace DataArcs.Components
 			_stores.Remove(id);
 		}
 		
-        public override void GetDefinedProperties(HashSet<PropertyId> ids)
+        public override void GetDefinedStores(HashSet<PropertyId> ids)
         {
             foreach (var item in _stores.Keys)
             {
@@ -53,7 +53,7 @@ namespace DataArcs.Components
             }
             if(Parent != null)
             {
-                Parent.GetDefinedProperties(ids);
+                Parent.GetDefinedStores(ids);
             }
         }
 
@@ -68,11 +68,11 @@ namespace DataArcs.Components
 
             if (time <= 0.05f && shouldShuffle)
             {
-                SeriesUtils.Shuffle(((BlendStore)GetStore(PropertyId.Location))._stores[1].GetSeries(0));
+                SeriesUtils.Shuffle(((BlendStore)GetStore(PropertyId.Location))[1].GetSeries(0));
             }
             if (time > 0.99 && shouldShuffle)
             {
-                Series s = ((BlendStore)GetStore(PropertyId.Location))._stores[0].GetSeries(0);
+                Series s = ((BlendStore)GetStore(PropertyId.Location))[0].GetSeries(0);
                 RandomSeries rs = (RandomSeries)s;
                 rs.Seed = rs.Seed + 1;
             }
@@ -87,32 +87,4 @@ namespace DataArcs.Components
 
     }
 
-	public enum PropertyId : int
-	{
-		None = 0,
-		TModifier,
-
-        Items,
-		Shape,
-		Transform,
-		Location,
-		Size,
-		Scale,
-		Rotation,
-		FillColor,
-		PenColor,
-		T,
-		StartTime,
-		Duration,
-		Easing,
-		SampleType,
-
-		Graphic,
-		Starness,
-		Roundness,
-		Radius,
-		RandomMotion,
-
-		Custom = 0x1000,
-	}
 }
