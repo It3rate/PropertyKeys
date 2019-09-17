@@ -4,6 +4,7 @@ using System.Timers;
 using System.Windows.Forms;
 using DataArcs.Components;
 using DataArcs.Players;
+using DataArcs.Tests.GraphicTests;
 
 namespace DataArcs
 {
@@ -16,7 +17,7 @@ namespace DataArcs
 			Application.Run(new MainForm());
 		}
 
-		private Circles circles;
+		//private Circles circles;
 		private System.Timers.Timer timer;
 		private DateTime curTime;
 		private float t = 0;
@@ -35,10 +36,12 @@ namespace DataArcs
 			Controls.Add(b0);
 
 			Player player = new Player(this);
+			player.AddElement(CompositeTestObjects.GetTest0());
+			player.AddElement(CompositeTestObjects.GetTest3());
 
-			circles = new Circles(version);
+            //circles = new Circles(version);
 
-			curTime = DateTime.Now;
+            curTime = DateTime.Now;
 			timer = new System.Timers.Timer();
 			timer.Elapsed += Tick;
 			timer.Interval = 8;
@@ -48,8 +51,8 @@ namespace DataArcs
 
         private void MainForm_Paint(object sender, PaintEventArgs e)
         {
-	        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-	        circles.Draw(e.Graphics, t);
+	        //e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+	        //circles.Draw(e.Graphics, t);
         }
 
         private void B0_Click(object sender, EventArgs e)
@@ -60,7 +63,7 @@ namespace DataArcs
 				version = 0;
 			}
 
-			circles = new Circles(version);
+			//circles = new Circles(version);
 		}
 
 		private void Tick(object sender, ElapsedEventArgs e)

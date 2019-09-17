@@ -13,10 +13,9 @@ namespace DataArcs.Tests.GraphicTests
 {
     public class CompositeTestObjects
     {
-        private Composite GetTest0()
+        public static Composite GetTest0()
         {
-
-            var composite = new Composite();
+	        var composite = new Composite();
             AddGraphic(composite);
             AddColor(composite);
 
@@ -43,7 +42,7 @@ namespace DataArcs.Tests.GraphicTests
             return composite;
         }
 
-        private Composite GetTest1()
+        public static Composite GetTest1()
         {
             var composite = GetTest0();
 
@@ -56,7 +55,7 @@ namespace DataArcs.Tests.GraphicTests
             return composite;
         }
 
-        private Composite GetTest2()
+        public static Composite GetTest2()
         {
             var composite = new Composite();
             AddGraphic(composite);
@@ -75,7 +74,7 @@ namespace DataArcs.Tests.GraphicTests
             composite.shouldShuffle = true;
             return composite;
         }
-        private Composite GetTest3()
+        public static Composite GetTest3()
         {
             var composite = new Composite();
             AddGraphic(composite);
@@ -103,7 +102,7 @@ namespace DataArcs.Tests.GraphicTests
             return composite;
         }
 
-        private void AddGraphic(Composite composite)
+        private static void AddGraphic(Composite composite)
         {
 	        composite.Graphic = new PolyShape(
 		        radius: new Store(new float[] { 10f, 20f }),
@@ -113,7 +112,7 @@ namespace DataArcs.Tests.GraphicTests
 	        );
         }
 
-        private void AddColor(Composite composite)
+        private static void AddColor(Composite composite)
         {
 	        Sampler colorSampler = new LineSampler(); //new GridSampler(new []{10, 0});
 	        var start = new float[] { 0.3f, 0.1f, 0.2f, 1f, 1f, 0, 0, 0.15f, 1f, 0, 0.5f, 0.1f };

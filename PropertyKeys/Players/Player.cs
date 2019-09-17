@@ -58,6 +58,7 @@ namespace DataArcs.Players
 	        }
         }
 
+        private float t = 0;
         private void Tick(object sender, ElapsedEventArgs e)
         {
 	        if (_lastTime.Ticks == 0)
@@ -66,9 +67,16 @@ namespace DataArcs.Players
 	        }
             _currentTime = e.SignalTime;
 
-	        foreach (var element in _elements.Values)
-	        {
-		        element.Update((float)TimeSpan.FromTicks(_currentTime.Ticks).TotalMilliseconds, (float)(_currentTime - _lastTime).TotalMilliseconds);
+            t += 0.01f;
+            var floorT = (int)t;
+            float time = t - floorT;
+            if (floorT % 2 == 0)
+            {
+	            time = 1.0f - time;
+            }
+            foreach (var element in _elements.Values)
+            {
+	            element.Update(time, time);//(float)TimeSpan.FromTicks(_currentTime.Ticks).TotalMilliseconds, (float)(_currentTime - _lastTime).TotalMilliseconds);
 	        }
 	        _display.Invalidate();
 
