@@ -9,7 +9,6 @@ namespace DataArcs.Graphic
 	public class PolyShape : GraphicBase
 	{
 		private BezierSeries Polygon { get; set; }
-		private BezierSampler Sampler { get; }
 
 		public Store Orientation { get; set; }
 		public Store PointCount { get; set; }

@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Timers;
 using System.Windows.Forms;
 using DataArcs.Components;
+using DataArcs.Players;
 
 namespace DataArcs
 {
@@ -32,6 +33,8 @@ namespace DataArcs
 			b0.Click += B0_Click;
 
 			Controls.Add(b0);
+
+			Player player = new Player(this);
 
 			circles = new Circles(version);
 

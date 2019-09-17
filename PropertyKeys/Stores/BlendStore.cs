@@ -9,7 +9,8 @@ namespace DataArcs.Stores
 	public class BlendStore : StoreBase
     {
 		private readonly List<IStore> _stores;
-        public float CurrentT { get; set; } = 0;
+        public float CurrentT { get; set; }
+        private readonly IStore _easing;
 
         private int _virtualCount = -1;
         public override int VirtualCount
@@ -27,9 +28,14 @@ namespace DataArcs.Stores
         }
 
         public BlendStore(params IStore[] stores)
-		{
-			_stores = new List<IStore>(stores);
-		}
+        {
+	        _stores = new List<IStore>(stores);
+        }
+        public BlendStore(IStore[] stores, IStore easing)
+        {
+	        _stores = new List<IStore>(stores);
+	        _easing = easing;
+        }
 
         public override Series GetSeries(int index)
 		{
@@ -76,8 +82,9 @@ namespace DataArcs.Stores
 			Series result;
 
 			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
+			vT = _easing?.GetSeriesAtT(vT).FloatDataAt(0) ?? vT;
 
-			if (startIndex == endIndex)
+            if (startIndex == endIndex)
 			{
 				result = _stores[startIndex].GetSeriesAtIndex(index, virtualCount);
 			}
@@ -94,8 +101,9 @@ namespace DataArcs.Stores
 			Series result;
 
 			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
+			vT = _easing?.GetSeriesAtT(vT).FloatDataAt(0) ?? vT;
 
-			if (startIndex == endIndex)
+            if (startIndex == endIndex)
 			{
 				result = _stores[startIndex].GetSeriesAtT(indexT, virtualCount);
 			}
@@ -145,6 +153,7 @@ namespace DataArcs.Stores
             if (end != null)
             {
                 var endAr = end.GetSeriesAtT(indexT, virtualCount);
+
                 result.InterpolateInto(endAr, t);
             }
 

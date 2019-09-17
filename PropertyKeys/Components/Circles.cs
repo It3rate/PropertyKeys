@@ -22,7 +22,6 @@ namespace DataArcs.Components
 	public class Circles
 	{
 		private Composite object1;
-		private Store easeStore; // to animation eventually
 		private int _version;
 		public const int versionCount = 4;
 		private Random rnd = new Random();
@@ -36,15 +35,6 @@ namespace DataArcs.Components
 
 		public void SetVersion(int version)
 		{
-			//_version = version;
-			//easeStore = _version == 2 ?
-			//	new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.SmoothStep4), CombineFunction.Multiply, CombineTarget.T) :
-			//	new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
-   //         object1 = new Composite();
-			//var graphic = new PolyShape( radius: new float[] {10f, 20f},
-			//	orientation: new float[] {1f / 12f, 0.3f}, starness: new float[] {0, -0.3f});
-   //         Store points = new FloatSeries(1, new float[] { 6.0f, 10.99f }, 6).Store;
-   //         graphic.PointCount = points;
             switch (version)
             {
 	            case 0:
@@ -60,101 +50,10 @@ namespace DataArcs.Components
 		            object1 = GetTest3();
 		            break;
             }
-   //         if (_version == 0 || _version == 1)
-			//{
-			//	var cols = 10;
-			//	var rows = 10;
-   //             Store items = new IntSeries(1, new int[] { 0, rows * cols - 1 }, virtualCount: rows * cols).Store;
-   //             object1.AddProperty(PropertyId.Items, new BlendStore(items));
-
-			//	var totalWidth = 500f;
-			//	float growth = 60;
-			//	//graphic.Orientation = 0.5f;
-			//	var armLen = totalWidth / (float) (cols - 1) / 3f;
-			//	var height = armLen * (float) Math.Sqrt(3) / 2f * (rows - 1f);
-			//	graphic.Radius = new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f).Store;
-
-			//	float[] start = {150, 150, 150 + totalWidth, 150 + height};
-			//	Sampler hexSampler = new HexagonSampler(new[] {cols, 0});
-			//	var startStore = new Store(new FloatSeries(2, start, cols * rows), hexSampler);
-
-			//	float[] end = {start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth};
-			//	var endStore = new Store(new FloatSeries(2, end, rows * cols), hexSampler);
-			//	if (_version == 1)
-			//	{
-   //                 Series minMax = new FloatSeries(2, -4f, -3f, 4f, 3f);
-			//		var randomStore = new RandomSeries(2, SeriesType.Float, rows * cols, minMax, 1111, CombineFunction.ContinuousAdd).Store;
-			//		// rs.setMinMax(.98f, 1f/.98f);
-			//		//endStore.HardenToData();
-			//		var fs = new FunctionalStore(endStore, randomStore);
-			//		object1.AddProperty(PropertyId.Location, new BlendStore(startStore, fs));
-			//	}
-			//	else
-			//	{
-			//		object1.AddProperty(PropertyId.Location, new BlendStore(startStore, endStore));
-			//	}
-
-			//	//startStore.HardenToData();
-			//	//endStore.HardenToData();
-			//	//endStore.Series.Shuffle();
-			//}
-			//else if (_version == 2)
-			//{
-			//	graphic.Radius = new FloatSeries(2, 10f, 15f, 20f, 15f).Store;
-			//	const int count = 50;
-			//	const int vectorSize = 2;
-   //             Series maxMinA = new FloatSeries(2, 0, 0, 1000f, 500f);
-   //             Series maxMinB = new FloatSeries(2, 200f, 100f, 600f, 300f);
-   //             var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).Store;
-   //             var endStore = new RandomSeries(2, SeriesType.Float, count, maxMinB).Store;
-   // //            var start = new float[count * vectorSize];
-			//	//var end = new float[count * vectorSize];
-			//	//for (var i = 0; i < count * vectorSize; i += vectorSize)
-			//	//{
-			//	//	start[i] = rnd.Next(500) + 100;
-			//	//	start[i + 1] = rnd.Next(300) + 50;
-			//	//	end[i] = start[i] + rnd.Next((int) start[i]) - start[i] / 2.0f;
-			//	//	end[i + 1] = start[i + 1] + rnd.Next(100) - 50;
-			//	//}
-
-			//	//var startStore = new FloatSeries(vectorSize, start).Store;
-			//	//var endStore = new FloatSeries(vectorSize, end).Store;
-			//	//endStore.HardenToData();
-			//	//SeriesUtils.Shuffle(endStore.GetSeries(0));
-
-			//	object1.AddProperty(PropertyId.Location, new BlendStore(startStore, endStore));
-			//	object1.shouldShuffle = true;
-			//}
-			//else if (_version == 3)
-   //         {
-   //             IntSeries itemData = new IntSeries(1, new int[] { 0, 149 }, virtualCount: 150);
-   //             itemData = (IntSeries)itemData.HardenToData();
-   //             SeriesUtils.Shuffle(itemData);
-   //             Store items = itemData.Store;
-   //             object1.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
-
-   //             graphic.PointCount = new float[]{3f,5.9f}.ToStore();
-			//	Sampler ringSampler = new RingSampler();
-			//	Sampler gridSampler = new GridSampler(new[] {15, 0, 0});
-			//	graphic.Radius = new FloatSeries(2, 5f, 5f, 15f, 15f).Store;
-			//	var vectorSize = 2;
-			//	var start = new float[] {100, 100, 500, 400};
-			//	var end = new float[] {100, 100, 500, 400};
-			//	var startStore = new Store(new FloatSeries(vectorSize, start, 150), ringSampler);
-			//	var endStore = new Store(new FloatSeries(vectorSize, end, 150), gridSampler);
-			//	//var fnStore = new FunctionalStore(startStore, endStore);
-			//	//endStore.HardenToData();
-			//	object1.AddProperty(PropertyId.Location, new BlendStore( startStore, endStore));
-			//}
-			
-   //         AddColor(object1);
-   //         object1.Graphic = graphic;
 		}
 
 		private Composite GetTest0()
 		{
-			easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
-
             var composite = new Composite();
 			AddGraphic(composite);
 			AddColor(composite);
@@ -175,15 +74,15 @@ namespace DataArcs.Components
 			var startStore = new Store(new FloatSeries(2, start, cols * rows), hexSampler);
 			float[] end = { start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth };
 			var endStore = new Store(new FloatSeries(2, end, rows * cols), hexSampler);
-			composite.AddProperty(PropertyId.Location, new BlendStore(startStore, endStore));
 
+			var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
+			composite.AddProperty(PropertyId.Location, new BlendStore(new IStore[] { startStore, endStore }, easeStore));
 
-            return composite;
+			return composite;
 		}
 
 		private Composite GetTest1()
 		{
-			easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
             var composite = GetTest0();
 
 			BlendStore loc = (BlendStore)composite.GetStore(PropertyId.Location);
@@ -197,8 +96,6 @@ namespace DataArcs.Components
 
 		private Composite GetTest2()
 		{
-			easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.SmoothStep4), CombineFunction.Multiply, CombineTarget.T);
-
 			var composite = new Composite();
 			AddGraphic(composite);
 			AddColor(composite);
@@ -209,13 +106,15 @@ namespace DataArcs.Components
 			Series maxMinB = new FloatSeries(2, 200f, 100f, 600f, 300f);
 			var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).Store;
 			var endStore = new RandomSeries(2, SeriesType.Float, count, maxMinB).Store;
-			composite.AddProperty(PropertyId.Location, new BlendStore(startStore, endStore));
-			composite.shouldShuffle = true;
+
+			var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.SmoothStep4), CombineFunction.Multiply, CombineTarget.T);
+			composite.AddProperty(PropertyId.Location, new BlendStore(new IStore[] { startStore, endStore }, easeStore));
+
+            composite.shouldShuffle = true;
 			return composite;
 		}
 		private Composite GetTest3()
-		{
-			easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
+        { 
             var composite = new Composite();
 			AddGraphic(composite);
 			AddColor(composite);
@@ -235,7 +134,9 @@ namespace DataArcs.Components
 			var end = new float[] { 100, 100, 500, 400 };
 			var startStore = new Store(new FloatSeries(vectorSize, start, 150), ringSampler);
 			var endStore = new Store(new FloatSeries(vectorSize, end, 150), gridSampler);
-			composite.AddProperty(PropertyId.Location, new BlendStore(startStore, endStore));
+
+			var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
+			composite.AddProperty(PropertyId.Location, new BlendStore(new IStore[] { startStore, endStore }, easeStore));
 
             return composite;
 		}
@@ -270,7 +171,6 @@ namespace DataArcs.Components
 				t = 1.0f - t;
 			}
 
-			t = easeStore.GetSeriesAtT(t).FloatDataAt(0);
 			object1.Update(time, t);
 			object1.Draw(g);
 		}

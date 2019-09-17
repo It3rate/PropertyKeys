@@ -12,11 +12,13 @@ namespace DataArcs.Transitions
 {
     public class BlendTransition : CompositeBase
     {
+	    private Store _easing;
+
         private float _startTime; // todo: All time should be one class, maybe even a store.
         private Series _delay;
         private Series _duration;
 
-        private Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
+        private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
         public Composite Start { get; }
         public Composite End { get; }
