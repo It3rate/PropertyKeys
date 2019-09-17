@@ -41,7 +41,7 @@ namespace DataArcs.Players
 
         public void AddElement(CompositeBase composite)
         {
-	        _elements.Add(composite.CompositeId, composite);
+	        _elements[composite.CompositeId] = composite;
         }
         public void RemoveElement(CompositeBase composite)
         {

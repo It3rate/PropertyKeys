@@ -5,6 +5,7 @@ using DataArcs.SeriesData;
 
 namespace DataArcs.Stores
 {
+	// todo: maybe. Remove blendStore as all transitions will happen at the composite level or functional blends.
 	public class BlendStore : StoreBase
     {
 		private readonly List<IStore> _stores;
@@ -30,13 +31,7 @@ namespace DataArcs.Stores
 			_stores = new List<IStore>(stores);
 		}
 
-		public IStore this[int index] // todo: change to return series
-		{
-			get => _stores[index];
-			set => _stores[index] = value;
-		}
-
-		public override Series GetSeries(int index)
+        public override Series GetSeries(int index)
 		{
 			return GetSeriesAtIndex(index, CurrentT);
 		}
@@ -73,32 +68,6 @@ namespace DataArcs.Stores
 			foreach (var store in _stores)
 			{
 				store.HardenToData();
-			}
-		}
-
-        public void Add(Store item)
-		{
-			_stores.Add(item);
-		}
-
-		public void Insert(int index, IStore item)
-		{
-			if (index >= 0 && index < _stores.Count)
-			{
-				_stores.Insert(index, item);
-			}
-		}
-
-		public bool Remove(IStore item)
-		{
-			return _stores.Remove(item);
-		}
-
-		public void RemoveAt(int index)
-		{
-			if (index >= 0 && index < _stores.Count)
-			{
-				_stores.RemoveAt(index);
 			}
 		}
 
@@ -180,6 +149,36 @@ namespace DataArcs.Stores
             }
 
             return result;
+        }
+
+
+        //public IStore this[int index] // todo: change to return series
+        //{
+        // get => _stores[index];
+        // set => _stores[index] = value;
+        //}
+
+        public IStore GetStoreAt(int index) => _stores[Math.Max(0, Math.Min(_stores.Count - 1, index))];
+        public void Add(IStore item) => _stores.Add(item);
+        public void Insert(int index, IStore item) => _stores.Insert(Math.Max(0, Math.Min(_stores.Count - 1, index)), item);
+        public bool Remove(IStore item) => _stores.Remove(item);
+        public void RemoveAt(int index)
+        {
+	        if (index >= 0 && index < _stores.Count)
+	        {
+		        _stores.RemoveAt(index);
+	        }
+        }
+        public bool RemoveById(int id)
+        {
+	        bool result = false;
+	        int index = _stores.FindIndex(s => s.StoreId == id);
+	        if (index > -1)
+	        {
+		        _stores.RemoveAt(index);
+		        result = true;
+	        }
+	        return result;
         }
 
     }

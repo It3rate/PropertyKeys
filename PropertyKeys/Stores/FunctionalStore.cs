@@ -1,34 +1,36 @@
-﻿using DataArcs.SeriesData;
+﻿using System;
+using DataArcs.SeriesData;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace DataArcs.Stores
 {
 	public class FunctionalStore : StoreBase
     {
-		public readonly Store[] Stores;
+		private readonly List<IStore> _stores;
 
 		public override int VirtualCount
 		{
-			get => GetNonTStore().VirtualCount;
-			set => GetNonTStore().VirtualCount = value;
+			get => GetStartDataStore().VirtualCount;
+			set => GetStartDataStore().VirtualCount = value;
 		}
 		
-		public FunctionalStore(params Store[] stores)
+		public FunctionalStore(params IStore[] stores)
 		{
-			Stores = stores;
+			_stores = new List<IStore>(stores);
 		}
 
         public Series this[int index] => GetSeriesAtIndex(index);
 
-		public override Series GetSeries(int index) => Stores[index].GetSeries(0);
+		public override Series GetSeries(int index) => _stores[index].GetSeries(0);
 
         public override Series GetSeriesAtIndex(int index, int virtualCount = -1)
 		{
-			var series = Stores[0].GetSeriesAtIndex(index, virtualCount);
-			for (var i = 1; i < Stores.Length; i++)
+			var series = _stores[0].GetSeriesAtIndex(index, virtualCount);
+			for (var i = 1; i < _stores.Count; i++)
 			{
-				var b = Stores[i].GetSeriesAtIndex(index, virtualCount);
-				series.CombineInto(b, Stores[i].CombineFunction);
+				var b = _stores[i].GetSeriesAtIndex(index, virtualCount);
+				series.CombineInto(b, _stores[i].CombineFunction);
 			}
 
 			return series;
@@ -37,8 +39,8 @@ namespace DataArcs.Stores
         public override Series GetSeriesAtT(float t, int virtualCount = -1)
 		{
 			Series series = null;
-			//var series = Stores[0].GetSeriesAtT(t, virtualCount);
-			foreach (var store in Stores)
+			//var series = _stores[0].GetSeriesAtT(t, virtualCount);
+			foreach (var store in _stores)
 			{
 				if (store.CombineTarget == CombineTarget.T)
 				{
@@ -59,7 +61,7 @@ namespace DataArcs.Stores
 
         public override void Update(float deltaTime)
 		{
-			foreach (var store in Stores)
+			foreach (var store in _stores)
 			{
 				store.Update(deltaTime);
 			}
@@ -67,7 +69,7 @@ namespace DataArcs.Stores
 
         public override void ResetData()
 		{
-			foreach (var store in Stores)
+			foreach (var store in _stores)
 			{
 				store.ResetData();
 			}
@@ -75,21 +77,46 @@ namespace DataArcs.Stores
 
         public override void HardenToData()
 		{
-			foreach (var store in Stores)
+			foreach (var store in _stores)
 			{
 				store.HardenToData();
 			}
 		}
 
-		private Store GetNonTStore()
+		private IStore GetStartDataStore()
 		{
-			Store result = Stores[0];
+			IStore result = _stores[0];
 			int index = 1;
-			while (result.CombineTarget == CombineTarget.T && index < Stores.Length)
+			while (result.CombineTarget == CombineTarget.T && index < _stores.Count)
 			{
-				result = Stores[index];
+				result = _stores[index];
 			}
 			return result;
 		}
+
+		
+		public IStore GetStoreAt(int index) => _stores[Math.Max(0, Math.Min(_stores.Count - 1, index))];
+		public void Add(IStore item) => _stores.Add(item);
+		public void Insert(int index, IStore item) => _stores.Insert(Math.Max(0, Math.Min(_stores.Count - 1, index)), item);
+		public bool Remove(IStore item) => _stores.Remove(item);
+		public void RemoveAt(int index)
+		{
+			if (index >= 0 && index < _stores.Count)
+			{
+				_stores.RemoveAt(index);
+			}
+		}
+		public bool RemoveById(int id)
+		{
+			bool result = false;
+			int index = _stores.FindIndex(s => s.StoreId == id);
+			if (index > -1)
+			{
+				_stores.RemoveAt(index);
+				result = true;
+			}
+			return result;
+		}
+
     }
 }

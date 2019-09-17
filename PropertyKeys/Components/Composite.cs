@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using DataArcs.Adapters;
 using DataArcs.Adapters.Color;
 using DataArcs.Adapters.Geometry;
@@ -34,13 +35,32 @@ namespace DataArcs.Components
 
 			return result;
 		}
-        
-		public void AddProperty(PropertyId id, BlendStore propertyStore)
+
+		public void AddProperty(PropertyId id, IStore store)
 		{
-			_stores.Add(id, propertyStore);
+			_stores[id] = store;
+		}
+		public void AppendProperty(PropertyId id, IStore store)
+		{
+			if (_stores.ContainsKey(id))
+			{
+				IStore curStore = _stores[id];
+				if (curStore is FunctionalStore)
+				{
+					((FunctionalStore) curStore).Add(curStore);
+				}
+				else
+				{
+					_stores[id] = new FunctionalStore(curStore, store);
+				}
+			}
+			else
+			{
+				AddProperty(id, store);
+			}
 		}
 
-		public void RemoveProperty(PropertyId id, BlendStore propertyStore)
+        public void RemoveProperty(PropertyId id, BlendStore store)
 		{
 			_stores.Remove(id);
 		}
@@ -68,11 +88,11 @@ namespace DataArcs.Components
 
             if (deltaTime <= 0.05f && shouldShuffle)
             {
-                SeriesUtils.Shuffle(((BlendStore)GetStore(PropertyId.Location))[1].GetSeries(0));
+                SeriesUtils.Shuffle(((BlendStore)GetStore(PropertyId.Location)).GetStoreAt(1).GetSeries(0));
             }
             if (deltaTime > 0.99 && shouldShuffle)
             {
-                Series s = ((BlendStore)GetStore(PropertyId.Location))[0].GetSeries(0);
+                Series s = ((BlendStore)GetStore(PropertyId.Location)).GetStoreAt(0).GetSeries(0);
                 RandomSeries rs = (RandomSeries)s;
                 rs.Seed = rs.Seed + 1;
             }

@@ -17,24 +17,27 @@ namespace DataArcs.Graphic
 		public Store Roundness { get; set; }
 		public Store Radius { get; set; }
 
-		public PolyShape(float radius, float orientation = 0, int pointCount = 4, float roundness = 0,
-			float starness = 0)
-		{
-			Orientation = new Store(new[] {orientation});
-			PointCount = new Store(new[] {pointCount});
-			Roundness = new Store(new[] {roundness});
-			Starness = new Store(new[] {starness});
-			Radius = new Store(new FloatSeries(2, radius, radius));
-		}
+		public PolyShape(float radius, float orientation = 0, int pointCount = 4, float roundness = 0, float starness = 0) : this (
+			new Store(new[] { radius }),
+			new Store(new[] { orientation }),
+			new Store(new[] { pointCount }),
+			new Store(new[] { roundness }),
+			new Store(new[] { starness }) ) { }
 
-		public PolyShape(float[] radius, float[] orientation = null, int[] pointCount = null, float[] roundness = null,
-			float[] starness = null)
+		public PolyShape(float[] radius, float[] orientation = null, int[] pointCount = null, float[] roundness = null, float[] starness = null) : this(
+			radius != null ? new Store(radius) : null,
+			orientation != null ? new Store(orientation) : null,
+			pointCount != null ? new Store(pointCount) : null,
+			roundness != null ? new Store(roundness) : null,
+			starness != null ? new Store(starness) : null) { }
+
+		public PolyShape(Store radius, Store orientation = null, Store pointCount = null, Store roundness = null, Store starness = null)
 		{
-			Orientation = orientation == null ? new Store(new[] { 0f }) : new Store(orientation);
-			PointCount = pointCount == null ? new Store(new[] { 4 }) : new Store(pointCount);
-			Roundness = roundness == null ? new Store(new[] { 0f }) : new Store(roundness);
-			Starness = starness == null ? new Store(new[] { 1, 0f }) : new Store(starness);
-			Radius = radius == null ? new Store(new FloatSeries(2, 10f, 10f)) : new Store(new FloatSeries(2, radius));
+			Orientation = orientation ?? new Store(new[] { 0f });
+			PointCount = pointCount ?? new Store(new[] { 4 });
+			Roundness = roundness ?? new Store(new[] { 0f });
+			Starness = starness ?? new Store(new[] { 1, 0f });
+			Radius = radius ?? new Store(new FloatSeries(2, 10f, 10f));
 		}
 
         //public FloatStore Orientation

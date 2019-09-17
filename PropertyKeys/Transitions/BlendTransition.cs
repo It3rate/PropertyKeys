@@ -53,7 +53,7 @@ namespace DataArcs.Transitions
             {
 	            if (Start.GetStore(key).StoreId != End.GetStore(key).StoreId)
 	            {
-					_blends.Add(key, (BlendStore)GetStore(key));
+					_blends[key] = (BlendStore)GetStore(key);
 	            }
             }
         }

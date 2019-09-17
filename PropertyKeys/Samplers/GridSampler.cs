@@ -36,7 +36,7 @@ namespace DataArcs.Samplers
 
 			for (var i = 0; i < result.Length; i++)
 			{
-				result[i] = series.GetValueAtT(strideTs[i]).FloatDataAt(i);
+				result[i] = (i < strides.Length) ? series.GetValueAtT(strideTs[i]).FloatDataAt(i) : 0;
 			}
 
 			return SeriesUtils.Create(series, result);

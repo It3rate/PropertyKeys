@@ -73,6 +73,14 @@ namespace DataArcs.Stores
 		}
 
 
-		
+
+		public FunctionalStore CreateFunctionalStore(IStore store)
+		{
+			return new FunctionalStore(this, store);
+		}
+		public BlendStore CreateBlendStore(IStore store)
+		{
+			return new BlendStore(this, store);
+		}
     }
 }

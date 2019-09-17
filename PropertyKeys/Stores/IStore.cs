@@ -17,6 +17,7 @@ namespace DataArcs.Stores
 		void Update(float deltaTime);
 		void ResetData();
 		void HardenToData();
+
     }
 
     public class IStoreEnumerator : IEnumerator
