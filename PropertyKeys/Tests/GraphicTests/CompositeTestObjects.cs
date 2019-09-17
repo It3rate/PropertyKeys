@@ -13,6 +13,7 @@ namespace DataArcs.Tests.GraphicTests
 {
     public class CompositeTestObjects
     {
+	    public const int VersionCount = 4;
         public static Composite GetTest0()
         {
 	        var composite = new Composite();

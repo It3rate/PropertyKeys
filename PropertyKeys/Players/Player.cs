@@ -14,9 +14,9 @@ namespace DataArcs.Players
 	    public static DateTime StartTime { get; }
 	    static Player() { StartTime = DateTime.Now;}
 
-		private Dictionary<int, CompositeBase> _elements = new Dictionary<int, CompositeBase>();
+		private readonly Dictionary<int, CompositeBase> _elements = new Dictionary<int, CompositeBase>();
 
-		private Form _display;
+		private readonly Form _display;
         private Timer _timer;
         private DateTime _lastTime;
         private DateTime _currentTime;
@@ -37,25 +37,6 @@ namespace DataArcs.Players
 			_timer.Enabled = true;
 
 			_display.Paint += OnDraw;
-        }
-
-        public void AddElement(CompositeBase composite)
-        {
-	        _elements[composite.CompositeId] = composite;
-        }
-        public void RemoveElement(CompositeBase composite)
-        {
-	        if (_elements.ContainsKey(composite.CompositeId))
-	        {
-		        _elements.Remove(composite.CompositeId);
-	        }
-        }
-        public void RemoveElementById(int id)
-        {
-	        if (_elements.ContainsKey(id))
-	        {
-		        _elements.Remove(id);
-	        }
         }
 
         private float t = 0;
@@ -91,6 +72,23 @@ namespace DataArcs.Players
 		        element.Draw(e.Graphics);
 	        }
         }
+
+        public void AddElement(CompositeBase composite) => _elements[composite.CompositeId] = composite;
+        public void RemoveElement(CompositeBase composite)
+        {
+	        if (_elements.ContainsKey(composite.CompositeId))
+	        {
+		        _elements.Remove(composite.CompositeId);
+	        }
+        }
+        public void RemoveElementById(int id)
+        {
+	        if (_elements.ContainsKey(id))
+	        {
+		        _elements.Remove(id);
+	        }
+        }
+        public void Clear() => _elements.Clear();
 
     }
 }

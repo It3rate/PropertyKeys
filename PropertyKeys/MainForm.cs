@@ -10,6 +10,8 @@ namespace DataArcs
 {
 	public partial class MainForm : Form
 	{
+		private readonly Player _player;
+
 		private static void Main(string[] args)
 		{
 			Application.EnableVisualStyles();
@@ -17,67 +19,54 @@ namespace DataArcs
 			Application.Run(new MainForm());
 		}
 
-		//private Circles circles;
-		private System.Timers.Timer timer;
-		private DateTime curTime;
-		private float t = 0;
-
-		private int version = 3;
-
 		public MainForm()
 		{
 			InitializeComponent();
 			DoubleBuffered = true;
 
-			var b0 = new Button();
+            var b0 = new Button();
 			b0.Text = "Next";
 			b0.Click += B0_Click;
-
 			Controls.Add(b0);
 
-			Player player = new Player(this);
-			player.AddElement(CompositeTestObjects.GetTest0());
-			player.AddElement(CompositeTestObjects.GetTest3());
-
-            //circles = new Circles(version);
-
-            curTime = DateTime.Now;
-			timer = new System.Timers.Timer();
-			timer.Elapsed += Tick;
-			timer.Interval = 8;
-			timer.Enabled = true;
-            this.Paint += MainForm_Paint;
+			_player = new Player(this);
+			B0_Click(null, null);
 		}
 
-        private void MainForm_Paint(object sender, PaintEventArgs e)
-        {
-	        //e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-	        //circles.Draw(e.Graphics, t);
-        }
+		// Sequencer
+		// convert to cuda
+		// hook up to commands
+		// definitions/instances
+		// basic UI
+		// Add algorithmic step sampler (physics, navier stokes, runge kutta, reaction diffusion etc)
+		// add ML in simple 'bacteria' test
+		// matrix support
 
+        private int _version = -1;
         private void B0_Click(object sender, EventArgs e)
 		{
-			version++;
-			if (version >= Circles.versionCount)
+			_version++;
+			if (_version >= CompositeTestObjects.VersionCount)
 			{
-				version = 0;
+				_version = 0;
 			}
 
-			//circles = new Circles(version);
-		}
-
-		private void Tick(object sender, ElapsedEventArgs e)
-		{
-			t += version == 2 ? 0.008f : 0.01f; // (e.SignalTime - curTime).Milliseconds / 3000f;
-			curTime = e.SignalTime;
-			Invalidate();
-		}
-
-		//protected override void OnPaint(PaintEventArgs e)
-		//{
-		//	base.OnPaint(e);
-		//	e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-		//	circles.Draw(e.Graphics, t);
-		//}
+			_player.Clear();
+			switch (_version)
+			{
+				case 0:
+					_player.AddElement(CompositeTestObjects.GetTest0());
+					break;
+				case 1:
+					_player.AddElement(CompositeTestObjects.GetTest1());
+					break;
+				case 2:
+					_player.AddElement(CompositeTestObjects.GetTest2());
+					break;
+				case 3:
+					_player.AddElement(CompositeTestObjects.GetTest3());
+					break;
+			}
+        }
 	}
 }
