@@ -22,6 +22,7 @@ namespace DataArcs.Components
 	        CompositeId = _idCounter++;
         }
 
+        //public abstract void AddProperty(PropertyId id, IStore store);
         public abstract IStore GetStore(PropertyId propertyId);
         public abstract void GetDefinedStores(HashSet<PropertyId> ids);
         public abstract void Update(float currentTime, float deltaTime);

@@ -24,8 +24,9 @@ namespace DataArcs.Samplers
 		SmoothStep5,
 		SmoothStep6,
 
+		Arch,
 		BellCurve4,
-		BellCurve6,
+        BellCurve6,
 		InverseBellCurve4,
 		InverseBellCurve6,
         InverseSquared,
@@ -37,6 +38,8 @@ namespace DataArcs.Samplers
 		EaseInOut4,
 		EaseInOut5,
 		EaseInOut6,
+
+		EaseInOut3AndBack,
     }
 
 	public class Easing : Sampler
@@ -122,7 +125,10 @@ namespace DataArcs.Samplers
 					result = CrossFade(EasingType.SmoothStart6, EasingType.SmoothStop6, t);
 					break;
 
-				case EasingType.BellCurve4:
+				case EasingType.Arch:
+					result = Scale(EasingType.Linear, t);
+					break;
+                case EasingType.BellCurve4:
 					result = Mult(EasingType.SmoothStop2, EasingType.SmoothStart2, t);
 					break;
 				case EasingType.BellCurve6:
@@ -162,6 +168,17 @@ namespace DataArcs.Samplers
 					break;
 				case EasingType.EaseInOut6:
 					result = InOut(6, t);
+					break;
+
+				case EasingType.EaseInOut3AndBack:
+					if (t < 0.5f)
+					{
+						result = InOut(3, t*2);
+                    }
+					else
+					{
+						result = 1f - InOut(3, (t - 0.5f) * 2f);
+                    }
 					break;
             }
 

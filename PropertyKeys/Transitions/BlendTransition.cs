@@ -2,6 +2,7 @@
 using DataArcs.Stores;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,27 +14,28 @@ namespace DataArcs.Transitions
     public class BlendTransition : CompositeBase
     {
 	    private Store _easing;
-
+		
         private float _startTime; // todo: All time should be one class, maybe even a store.
         private Series _delay;
         private Series _duration;
 
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
-        public Composite Start { get; }
-        public Composite End { get; }
+        public CompositeBase Start { get; }
+        public CompositeBase End { get; }
 
-        public BlendTransition(Composite start, Composite end, float delay = 0, float startTime = -1, float duration = 0)
+        public BlendTransition(CompositeBase start, CompositeBase end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null)
         {
 	        Start = start;
 	        End = end;
 	        _delay = new FloatSeries(1, delay);
 	        _startTime = startTime < 0 ? (float)(DateTime.Now - Player.StartTime).TotalMilliseconds : startTime;
 	        _duration = new FloatSeries(1, duration);
+	        _easing = easing;
 	        GenerateBlends(); // eventually immutable after creation, so no new blends
         }
 
-        public BlendTransition(Composite start, Composite end, Series delay, float startTime, Series duration)
+        public BlendTransition(CompositeBase start, CompositeBase end, Series delay, float startTime, Series duration)
         {
 	        Start = start;
 	        End = end;
@@ -45,6 +47,8 @@ namespace DataArcs.Transitions
 
         private void GenerateBlends()
         {
+	        Graphic = Start.Graphic;
+
             _blends.Clear();
             HashSet<PropertyId> commonKeys = new HashSet<PropertyId>();
             HashSet<PropertyId> endKeys = new HashSet<PropertyId>();
@@ -62,10 +66,21 @@ namespace DataArcs.Transitions
 
         public override void Update(float currentTime, float deltaTime)
         {
-            //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration ? 1f : (deltaTime - _startTime) / _duration;
+	        float dur = _duration.FloatDataAt(0);
+	        if (currentTime > _startTime + dur)
+	        {
+		        _startTime += dur;
+	        }
+            //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.FloatDataAt(0) ? 1f : (deltaTime - _startTime) / _duration.FloatDataAt(0);
+            CurrentT = currentTime < _startTime ? 0 : 
+		        currentTime > _startTime + dur ? 1f : 
+		        (currentTime - _startTime) / dur;
+
+            Start.Update(currentTime, deltaTime);
+            End.Update(currentTime, deltaTime);
             foreach (var item in _blends.Values)
             {
-                item.Update(deltaTime);
+                item.Update(CurrentT);
             }
         }
 
@@ -76,11 +91,13 @@ namespace DataArcs.Transitions
 	        {
 		        result = Start.GetSeriesAtT(propertyId, t, virtualCount);
 		        Series end = End.GetSeriesAtT(propertyId, t, virtualCount);
-		        float delT = _delay.GetValueAtT(t).FloatDataAt(0);
-		        float durT = _delay.GetValueAtT(t).FloatDataAt(0);
-		        float delRatio = delT / (delT + durT);
-		        float blendT = delRatio < t ? 0 : (t - delRatio) * (1f / delRatio);
-		        result.InterpolateInto(end, blendT);
+                //float delT = _delay.GetValueAtT(t).FloatDataAt(0);
+                //float durT = _duration.GetValueAtT(t).FloatDataAt(0);
+                //float delRatio = delT / (delT + durT);
+                //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
+                float easedT = _easing?.GetSeriesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
+                Debug.WriteLine(easedT);
+                result.InterpolateInto(end, easedT);
             }
 	        else
 	        {

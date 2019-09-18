@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Timers;
 using System.Windows.Forms;
@@ -18,8 +19,9 @@ namespace DataArcs.Players
 
 		private readonly Form _display;
         private Timer _timer;
-        private DateTime _lastTime;
-        private DateTime _currentTime;
+        private TimeSpan _lastTime;
+        private TimeSpan _currentTime;
+        public float CurrentMs => (float)_currentTime.TotalMilliseconds;
 
         public Player(Form display)
 		{
@@ -29,7 +31,8 @@ namespace DataArcs.Players
 
         private void Initialize()
         {
-	        _lastTime = new DateTime(0);
+	        _currentTime = DateTime.Now - StartTime;
+	        _lastTime = _currentTime;
 
             _timer = new Timer();
 			_timer.Elapsed += Tick;
@@ -42,11 +45,11 @@ namespace DataArcs.Players
         private float t = 0;
         private void Tick(object sender, ElapsedEventArgs e)
         {
-	        if (_lastTime.Ticks == 0)
-	        {
-		        _lastTime = e.SignalTime;
-	        }
-            _currentTime = e.SignalTime;
+	        //if (_lastTime.Ticks == 0)
+	        //{
+		       // _lastTime = e.SignalTime;
+	        //}
+            _currentTime = e.SignalTime - StartTime;
 
             t += 0.01f;
             var floorT = (int)t;
@@ -55,10 +58,13 @@ namespace DataArcs.Players
             {
 	            time = 1.0f - time;
             }
+
+            float dt = (float) (_currentTime - _lastTime).TotalMilliseconds;
+            //Debug.WriteLine(dt);
             foreach (var element in _elements.Values)
             {
-	            element.Update(time, time);//(float)TimeSpan.FromTicks(_currentTime.Ticks).TotalMilliseconds, (float)(_currentTime - _lastTime).TotalMilliseconds);
-	        }
+	            element.Update(CurrentMs, dt);
+            }
 	        _display.Invalidate();
 
 	        _lastTime = _currentTime;

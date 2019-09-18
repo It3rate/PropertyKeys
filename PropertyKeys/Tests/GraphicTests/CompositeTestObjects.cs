@@ -8,13 +8,14 @@ using DataArcs.Graphic;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
+using DataArcs.Transitions;
 
 namespace DataArcs.Tests.GraphicTests
 {
     public class CompositeTestObjects
     {
 	    public const int VersionCount = 4;
-        public static Composite GetTest0()
+        public static CompositeBase GetTest0(float delay, float startTime, float duration)
         {
 	        var composite = new Composite();
             AddGraphic(composite);
@@ -34,29 +35,32 @@ namespace DataArcs.Tests.GraphicTests
             float[] start = { 150, 150, 150 + totalWidth, 150 + height };
             Sampler hexSampler = new HexagonSampler(new[] { cols, 0 });
             var startStore = new Store(new FloatSeries(2, start, cols * rows), hexSampler);
+
+            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
+            composite.AddProperty(PropertyId.Location, startStore);
+
+
+            Composite endComp = (Composite)composite.CreateChild();
             float[] end = { start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth };
-            var endStore = new Store(new FloatSeries(2, end, rows * cols), hexSampler);
+            endComp.AddProperty(PropertyId.Location, new Store(new FloatSeries(2, end, rows * cols), hexSampler, CombineFunction.Replace));
 
-            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
-            composite.AddProperty(PropertyId.Location, new BlendStore(new IStore[]{startStore, endStore}, easeStore));
-
-            return composite;
+            return new BlendTransition(composite, endComp, delay, startTime, duration, easeStore);
         }
 
-        public static Composite GetTest1()
+        public static CompositeBase GetTest1(float delay, float startTime, float duration)
         {
-            var composite = GetTest0();
+	        BlendTransition bt = (BlendTransition)GetTest0(delay, startTime, duration);
 
-            BlendStore loc = (BlendStore)composite.GetStore(PropertyId.Location);
+            IStore endLocStore = bt.End.GetStore(PropertyId.Location);
             Series minMax = new FloatSeries(2, -4f, -3f, 4f, 3f);
-            var randomStore = new RandomSeries(2, SeriesType.Float, loc.VirtualCount, minMax, 1111, CombineFunction.ContinuousAdd).Store;
+            var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.VirtualCount, minMax, 1111, CombineFunction.ContinuousAdd).Store;
 
-            var fs = new FunctionalStore(loc.GetStoreAt(1), randomStore);
-            composite.AddProperty(PropertyId.Location, new BlendStore(loc.GetStoreAt(0), fs));
-            return composite;
+            var fs = new FunctionalStore(endLocStore, randomStore);
+            ((Composite)bt.End).AddProperty(PropertyId.Location, fs);
+            return bt;
         }
 
-        public static Composite GetTest2()
+        public static CompositeBase GetTest2(float delay, float startTime, float duration)
         {
             var composite = new Composite();
             AddGraphic(composite);
@@ -67,15 +71,19 @@ namespace DataArcs.Tests.GraphicTests
             Series maxMinA = new FloatSeries(2, 0, 0, 1000f, 500f);
             Series maxMinB = new FloatSeries(2, 200f, 100f, 600f, 300f);
             var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).Store;
-            var endStore = new RandomSeries(2, SeriesType.Float, count, maxMinB).Store;
+            composite.AddProperty(PropertyId.Location, startStore);
 
-            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.SmoothStep4), CombineFunction.Multiply, CombineTarget.T);
-            composite.AddProperty(PropertyId.Location, new BlendStore(new IStore[] { startStore, endStore }, easeStore));
+            Composite endComp = (Composite)composite.CreateChild();
+            var endStore = new Store(new RandomSeries(2, SeriesType.Float, count, maxMinB, 0, CombineFunction.Replace));
+            endComp.AddProperty(PropertyId.Location, endStore);
+
+            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
 
             composite.shouldShuffle = true;
-            return composite;
+            return new BlendTransition(composite, endComp, delay, startTime, duration, easeStore);
+
         }
-        public static Composite GetTest3()
+        public static CompositeBase GetTest3(float delay, float startTime, float duration)
         {
             var composite = new Composite();
             AddGraphic(composite);
@@ -87,20 +95,23 @@ namespace DataArcs.Tests.GraphicTests
             Store items = itemData.Store;
             composite.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
 
-            ((PolyShape)composite.Graphic).PointCount = new float[] { 3f, 5.9f }.ToStore();
+            ((PolyShape)composite.Graphic).PointCount = new float[] { 3f, 6f, 3f }.ToStore();
             Sampler ringSampler = new RingSampler();
             Sampler gridSampler = new GridSampler(new[] { 15, 0, 0 });
-            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 5f, 5f, 15f, 15f).Store;
+            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 5f, 5f, 15f, 15f, 5f, 5f).Store;
             var vectorSize = 2;
             var start = new float[] { 100, 100, 500, 400 };
             var end = new float[] { 100, 100, 500, 400 };
             var startStore = new Store(new FloatSeries(vectorSize, start, 150), ringSampler);
-            var endStore = new Store(new FloatSeries(vectorSize, end, 150), gridSampler);
 
-            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut2), CombineFunction.Multiply, CombineTarget.T);
-            composite.AddProperty(PropertyId.Location, new BlendStore(new IStore[] { startStore, endStore }, easeStore));
+            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
+            composite.AddProperty(PropertyId.Location, startStore);
 
-            return composite;
+            Composite endComp = (Composite)composite.CreateChild();
+            var endStore = new Store(new FloatSeries(vectorSize, end, 150), gridSampler, CombineFunction.Replace);
+            endComp.AddProperty(PropertyId.Location, endStore);
+
+            return new BlendTransition(composite, endComp, delay, startTime, duration, easeStore);
         }
 
         private static void AddGraphic(Composite composite)

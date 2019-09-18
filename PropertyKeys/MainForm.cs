@@ -31,6 +31,7 @@ namespace DataArcs
 
 			_player = new Player(this);
 			B0_Click(null, null);
+			Invalidate();
 		}
 
 		// Sequencer
@@ -55,16 +56,16 @@ namespace DataArcs
 			switch (_version)
 			{
 				case 0:
-					_player.AddElement(CompositeTestObjects.GetTest0());
+					_player.AddElement(CompositeTestObjects.GetTest0(0, _player.CurrentMs, 1000f));
 					break;
 				case 1:
-					_player.AddElement(CompositeTestObjects.GetTest1());
+					_player.AddElement(CompositeTestObjects.GetTest1(0, _player.CurrentMs, 1000f));
 					break;
 				case 2:
-					_player.AddElement(CompositeTestObjects.GetTest2());
+					_player.AddElement(CompositeTestObjects.GetTest2(0, _player.CurrentMs, 1000f));
 					break;
 				case 3:
-					_player.AddElement(CompositeTestObjects.GetTest3());
+					_player.AddElement(CompositeTestObjects.GetTest3(0, _player.CurrentMs, 3000f));
 					break;
 			}
         }
