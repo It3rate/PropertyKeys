@@ -45,10 +45,6 @@ namespace DataArcs.Players
         private float t = 0;
         private void Tick(object sender, ElapsedEventArgs e)
         {
-	        //if (_lastTime.Ticks == 0)
-	        //{
-		       // _lastTime = e.SignalTime;
-	        //}
             _currentTime = e.SignalTime - StartTime;
 
             t += 0.01f;
