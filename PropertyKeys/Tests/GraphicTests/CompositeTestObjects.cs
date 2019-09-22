@@ -21,7 +21,7 @@ namespace DataArcs.Tests.GraphicTests
             AddGraphic(composite);
             AddColor(composite);
 
-            var cols = 10;
+            var cols = 15;
             var rows = 10;
             Store items = new IntSeries(1, new int[] { 0, rows * cols - 1 }).Store;
             items.VirtualCount = rows * cols;
@@ -95,12 +95,17 @@ namespace DataArcs.Tests.GraphicTests
             //itemData = (IntSeries)itemData.HardenToData();
             Store items = new Store(itemData, virtualCount: 150);
             items.HardenToData();
-            SeriesUtils.Shuffle(itemData);
+            
+            //SeriesUtils.Shuffle(items.GetFullSeries(0));
             composite.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
 
-            ((PolyShape)composite.Graphic).PointCount = new float[] { 3.1f, 7f, 7f, 3.1f }.ToStore();
-            Sampler ringSampler = new RingSampler(new int[] { 60, 50, 40 });
-            Sampler gridSampler = new GridSampler(new[] { 15, 0, 0 });
+            float[] pointArray = new float[] { 3f, 7f, 7f, 3f };
+            ((PolyShape)composite.Graphic).PointCount = new Store(pointArray, new Easing(EasingType.EaseInOut));
+
+            Sampler ringSampler = new RingSampler(new int[] { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15 });
+            //Sampler ringSampler = new RingSampler(new int[] { 30, 20, 15, 15, 15, 15, 15, 10, 10, 5 });
+            //Sampler ringSampler = new RingSampler(new int[] { 60, 50, 40 });
+            Sampler gridSampler = new GridSampler(new[] { 15, 10});
             ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 10f, 10f, 15f, 15f, 10f, 10f).Store;
             var vectorSize = 2;
             var start = new float[] { 100, 100, 500, 400 };
@@ -120,16 +125,16 @@ namespace DataArcs.Tests.GraphicTests
         private static void AddGraphic(Composite composite)
         {
             composite.Graphic = new PolyShape(
-                radius: new Store(new float[] { 10f, 20f }),
-                orientation: new Store(new float[] { 1f / 12f, 0.3f }),
-                starness: new Store(new float[] { 0, -0.3f }),
+                radius: new Store(new float[] { 10f, 20f, 10f }),
+                orientation: new Store(new float[] { 0.3f, 1f / 12f, 0.3f }),
+                starness: new Store(new float[] { 0, -0.3f, 0 }),
                 pointCount: new Store(new FloatSeries(1, new float[] { 6.0f, 10.99f }), virtualCount: 6)
 	        );
         }
 
         private static void AddColor(Composite composite)
         {
-	        Sampler colorSampler = new LineSampler(); //new GridSampler(new []{10, 0});
+	        Sampler colorSampler = new LineSampler(); //new GridSampler(new []{10, 10});
 	        var start = new float[] { 0.3f, 0.1f, 0.2f, 1f, 1f, 0, 0, 0.15f, 1f, 0, 0.5f, 0.1f };
 	        var end = new float[] { 0, 0.2f, 0.7f, 0.8f, 0, 0.3f, 0.7f, 1f, 0.1f, 0.4f, 0, 1f };
 	        var colorStartStore = new Store(new FloatSeries(3, start), colorSampler);

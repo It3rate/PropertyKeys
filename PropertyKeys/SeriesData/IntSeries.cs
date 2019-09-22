@@ -132,13 +132,15 @@ namespace DataArcs.SeriesData
 		public override bool[] BoolData => throw new NotImplementedException();
 
 		public override float FloatDataAt(int index)
-		{
-			return index >= 0 && index < _intValues.Length ? (float) _intValues[index] : 0;
+        {
+            index = Math.Max(0, Math.Min(_intValues.Length - 1, index));
+            return (float)_intValues[index];
 		}
 
 		public override int IntDataAt(int index)
-		{
-			return index >= 0 && index < _intValues.Length ? _intValues[index] : 0;
+        {
+            index = Math.Max(0, Math.Min(_intValues.Length - 1, index));
+            return _intValues[index];
 		}
 
 		public override bool BoolDataAt(int index)

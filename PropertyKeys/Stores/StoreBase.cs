@@ -29,6 +29,8 @@ namespace DataArcs.Stores
 
         public abstract Series GetSeriesAtT(float t, int virtualCount = -1);
 
+        public abstract ParametricSeries GetSampledT(float t);
+
         public abstract void Update(float deltaTime);
 
         public abstract void ResetData();

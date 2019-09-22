@@ -14,7 +14,9 @@ namespace DataArcs.Stores
 		Series GetFullSeries(int index);
 		Series GetSeriesAtIndex(int index, int virtualCount = -1);
 		Series GetSeriesAtT(float t, int virtualCount = -1);
-		void Update(float deltaTime);
+        ParametricSeries GetSampledT(float t);
+
+        void Update(float deltaTime);
 		void ResetData();
 		void HardenToData();
 

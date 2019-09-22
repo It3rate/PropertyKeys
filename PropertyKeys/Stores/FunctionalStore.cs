@@ -57,7 +57,31 @@ namespace DataArcs.Stores
                 }
 			}
 			return series;
-		}
+        }
+
+        public override ParametricSeries GetSampledT(float t)
+        {
+            ParametricSeries result = null;
+
+            foreach (var store in _stores)
+            {
+                if (store.CombineTarget == CombineTarget.T)
+                {
+                    t = store.GetSampledT(t).FloatDataAt(0);
+                }
+                else if (result != null)
+                {
+                    var b = store.GetSampledT(t);
+                    result.CombineInto(b, store.CombineFunction);
+                }
+                else
+                {
+                    result = store.GetSampledT(t);
+                }
+            }
+            
+            return result;
+        }
 
         public override void Update(float deltaTime)
 		{

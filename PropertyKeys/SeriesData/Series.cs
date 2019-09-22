@@ -82,19 +82,6 @@ namespace DataArcs.SeriesData
             var indexT = index / (virtualCount - 1f);
             return GetValueAtT(indexT);
         }
-        //public virtual Series GetValueAtVirtualIndex(int index, int vectorSize)
-        //{
-        //    var indexT = index / (VirtualCount - 1f);
-        //    Series result = GetValueAtT(indexT);
-        //    if (result.VectorSize != vectorSize)
-        //    {
-        //        result.VectorSize = 1;
-        //        result.VirtualCount = vectorSize;
-        //        result.HardenToData();
-        //        result.VectorSize = vectorSize;
-        //    }
-        //    return result;
-        //}
 
         // todo: All float t's should probably be float[] t.
         public virtual Series GetValueAtT(float t)

@@ -6,6 +6,7 @@ using System.Drawing;
 using DataArcs.Adapters.Color;
 using DataArcs.Adapters.Geometry;
 using DataArcs.Graphic;
+using DataArcs.Samplers;
 
 namespace DataArcs.Components
 {
@@ -32,6 +33,11 @@ namespace DataArcs.Components
         {
 	        var store = GetStore(propertyId);
 	        return store != null ? store.GetSeriesAtT(t, virtualCount) : SeriesUtils.GetZeroFloatSeries(1, 0);
+        }
+        public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
+        {
+            var store = GetStore(propertyId);
+            return store != null ? store.GetSampledT(t) : new ParametricSeries(1, t);
         }
 
         public virtual void Draw(Graphics g)
@@ -60,7 +66,10 @@ namespace DataArcs.Components
         {
             var it = index / (count - 1f);
             Series v = GetSeriesAtT(PropertyId.Location, it, count);
-            var c = GetSeriesAtT(PropertyId.FillColor, it).RGB();
+            
+            ParametricSeries ps = GetSampledT(PropertyId.Location, it);
+
+            var c = GetSeriesAtT(PropertyId.FillColor, ps.FloatDataAt(0)).RGB();
 
             Brush b = new SolidBrush(c);
             var state = g.Save();

@@ -9,8 +9,7 @@ namespace DataArcs.SeriesData
         public override int Count => (int)(_floatValues.Length / VectorSize);
         public override int DataSize => _floatValues.Length;
         
-		public FloatSeries(int vectorSize, params float[] values) :
-			base(vectorSize, SeriesType.Float)
+		public FloatSeries(int vectorSize, params float[] values) : base(vectorSize, SeriesType.Float)
 		{
 			_floatValues = values;
 		}
@@ -136,12 +135,14 @@ namespace DataArcs.SeriesData
 		//public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
 		public override float FloatDataAt(int index)
 		{
-			return index >= 0 && index < _floatValues.Length ? _floatValues[index] : 0;
+            index = Math.Max(0, Math.Min(_floatValues.Length - 1, index));
+			return _floatValues[index];
 		}
 
 		public override int IntDataAt(int index)
-		{
-			return index >= 0 && index < _floatValues.Length ? (int) _floatValues[index] : 0;
+        {
+            index = Math.Max(0, Math.Min(_floatValues.Length - 1, index));
+            return (int)_floatValues[index];
 		}
 
 		public override bool BoolDataAt(int index)

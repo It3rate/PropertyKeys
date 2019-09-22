@@ -52,7 +52,28 @@ namespace DataArcs.Stores
 			return GetSeriesAtT(t, CurrentT, virtualCount);
 		}
 
-		public override void Update(float deltaTime)
+        public override ParametricSeries GetSampledT(float t)
+        {
+            ParametricSeries result;
+
+            SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
+            vT = _easing?.GetSeriesAtT(vT).FloatDataAt(0) ?? vT;
+
+            if (startIndex == endIndex)
+            {
+                result = _stores[startIndex].GetSampledT(vT);
+            }
+            else
+            {
+                result = _stores[startIndex].GetSampledT(t);
+                var endPS = _stores[endIndex].GetSampledT(t);
+                result.InterpolateInto(endPS, vT);
+            }
+
+            return result;
+        }
+
+        public override void Update(float deltaTime)
 		{
 			CurrentT = deltaTime;
 			foreach (var store in _stores)

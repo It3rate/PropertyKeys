@@ -1,6 +1,5 @@
 ﻿using DataArcs.Stores;
 using System;
-using System.Linq;
 
 namespace DataArcs.SeriesData
 {
@@ -126,37 +125,7 @@ namespace DataArcs.SeriesData
 		public const float TOLERANCE = 0.00001f;
 		public static readonly Random Random = new Random();
         
-		public static float[] GetFloatZeroArray(int size)
-		{
-			return new float[size];
-		}
-
-		public static float[] GetFloatMinArray(int size)
-		{
-            return Enumerable.Repeat<float>(float.MinValue, size).ToArray();
-		}
-
-		public static float[] GetFloatMaxArray(int size)
-		{
-            return Enumerable.Repeat<float>(float.MaxValue, size).ToArray();
-        }
-
-		public static int[] GetIntZeroArray(int size)
-        {
-            return new int[size];
-		}
-
-		public static int[] GetIntMinArray(int size)
-        {
-            return Enumerable.Repeat<int>(int.MinValue, size).ToArray();
-		}
-
-		public static int[] GetIntMaxArray(int size)
-        {
-            return Enumerable.Repeat<int>(int.MaxValue, size).ToArray();
-		}
-
-		public static void GetScaledT(float t, int len, out float virtualT, out int startIndex, out int endIndex)
+        public static void GetScaledT(float t, int len, out float virtualT, out int startIndex, out int endIndex)
 		{
 			if (t >= 1)
 			{
@@ -179,28 +148,6 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		public static float[] GetSizedFloatArray(int size, float value)
-		{
-			var result = new float[size];
-			for (var i = 0; i < size; i++)
-			{
-				result[i] = value;
-			}
-
-			return result;
-		}
-
-		public static int[] GetSizedIntArray(int size, int value)
-		{
-			var result = new int[size];
-			for (var i = 0; i < size; i++)
-			{
-				result[i] = value;
-			}
-
-			return result;
-		}
-
 		public static float[] CombineFloatArrays(params float[][] arrays)
 		{
 			var len = 0;
@@ -219,7 +166,6 @@ namespace DataArcs.SeriesData
 
 			return result;
 		}
-
 		public static int[] CombineIntArrays(params int[][] arrays)
 		{
 			var len = 0;
@@ -253,7 +199,6 @@ namespace DataArcs.SeriesData
 				}
 			}
 		}
-
 		public static void SubtractIntArrayFrom(int[] result, int[] b)
 		{
 			for (var i = 0; i < result.Length; i++)
@@ -268,9 +213,59 @@ namespace DataArcs.SeriesData
 				}
 			}
 		}
-	}
 
-	public static class ArrayExtension
+        public static float[] GetSizedFloatArray(int size, float value)
+        {
+            var result = new float[size];
+            for (var i = 0; i < size; i++)
+            {
+                result[i] = value;
+            }
+
+            return result;
+        }
+        public static int[] GetSizedIntArray(int size, int value)
+        {
+            var result = new int[size];
+            for (var i = 0; i < size; i++)
+            {
+                result[i] = value;
+            }
+
+            return result;
+        }
+
+        public static float[] GetFloatZeroArray(int size)
+        {
+            return new float[size];
+        }
+        public static float[] GetFloatMinArray(int size)
+        {
+            return GetSizedFloatArray(size, float.MinValue);
+            //return Enumerable.Repeat<float>(float.MinValue, size).ToArray();
+        }
+        public static float[] GetFloatMaxArray(int size)
+        {
+            return GetSizedFloatArray(size, float.MaxValue);
+            //return Enumerable.Repeat<float>(float.MaxValue, size).ToArray();
+        }
+        public static int[] GetIntZeroArray(int size)
+        {
+            return new int[size];
+        }
+        public static int[] GetIntMinArray(int size)
+        {
+            return GetSizedIntArray(size, int.MinValue);
+            //return Enumerable.Repeat<int>(int.MinValue, size).ToArray();
+        }
+        public static int[] GetIntMaxArray(int size)
+        {
+            return GetSizedIntArray(size, int.MaxValue);
+            //return Enumerable.Repeat<int>(int.MaxValue, size).ToArray();
+        }
+    }
+
+    public static class ArrayExtension
 	{
 		public static float[] ToFloat(this int[] values)
 		{

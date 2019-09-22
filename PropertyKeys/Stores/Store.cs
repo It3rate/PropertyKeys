@@ -51,8 +51,12 @@ namespace DataArcs.Stores
 		{
 			return Sampler?.GetValueAtT(_series, t, virtualCount) ?? _series.GetValueAtT(t);
 		}
+        public override ParametricSeries GetSampledT(float t)
+        {
+            return Sampler.GetSampledT(t);
+        }
 
-		public override void Update(float deltaTime)
+        public override void Update(float deltaTime)
 		{
 			_series.Update(deltaTime);
 		}
@@ -72,6 +76,7 @@ namespace DataArcs.Stores
                 {
                     result.SetDataAtIndex(i, GetSeriesAtIndex(i, VirtualCount));
                 }
+                _series = result;
             }
 			Sampler = new LineSampler();
 		}
