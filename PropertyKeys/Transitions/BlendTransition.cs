@@ -96,7 +96,6 @@ namespace DataArcs.Transitions
                 //float delRatio = delT / (delT + durT);
                 //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
                 float easedT = _easing?.GetSeriesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
-                Debug.WriteLine(easedT);
                 result.InterpolateInto(end, easedT);
             }
 	        else

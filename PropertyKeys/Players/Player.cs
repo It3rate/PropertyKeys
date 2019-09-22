@@ -56,7 +56,6 @@ namespace DataArcs.Players
             }
 
             float dt = (float) (_currentTime - _lastTime).TotalMilliseconds;
-            //Debug.WriteLine(dt);
             foreach (var element in _elements.Values)
             {
 	            element.Update(CurrentMs, dt);

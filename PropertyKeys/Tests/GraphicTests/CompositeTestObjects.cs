@@ -99,14 +99,14 @@ namespace DataArcs.Tests.GraphicTests
             //SeriesUtils.Shuffle(items.GetFullSeries(0));
             composite.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
 
-            float[] pointArray = new float[] { 3f, 7f, 7f, 3f };
+            float[] pointArray = new float[] { 15f, 5f, 5f, 15f };
             ((PolyShape)composite.Graphic).PointCount = new Store(pointArray, new Easing(EasingType.EaseInOut));
 
             Sampler ringSampler = new RingSampler(new int[] { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15 });
             //Sampler ringSampler = new RingSampler(new int[] { 30, 20, 15, 15, 15, 15, 15, 10, 10, 5 });
             //Sampler ringSampler = new RingSampler(new int[] { 60, 50, 40 });
             Sampler gridSampler = new GridSampler(new[] { 15, 10});
-            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 10f, 10f, 15f, 15f, 10f, 10f).Store;
+            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 6f, 6f, 15f, 15f, 6f, 6f).Store;
             var vectorSize = 2;
             var start = new float[] { 100, 100, 500, 400 };
             var end = new float[] { 100, 100, 500, 400 };

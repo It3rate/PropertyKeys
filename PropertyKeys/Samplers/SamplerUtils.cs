@@ -41,6 +41,9 @@ namespace DataArcs.Samplers
         {
             int index = 0;
             float capacity = (float)segments.Sum();
+            //float capacity = (float)segments[0];
+            //for (int i = 1; i < segments.Length; i++) capacity += segments[i];
+
             float ratio = segments[0] / capacity;
             while (t - ratio > 0 && index < segments.Length - 1)
             {
