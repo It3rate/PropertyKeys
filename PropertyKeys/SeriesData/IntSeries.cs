@@ -6,24 +6,17 @@ namespace DataArcs.SeriesData
 	public class IntSeries : Series
 	{
 		private readonly int[] _intValues;
-		public override int DataSize => _intValues.Length;
-
-		public IntSeries(int vectorSize, int[] values, int virtualCount = -1) :
-			base(vectorSize, SeriesType.Int, virtualCount <= 0 ? values.Length / vectorSize : virtualCount)
-		{
-			_intValues = values;
-		}
-
-		public IntSeries(int vectorSize, params int[] values) :
-			base(vectorSize, SeriesType.Int, values.Length / vectorSize)
+        public override int Count => (int)(_intValues.Length / VectorSize);
+        public override int DataSize => _intValues.Length;
+        
+		public IntSeries(int vectorSize, params int[] values) : base(vectorSize, SeriesType.Int)
 		{
 			_intValues = values;
 		}
 
 		public override Series GetDataAtIndex(int index)
 		{
-			var len = DataSize / VectorSize;
-			var startIndex = Math.Min(len - 1, Math.Max(0, index));
+			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
 			if (startIndex * VectorSize + (VectorSize - 1) < DataSize)
 			{
@@ -39,28 +32,8 @@ namespace DataArcs.SeriesData
 
 		public override void SetDataAtIndex(int index, Series series)
 		{
-			var len = DataSize / VectorSize;
-			var startIndex = Math.Min(len - 1, Math.Max(0, index));
+			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			Array.Copy(series.IntData, 0, _intValues, startIndex * VectorSize, VectorSize);
-		}
-
-		public override Series HardenToData(Store store = null)
-		{
-			Series result = this;
-			var len = VirtualCount * VectorSize;
-			if (_intValues.Length != len)
-			{
-				var vals = new int[len];
-				for (var i = 0; i < VirtualCount; i++)
-				{
-					var val = store == null ? GetValueAtVirtualIndex(i).IntData : store.GetSeriesAtIndex(i).IntData;
-					Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
-				}
-
-				result = new IntSeries(VectorSize, vals, VirtualCount);
-			}
-
-			return result;
 		}
 
 		public override void InterpolateInto(Series b, float t)
@@ -195,7 +168,7 @@ namespace DataArcs.SeriesData
 
 		public override Series Copy()
 		{
-			IntSeries result = new IntSeries(VectorSize, IntData, VirtualCount);
+			IntSeries result = new IntSeries(VectorSize, IntData);
 			result.CachedFrame = CachedFrame;
 			result.CachedSize = CachedSize;
 			return result;

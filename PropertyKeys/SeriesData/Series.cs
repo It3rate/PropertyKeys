@@ -15,7 +15,7 @@ namespace DataArcs.SeriesData
     public abstract class Series : IEnumerable
     {
         public int VectorSize { get; set; }
-        public int VirtualCount { get; set; }
+        public abstract int Count { get; }
         public SeriesType Type { get; }
 
         /// <summary>
@@ -58,11 +58,10 @@ namespace DataArcs.SeriesData
         protected Series CachedFrame;
         protected Series CachedSize;
 
-        protected Series(int vectorSize, SeriesType type, int virtualCount)
+        protected Series(int vectorSize, SeriesType type)
         {
             Type = type;
             VectorSize = vectorSize;
-            VirtualCount = virtualCount;
         }
 
         public virtual void ResetData()
@@ -75,47 +74,44 @@ namespace DataArcs.SeriesData
 
         protected abstract void CalculateFrame();
 
-        public abstract Series HardenToData(Store store = null); // return new copy as eventually everything should be immutable
-
         public abstract Series GetDataAtIndex(int index);
         public abstract void SetDataAtIndex(int index, Series series);
 
-        public virtual Series GetValueAtVirtualIndex(int index)
+        public virtual Series GetValueAtVirtualIndex(int index, int virtualCount)
         {
-            var indexT = index / (VirtualCount - 1f);
+            var indexT = index / (virtualCount - 1f);
             return GetValueAtT(indexT);
         }
-        public virtual Series GetValueAtVirtualIndex(int index, int vectorSize)
-        {
-            var indexT = index / (VirtualCount - 1f);
-            Series result = GetValueAtT(indexT);
-            if (result.VectorSize != vectorSize)
-            {
-                result.VectorSize = 1;
-                result.VirtualCount = vectorSize;
-                result.HardenToData();
-                result.VectorSize = vectorSize;
-            }
-            return result;
-        }
+        //public virtual Series GetValueAtVirtualIndex(int index, int vectorSize)
+        //{
+        //    var indexT = index / (VirtualCount - 1f);
+        //    Series result = GetValueAtT(indexT);
+        //    if (result.VectorSize != vectorSize)
+        //    {
+        //        result.VectorSize = 1;
+        //        result.VirtualCount = vectorSize;
+        //        result.HardenToData();
+        //        result.VectorSize = vectorSize;
+        //    }
+        //    return result;
+        //}
 
         // todo: All float t's should probably be float[] t.
         public virtual Series GetValueAtT(float t)
         {
             Series result;
-            var len = DataSize / VectorSize;
-
             if (t >= 1)
             {
-                result = GetDataAtIndex(len - 1);
+                result = GetDataAtIndex(Count - 1);
             }
-            else if (len > 1)
+            else if (Count > 1)
             {
+                var endIndex = Count - 1;
                 // interpolate between indexes to get virtual values from array.
-                var pos = Math.Min(1, Math.Max(0, t)) * (float)(len - 1f);
+                var pos = Math.Min(1, Math.Max(0, t)) * endIndex;
                 var startIndex = (int)Math.Floor(pos);
-                startIndex = Math.Min(len - 1, Math.Max(0, startIndex));
-                if (pos < len - 1)
+                startIndex = Math.Min(endIndex, Math.Max(0, startIndex));
+                if (pos < endIndex)
                 {
                     var remainderT = pos - startIndex;
                     result = GetDataAtIndex(startIndex);
@@ -156,7 +152,7 @@ namespace DataArcs.SeriesData
         public abstract Series Copy();
 
 #region Enumeration
-        public Series this[int index] => GetValueAtVirtualIndex(index);
+        //public Series this[int index] => GetValueAtVirtualIndex(index);
         public IEnumerator GetEnumerator()
         {
             return new SeriesEnumerator(this);
@@ -173,10 +169,9 @@ namespace DataArcs.SeriesData
             public bool MoveNext()
             {
                 _position++;
-                return (_position < _instance.VirtualCount);
+                return (_position < (int)(_instance.DataSize / _instance.VectorSize));
             }
-
-            public object Current => _instance[_position];
+            public object Current => _instance.GetDataAtIndex(_position);
 
             public void Reset()
             {

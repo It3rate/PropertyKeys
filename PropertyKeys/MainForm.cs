@@ -30,7 +30,7 @@ namespace DataArcs
             _b0.Text = "Next";
             _b0.Click += B0_Click;
             Controls.Add(_b0);
-            Execute(null, 50);
+            _ = Execute(null, 50);
         }
 
         public async Task Execute(Action action, int timeoutInMilliseconds)

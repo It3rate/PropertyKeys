@@ -22,7 +22,7 @@ namespace DataArcs.Stores
 
         public Series this[int index] => GetSeriesAtIndex(index);
 
-		public override Series GetSeries(int index) => _stores[index].GetSeries(0);
+		public override Series GetFullSeries(int index) => _stores[index].GetFullSeries(0);
 
         public override Series GetSeriesAtIndex(int index, int virtualCount = -1)
 		{

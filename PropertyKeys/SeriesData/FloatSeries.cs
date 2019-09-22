@@ -5,25 +5,19 @@ namespace DataArcs.SeriesData
 {
 	public class FloatSeries : Series
 	{
-		protected readonly float[] _floatValues;
-		public override int DataSize => _floatValues.Length;
-
-		public FloatSeries(int vectorSize, float[] values, int virtualCount = -1) :
-			base(vectorSize, SeriesType.Float, virtualCount <= 0 ? values.Length / vectorSize : virtualCount)
-		{
-			_floatValues = values;
-		}
-
+		protected float[] _floatValues;
+        public override int Count => (int)(_floatValues.Length / VectorSize);
+        public override int DataSize => _floatValues.Length;
+        
 		public FloatSeries(int vectorSize, params float[] values) :
-			base(vectorSize, SeriesType.Float, values.Length / vectorSize)
+			base(vectorSize, SeriesType.Float)
 		{
 			_floatValues = values;
 		}
 
 		public override Series GetDataAtIndex(int index)
 		{
-			var len = DataSize / VectorSize;
-			var startIndex = Math.Min(len - 1, Math.Max(0, index));
+			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new float[VectorSize];
 			if (startIndex * VectorSize + VectorSize <= DataSize)
 			{
@@ -42,29 +36,6 @@ namespace DataArcs.SeriesData
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
 			Array.Copy(series.FloatData, 0, _floatValues, startIndex * VectorSize, VectorSize);
-		}
-
-		public override Series HardenToData(Store store = null)
-		{
-			Series result;
-			var len = VirtualCount * VectorSize;
-			if (_floatValues.Length != len)
-			{
-				var vals = new float[len];
-				for (var i = 0; i < VirtualCount; i++)
-				{
-					var val = store == null ? GetDataAtIndex(i).FloatData : store.GetSeriesAtIndex(i).FloatData;
-					Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
-				}
-
-				result = new FloatSeries(VectorSize, vals, VirtualCount);
-			}
-			else
-			{
-				result = this.Copy();
-			}
-
-			return result;
 		}
 
 		protected override void CalculateFrame()
@@ -200,7 +171,7 @@ namespace DataArcs.SeriesData
 
 		public override Series Copy()
 		{
-			FloatSeries result = new FloatSeries(VectorSize, FloatData, VirtualCount);
+			FloatSeries result = new FloatSeries(VectorSize, FloatData);
 			result.CachedFrame = CachedFrame;
 			result.CachedSize = CachedSize;
 			return result;

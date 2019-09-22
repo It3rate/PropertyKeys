@@ -88,11 +88,11 @@ namespace DataArcs.Components
 
             if (deltaTime <= 0.05f && shouldShuffle)
             {
-                SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetSeries(0));
+                SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetFullSeries(0));
             }
             if (deltaTime > 0.99 && shouldShuffle)
             {
-                Series s = GetStore(PropertyId.Location).GetSeries(0);
+                Series s = GetStore(PropertyId.Location).GetFullSeries(0);
                 RandomSeries rs = (RandomSeries)s;
                 rs.Seed = rs.Seed + 1;
             }

@@ -10,7 +10,7 @@ namespace DataArcs.Mutators
 		public RandomMutator(int vectorSize, SeriesType type, int virtualCount, Series minMax, int seed = 0) :
 			base(new Store(new RandomSeries(vectorSize, type, virtualCount, minMax, seed)))
 		{
-			RandomSeries = (RandomSeries) Store.GetSeries(0);
+			RandomSeries = (RandomSeries) Store.GetFullSeries(0);
 		}
 
 		public override void Update(float time)

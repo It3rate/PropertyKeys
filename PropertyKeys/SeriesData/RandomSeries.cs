@@ -4,8 +4,10 @@ using DataArcs.Stores;
 namespace DataArcs.SeriesData
 {
 	public class RandomSeries : Series
-	{
-		private CombineFunction _combineFunction;
+    {
+        public override int Count => _count;
+        private int _count;
+        private CombineFunction _combineFunction;
 		private Random _random;
 		private int _seed;
 		private Series _minMax;
@@ -20,12 +22,12 @@ namespace DataArcs.SeriesData
 		/// <summary>
         /// RandomSeries always has an actual store in order to be consistent on repeated queries.
         /// </summary>
-        public RandomSeries(int vectorSize, SeriesType type, int virtualCount, Series minMax, int seed = 0,
-			CombineFunction combineFunction = CombineFunction.Replace) : base(vectorSize, type, virtualCount)
+        public RandomSeries(int vectorSize, SeriesType type, int count, Series minMax, int seed = 0,
+			CombineFunction combineFunction = CombineFunction.Replace) : base(vectorSize, type)
 		{
+            _count = count;
 			seed = seed == 0 ? SeriesUtils.Random.Next() : seed;
 			_seed = seed;
-			_random = new Random(_seed);
             _minMax = minMax;
 			_combineFunction = combineFunction;
 			_series = GenerateData();
@@ -34,11 +36,12 @@ namespace DataArcs.SeriesData
 		private Series GenerateData()
 		{
 			Series result;
-			var len = VirtualCount * VectorSize;
+            _random = new Random(_seed);
+            var len = Count * VectorSize;
 			if (Type == SeriesType.Int)
 			{
 				var data = new int[len];
-				for (var i = 0; i < VirtualCount; i++)
+				for (var i = 0; i < Count; i++)
 				{
                     for (int j = 0; j < VectorSize; j++)
                     {
@@ -51,7 +54,7 @@ namespace DataArcs.SeriesData
 			else
 			{
 				var data = new float[len];
-                for (var i = 0; i < VirtualCount; i++)
+                for (var i = 0; i < Count; i++)
                 {
                     for (int j = 0; j < VectorSize; j++)
                     {
@@ -60,11 +63,6 @@ namespace DataArcs.SeriesData
                         data[i * VectorSize + j] = (float)(_random.NextDouble() * (max - min) + min);
                     }
                 }
-    //            for (var i = 0; i < len; i++)
-				//{
-				//	data[i] = (float) (_random.NextDouble() * (_max - _min) + _min);
-				//}
-
 				result = new FloatSeries(VectorSize, data);
 			}
 
@@ -86,18 +84,6 @@ namespace DataArcs.SeriesData
 		public override Series GetValueAtT(float t)
 		{
 			return _series.GetValueAtT(t);
-		}
-
-		public override Series HardenToData(Store store = null)
-		{
-			Series result = this;
-			var len = VirtualCount * VectorSize;
-			if ((int) (_series.DataSize / VectorSize) != len)
-			{
-				result = GenerateData();
-			}
-
-			return result;
 		}
 
 		public override void ResetData()
@@ -175,7 +161,7 @@ namespace DataArcs.SeriesData
 		}
 		public override Series Copy()
 		{
-			RandomSeries result = new RandomSeries(VectorSize, Type, VirtualCount, _minMax.Copy(), _seed);
+			RandomSeries result = new RandomSeries(VectorSize, Type, Count, _minMax.Copy(), _seed);
 			result.CachedFrame = CachedFrame;
 			result.CachedSize = CachedSize;
 			result._series = _series.Copy();

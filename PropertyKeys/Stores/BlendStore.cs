@@ -37,7 +37,7 @@ namespace DataArcs.Stores
 	        _easing = easing;
         }
 
-        public override Series GetSeries(int index)
+        public override Series GetFullSeries(int index)
 		{
 			return GetSeriesAtIndex(index, CurrentT);
 		}

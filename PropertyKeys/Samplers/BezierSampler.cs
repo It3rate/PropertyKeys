@@ -18,7 +18,7 @@ namespace DataArcs.Samplers
 		public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
 		{
 			// todo: check if this virtualCount assignment should happen in beziers at this point or pass through.
-			virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
+			virtualCount = virtualCount == -1 ? series.Count : virtualCount;
 			series = series ?? Series;
 			var t = index / (float) virtualCount;
 			return GetValueAtT(series, t, virtualCount);
@@ -36,10 +36,10 @@ namespace DataArcs.Samplers
 		{
 			if (virtualCount > -1)
 			{
-				t *= series.VirtualCount / (float) virtualCount;
+				t *= series.Count / (float) virtualCount;
 			}
 
-			virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
+			virtualCount = virtualCount == -1 ? series.Count : virtualCount;
 			SeriesUtils.GetScaledT(t, virtualCount, out var vT, out var startIndex, out var endIndex);
 			var a = series.GetDataAtIndex(startIndex).FloatData; // GetFloatArrayAtIndex(startIndex);
 			var b = series.GetDataAtIndex(endIndex).FloatData; // GetFloatArrayAtIndex(endIndex);

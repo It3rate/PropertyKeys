@@ -16,92 +16,95 @@ namespace DataArcs.Tests
 		public void TestInitializer()
 		{
 			series_1 = new FloatSeries(1, 1f, 2f, 11f, 22f);
-			series_1_31 = new FloatSeries(1, new float[] {1f, 2f, 11f, 22f}, 31);
+			series_1_31 = new FloatSeries(1, new float[] {1f, 2f, 11f, 22f});
 			series_2 = new FloatSeries(2, 10f, 20f, 110f, 220f, 310f, 420f);
 		}
 
 		[TestMethod]
 		public void TestGetDimsForIndex()
 		{
-			Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
+			Series series = new FloatSeries(1, new[] {0f, 1f});
+            int virtualCount = 100;
 			int[] strides = {10};
 			int[] sample;
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, -3);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, -3);
 			ArraysEqual(new int[] {0, 0}, sample);
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, 0);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, 0);
 			ArraysEqual(new int[] {0, 0}, sample);
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, 1);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, 1);
 			ArraysEqual(new int[] {1, 0}, sample);
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, 10);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, 10);
 			ArraysEqual(new int[] {0, 1}, sample);
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, 11);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, 11);
 			ArraysEqual(new int[] {1, 1}, sample);
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, 53);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, 53);
 			ArraysEqual(new int[] {3, 5}, sample);
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, 99);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, 99);
 			ArraysEqual(new int[] {9, 9}, sample);
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, 100);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, 100);
 			ArraysEqual(new int[] {9, 9}, sample);
-			sample = Sampler.GetDimsForIndex(series.VirtualCount, strides, 101);
+			sample = Sampler.GetDimsForIndex(virtualCount, strides, 101);
 			ArraysEqual(new int[] {9, 9}, sample);
 		}
 
 		[TestMethod]
 		public void TestGetStrideTsForIndex()
 		{
-			Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
-			int[] strides = {10};
+			Series series = new FloatSeries(1, new[] {0f, 1f});
+            int virtualCount = 100;
+            int[] strides = {10};
 			var cl = strides[0] - 1f;
 			float[] sample;
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, -3);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, -3);
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 0);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 0);
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 1);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 1);
 			ArraysEqual(new float[] {1f / cl, 0}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 9);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 9);
 			ArraysEqual(new float[] {1f, 0}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 10);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 10);
 			ArraysEqual(new float[] {0, 1f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 11);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 11);
 			ArraysEqual(new float[] {1f / cl, 1f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 53);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 53);
 			ArraysEqual(new float[] {3f / cl, 5f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 99);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 99);
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 100);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 100);
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForIndex(series.VirtualCount, strides, 101);
+			sample = Sampler.GetStrideTsForIndex(virtualCount, strides, 101);
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
 		}
 
 		[TestMethod]
 		public void TestGetStrideTsForT()
 		{
-			Series series = new FloatSeries(1, new[] {0f, 1f}, 100);
-			int[] strides = {10};
+			Series series = new FloatSeries(1, new[] {0f, 1f});
+            int virtualCount = 100;
+            int[] strides = {10};
 			var cl = strides[0] - 1f;
-			var len = series.VirtualCount - 1f;
+			var len = virtualCount - 1f;
 			float[] sample;
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, -3f);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, -3f);
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 0);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 0);
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 1f / len);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 1f / len);
 			ArraysEqual(new float[] {1f / cl, 0}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 9f / len);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 9f / len);
 			ArraysEqual(new float[] {1f, 0}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 10f / len);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 10f / len);
 			ArraysEqual(new float[] {0, 1f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 11f / len);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 11f / len);
 			ArraysEqual(new float[] {1f / cl, 1f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 53f / len);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 53f / len);
 			ArraysEqual(new float[] {3f / cl, 5f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 1f);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 1f);
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 100f / len);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 100f / len);
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = Sampler.GetStrideTsForT(series.VirtualCount, strides, 101 / len);
+			sample = Sampler.GetStrideTsForT(virtualCount, strides, 101 / len);
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
 		}
 
@@ -109,20 +112,29 @@ namespace DataArcs.Tests
 		public void TestTVectorSize1()
 		{
 			TVectorSize1();
-			series_1.HardenToData();
-			TVectorSize1();
+            var store = series_1.Store;
+            store.VirtualCount = 100;
+            store.HardenToData();
+            series_1 = (FloatSeries)store.GetFullSeries(0);
+            TVectorSize1();
 
 			IndexVectorSize1();
-			series_1_31.HardenToData();
-			IndexVectorSize1();
+            store = series_1_31.Store;
+            store.VirtualCount = 31;
+            store.HardenToData();
+            series_1_31 = (FloatSeries)store.GetFullSeries(0);
+            IndexVectorSize1();
 		}
 
 		[TestMethod]
 		public void TestTVectorSize2()
 		{
 			TVectorSize2();
-			series_2.HardenToData();
-			TVectorSize2();
+            var store = series_2.Store;
+            store.VirtualCount = 100;
+            store.HardenToData();
+            series_2 = (FloatSeries)store.GetFullSeries(0);
+            TVectorSize2();
 		}
 
 		public void TVectorSize1()
@@ -153,9 +165,10 @@ namespace DataArcs.Tests
 
 		public void IndexVectorSize1()
 		{
-			//series_1_40 = new FloatSeries(1, new float[] { 1f, 2f, 11f, 22f }, virtualCount: 31);
 			float sample;
-			sample = series_1_31.GetDataAtIndex(-10).FloatDataAt(0);
+            int count = 31;
+
+            sample = series_1_31.GetDataAtIndex(-10).FloatDataAt(0);
 			Assert.AreEqual(1f, sample, delta);
 			sample = series_1_31.GetDataAtIndex(0).FloatDataAt(0);
 			Assert.AreEqual(1f, sample, delta);
@@ -164,28 +177,28 @@ namespace DataArcs.Tests
 			sample = series_1_31.GetDataAtIndex(99).FloatDataAt(0);
 			Assert.AreEqual(22f, sample, delta);
 
-			sample = series_1_31.GetValueAtVirtualIndex(-10).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(-10, count).FloatDataAt(0);
 			Assert.AreEqual(1f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(0).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(0, count).FloatDataAt(0);
 			Assert.AreEqual(1f, sample, delta);
 
-			sample = series_1_31.GetValueAtVirtualIndex(1).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(1, count).FloatDataAt(0);
 			Assert.AreEqual(1.1f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(2).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(2, count).FloatDataAt(0);
 			Assert.AreEqual(1.2f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(3).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(3, count).FloatDataAt(0);
 			Assert.AreEqual(1.3f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(4).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(4, count).FloatDataAt(0);
 			Assert.AreEqual(1.4f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(5).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(5, count).FloatDataAt(0);
 			Assert.AreEqual(1.5f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(10).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(10, count).FloatDataAt(0);
 			Assert.AreEqual(2f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(15).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(15, count).FloatDataAt(0);
 			Assert.AreEqual(6.5f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(20).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(20, count).FloatDataAt(0);
 			Assert.AreEqual(11f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(30).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(30, count).FloatDataAt(0);
 			Assert.AreEqual(22f, sample, delta);
 		}
 

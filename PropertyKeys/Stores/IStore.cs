@@ -11,7 +11,7 @@ namespace DataArcs.Stores
 		CombineTarget CombineTarget { get; set; }
 		int VirtualCount { get; set; }
 
-		Series GetSeries(int index);
+		Series GetFullSeries(int index);
 		Series GetSeriesAtIndex(int index, int virtualCount = -1);
 		Series GetSeriesAtT(float t, int virtualCount = -1);
 		void Update(float deltaTime);

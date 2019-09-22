@@ -54,7 +54,7 @@ namespace DataArcs.Samplers
 		public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
 		{
 			// todo: check if this virtualCount assignment should happen in easing at this point or pass through.
-			virtualCount = virtualCount == -1 ? series.VirtualCount : virtualCount;
+			virtualCount = virtualCount == -1 ? series.Count : virtualCount;
 			var indexT = index / (float) virtualCount;
 			return GetValueAtT(series, indexT, virtualCount);
 		}

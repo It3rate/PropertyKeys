@@ -88,7 +88,7 @@ namespace DataArcs.Samplers
 					result = new GridSampler(strides);
 					break;
 				case SampleType.Ring:
-					result = new RingSampler();
+					result = new RingSampler(strides);
 					break;
 				case SampleType.Hexagon:
 					result = new HexagonSampler(strides);

@@ -1,5 +1,6 @@
 ﻿using DataArcs.Stores;
 using System;
+using System.Linq;
 
 namespace DataArcs.SeriesData
 {
@@ -67,37 +68,40 @@ namespace DataArcs.SeriesData
 		public static bool IsEqual(Series a, Series b)
 		{
 			var result = true;
-			if (a.GetType() == b.GetType() && a.VirtualCount == b.VirtualCount && a.VectorSize == b.VectorSize)
+			if (a.GetType() == b.GetType() && a.Count == b.Count && a.VectorSize == b.VectorSize)
 			{
-				for (var i = 0; i < a.VirtualCount; i++)
-				{
-					if (a.Type == SeriesType.Float)
-					{
-						var delta = 0.0001f;
-						var ar = a.GetValueAtVirtualIndex(i).FloatData;
-						var br = b.GetValueAtVirtualIndex(i).FloatData;
-						for (var j = 0; j < ar.Length; j++)
-						{
-							if (Math.Abs(ar[j] - br[j]) > delta)
-							{
-								result = false;
-								break;
-							}
-						}
-					}
-					else
-					{
-						var ar = a.GetValueAtVirtualIndex(i).IntData;
-						var br = b.GetValueAtVirtualIndex(i).IntData;
-						for (var j = 0; j < ar.Length; j++)
-						{
-							if (ar[j] != br[j])
-							{
-								result = false;
-								break;
-							}
-						}
-					}
+                if (a.Type == SeriesType.Float)
+                {
+                    for (var i = 0; i < a.DataSize; i++)
+                    {
+                        var delta = 0.0001f;
+                        var ar = a.GetDataAtIndex(i).FloatData;
+                        var br = b.GetDataAtIndex(i).FloatData;
+                        for (var j = 0; j < ar.Length; j++)
+                        {
+                            if (Math.Abs(ar[j] - br[j]) > delta)
+                            {
+                                result = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (var i = 0; i < a.DataSize; i++)
+                    {
+                        var ar = a.GetDataAtIndex(i).IntData;
+                        var br = b.GetDataAtIndex(i).IntData;
+                        for (var j = 0; j < ar.Length; j++)
+                        {
+                            if (ar[j] != br[j])
+                            {
+                                result = false;
+                                break;
+                            }
+                        }
+                    }
 				}
 			}
 			else
@@ -121,63 +125,35 @@ namespace DataArcs.SeriesData
 
 		public const float TOLERANCE = 0.00001f;
 		public static readonly Random Random = new Random();
-
-		private static readonly float[][] zeroFloatArray;
-		private static readonly float[][] minFloatArray;
-		private static readonly float[][] maxFloatArray;
-		private static readonly int[][] zeroIntArray;
-		private static readonly int[][] minIntArray;
-		private static readonly int[][] maxIntArray;
-
-		// Generate default array sizes for zero, min and max for quick cloning.
-		static SeriesUtils()
-		{
-			var count = 16; // if higher than 16 needed make this lazy generating.
-			zeroFloatArray = new float[count][];
-			minFloatArray = new float[count][];
-			maxFloatArray = new float[count][];
-			zeroIntArray = new int[count][];
-			minIntArray = new int[count][];
-			maxIntArray = new int[count][];
-			for (var i = 0; i < count; i++)
-			{
-				zeroFloatArray[i] = GetSizedFloatArray(i, 0);
-				minFloatArray[i] = GetSizedFloatArray(i, float.MinValue);
-				maxFloatArray[i] = GetSizedFloatArray(i, float.MaxValue);
-				zeroIntArray[i] = GetSizedIntArray(i, 0);
-				minIntArray[i] = GetSizedIntArray(i, int.MinValue);
-				maxIntArray[i] = GetSizedIntArray(i, int.MaxValue);
-			}
-		}
-
+        
 		public static float[] GetFloatZeroArray(int size)
 		{
-			return (float[]) zeroFloatArray[size].Clone();
+			return new float[size];
 		}
 
 		public static float[] GetFloatMinArray(int size)
 		{
-			return (float[]) minFloatArray[size].Clone();
+            return Enumerable.Repeat<float>(float.MinValue, size).ToArray();
 		}
 
 		public static float[] GetFloatMaxArray(int size)
 		{
-			return (float[]) maxFloatArray[size].Clone();
-		}
+            return Enumerable.Repeat<float>(float.MaxValue, size).ToArray();
+        }
 
 		public static int[] GetIntZeroArray(int size)
-		{
-			return (int[]) zeroIntArray[size].Clone();
+        {
+            return new int[size];
 		}
 
 		public static int[] GetIntMinArray(int size)
-		{
-			return (int[]) minIntArray[size].Clone();
+        {
+            return Enumerable.Repeat<int>(int.MinValue, size).ToArray();
 		}
 
 		public static int[] GetIntMaxArray(int size)
-		{
-			return (int[]) maxIntArray[size].Clone();
+        {
+            return Enumerable.Repeat<int>(int.MaxValue, size).ToArray();
 		}
 
 		public static void GetScaledT(float t, int len, out float virtualT, out int startIndex, out int endIndex)

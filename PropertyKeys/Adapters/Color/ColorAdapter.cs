@@ -27,7 +27,7 @@ namespace DataArcs.Adapters.Color
             float r = a.Red();
             float g = a.Green();
             float b = a.Blue();
-            switch (a.VirtualCount * a.VectorSize)
+            switch (a.Count * a.VectorSize)
 		    {
                 case 1:
 				    result = System.Drawing.Color.FromArgb(255, (int)(r * 255), (int)(r * 255), (int)(r * 255));

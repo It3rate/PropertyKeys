@@ -4,7 +4,9 @@ using DataArcs.Stores;
 
 namespace DataArcs.SeriesData
 {
-	// maybe store all values as quadratic, allowing easier blending?
+    // maybe store all values as quadratic, allowing easier blending?
+    // todo: split into all quadratic beziers and all ploy lines. 
+    // Use identical first and second coordinate for lines in quadratic, *or use midpoint and Move data determines lines etc.
 	// try blending with len/angle from zero vs interpolate points.
 	public enum BezierMove : int
 	{
@@ -23,10 +25,11 @@ namespace DataArcs.SeriesData
 
         public static readonly int[] MoveSize = new int[] {2, 2, 4, 6, 0};
 
-		public BezierMove[] Moves { get; }
+        public override int Count => (int)(_floatValues.Length / VectorSize);
 
-		public BezierSeries(float[] values, BezierMove[] moves = null) : base(2, values,
-			moves?.Length ?? values.Length / 2)
+        public BezierMove[] Moves { get; }
+
+		public BezierSeries(float[] values, BezierMove[] moves = null) : base(2, values)
 		{
 			// default to polyline if moves is empty
 			if (moves == null)
@@ -44,7 +47,7 @@ namespace DataArcs.SeriesData
 
 		public override Series GetValueAtT(float t)
 		{
-			var index = (int) (t * VirtualCount);
+			var index = (int) (t * Count);
 			return GetDataAtIndex(index);
 		}
 
@@ -62,7 +65,7 @@ namespace DataArcs.SeriesData
 			Array.Copy(_floatValues, start, result, 0, size);
 			return new BezierSeries(result, new[] {Moves[index]});
 		}
-
+        // todo: need an insertDataAtIndex
 		public override void SetDataAtIndex(int index, Series series)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
@@ -72,33 +75,31 @@ namespace DataArcs.SeriesData
 				start += MoveSize[(int) Moves[i]];
 			}
 
+            // todo: need to adjust float array length if move size is different
 			var size = MoveSize[(int) Moves[index]];
-			Array.Copy(series.FloatData, 0, _floatValues, index * VectorSize, VectorSize);
 			if (series is BezierSeries)
 			{
-				Moves[index] = ((BezierSeries) series).Moves[0];
+                var newMove = ((BezierSeries)series).Moves[0];
+                var newSize = MoveSize[(int)newMove];
+                if(newSize != size)
+                {
+                    int diff = newSize - size;
+                    float[] newFloats = new float[_floatValues.Length + diff];
+                    Array.Copy(_floatValues, 0, newFloats, 0, start);
+                    Array.Copy(series.FloatData, 0, newFloats, start, newSize);
+                    Array.Copy(_floatValues, start + 1, newFloats, start + newSize, _floatValues.Length - start);
+                    _floatValues = newFloats; // todo: make immutable, return a series (or this if no change) to store.
+                }
+                else
+                {
+                    Array.Copy(series.FloatData, 0, _floatValues, start, newSize);
+                }
+                Moves[index] = newMove;
 			}
-		}
-
-		public override Series HardenToData(Store store = null)
-		{
-			Series result = this;
-			var len = VirtualCount * VectorSize;
-			if (_floatValues.Length != len)
-			{
-				var vals = new float[len];
-				var moves = new BezierMove[VirtualCount];
-				for (var i = 0; i < VirtualCount; i++)
-				{
-					var val = store == null ? GetDataAtIndex(i).FloatData : store.GetSeriesAtIndex(i).FloatData;
-					Array.Copy(val, 0 * VectorSize, vals, i * VectorSize, VectorSize);
-					moves[i] = i < moves.Length ? moves[i] : BezierMove.LineTo;
-				}
-
-				result = new BezierSeries(vals, moves);
-			}
-
-			return result;
+            else
+            {
+                Array.Copy(series.FloatData, 0, _floatValues, start, size);
+            }
 		}
 
 		public GraphicsPath Path()

@@ -23,7 +23,7 @@ namespace DataArcs.Stores
 	    }
 
 
-        public abstract Series GetSeries(int index);
+        public abstract Series GetFullSeries(int index);
 
         public abstract Series GetSeriesAtIndex(int index, int virtualCount = -1);
 
