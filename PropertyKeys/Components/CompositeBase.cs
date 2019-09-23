@@ -47,27 +47,22 @@ namespace DataArcs.Components
 
         public virtual void Draw(Graphics g)
         {
-            var itemStore = GetStore(PropertyId.Items);
-            if (itemStore != null)
+            IStore store = GetStore(PropertyId.Items) ?? GetStore(PropertyId.Location);
+            if (store != null)
             {
-                foreach (Series series in itemStore)
-                {
-                    DrawAtIndex(series.IntDataAt(0), itemStore.VirtualCount, g);
-                }
-            }
-            else
-            {
-                var count = 50;// GetStore(PropertyId.Location).GetElementCountAt(t);
-                for (var i = 0; i < count; i++)
-                {
-                    DrawAtIndex(i, count, g);
+	            for (int i = 0; i < store.VirtualCount; i++)
+	            {
+		            DrawAtIndex(i, store, g);
                 }
             }
             //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
         }
-        public void DrawAtIndex(int index, int count, Graphics g)
+        public void DrawAtIndex(int countIndex, IStore itemStore, Graphics g)
         {
-            var it = index / (count - 1f);
+	        int count = itemStore.VirtualCount;
+            var it = count > 1 ? countIndex / (count - 1f) : 0;
+
+	        int index = GetStore(PropertyId.Items)?.GetSeriesAtIndex(countIndex).IntDataAt(0) ?? countIndex;
             Series v = GetSeriesAtIndex(PropertyId.Location, index, count);
             //Series v = GetSeriesAtT(PropertyId.Location, it, count);
             

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataArcs.Samplers;
 using DataArcs.SeriesData;
 
 namespace DataArcs.Stores
@@ -16,12 +13,12 @@ namespace DataArcs.Stores
         public CombineFunction CombineFunction { get; set; }
         public CombineTarget CombineTarget { get; set; }
         public abstract int VirtualCount { get; set; }
+        public Sampler Sampler { get; set; }
 
         protected StoreBase()
 	    {
 		    StoreId = _idCounter++;
 	    }
-
 
         public abstract Series GetFullSeries(int index);
 

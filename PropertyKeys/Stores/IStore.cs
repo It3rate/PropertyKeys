@@ -1,6 +1,7 @@
 ﻿using System;
 using DataArcs.SeriesData;
 using System.Collections;
+using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
@@ -10,8 +11,9 @@ namespace DataArcs.Stores
         CombineFunction CombineFunction { get; set; }
 		CombineTarget CombineTarget { get; set; }
 		int VirtualCount { get; set; }
+		Sampler Sampler { get; set; }
 
-		Series GetFullSeries(int index);
+        Series GetFullSeries(int index);
 		Series GetSeriesAtIndex(int index, int virtualCount = -1);
 		Series GetSeriesAtT(float t, int virtualCount = -1);
         ParametricSeries GetSampledT(float t);

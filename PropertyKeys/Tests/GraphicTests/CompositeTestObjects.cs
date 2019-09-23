@@ -94,8 +94,8 @@ namespace DataArcs.Tests.GraphicTests
             IntSeries itemData = new IntSeries(1, new int[] { 0, 149 });
             Store items = new Store(itemData, virtualCount: 150);
             items.HardenToData();
-            
-            SeriesUtils.Shuffle(items.GetFullSeries(0));
+	        SeriesUtils.Shuffle(items.GetFullSeries(0));
+
             composite.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
 
             float[] pointArray = new float[] { 15f, 5f, 5f, 15f };

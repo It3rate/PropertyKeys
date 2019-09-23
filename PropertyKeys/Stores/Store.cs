@@ -10,9 +10,7 @@ namespace DataArcs.Stores
 		
         public override int VirtualCount { get; set; }
 
-		protected Sampler Sampler { get; set; }
-
-		public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
+        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
             CombineTarget combineTarget = CombineTarget.Destination, int virtualCount = -1)
 		{
 			_series = series;
