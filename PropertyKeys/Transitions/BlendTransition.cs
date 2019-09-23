@@ -84,6 +84,27 @@ namespace DataArcs.Transitions
             }
         }
 
+        public override Series GetSeriesAtIndex(PropertyId propertyId, int index, int virtualCount = -1)
+        {
+            Series result;
+            if (_blends.ContainsKey(propertyId))
+            {
+                result = Start.GetSeriesAtIndex(propertyId, index, virtualCount);
+                Series end = End.GetSeriesAtIndex(propertyId, index, virtualCount);
+                //float delT = _delay.GetValueAtT(t).FloatDataAt(0);
+                //float durT = _duration.GetValueAtT(t).FloatDataAt(0);
+                //float delRatio = delT / (delT + durT);
+                //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
+                float easedT = _easing?.GetSeriesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
+                result.InterpolateInto(end, easedT);
+            }
+            else
+            {
+                var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
+                result = store != null ? store.GetSeriesAtIndex(index, virtualCount) : SeriesUtils.GetZeroFloatSeries(1, 0);
+            }
+            return result;
+        }
         public override Series GetSeriesAtT(PropertyId propertyId, float t, int virtualCount = -1)
         {
 	        Series result;

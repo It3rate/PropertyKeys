@@ -28,11 +28,16 @@ namespace DataArcs.Components
         public abstract void GetDefinedStores(HashSet<PropertyId> ids);
         public abstract void Update(float currentTime, float deltaTime);
         public abstract CompositeBase CreateChild();
-		
+
         public virtual Series GetSeriesAtT(PropertyId propertyId, float t, int virtualCount = -1)
         {
-	        var store = GetStore(propertyId);
-	        return store != null ? store.GetSeriesAtT(t, virtualCount) : SeriesUtils.GetZeroFloatSeries(1, 0);
+            var store = GetStore(propertyId);
+            return store != null ? store.GetSeriesAtT(t, virtualCount) : SeriesUtils.GetZeroFloatSeries(1, 0);
+        }
+        public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index, int virtualCount = -1)
+        {
+            var store = GetStore(propertyId);
+            return store != null ? store.GetSeriesAtIndex(index, virtualCount) : SeriesUtils.GetZeroFloatSeries(1, 0);
         }
         public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
         {
@@ -58,14 +63,13 @@ namespace DataArcs.Components
                     DrawAtIndex(i, count, g);
                 }
             }
-
-
             //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
         }
         public void DrawAtIndex(int index, int count, Graphics g)
         {
             var it = index / (count - 1f);
-            Series v = GetSeriesAtT(PropertyId.Location, it, count);
+            Series v = GetSeriesAtIndex(PropertyId.Location, index, count);
+            //Series v = GetSeriesAtT(PropertyId.Location, it, count);
             
             ParametricSeries ps = GetSampledT(PropertyId.Location, it);
 

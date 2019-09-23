@@ -49,8 +49,9 @@ namespace DataArcs.Stores
 
 		public override Series GetSeriesAtT(float t, int virtualCount = -1)
 		{
-			return Sampler?.GetValueAtT(_series, t, virtualCount) ?? _series.GetValueAtT(t);
+			return Sampler.GetValueAtT(_series, t, virtualCount);
 		}
+
         public override ParametricSeries GetSampledT(float t)
         {
             return Sampler.GetSampledT(t);
