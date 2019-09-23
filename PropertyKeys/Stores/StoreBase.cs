@@ -13,7 +13,7 @@ namespace DataArcs.Stores
         public CombineFunction CombineFunction { get; set; }
         public CombineTarget CombineTarget { get; set; }
         public Sampler Sampler { get; set; }
-        public virtual int VirtualCount => Sampler.Capacity;
+        public virtual int Capacity => Sampler.Capacity;
 
         protected StoreBase()
 	    {
@@ -22,9 +22,9 @@ namespace DataArcs.Stores
 
         public abstract Series GetFullSeries(int index);
 
-        public abstract Series GetSeriesAtIndex(int index, int virtualCount = -1);
+        public abstract Series GetSeriesAtIndex(int index);
 
-        public abstract Series GetSeriesAtT(float t, int virtualCount = -1);
+        public abstract Series GetSeriesAtT(float t);
 
         public abstract ParametricSeries GetSampledT(float t);
 

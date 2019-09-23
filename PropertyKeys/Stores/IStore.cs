@@ -10,12 +10,12 @@ namespace DataArcs.Stores
 		int StoreId { get; }
         CombineFunction CombineFunction { get; set; }
 		CombineTarget CombineTarget { get; set; }
-		int VirtualCount { get; }
+		int Capacity { get; }
 		Sampler Sampler { get; set; }
 
         Series GetFullSeries(int index);
-		Series GetSeriesAtIndex(int index, int virtualCount = -1);
-		Series GetSeriesAtT(float t, int virtualCount = -1);
+		Series GetSeriesAtIndex(int index);
+		Series GetSeriesAtT(float t);
         ParametricSeries GetSampledT(float t);
 
         void Update(float deltaTime);
@@ -35,7 +35,7 @@ namespace DataArcs.Stores
         public bool MoveNext()
         {
             _position++;
-            return (_position < _instance.VirtualCount);
+            return (_position < _instance.Capacity);
         }
 
         public object Current => _instance.GetSeriesAtIndex(_position);

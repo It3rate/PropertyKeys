@@ -64,12 +64,12 @@ namespace DataArcs.Commands
 
 			if (startIndex == endIndex)
 			{
-				result = Stores[startIndex].VirtualCount;
+				result = Stores[startIndex].Capacity;
 			}
 			else
 			{
-				var sec = Stores[startIndex].VirtualCount;
-				var eec = Stores[startIndex + 1].VirtualCount;
+				var sec = Stores[startIndex].Capacity;
+				var eec = Stores[startIndex + 1].Capacity;
 				result = sec + (int) (vT * (eec - sec));
 			}
 

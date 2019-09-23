@@ -36,12 +36,12 @@ namespace DataArcs.Stores
             return _series;
         }
 
-		public override Series GetSeriesAtIndex(int index, int virtualCount = -1)
+		public override Series GetSeriesAtIndex(int index)
 		{
 			return Sampler.GetValueAtIndex(_series, index);
 		}
 
-		public override Series GetSeriesAtT(float t, int virtualCount = -1)
+		public override Series GetSeriesAtT(float t)
 		{
 			return Sampler.GetValueAtT(_series, t);
 		}
@@ -63,13 +63,13 @@ namespace DataArcs.Stores
 
 		public override void HardenToData()
         {
-            var len = VirtualCount * _series.VectorSize;
+            var len = Capacity * _series.VectorSize;
             if (_series.DataSize != len)
             {
                 Series result = _series.GetZeroSeries(len);
-                for (var i = 0; i < VirtualCount; i++)
+                for (var i = 0; i < Capacity; i++)
                 {
-                    result.SetDataAtIndex(i, GetSeriesAtIndex(i, VirtualCount));
+                    result.SetDataAtIndex(i, GetSeriesAtIndex(i));
                 }
                 _series = result;
             }

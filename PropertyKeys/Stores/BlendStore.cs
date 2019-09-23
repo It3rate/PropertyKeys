@@ -12,12 +12,12 @@ namespace DataArcs.Stores
         public float CurrentT { get; set; }
         private readonly IStore _easing;
 		
-        public override int VirtualCount
+        public override int Capacity
         {
             get
             {
 	            int result = 0;
-                foreach (var store in _stores) { result = Math.Max(result, store.VirtualCount); } // todo: use combine function for virtual count, rename to capacity.
+                foreach (var store in _stores) { result = Math.Max(result, store.Capacity); } // todo: use combine function for virtual count, rename to capacity.
                 return result;
             }
         }
@@ -37,14 +37,14 @@ namespace DataArcs.Stores
 			return GetSeriesAtIndex(index, CurrentT);
 		}
 
-		public override Series GetSeriesAtIndex(int index, int virtualCount = -1)
+		public override Series GetSeriesAtIndex(int index)
 		{
-			return GetSeriesAtIndex(index, CurrentT, virtualCount);
+			return GetSeriesAtIndex(index, CurrentT);
 		}
 
-		public override Series GetSeriesAtT(float t, int virtualCount = -1)
+		public override Series GetSeriesAtT(float t)
 		{
-			return GetSeriesAtT(t, CurrentT, virtualCount);
+			return GetSeriesAtT(t, CurrentT);
 		}
 
         public override ParametricSeries GetSampledT(float t)
@@ -93,7 +93,7 @@ namespace DataArcs.Stores
 			}
 		}
 
-		public Series GetSeriesAtIndex(int index, float t, int virtualCount = -1)
+		public Series GetSeriesAtIndex(int index, float t)
 		{
 			Series result;
 
@@ -102,17 +102,17 @@ namespace DataArcs.Stores
 
             if (startIndex == endIndex)
 			{
-				result = _stores[startIndex].GetSeriesAtIndex(index, virtualCount);
+				result = _stores[startIndex].GetSeriesAtIndex(index);
 			}
 			else
 			{
-				result = BlendValueAtIndex(_stores[startIndex], _stores[endIndex], index, vT, virtualCount);
+				result = BlendValueAtIndex(_stores[startIndex], _stores[endIndex], index, vT);
 			}
 
 			return result;
 		}
 
-		public Series GetSeriesAtT(float indexT, float t, int virtualCount = -1)
+		public Series GetSeriesAtT(float indexT, float t)
 		{
 			Series result;
 
@@ -121,11 +121,11 @@ namespace DataArcs.Stores
 
             if (startIndex == endIndex)
 			{
-				result = _stores[startIndex].GetSeriesAtT(indexT, virtualCount);
+				result = _stores[startIndex].GetSeriesAtT(indexT);
 			}
 			else
 			{
-				result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT, virtualCount);
+				result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT);
 			}
 
 			return result;
@@ -139,36 +139,36 @@ namespace DataArcs.Stores
 
 			if (startIndex == endIndex)
 			{
-				result = _stores[startIndex].VirtualCount;
+				result = _stores[startIndex].Capacity;
 			}
 			else
 			{
-				var sec = _stores[startIndex].VirtualCount;
-				var eec = _stores[startIndex + 1].VirtualCount;
+				var sec = _stores[startIndex].Capacity;
+				var eec = _stores[startIndex + 1].Capacity;
 				result = sec + (int) (vT * (eec - sec));
 			}
 
 			return result;
 		}
 
-        public static Series BlendValueAtIndex(IStore start, IStore end, int index, float t, int virtualCount = -1)
+        public static Series BlendValueAtIndex(IStore start, IStore end, int index, float t)
         {
-            var result = start.GetSeriesAtIndex(index, virtualCount);
+            var result = start.GetSeriesAtIndex(index);
             if (end != null)
             {
-                var endAr = end.GetSeriesAtIndex(index, virtualCount);
+                var endAr = end.GetSeriesAtIndex(index);
                 result.InterpolateInto(endAr, t);
             }
 
             return result;
         }
 
-        public static Series BlendValueAtT(IStore start, IStore end, float indexT, float t, int virtualCount = -1)
+        public static Series BlendValueAtT(IStore start, IStore end, float indexT, float t)
         {
-            var result = start.GetSeriesAtT(indexT, virtualCount);
+            var result = start.GetSeriesAtT(indexT);
             if (end != null)
             {
-                var endAr = end.GetSeriesAtT(indexT, virtualCount);
+                var endAr = end.GetSeriesAtT(indexT);
 
                 result.InterpolateInto(endAr, t);
             }

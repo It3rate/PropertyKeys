@@ -20,7 +20,7 @@ namespace DataArcs.SeriesData
         public SeriesType Type { get; }
 
         /// <summary>
-        /// The raw size of the stored data array, ignores VirtualCount and VectorSize.
+        /// The raw size of the stored data array, ignores Capacity and VectorSize.
         /// </summary>
         public abstract int DataSize { get; }
 

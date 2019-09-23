@@ -53,8 +53,8 @@ namespace DataArcs.Tests.GraphicTests
 
             IStore endLocStore = bt.End.GetStore(PropertyId.Location);
             Series minMax = new FloatSeries(2, -4f, -3f, 4f, 3f);
-            var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.VirtualCount, minMax, 1111, CombineFunction.ContinuousAdd).CreateLinearStore(endLocStore.VirtualCount);
-            //randomStore.VirtualCount = endLocStore.VirtualCount;
+            var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.Capacity, minMax, 1111, CombineFunction.ContinuousAdd).CreateLinearStore(endLocStore.Capacity);
+            //randomStore.Capacity = endLocStore.Capacity;
             var fs = new FunctionalStore(endLocStore, randomStore);
             ((Composite)bt.End).AddProperty(PropertyId.Location, fs);
             return bt;

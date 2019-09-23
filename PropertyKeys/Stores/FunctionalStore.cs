@@ -9,9 +9,9 @@ namespace DataArcs.Stores
     {
 		private readonly List<IStore> _stores;
 
-		public override int VirtualCount
+		public override int Capacity
 		{
-			get => GetStartDataStore().VirtualCount; // todo: use combine math to get functional store virtual count. Rename to capacity.
+			get => GetStartDataStore().Capacity; // todo: use combine math to get functional store virtual count. Rename to capacity.
 		}
 		
 		public FunctionalStore(params IStore[] stores)
@@ -23,22 +23,21 @@ namespace DataArcs.Stores
 
 		public override Series GetFullSeries(int index) => _stores[index].GetFullSeries(0);
 
-        public override Series GetSeriesAtIndex(int index, int virtualCount = -1)
+        public override Series GetSeriesAtIndex(int index)
 		{
-			var series = _stores[0].GetSeriesAtIndex(index, virtualCount);
+			var series = _stores[0].GetSeriesAtIndex(index);
 			for (var i = 1; i < _stores.Count; i++)
 			{
-				var b = _stores[i].GetSeriesAtIndex(index, virtualCount);
+				var b = _stores[i].GetSeriesAtIndex(index);
 				series.CombineInto(b, _stores[i].CombineFunction);
 			}
 
 			return series;
 		}
 
-        public override Series GetSeriesAtT(float t, int virtualCount = -1)
+        public override Series GetSeriesAtT(float t)
 		{
 			Series series = null;
-			//var series = _stores[0].GetSeriesAtT(t, virtualCount);
 			foreach (var store in _stores)
 			{
 				if (store.CombineTarget == CombineTarget.T)
@@ -47,12 +46,12 @@ namespace DataArcs.Stores
 				}
 				else if(series != null)
 				{
-					var b = store.GetSeriesAtT(t, virtualCount);
+					var b = store.GetSeriesAtT(t);
 					series.CombineInto(b, store.CombineFunction);
                 }
 				else
 				{
-					series = store.GetSeriesAtT(t, virtualCount);
+					series = store.GetSeriesAtT(t);
                 }
 			}
 			return series;

@@ -50,7 +50,7 @@ namespace DataArcs.Components
             IStore store = GetStore(PropertyId.Items) ?? GetStore(PropertyId.Location);
             if (store != null)
             {
-	            for (int i = 0; i < store.VirtualCount; i++)
+	            for (int i = 0; i < store.Capacity; i++)
 	            {
 		            DrawAtIndex(i, store, g);
                 }
@@ -59,7 +59,7 @@ namespace DataArcs.Components
         }
         public void DrawAtIndex(int countIndex, IStore itemStore, Graphics g)
         {
-	        int count = itemStore.VirtualCount;
+	        int count = itemStore.Capacity;
             var it = count > 1 ? countIndex / (count - 1f) : 0;
 
 	        int index = GetStore(PropertyId.Items)?.GetSeriesAtIndex(countIndex).IntDataAt(0) ?? countIndex;
