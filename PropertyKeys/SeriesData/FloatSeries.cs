@@ -63,6 +63,39 @@ namespace DataArcs.SeriesData
 			CachedSize = new FloatSeries(VectorSize, max);
 		}
 
+		public void Normalize()
+		{
+			NormalizeWith(new FloatSeries(0,0,1,1));
+		}
+
+		public void NormalizeWith(Series bounds)
+		{
+            float[] bMin = CachedFrame.GetValueAtT(0).FloatData;
+			float[] bDif = CachedFrame.GetValueAtT(1).FloatData;
+			for (int i = 0; i < bDif.Length; i++)
+			{
+				bDif[i] -= bMin[i];
+			}
+
+            float[] min = bounds.Count > 1 ? bounds.GetValueAtT(0).FloatData : SeriesUtils.GetSizedFloatArray(VectorSize, 1f);
+			float[] dif = bounds.Count > 1 ? bounds.GetValueAtT(1).FloatData : bounds.GetValueAtT(0).FloatData;
+			for (int i = 0; i < dif.Length; i++)
+			{
+				dif[i] -= min[i];
+			}
+
+            int maxLen = Math.Min(min.Length, dif.Length);
+            for (int i = 0; i < Count; i++)
+			{
+				for (int j = 0; j < VectorSize; j++)
+				{
+					float val = (_floatValues[i * VectorSize + j] - bMin[j]) / bDif[j];
+					int index = j < maxLen ? j : maxLen - 1;
+					_floatValues[i * VectorSize + j] = val * dif[index] + min[index];
+				}
+			}
+		}
+
 		public override void InterpolateInto(Series b, float t)
 		{
 			for (var i = 0; i < DataSize; i++)

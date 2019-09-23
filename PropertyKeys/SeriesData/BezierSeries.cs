@@ -4,25 +4,11 @@ using DataArcs.Stores;
 
 namespace DataArcs.SeriesData
 {
-    // maybe store all values as quadratic, allowing easier blending?
-    // todo: split into all quadratic beziers and all ploy lines. 
-    // Use identical first and second coordinate for lines in quadratic, *or use midpoint and Move data determines lines etc.
-	// try blending with len/angle from zero vs interpolate points.
-	public enum BezierMove : int
-	{
-		MoveTo,
-		LineTo,
-		QuadTo,
-		CubeTo,
-		End,
-	}
-
 	/// <summary>
 	/// Specialized series for 2D Beziers, holds the extra move data. Use a BezierSampler to render and interpolate.
 	/// </summary>
 	public class BezierSeries : FloatSeries
 	{
-
         public static readonly int[] MoveSize = new int[] {2, 2, 4, 6, 0};
 
         public override int Count => (int)(_floatValues.Length / VectorSize);
@@ -163,4 +149,18 @@ namespace DataArcs.SeriesData
 			return result;
 		}
     }
+
+	// maybe store all values as quadratic, allowing easier blending?
+	// todo: split into all quadratic beziers and all ploy lines. 
+	// Use identical first and second coordinate for lines in quadratic, *or use midpoint and Move data determines lines etc.
+	// try blending with len/angle from zero vs interpolate points.
+	public enum BezierMove : int
+	{
+		MoveTo,
+		LineTo,
+		QuadTo,
+		CubeTo,
+		End,
+	}
+
 }
