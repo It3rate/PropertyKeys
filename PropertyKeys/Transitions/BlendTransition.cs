@@ -84,13 +84,13 @@ namespace DataArcs.Transitions
             }
         }
 
-        public override Series GetSeriesAtIndex(PropertyId propertyId, int index, int virtualCount = -1)
+        public override Series GetSeriesAtIndex(PropertyId propertyId, int index)
         {
             Series result;
             if (_blends.ContainsKey(propertyId))
             {
-                result = Start.GetSeriesAtIndex(propertyId, index, virtualCount);
-                Series end = End.GetSeriesAtIndex(propertyId, index, virtualCount);
+                result = Start.GetSeriesAtIndex(propertyId, index);
+                Series end = End.GetSeriesAtIndex(propertyId, index);
                 //float delT = _delay.GetValueAtT(t).FloatDataAt(0);
                 //float durT = _duration.GetValueAtT(t).FloatDataAt(0);
                 //float delRatio = delT / (delT + durT);
@@ -101,17 +101,17 @@ namespace DataArcs.Transitions
             else
             {
                 var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
-                result = store != null ? store.GetSeriesAtIndex(index, virtualCount) : SeriesUtils.GetZeroFloatSeries(1, 0);
+                result = store != null ? store.GetSeriesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
             }
             return result;
         }
-        public override Series GetSeriesAtT(PropertyId propertyId, float t, int virtualCount = -1)
+        public override Series GetSeriesAtT(PropertyId propertyId, float t)
         {
 	        Series result;
 	        if (_blends.ContainsKey(propertyId))
 	        {
-		        result = Start.GetSeriesAtT(propertyId, t, virtualCount);
-		        Series end = End.GetSeriesAtT(propertyId, t, virtualCount);
+		        result = Start.GetSeriesAtT(propertyId, t);
+		        Series end = End.GetSeriesAtT(propertyId, t);
                 //float delT = _delay.GetValueAtT(t).FloatDataAt(0);
                 //float durT = _duration.GetValueAtT(t).FloatDataAt(0);
                 //float delRatio = delT / (delT + durT);
@@ -122,7 +122,7 @@ namespace DataArcs.Transitions
 	        else
 	        {
 		        var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
-		        result = store != null ? store.GetSeriesAtT(t, virtualCount) : SeriesUtils.GetZeroFloatSeries(1, 0);
+		        result = store != null ? store.GetSeriesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
             }
 	        return result;
         }

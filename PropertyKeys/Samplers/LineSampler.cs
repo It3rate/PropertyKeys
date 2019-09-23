@@ -4,12 +4,16 @@ namespace DataArcs.Samplers
 {
 	public class LineSampler : Sampler
 	{
-		public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
+		public LineSampler(int capacity = 1)
 		{
-			return series.GetValueAtVirtualIndex(index, virtualCount);
+			Capacity = capacity;
+		}
+		public override Series GetValueAtIndex(Series series, int index)
+		{
+			return series.GetValueAtVirtualIndex(index, Capacity);
 		}
 
-		public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
+		public override Series GetValueAtT(Series series, float t)
 		{
 			return series.GetValueAtT(t);
 		}

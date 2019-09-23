@@ -24,7 +24,6 @@ namespace DataArcs.Tests
 			series_1 = new FloatSeries(2, new[] {0f, 0f, 100f, 200f});
 			HexagonSamplerByT_1();
             var store = series_1.Store;
-            store.VirtualCount = 100;
             store.HardenToData();
             series_1 = (FloatSeries)store.GetFullSeries(0);
 			HexagonSamplerByT_1();
@@ -34,12 +33,11 @@ namespace DataArcs.Tests
 		public void TestHexagonSamplerByIndex_1()
 		{
 			series_1 = new FloatSeries(2, new[] {0f, 0f, 100f, 200f});
-			HexagonSamplerByIndex_1(100);
+			HexagonSamplerByIndex_1();
             var store = series_1.Store;
-            store.VirtualCount = 100;
             store.HardenToData();
             series_1 = (FloatSeries)store.GetFullSeries(0);
-            HexagonSamplerByIndex_1(100);
+            HexagonSamplerByIndex_1();
 		}
 
 		[TestMethod]
@@ -54,12 +52,11 @@ namespace DataArcs.Tests
 			series_1 = new FloatSeries(2, start);
 			var sampler = new HexagonSampler(new[] {cols, rows});
 
-			VisualSampleByIndex(sampler, cols * rows);
+			VisualSampleByIndex(sampler);
             var store = series_1.Store;
-            store.VirtualCount = cols * rows;
             store.HardenToData();
             series_1 = (FloatSeries)store.GetFullSeries(0);
-            VisualSampleByIndex(sampler, cols * rows);
+            VisualSampleByIndex(sampler);
 		}
 
 		[TestMethod]
@@ -76,7 +73,6 @@ namespace DataArcs.Tests
 
 			VisualSampleByT(sampler);
             var store = series_1.Store;
-            store.VirtualCount = cols * rows;
             store.HardenToData();
             series_1 = (FloatSeries)store.GetFullSeries(0);
             VisualSampleByT(sampler);
@@ -112,29 +108,29 @@ namespace DataArcs.Tests
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 		}
 
-		public void VisualSampleByIndex(HexagonSampler sampler, int count)
+		public void VisualSampleByIndex(HexagonSampler sampler)
 		{
 			var startStore = new Store(series_1, sampler);
 
 			Series sample;
 			Series expected;
-			sample = sampler.GetValueAtIndex(series_1, 0, count);
+			sample = sampler.GetValueAtIndex(series_1, 0);
 			expected = new FloatSeries(2, new[] {150f, 150f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 9, count);
+			sample = sampler.GetValueAtIndex(series_1, 9);
 			expected = new FloatSeries(2, new[] {650f, 150f});
 			//Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 10, count);
+			sample = sampler.GetValueAtIndex(series_1, 10);
 			expected = new FloatSeries(2, new[] {177.7777f, 166.0375f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 20, count);
+			sample = sampler.GetValueAtIndex(series_1, 20);
 			expected = new FloatSeries(2, new[] {150f, 182.075f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 60, count);
+			sample = sampler.GetValueAtIndex(series_1, 60);
 			expected = new FloatSeries(2, new[] {150f, 246.225f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 		}
@@ -201,7 +197,7 @@ namespace DataArcs.Tests
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 		}
 
-		public void HexagonSamplerByIndex_1(int count)
+		public void HexagonSamplerByIndex_1()
 		{
 			int[] strides = {10, 10};
 			Series sample;
@@ -209,51 +205,51 @@ namespace DataArcs.Tests
 			var sampler = new HexagonSampler(strides);
 
 			// odd rows are offset to make hex grid, by 5.555 in this case.
-			sample = sampler.GetValueAtIndex(series_1, -10, count);
+			sample = sampler.GetValueAtIndex(series_1, -10);
 			expected = new FloatSeries(2, new[] {0f, 0f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 0, count);
+			sample = sampler.GetValueAtIndex(series_1, 0);
 			expected = new FloatSeries(2, new[] {0f, 0f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 1, count);
+			sample = sampler.GetValueAtIndex(series_1, 1);
 			expected = new FloatSeries(2, new[] {11.11111f, 0f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 9, count);
+			sample = sampler.GetValueAtIndex(series_1, 9);
 			expected = new FloatSeries(2, new[] {100f, 0f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 10, count);
+			sample = sampler.GetValueAtIndex(series_1, 10);
 			expected = new FloatSeries(2, new[] {5.55555555f, 22.222222f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 11, count);
+			sample = sampler.GetValueAtIndex(series_1, 11);
 			expected = new FloatSeries(2, new[] {16.66666f, 22.222222f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 20, count);
+			sample = sampler.GetValueAtIndex(series_1, 20);
 			expected = new FloatSeries(2, new[] {0f, 44.444444f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 21, count);
+			sample = sampler.GetValueAtIndex(series_1, 21);
 			expected = new FloatSeries(2, new[] {11.11111f, 44.444444f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 44, count);
+			sample = sampler.GetValueAtIndex(series_1, 44);
 			expected = new FloatSeries(2, new[] {44.44444f, 88.88888f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 89, count);
+			sample = sampler.GetValueAtIndex(series_1, 89);
 			expected = new FloatSeries(2, new[] {100f, 177.77777f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 99, count);
+			sample = sampler.GetValueAtIndex(series_1, 99);
 			expected = new FloatSeries(2, new[] {105.555555f, 200f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-			sample = sampler.GetValueAtIndex(series_1, 999, count);
+			sample = sampler.GetValueAtIndex(series_1, 999);
 			expected = new FloatSeries(2, new[] {105.555555f, 200f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 		}

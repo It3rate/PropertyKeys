@@ -6,7 +6,6 @@ namespace DataArcs.Samplers
 	public class RingSampler : Sampler
 	{
         protected int[] RingCounts { get; }
-        private int Capacity { get; }
 
         public RingSampler(int[] ringCounts)
         {
@@ -24,32 +23,26 @@ namespace DataArcs.Samplers
                 }
             }
         }
-        public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
+        public override Series GetValueAtIndex(Series series, int index)
 		{
-			virtualCount = virtualCount == -1 ? Capacity : virtualCount;
-			var indexT = index / (virtualCount - 1f); // full circle
-			return GetSeriesSample(series, indexT, virtualCount);
+			var indexT = index / (Capacity - 1f); // full circle
+			return GetSeriesSample(series, indexT);
 		}
 
-		public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
+		public override Series GetValueAtT(Series series, float t)
         {
-            virtualCount = virtualCount == -1 ? Capacity : virtualCount;
-            return GetSeriesSample(series, t, virtualCount);
+            return GetSeriesSample(series, t);
 		}
 
         public override ParametricSeries GetSampledT(float t)
         {
-            float ringIndexT;
-            float ringT;
-            SamplerUtils.GetJaggedT(RingCounts, t, out ringIndexT, out ringT);
+            SamplerUtils.GetJaggedT(RingCounts, t, out var ringIndexT, out var ringT);
             return new ParametricSeries(2, ringIndexT, ringT);
         }
 
-        public Series GetSeriesSample(Series series, float t, int virtualCount = -1)
+        private Series GetSeriesSample(Series series, float t)
 		{
-            float ringIndexT;
-            float ringT;
-            SamplerUtils.GetJaggedT(RingCounts, t, out ringIndexT, out ringT);
+			SamplerUtils.GetJaggedT(RingCounts, t, out var ringIndexT, out var ringT);
 
             var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
 			var frame = series.Frame.FloatData; // x0,y0...n0, x1,y1..n1

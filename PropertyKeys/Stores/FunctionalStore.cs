@@ -11,8 +11,7 @@ namespace DataArcs.Stores
 
 		public override int VirtualCount
 		{
-			get => GetStartDataStore().VirtualCount;
-			set => GetStartDataStore().VirtualCount = value;
+			get => GetStartDataStore().VirtualCount; // todo: use combine math to get functional store virtual count. Rename to capacity.
 		}
 		
 		public FunctionalStore(params IStore[] stores)

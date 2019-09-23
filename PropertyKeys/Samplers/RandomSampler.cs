@@ -14,13 +14,13 @@ namespace DataArcs.Samplers
 			_random = new Random(seed);
 		}
 
-		public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
+		public override Series GetValueAtIndex(Series series, int index)
 		{
 			index = _random.Next(0, index);
 			return series.GetDataAtIndex(index);
 		}
 
-		public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
+		public override Series GetValueAtT(Series series, float t)
 		{
 			t = (float) _random.NextDouble() * t;
 			return series.GetValueAtT(t);

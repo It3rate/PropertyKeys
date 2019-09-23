@@ -13,39 +13,32 @@ namespace DataArcs.Samplers
 		public BezierSampler(BezierSeries series)
 		{
 			Series = series;
+			Capacity = series.Count;
 		}
 
-		public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
+		public override Series GetValueAtIndex(Series series, int index)
 		{
 			// todo: check if this virtualCount assignment should happen in beziers at this point or pass through.
-			virtualCount = virtualCount == -1 ? series.Count : virtualCount;
 			series = series ?? Series;
-			var t = index / (float) virtualCount;
-			return GetValueAtT(series, t, virtualCount);
+			var t = index / (float) Capacity;
+			return GetValueAtT(series, t);
 		}
 
-		public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
+		public override Series GetValueAtT(Series series, float t)
 		{
 			series = series ?? Series;
 			var moves = series is BezierSeries bezierSeries ? bezierSeries.Moves : new[] {BezierMove.LineTo};
-			return GetValueAtT(series, moves, t, virtualCount);
+			return GetSeriesAtT(series, t);
 		}
 		
-		public static Series GetValueAtT(Series series, BezierMove[] moves, float t,
-			int virtualCount = -1)
+		private Series GetSeriesAtT(Series series, float t)
 		{
-			if (virtualCount > -1)
-			{
-				t *= series.Count / (float) virtualCount;
-			}
-
-			virtualCount = virtualCount == -1 ? series.Count : virtualCount;
-			SeriesUtils.GetScaledT(t, virtualCount, out var vT, out var startIndex, out var endIndex);
+			SeriesUtils.GetScaledT(t, Series.Moves.Length, out var vT, out var startIndex, out var endIndex);
 			var a = series.GetDataAtIndex(startIndex).FloatData; // GetFloatArrayAtIndex(startIndex);
 			var b = series.GetDataAtIndex(endIndex).FloatData; // GetFloatArrayAtIndex(endIndex);
 			var p0Index = startIndex == endIndex ? 0 : a.Length - 2; // start from last point unless at start or end.
 			var p2Index = b.Length - 2;
-			var moveType = startIndex < moves.Length ? moves[startIndex] : BezierMove.LineTo;
+			var moveType = startIndex < Series.Moves.Length ? Series.Moves[startIndex] : BezierMove.LineTo;
 			float[] result = {0, 0};
 			var it = 1f - t;
 			switch (moveType)

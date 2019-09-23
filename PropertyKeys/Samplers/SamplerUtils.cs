@@ -83,30 +83,5 @@ namespace DataArcs.Samplers
             var index = (int)(t * (virtualCount - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
             return GetStrideTsForIndex(virtualCount, strides, index);
         }
-
-        public static Sampler CreateSampler(SampleType sampleType, int[] strides = null)
-        {
-            Sampler result;
-            switch (sampleType)
-            {
-                case SampleType.Line:
-                    result = new LineSampler();
-                    break;
-                case SampleType.Grid:
-                    result = new GridSampler(strides);
-                    break;
-                case SampleType.Ring:
-                    result = new RingSampler(strides);
-                    break;
-                case SampleType.Hexagon:
-                    result = new HexagonSampler(strides);
-                    break;
-                default:
-                    result = new LineSampler();
-                    break;
-            }
-
-            return result;
-        }
     }
 }

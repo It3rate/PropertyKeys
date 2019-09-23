@@ -10,7 +10,7 @@ namespace DataArcs.Stores
 		int StoreId { get; }
         CombineFunction CombineFunction { get; set; }
 		CombineTarget CombineTarget { get; set; }
-		int VirtualCount { get; set; }
+		int VirtualCount { get; }
 		Sampler Sampler { get; set; }
 
         Series GetFullSeries(int index);

@@ -11,20 +11,15 @@ namespace DataArcs.Stores
 		private readonly List<IStore> _stores;
         public float CurrentT { get; set; }
         private readonly IStore _easing;
-
-        private int _virtualCount = -1;
+		
         public override int VirtualCount
         {
             get
             {
-                int result = _virtualCount;
-                if (result == -1)
-                {
-                    foreach (var store in _stores) { result = Math.Max(result, store.VirtualCount); }
-                }
+	            int result = 0;
+                foreach (var store in _stores) { result = Math.Max(result, store.VirtualCount); } // todo: use combine function for virtual count, rename to capacity.
                 return result;
             }
-            set => _virtualCount = value;
         }
 
         public BlendStore(params IStore[] stores)

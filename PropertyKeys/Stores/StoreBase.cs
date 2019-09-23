@@ -12,8 +12,8 @@ namespace DataArcs.Stores
 
         public CombineFunction CombineFunction { get; set; }
         public CombineTarget CombineTarget { get; set; }
-        public abstract int VirtualCount { get; set; }
         public Sampler Sampler { get; set; }
+        public virtual int VirtualCount => Sampler.Capacity;
 
         protected StoreBase()
 	    {

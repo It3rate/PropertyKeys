@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using DataArcs.Samplers;
 using DataArcs.Stores;
 
 namespace DataArcs.SeriesData
@@ -134,7 +135,8 @@ namespace DataArcs.SeriesData
         public abstract Series GetMinSeries();
         public abstract Series GetMaxSeries();
 
-        public Store Store => new Store(this);
+        public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
+        public Store Store => new Store(this, new LineSampler(this.Count));
 
         public abstract Series Copy();
 

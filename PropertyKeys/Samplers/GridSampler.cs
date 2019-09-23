@@ -7,8 +7,6 @@ namespace DataArcs.Samplers
 	{
 		protected int[] Strides { get; }
 
-        private int Capacity { get; }
-
         public GridSampler(int[] strides)
 		{
 			Strides = strides;
@@ -26,19 +24,17 @@ namespace DataArcs.Samplers
             }
         }
 
-		public override Series GetValueAtIndex(Series series, int index, int virtualCount = -1)
+		public override Series GetValueAtIndex(Series series, int index)
         {
-            virtualCount = virtualCount == -1 ? Capacity : virtualCount;
-			index = Math.Max(0, Math.Min(virtualCount - 1, index));
-			return GetSeriesSample(series, Strides, index);
+			index = Math.Max(0, Math.Min(Capacity - 1, index));
+			return GetSeriesSample(series, index);
 		}
 
-		public override Series GetValueAtT(Series series, float t, int virtualCount = -1)
+		public override Series GetValueAtT(Series series, float t)
         {
-            virtualCount = virtualCount == -1 ? Capacity : virtualCount;
 			t = Math.Max(0, Math.Min(1f, t));
-			var index = (int) Math.Round(t * (virtualCount - 1f));
-			return GetSeriesSample(series, Strides, index, virtualCount);
+			var index = (int) Math.Round(t * (Capacity - 1f));
+			return GetSeriesSample(series, index);
 		}
 
         public override ParametricSeries GetSampledT(float t)
@@ -50,15 +46,14 @@ namespace DataArcs.Samplers
             return new ParametricSeries(Strides.Length, strideTs[1], strideTs[0]);
         }
 
-        public static Series GetSeriesSample(Series series, int[] strides, int index, int virtualCount = -1)
+        private Series GetSeriesSample(Series series, int index)
         {
-            virtualCount = virtualCount == -1 ? strides[0] * strides[1] : virtualCount;
 			var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
-			var strideTs = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, index);
+			var strideTs = SamplerUtils.GetStrideTsForIndex(Capacity, Strides, index);
 
 			for (var i = 0; i < result.Length; i++)
 			{
-				result[i] = (i < strides.Length) ? series.GetValueAtT(strideTs[i]).FloatDataAt(i) : 0;
+				result[i] = (i < Strides.Length) ? series.GetValueAtT(strideTs[i]).FloatDataAt(i) : 0;
 			}
 
 			return SeriesUtils.Create(series, result);
