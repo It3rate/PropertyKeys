@@ -15,7 +15,7 @@ namespace DataArcs.Tests.GraphicTests
     public class CompositeTestObjects
     {
 	    public const int VersionCount = 4;
-        public static CompositeBase GetTest0(float delay, float startTime, float duration)
+        public static BlendTransition GetTest0(float delay, float startTime, float duration)
         {
 	        var composite = new Composite();
             AddGraphic(composite);
@@ -45,7 +45,7 @@ namespace DataArcs.Tests.GraphicTests
             return new BlendTransition(composite, endComp, delay, startTime, duration, easeStore);
         }
 
-        public static CompositeBase GetTest1(float delay, float startTime, float duration)
+        public static BlendTransition GetTest1(float delay, float startTime, float duration)
         {
 	        BlendTransition bt = (BlendTransition)GetTest0(delay, startTime, duration);
 
@@ -58,7 +58,7 @@ namespace DataArcs.Tests.GraphicTests
             return bt;
         }
 
-        public static CompositeBase GetTest2(float delay, float startTime, float duration)
+        public static BlendTransition GetTest2(float delay, float startTime, float duration)
         {
             var composite = new Composite();
             AddGraphic(composite);
@@ -82,7 +82,7 @@ namespace DataArcs.Tests.GraphicTests
             return new BlendTransition(composite, endComp, delay, startTime, duration, easeStore);
 
         }
-        public static CompositeBase GetTest3(float delay, float startTime, float duration)
+        public static BlendTransition GetTest3(float delay, float startTime, float duration)
         {
             var composite = new Composite();
             AddGraphic(composite);

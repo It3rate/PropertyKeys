@@ -3,6 +3,7 @@ using DataArcs.Stores;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ using DataArcs.SeriesData;
 
 namespace DataArcs.Transitions
 {
+	public delegate void TransitionEventHandler(object sender, EventArgs e);
+
     public class BlendTransition : CompositeBase
     {
 	    private Store _easing;
@@ -19,10 +22,17 @@ namespace DataArcs.Transitions
         private Series _delay;
         private Series _duration;
 
+        private bool _isComplete = false;
+        private bool _isReverse = false;
+
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
         public CompositeBase Start { get; }
         public CompositeBase End { get; }
+
+        public event TransitionEventHandler StartTransitionEvent;
+        public event TransitionEventHandler StepTransitionEvent;
+        public event TransitionEventHandler EndTransitionEvent;
 
         public BlendTransition(CompositeBase start, CompositeBase end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null)
         {
@@ -64,27 +74,47 @@ namespace DataArcs.Transitions
             }
         }
 
-        private bool _isReverse = false;
+        public void Restart()
+        {
+	        _startTime = (float) (DateTime.Now - Player.StartTime).TotalMilliseconds;
+	        _isComplete = false;
+        }
+
+        public void Reverse()
+        {
+	        _isReverse = !_isReverse;
+        }
+
         public override void Update(float currentTime, float deltaTime)
         {
+	        if (_isComplete) return;
+
 	        float dur = _duration.FloatDataAt(0);
 	        if (currentTime > _startTime + dur)
 	        {
-		        _startTime += dur;
-		        _isReverse = !_isReverse;
+		        _isComplete = true;
+		        CurrentT = 1f;
 	        }
-            //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.FloatDataAt(0) ? 1f : (deltaTime - _startTime) / _duration.FloatDataAt(0);
-            CurrentT = currentTime < _startTime ? 0 : 
-		        currentTime > _startTime + dur ? 1f : 
-		        (currentTime - _startTime) / dur;
+	        else
+	        {
+		        //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.FloatDataAt(0) ? 1f : (deltaTime - _startTime) / _duration.FloatDataAt(0);
+		        CurrentT = currentTime < _startTime ? 0 :
+			        currentTime > _startTime + dur ? 1f :
+			        (currentTime - _startTime) / dur;
+	        }
 
-            //CurrentT = _isReverse ? 1f - CurrentT : CurrentT;
+	        CurrentT = _isReverse ? 1f - CurrentT : CurrentT;
 
             Start.Update(currentTime, deltaTime);
             End.Update(currentTime, deltaTime);
             foreach (var item in _blends.Values)
             {
                 item.Update(CurrentT);
+            }
+
+            if (_isComplete)
+            {
+				EndTransitionEvent?.Invoke(this, EventArgs.Empty);
             }
         }
 

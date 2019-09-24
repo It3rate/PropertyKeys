@@ -22,6 +22,9 @@ namespace DataArcs.Players
         private TimeSpan _lastTime;
         private TimeSpan _currentTime;
         public float CurrentMs => (float)_currentTime.TotalMilliseconds;
+		
+        private readonly Dictionary<int, CompositeBase> _toAdd = new Dictionary<int, CompositeBase>();
+        public readonly List<int> _toRemove = new List<int>();
 
         public Player(Form display)
 		{
@@ -46,6 +49,18 @@ namespace DataArcs.Players
         private void Tick(object sender, ElapsedEventArgs e)
         {
             _currentTime = e.SignalTime - StartTime;
+
+            for (int i = 0; i < _toRemove.Count; i++)
+            {
+	            _elements.Remove(_toRemove[i]);
+            }
+			_toRemove.Clear();
+
+			foreach (var item in _toAdd)
+			{
+				_elements.Add(item.Key, item.Value);
+			}
+			_toAdd.Clear();
 
             t += 0.01f;
             var floorT = (int)t;
@@ -74,22 +89,22 @@ namespace DataArcs.Players
 	        }
         }
 
-        public void AddElement(CompositeBase composite) => _elements[composite.CompositeId] = composite;
+        public void AddElement(CompositeBase composite) => _toAdd.Add(composite.CompositeId, composite);
         public void RemoveElement(CompositeBase composite)
         {
 	        if (_elements.ContainsKey(composite.CompositeId))
 	        {
-		        _elements.Remove(composite.CompositeId);
+		        _toRemove.Add(composite.CompositeId);
 	        }
         }
         public void RemoveElementById(int id)
         {
 	        if (_elements.ContainsKey(id))
 	        {
-		        _elements.Remove(id);
+		        _toRemove.Add(id);
 	        }
         }
-        public void Clear() => _elements.Clear();
+        public void Clear() => _toRemove.AddRange(_elements.Keys);
 
     }
 }

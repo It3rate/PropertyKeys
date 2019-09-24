@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using DataArcs.Components;
 using DataArcs.Players;
 using DataArcs.Tests.GraphicTests;
+using DataArcs.Transitions;
 
 namespace DataArcs
 {
@@ -51,7 +52,7 @@ namespace DataArcs
         // add ML in simple 'bacteria' test
         // matrix support
 
-        private int _version = -1;
+        private int _version = 2;
         private void B0_Click(object sender, EventArgs e)
 		{
             NextVersion();
@@ -65,20 +66,40 @@ namespace DataArcs
             }
 
             _player.Clear();
+
+            BlendTransition comp;
             switch (_version)
             {
-                case 0:
-                    _player.AddElement(CompositeTestObjects.GetTest0(0, _player.CurrentMs, 1000f));
-                    break;
-                case 1:
-                    _player.AddElement(CompositeTestObjects.GetTest1(0, _player.CurrentMs, 1000f));
-                    break;
-                case 2:
-                    _player.AddElement(CompositeTestObjects.GetTest2(0, _player.CurrentMs, 1000f));
-                    break;
-                case 3:
-                    _player.AddElement(CompositeTestObjects.GetTest3(0, _player.CurrentMs, 3000f));
-                    break;
+	            case 0:
+		            comp = CompositeTestObjects.GetTest0(0, _player.CurrentMs, 1000f);
+		            break;
+	            case 1:
+		            comp = CompositeTestObjects.GetTest1(0, _player.CurrentMs, 1000f);
+		            break;
+	            case 2:
+		            comp = CompositeTestObjects.GetTest2(0, _player.CurrentMs, 1000f);
+		            break;
+	            default:
+		            comp = CompositeTestObjects.GetTest3(0, _player.CurrentMs, 3000f);
+		            break;
+            }
+		    _count = 0;
+            comp.EndTransitionEvent += CompOnEndTransitionEvent;
+            _player.AddElement(comp);
+        }
+
+		private int _count = 0;
+        private void CompOnEndTransitionEvent(object sender, EventArgs e)
+        {
+	        if (_count++ < 3)
+	        {
+		        BlendTransition bt = (BlendTransition) sender;
+		        bt.Reverse();
+		        bt.Restart();
+	        }
+	        else
+	        {
+		        NextVersion();
             }
         }
     }
