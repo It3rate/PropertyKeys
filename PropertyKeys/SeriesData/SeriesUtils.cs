@@ -185,6 +185,13 @@ namespace DataArcs.SeriesData
 			return result;
 		}
 
+		public static void MultiplyFloatArrayBy(float[] result, float b)
+		{
+			for (var i = 0; i < result.Length; i++)
+			{
+				result[i] *= b;
+			}
+		}
 		public static void SubtractFloatArrayFrom(float[] result, float[] b)
 		{
 			for (var i = 0; i < result.Length; i++)
@@ -199,7 +206,7 @@ namespace DataArcs.SeriesData
 				}
 			}
 		}
-		public static void SubtractIntArrayFrom(int[] result, int[] b)
+        public static void SubtractIntArrayFrom(int[] result, int[] b)
 		{
 			for (var i = 0; i < result.Length; i++)
 			{

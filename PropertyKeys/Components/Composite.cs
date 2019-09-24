@@ -86,11 +86,12 @@ namespace DataArcs.Components
 				store.Update(deltaTime);
 			}
 
-            if (deltaTime <= 0.05f && shouldShuffle)
+			float t = CurrentT % 1f;
+            if (t <= 0.05f && shouldShuffle)
             {
                 SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetFullSeries(0));
             }
-            if (deltaTime > 0.99 && shouldShuffle)
+            if (t > 0.99 && shouldShuffle)
             {
                 Series s = GetStore(PropertyId.Location).GetFullSeries(0);
                 RandomSeries rs = (RandomSeries)s;

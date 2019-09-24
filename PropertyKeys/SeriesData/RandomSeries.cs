@@ -30,7 +30,7 @@ namespace DataArcs.SeriesData
 			_seed = seed;
             _minMax = minMax;
 			_combineFunction = combineFunction;
-			_series = GenerateData();
+			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.GetZeroFloatSeries(vectorSize, _count) : GenerateData();
 		}
 
 		private Series GenerateData()
@@ -96,7 +96,11 @@ namespace DataArcs.SeriesData
 		{
             if(_combineFunction == CombineFunction.ContinuousAdd)
             {
+	            _seed = SeriesUtils.Random.Next();
                 var b = GenerateData();
+                float tSec = time / 1000f;
+                var scaled = new FloatSeries(VectorSize, SeriesUtils.GetSizedFloatArray(VectorSize, tSec));
+				b.CombineInto(scaled, CombineFunction.Multiply);
                 _series.CombineInto(b, CombineFunction.Add);
             }
         }
@@ -108,8 +112,11 @@ namespace DataArcs.SeriesData
 
 		protected override void CalculateFrame()
 		{
-			// nothing to do as internal series calculates it's own frame.
-		}
+            CachedFrame = _minMax.Copy();
+            float[] max = _minMax.GetValueAtT(1f).FloatData;
+            SeriesUtils.SubtractFloatArrayFrom(max, _minMax.GetValueAtT(0).FloatData);
+            CachedSize = new FloatSeries(VectorSize, max);
+        }
 
 		public override void CombineInto(Series b, CombineFunction combineFunction)
 		{

@@ -172,7 +172,56 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		public override float[] FloatData => (float[]) _floatValues.Clone();
+		public void CombineWith(float b, CombineFunction combineFunction)
+		{
+			switch (combineFunction)
+			{
+				case CombineFunction.Add:
+					for (var i = 0; i < DataSize; i++)
+					{
+						_floatValues[i] += b;
+					}
+
+					break;
+				case CombineFunction.Subtract:
+					for (var i = 0; i < DataSize; i++)
+					{
+						_floatValues[i] -= b;
+					}
+
+					break;
+				case CombineFunction.Multiply:
+					for (var i = 0; i < DataSize; i++)
+					{
+						_floatValues[i] *= b;
+					}
+
+					break;
+				case CombineFunction.Divide:
+					for (var i = 0; i < DataSize; i++)
+					{
+						_floatValues[i] = b != 0 ? _floatValues[i] / b : _floatValues[i];
+					}
+
+					break;
+				case CombineFunction.Average:
+					for (var i = 0; i < DataSize; i++)
+					{
+						_floatValues[i] = (_floatValues[i] + b) / 2.0f + _floatValues[i];
+					}
+
+					break;
+				case CombineFunction.Replace:
+					for (var i = 0; i < DataSize; i++)
+					{
+						_floatValues[i] = b;
+					}
+
+					break;
+			}
+		}
+
+        public override float[] FloatData => (float[]) _floatValues.Clone();
 		public override int[] IntData => _floatValues.ToInt();
 		public override bool[] BoolData => throw new NotImplementedException();
 

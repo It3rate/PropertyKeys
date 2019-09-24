@@ -52,7 +52,7 @@ namespace DataArcs.Tests.GraphicTests
 	        BlendTransition bt = (BlendTransition)GetTest0(delay, startTime, duration);
 
             IStore endLocStore = bt.End.GetStore(PropertyId.Location);
-            Series minMax = new FloatSeries(2, -4f, -3f, 4f, 3f);
+            Series minMax = new FloatSeries(2, -200f, -100f, 200f, 100f);
             var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.Capacity, minMax, 1111, CombineFunction.ContinuousAdd).CreateLinearStore(endLocStore.Capacity);
             //randomStore.Capacity = endLocStore.Capacity;
             var fs = new FunctionalStore(endLocStore, randomStore);
@@ -66,16 +66,17 @@ namespace DataArcs.Tests.GraphicTests
             AddGraphic(composite);
             AddColor(composite);
 
-            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 10f, 15f, 20f, 15f).Store;
+            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 20f, 20f, 10f, 10f, 20f, 20f).Store;
             const int count = 50;
-            Series maxMinA = new FloatSeries(2, 0, 0, 1000f, 500f);
+            Series maxMinA = new FloatSeries(2, 0, 0, 800f, 400f);
             Series maxMinB = new FloatSeries(2, 200f, 100f, 600f, 300f);
-            var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).Store;
+            var startStore = new RandomSeries(2, SeriesType.Float, 25, maxMinA).Store;
             composite.AddProperty(PropertyId.Location, startStore);
 
             Composite endComp = (Composite)composite.CreateChild();
             var endStore = new RandomSeries(2, SeriesType.Float, count, maxMinB, 0, CombineFunction.Replace).CreateLinearStore(count);
             endComp.AddProperty(PropertyId.Location, endStore);
+            endStore.Sampler = new RingSampler(new int[]{25,15,10});
 
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
 
@@ -91,8 +92,8 @@ namespace DataArcs.Tests.GraphicTests
 
             IntSeries itemData = new IntSeries(1, new int[] { 0, 149 });
             Store items = itemData.CreateLinearStore(150);
-            items.HardenToData();
-	        SeriesUtils.Shuffle(items.GetFullSeries(0));
+			// items.HardenToData();
+	        //SeriesUtils.Shuffle(items.GetFullSeries(0));
 
             composite.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
 
@@ -102,7 +103,6 @@ namespace DataArcs.Tests.GraphicTests
             Sampler ringSampler = new RingSampler(new int[] { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15 });
             //Sampler ringSampler = new RingSampler(new int[] { 30, 20, 15, 15, 15, 15, 15, 10, 10, 5 });
             //Sampler ringSampler = new RingSampler(new int[] { 60, 50, 40 });
-            Sampler gridSampler = new GridSampler(new[] { 15, 10});
             ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 6f, 6f, 15f, 15f, 6f, 6f).Store;
             var vectorSize = 2;
             var start = new float[] { 100, 100, 500, 400 };
@@ -113,6 +113,12 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Location, startStore);
 
             Composite endComp = (Composite)composite.CreateChild();
+
+            IntSeries itemData2 = new IntSeries(1, new int[] { 0, 199 });
+            Store items2 = itemData2.CreateLinearStore(200);
+            endComp.AddProperty(PropertyId.Items, items2);
+
+            Sampler gridSampler = new GridSampler(new[] { 15, 16});
             var endStore = new Store(new FloatSeries(vectorSize, end), gridSampler, CombineFunction.Replace);
             endComp.AddProperty(PropertyId.Location, endStore);
 
@@ -125,7 +131,7 @@ namespace DataArcs.Tests.GraphicTests
 		        radius: new Store(new float[] {10f, 20f, 10f}),
 		        orientation: new Store(new float[] {0.3f, 1f / 12f, 0.3f}),
 		        starness: new Store(new float[] {0, -0.3f, 0}),
-		        pointCount: new FloatSeries(1, new float[] {6.0f, 10.99f}).CreateLinearStore(6)
+		        pointCount: new FloatSeries(1, new float[] {6f, 9f, 6f}).CreateLinearStore(3)
 	        );
         }
 
