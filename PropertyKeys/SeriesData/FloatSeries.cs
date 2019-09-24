@@ -64,34 +64,45 @@ namespace DataArcs.SeriesData
 		}
 
 		public void Normalize()
-		{
-			NormalizeWith(new FloatSeries(0,0,1,1));
+        {
+            float[] frameMin = CachedFrame.GetValueAtT(0).FloatData;
+            float[] frameMax = CachedFrame.GetValueAtT(1).FloatData;
+            float maxDif = int.MinValue;
+            for (int i = 0; i < frameMax.Length; i++)
+            {
+                float dif = frameMax[i] - frameMin[i];
+                maxDif = dif > maxDif ? dif : maxDif;
+            }
+            
+            for (int i = 0; i < Count; i++)
+            {
+                for (int j = 0; j < VectorSize; j++)
+                {
+                    _floatValues[i * VectorSize + j] = (_floatValues[i * VectorSize + j] - frameMin[j]) / maxDif;
+                }
+            }
 		}
 
-		public void NormalizeWith(Series bounds)
+        // FitInto distorts the shape to fit into the passed series frame. Ignores any overhang in VectorSize.
+        public void FitInto(Series bounds)
 		{
-            float[] bMin = CachedFrame.GetValueAtT(0).FloatData;
-			float[] bDif = CachedFrame.GetValueAtT(1).FloatData;
-			for (int i = 0; i < bDif.Length; i++)
+            Normalize();
+
+            Series frame = bounds.Frame;
+            float[] boundsMin = frame.GetValueAtT(0).FloatData;
+			float[] boundsDif = frame.GetValueAtT(1).FloatData;
+			for (int i = 0; i < boundsDif.Length; i++)
 			{
-				bDif[i] -= bMin[i];
+				boundsDif[i] -= boundsMin[i];
 			}
 
-            float[] min = bounds.Count > 1 ? bounds.GetValueAtT(0).FloatData : SeriesUtils.GetSizedFloatArray(VectorSize, 1f);
-			float[] dif = bounds.Count > 1 ? bounds.GetValueAtT(1).FloatData : bounds.GetValueAtT(0).FloatData;
-			for (int i = 0; i < dif.Length; i++)
-			{
-				dif[i] -= min[i];
-			}
-
-            int maxLen = Math.Min(min.Length, dif.Length);
+            int maxLen = Math.Min(boundsMin.Length, boundsDif.Length);
             for (int i = 0; i < Count; i++)
 			{
 				for (int j = 0; j < VectorSize; j++)
 				{
-					float val = (_floatValues[i * VectorSize + j] - bMin[j]) / bDif[j];
 					int index = j < maxLen ? j : maxLen - 1;
-					_floatValues[i * VectorSize + j] = val * dif[index] + min[index];
+					_floatValues[i * VectorSize + j] = _floatValues[i * VectorSize + j] * boundsDif[index] + boundsMin[index];
 				}
 			}
 		}
