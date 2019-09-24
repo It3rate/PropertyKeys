@@ -64,17 +64,21 @@ namespace DataArcs.Transitions
             }
         }
 
+        private bool _isReverse = false;
         public override void Update(float currentTime, float deltaTime)
         {
 	        float dur = _duration.FloatDataAt(0);
 	        if (currentTime > _startTime + dur)
 	        {
 		        _startTime += dur;
+		        _isReverse = !_isReverse;
 	        }
             //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.FloatDataAt(0) ? 1f : (deltaTime - _startTime) / _duration.FloatDataAt(0);
             CurrentT = currentTime < _startTime ? 0 : 
 		        currentTime > _startTime + dur ? 1f : 
 		        (currentTime - _startTime) / dur;
+
+            //CurrentT = _isReverse ? 1f - CurrentT : CurrentT;
 
             Start.Update(currentTime, deltaTime);
             End.Update(currentTime, deltaTime);

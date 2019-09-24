@@ -95,7 +95,7 @@ namespace DataArcs.Tests.GraphicTests
 
             composite.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
 
-            float[] pointArray = new float[] { 15f, 5f, 5f, 15f };
+            float[] pointArray = new float[] { 8f, 5f, 5f, 8f };
             ((PolyShape)composite.Graphic).PointCount = new Store(pointArray, new Easing(EasingType.EaseInOut));
 
             Sampler ringSampler = new RingSampler(new int[] { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15 });
@@ -103,8 +103,8 @@ namespace DataArcs.Tests.GraphicTests
             //Sampler ringSampler = new RingSampler(new int[] { 60, 50, 40 });
             ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 6f, 6f, 15f, 15f, 6f, 6f).Store;
             var vectorSize = 2;
-            var start = new float[] { 100, 100, 500, 400 };
-            var end = new float[] { 100, 100, 500, 400 };
+            var start = new float[] { 50, 50, 500, 400 };
+            var end = new float[] { 50, 50, 500, 400 };
             var startStore = new Store(new FloatSeries(vectorSize, start), ringSampler);
 
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);

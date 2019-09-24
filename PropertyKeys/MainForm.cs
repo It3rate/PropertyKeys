@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Threading.Tasks;
 using System.Timers;
@@ -29,6 +30,7 @@ namespace DataArcs
             _b0 = new Button();
             _b0.Text = "Next";
             _b0.Click += B0_Click;
+			_b0.Location = new Point(700, 10);
             Controls.Add(_b0);
             _ = Execute(null, 50);
         }
