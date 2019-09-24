@@ -91,11 +91,10 @@ namespace DataArcs.Transitions
             {
                 result = Start.GetSeriesAtIndex(propertyId, index);
                 Series end = End.GetSeriesAtIndex(propertyId, index);
-                //float delT = _delay.GetValueAtT(t).FloatDataAt(0);
-                //float durT = _duration.GetValueAtT(t).FloatDataAt(0);
-                //float delRatio = delT / (delT + durT);
-                //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
-                float easedT = _easing?.GetSeriesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
+
+                float indexT = index / (Start.GetStore(propertyId).Capacity - 1f) + CurrentT; // delay per element.
+
+                float easedT = _easing?.GetSeriesAtT(CurrentT * indexT).FloatDataAt(0) ?? CurrentT;
                 result.InterpolateInto(end, easedT);
             }
             else

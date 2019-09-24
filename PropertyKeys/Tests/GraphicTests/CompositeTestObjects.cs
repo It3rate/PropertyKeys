@@ -35,15 +35,13 @@ namespace DataArcs.Tests.GraphicTests
             float[] start = { 150, 150, 150 + totalWidth, 150 + height };
             Sampler hexSampler = new HexagonSampler(new[] { cols, rows });
             var startStore = new Store(new FloatSeries(2, start), hexSampler);
-
-            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
             composite.AddProperty(PropertyId.Location, startStore);
-
 
             Composite endComp = (Composite)composite.CreateChild();
             float[] end = { start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth };
             endComp.AddProperty(PropertyId.Location, new Store(new FloatSeries(2, end), hexSampler, CombineFunction.Replace));
 
+            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
             return new BlendTransition(composite, endComp, delay, startTime, duration, easeStore);
         }
 
