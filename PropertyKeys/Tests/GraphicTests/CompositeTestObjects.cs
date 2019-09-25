@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Graphic;
+using DataArcs.Players;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
@@ -12,9 +13,97 @@ using DataArcs.Transitions;
 
 namespace DataArcs.Tests.GraphicTests
 {
-    public class CompositeTestObjects
+	public interface ITestScreen
+	{
+		void NextVersion();
+	}
+
+    public class CompositeTestObjects : ITestScreen
     {
 	    public const int VersionCount = 4;
+        private int _version = -1;
+        private int _count = 0;
+        private readonly Player _player;
+
+        public CompositeTestObjects(Player player)
+        {
+	        _player = player;
+        }
+
+        public void NextVersion()
+        {
+            _version = NextVersionIndex();
+            BlendTransition comp = GetVersion(_version);
+            _player.AddElement(comp);
+        }
+
+        private int NextVersionIndex()
+        {
+            int result = _version + 1;
+            if (result >= CompositeTestObjects.VersionCount)
+            {
+                result = 0;
+            }
+
+            return result;
+        }
+
+        private BlendTransition GetVersion(int index)
+        {
+            _player.Clear();
+
+            BlendTransition comp;
+            switch (index)
+            {
+                case 0:
+                    comp = CompositeTestObjects.GetTest3(0, _player.CurrentMs, 1000f);
+                    break;
+                case 1:
+                    comp = CompositeTestObjects.GetTest0(0, _player.CurrentMs, 1000f);
+                    break;
+                case 2:
+                    comp = CompositeTestObjects.GetTest2(0, _player.CurrentMs, 1000f);
+                    break;
+                default:
+                    comp = CompositeTestObjects.GetTest1(0, _player.CurrentMs, 1000f);
+                    break;
+            }
+            comp.EndTransitionEvent += CompOnEndTransitionEvent;
+            return comp;
+        }
+
+        private void CompOnEndTransitionEvent(object sender, EventArgs e)
+        {
+            _count++;
+            if (_count < 3)
+            {
+                BlendTransition bt = (BlendTransition)sender;
+                bt.Reverse();
+                bt.Restart();
+            }
+            else if (_count < 4)
+            {
+                BlendTransition bt = (BlendTransition)sender;
+                BlendTransition nextComp = GetVersion(NextVersionIndex());
+
+                var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Multiply, CombineTarget.T);
+                //BlendTransition newBT = new BlendTransition(bt, comp, 0, _player.CurrentMs, 3000, easeStore);
+                //_player.AddElement(newBT);
+
+                nextComp.End = nextComp.Start;
+                nextComp.Start = bt.Start;
+                nextComp.Easing = easeStore;
+                nextComp.GenerateBlends();
+                _player.AddElement(nextComp);
+            }
+            else
+            {
+                _count = 0;
+                NextVersion();
+            }
+        }
+
+
         public static BlendTransition GetTest0(float delay, float startTime, float duration)
         {
 	        var composite = new Composite();
