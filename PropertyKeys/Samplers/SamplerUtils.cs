@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,48 +12,19 @@ namespace DataArcs.Samplers
 
         public static int[] GetDimsForIndex(int virtualCount, int[] strides, int index)
         {
-            var count = Math.Max(0, Math.Min(virtualCount - 1, index));
-            var slot = 0;
-            var dSize = 1;
-            for (var i = 0; i < strides.Length; i++)
-            {
-                if (strides[i] > 0)
-                {
-                    dSize *= strides[i];
-                    slot++;
-                }
-            }
-
-            var result = new int[slot + 1];
-            for (var i = slot; i >= 0; i--)
-            {
-                result[i] = count / dSize;
-                count -= result[i] * dSize;
-                if (i > 0)
-                {
-                    dSize /= strides[i - 1];
-                }
-            }
-
-            return result;
-        }
-
-        public static void GetJaggedT(int[] segments, float t, out float indexT, out float segmentT)
-        {
-            int index = 0;
-            float capacity = (float)segments.Sum();
-            //float capacity = (float)segments[0];
-            //for (int i = 1; i < segments.Length; i++) capacity += segments[i];
-
-            float ratio = segments[0] / capacity;
-            while (t - ratio > 0 && index < segments.Length - 1)
-            {
-                t -= ratio;
-                index++;
-                ratio = segments[index] / capacity;
-            }
-            indexT = index / (float)segments.Length;
-            segmentT = t / ratio;
+            var result = new int[strides.Length];
+	        var count = Math.Max(0, Math.Min(virtualCount - 1, index));
+	        for (var i = strides.Length - 1; i >= 0; i--)
+	        {
+		        int dimSize = 1;
+		        for (int j = 0; j < i; j++)
+		        {
+			        dimSize *= strides[j];
+		        }
+		        result[i] = count / dimSize;
+		        count -= result[i] * dimSize;
+	        }
+	        return result;
         }
 
         public static float[] GetStrideTsForIndex(int virtualCount, int[] strides, int index)
@@ -76,6 +48,24 @@ namespace DataArcs.Samplers
             }
 
             return result;
+        }
+
+        public static void GetJaggedT(int[] segments, float t, out float indexT, out float segmentT)
+        {
+            int index = 0;
+            float capacity = (float)segments.Sum();
+            //float capacity = (float)segments[0];
+            //for (int i = 1; i < segments.Length; i++) capacity += segments[i];
+
+            float ratio = segments[0] / capacity;
+            while (t - ratio > 0 && index < segments.Length - 1)
+            {
+                t -= ratio;
+                index++;
+                ratio = segments[index] / capacity;
+            }
+            indexT = index / (float)segments.Length;
+            segmentT = t / ratio;
         }
 
         public static float[] GetStrideTsForT(int virtualCount, int[] strides, float t)

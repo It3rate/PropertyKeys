@@ -40,7 +40,7 @@ namespace DataArcs.Tests.GraphicTests
         private int NextVersionIndex()
         {
             int result = _version + 1;
-            if (result >= CompositeTestObjects.VersionCount)
+            if (result >= VersionCount)
             {
                 result = 0;
             }
@@ -56,16 +56,16 @@ namespace DataArcs.Tests.GraphicTests
             switch (index)
             {
                 case 0:
-                    comp = CompositeTestObjects.GetTest3(0, _player.CurrentMs, 1000f);
+                    comp = GetTest3(0, _player.CurrentMs, 1000f);
                     break;
                 case 1:
-                    comp = CompositeTestObjects.GetTest0(0, _player.CurrentMs, 1000f);
+                    comp = GetTest0(0, _player.CurrentMs, 1000f);
                     break;
                 case 2:
-                    comp = CompositeTestObjects.GetTest2(0, _player.CurrentMs, 1000f);
+                    comp = GetTest2(0, _player.CurrentMs, 1000f);
                     break;
                 default:
-                    comp = CompositeTestObjects.GetTest1(0, _player.CurrentMs, 1000f);
+                    comp = GetTest1(0, _player.CurrentMs, 1000f);
                     break;
             }
             comp.EndTransitionEvent += CompOnEndTransitionEvent;
@@ -206,7 +206,8 @@ namespace DataArcs.Tests.GraphicTests
             Store items2 = itemData2.CreateLinearStore(200);
             endComp.AddProperty(PropertyId.Items, items2);
 
-            Sampler gridSampler = new GridSampler(new[] { 15, 16});
+            GridSampler gridSampler = new GridSampler(new[] { 15, 16});
+            gridSampler.IsRowCol = false;
             var endStore = new Store(new FloatSeries(vectorSize, end), gridSampler, CombineFunction.Replace);
             endComp.AddProperty(PropertyId.Location, endStore);
 

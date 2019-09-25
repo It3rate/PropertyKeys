@@ -66,10 +66,11 @@ namespace DataArcs.Stores
             var len = Capacity * _series.VectorSize;
             if (_series.DataSize != len)
             {
-                Series result = _series.GetZeroSeries(len);
+                Series result = _series.GetZeroSeries(Capacity);
                 for (var i = 0; i < Capacity; i++)
                 {
-                    result.SetDataAtIndex(i, GetSeriesAtIndex(i));
+	                float t = i / (float) (Capacity - 1);
+                    result.SetDataAtIndex(i, GetSeriesAtT(t));
                 }
                 _series = result;
             }

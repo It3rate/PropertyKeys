@@ -6,6 +6,7 @@ namespace DataArcs.Samplers
 	public class GridSampler : Sampler
 	{
 		protected int[] Strides { get; }
+		public bool IsRowCol { get; set; } = true;
 
         public GridSampler(int[] strides)
 		{
@@ -41,12 +42,14 @@ namespace DataArcs.Samplers
         {
             var index = (int)Math.Round(t * (Capacity - 1f));
             float[] strideTs = SamplerUtils.GetStrideTsForIndex(Capacity, Strides, index);
-            //float[] resultAr = new float[Strides.Length];
-            //Array.Copy(strideTs, resultAr, Strides.Length); // todo: GetStrideTsForIndex still returns extra param, need to fix
-            return new ParametricSeries(Strides.Length, strideTs[1], strideTs[0]);
+            if (!IsRowCol)
+            {
+	            Array.Reverse(strideTs);
+            }
+            return new ParametricSeries(Strides.Length, strideTs);
         }
 
-        private Series GetSeriesSample(Series series, int index)
+        protected virtual Series GetSeriesSample(Series series, int index)
         {
 			var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
 			var strideTs = SamplerUtils.GetStrideTsForIndex(Capacity, Strides, index);
