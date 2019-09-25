@@ -76,16 +76,11 @@ namespace DataArcs.Stores
             }
 			Sampler = new LineSampler(Sampler.Capacity);
 		}
-
-
-
-		public FunctionalStore CreateFunctionalStore(IStore store)
+		
+		public static Store CreateItemStore(int count)
 		{
-			return new FunctionalStore(this, store);
-		}
-		public BlendStore CreateBlendStore(IStore store)
-		{
-			return new BlendStore(this, store);
+			IntSeries result = new IntSeries(1, 0, count - 1);
+			return result.CreateLinearStore(count);
 		}
     }
 }

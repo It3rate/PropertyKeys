@@ -65,7 +65,7 @@ namespace DataArcs.Components
 
 	        int index = GetStore(PropertyId.Items)?.GetSeriesAtIndex(countIndex).IntDataAt(0) ?? countIndex;
 	        Series v = GetSeriesAtIndex(PropertyId.Location, index);
-	        //Series v = GetSeriesAtT(PropertyId.Location, it, count);
+	        //Series v = GetSeriesAtT(PropertyId.Location, it);
 
 	        ParametricSeries ps = GetSampledT(PropertyId.Location, it);
 

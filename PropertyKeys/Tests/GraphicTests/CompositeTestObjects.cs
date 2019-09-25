@@ -112,8 +112,7 @@ namespace DataArcs.Tests.GraphicTests
 
             var cols = 15;
             var rows = 10;
-            Store items = new IntSeries(1, new int[] { 0, rows * cols - 1 }).CreateLinearStore(rows * cols);
-            composite.AddProperty(PropertyId.Items, new BlendStore(items));
+            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(rows * cols));
 
             var totalWidth = 500f;
             float growth = 60;
@@ -177,13 +176,11 @@ namespace DataArcs.Tests.GraphicTests
             var composite = new Composite();
             AddGraphic(composite);
             AddColor(composite);
-
-            IntSeries itemData = new IntSeries(1, new int[] { 0, 149 });
-            Store items = itemData.CreateLinearStore(150);
-			// items.HardenToData();
-	        //SeriesUtils.Shuffle(items.GetFullSeries(0));
-
-            composite.AddProperty(PropertyId.Items, new BlendStore(new Store[] { items }));
+			
+            Store items = Store.CreateItemStore(150);
+            // items.HardenToData();
+            //SeriesUtils.Shuffle(items.GetFullSeries(0));
+            composite.AddProperty(PropertyId.Items, new BlendStore(items));
 
             float[] pointArray = new float[] { 8f, 5f, 5f, 8f };
             ((PolyShape)composite.Graphic).PointCount = new Store(pointArray, new Easing(EasingType.EaseInOut));
