@@ -6,6 +6,9 @@ using System.Timers;
 using System.Windows.Forms;
 using DataArcs.Components;
 using DataArcs.Players;
+using DataArcs.Samplers;
+using DataArcs.SeriesData;
+using DataArcs.Stores;
 using DataArcs.Tests.GraphicTests;
 using DataArcs.Transitions;
 
@@ -52,54 +55,84 @@ namespace DataArcs
         // add ML in simple 'bacteria' test
         // matrix support
 
-        private int _version = 2;
+        private int _version = -1;
         private void B0_Click(object sender, EventArgs e)
-		{
-            NextVersion();
+        {
+	        NextVersion();
         }
+
+        private int NextVersionIndex()
+        {
+	        int result = _version + 1;
+	        if (result >= CompositeTestObjects.VersionCount)
+	        {
+		        result = 0;
+	        }
+
+	        return result;
+        }
+
         private void NextVersion()
         {
-            _version++;
-            if (_version >= CompositeTestObjects.VersionCount)
-            {
-                _version = 0;
-            }
+	        _version = NextVersionIndex();
+	        BlendTransition comp = GetVersion(_version);
+	        _player.AddElement(comp);
+        }
 
-            _player.Clear();
+        private BlendTransition GetVersion(int index)
+        {
+	        _player.Clear();
 
             BlendTransition comp;
-            switch (_version)
+            switch (index)
             {
 	            case 0:
+		            comp = CompositeTestObjects.GetTest3(0, _player.CurrentMs, 1000f);
+		            break;
+                case 1:
 		            comp = CompositeTestObjects.GetTest0(0, _player.CurrentMs, 1000f);
 		            break;
-	            case 1:
-		            comp = CompositeTestObjects.GetTest1(0, _player.CurrentMs, 1000f);
-		            break;
 	            case 2:
+		            //comp = CompositeTestObjects.GetTest3(0, _player.CurrentMs, 1000f);
 		            comp = CompositeTestObjects.GetTest2(0, _player.CurrentMs, 1000f);
 		            break;
 	            default:
-		            comp = CompositeTestObjects.GetTest3(0, _player.CurrentMs, 3000f);
+                    comp = CompositeTestObjects.GetTest1(0, _player.CurrentMs, 1000f);
 		            break;
             }
-		    _count = 0;
             comp.EndTransitionEvent += CompOnEndTransitionEvent;
-            _player.AddElement(comp);
+            return comp;
         }
 
 		private int _count = 0;
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
-	        if (_count++ < 3)
+	        _count++;
+	        if (_count < 3)
 	        {
-		        BlendTransition bt = (BlendTransition) sender;
+		        BlendTransition bt = (BlendTransition)sender;
 		        bt.Reverse();
 		        bt.Restart();
 	        }
-	        else
+	        else if (_count < 4)
 	        {
-		        NextVersion();
+                BlendTransition bt = (BlendTransition)sender;
+		        BlendTransition nextComp = GetVersion(NextVersionIndex());
+
+                var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Multiply, CombineTarget.T);
+                //BlendTransition newBT = new BlendTransition(bt, comp, 0, _player.CurrentMs, 3000, easeStore);
+                //_player.AddElement(newBT);
+
+                nextComp.End = nextComp.Start;
+                nextComp.Start = bt.Start;
+                nextComp.Easing = easeStore;
+				nextComp.GenerateBlends();
+		        _player.AddElement(nextComp);
+            }
+            else
+	        {
+		        _count = 0;
+		         NextVersion();
             }
         }
     }

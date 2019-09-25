@@ -64,17 +64,18 @@ namespace DataArcs.Tests.GraphicTests
             AddGraphic(composite);
             AddColor(composite);
 
-            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 20f, 20f, 10f, 10f, 20f, 20f).Store;
-            const int count = 50;
-            Series maxMinA = new FloatSeries(2, 0, 0, 800f, 400f);
+            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 6f, 6f, 9f, 9f, 6f, 6f).Store;
+            const int count = 150;
+            Series maxMinA = new FloatSeries(2, 200f, 100f, 600f, 300f); //0, 0, 800f, 400f);
             Series maxMinB = new FloatSeries(2, 200f, 100f, 600f, 300f);
-            var startStore = new RandomSeries(2, SeriesType.Float, 25, maxMinA).Store;
+            var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).CreateLinearStore(count);
             composite.AddProperty(PropertyId.Location, startStore);
 
             Composite endComp = (Composite)composite.CreateChild();
             var endStore = new RandomSeries(2, SeriesType.Float, count, maxMinB, 0, CombineFunction.Replace).CreateLinearStore(count);
             endComp.AddProperty(PropertyId.Location, endStore);
-            endStore.Sampler = new RingSampler(new int[]{25,15,10});
+
+            startStore.Sampler = new RingSampler(new int[] {100, 25,15,10});
 
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
 

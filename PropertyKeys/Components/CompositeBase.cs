@@ -57,26 +57,27 @@ namespace DataArcs.Components
             }
             //g.DrawRectangle(Pens.Blue, new Rectangle(150, 150, 500, 144));
         }
+
         public void DrawAtIndex(int countIndex, IStore itemStore, Graphics g)
         {
 	        int count = itemStore.Capacity;
-            var it = count > 1 ? countIndex / (count - 1f) : 0;
+	        var it = count > 1 ? countIndex / (count - 1f) : 0;
 
 	        int index = GetStore(PropertyId.Items)?.GetSeriesAtIndex(countIndex).IntDataAt(0) ?? countIndex;
-            Series v = GetSeriesAtIndex(PropertyId.Location, index);
-            //Series v = GetSeriesAtT(PropertyId.Location, it, count);
-            
-            ParametricSeries ps = GetSampledT(PropertyId.Location, it);
+	        Series v = GetSeriesAtIndex(PropertyId.Location, index);
+	        //Series v = GetSeriesAtT(PropertyId.Location, it, count);
 
-            var c = GetSeriesAtT(PropertyId.FillColor, ps.FloatDataAt(0)).RGB();
+	        ParametricSeries ps = GetSampledT(PropertyId.Location, it);
 
-            Brush b = new SolidBrush(c);
-            var state = g.Save();
-            var scale = 1f;// + it * 0.8f;
-            g.ScaleTransform(scale, scale);
-            g.TranslateTransform(v.X() / scale, v.Y() / scale);
-            Graphic.Draw(g, b, null, CurrentT);
-            g.Restore(state);
+	        var c = GetSeriesAtT(PropertyId.FillColor, ps.FloatDataAt(0)).RGB();
+
+	        Brush b = new SolidBrush(c);
+	        var state = g.Save();
+	        var scale = 1f; // + it * 0.8f;
+	        g.ScaleTransform(scale, scale);
+	        g.TranslateTransform(v.X() / scale, v.Y() / scale);
+	        Graphic.Draw(g, b, null, CurrentT);
+	        g.Restore(state);
         }
     }
 

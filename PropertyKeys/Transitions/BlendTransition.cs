@@ -16,9 +16,9 @@ namespace DataArcs.Transitions
 
     public class BlendTransition : CompositeBase
     {
-	    private Store _easing;
-		
-        private float _startTime; // todo: All time should be one class, maybe even a store.
+	    public Store Easing { get; set; }
+
+	    private float _startTime; // todo: All time should be one class, maybe even a store.
         private Series _delay;
         private Series _duration;
 
@@ -27,8 +27,8 @@ namespace DataArcs.Transitions
 
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
-        public CompositeBase Start { get; }
-        public CompositeBase End { get; }
+        public CompositeBase Start { get; set; }
+        public CompositeBase End { get; set; }
 
         public event TransitionEventHandler StartTransitionEvent;
         public event TransitionEventHandler StepTransitionEvent;
@@ -41,7 +41,7 @@ namespace DataArcs.Transitions
 	        _delay = new FloatSeries(1, delay);
 	        _startTime = startTime < 0 ? (float)(DateTime.Now - Player.StartTime).TotalMilliseconds : startTime;
 	        _duration = new FloatSeries(1, duration);
-	        _easing = easing;
+	        Easing = easing;
 	        GenerateBlends(); // eventually immutable after creation, so no new blends
         }
 
@@ -55,7 +55,7 @@ namespace DataArcs.Transitions
 	        GenerateBlends();
         }
 
-        private void GenerateBlends()
+        public void GenerateBlends()
         {
 	        Graphic = Start.Graphic;
 
@@ -128,7 +128,7 @@ namespace DataArcs.Transitions
 
                 float indexT = index / (Start.GetStore(propertyId).Capacity - 1f) + CurrentT; // delay per element.
 
-                float easedT = _easing?.GetSeriesAtT(CurrentT * indexT).FloatDataAt(0) ?? CurrentT;
+                float easedT = Easing?.GetSeriesAtT(CurrentT * indexT).FloatDataAt(0) ?? CurrentT;
                 result.InterpolateInto(end, easedT);
             }
             else
@@ -149,7 +149,7 @@ namespace DataArcs.Transitions
                 //float durT = _duration.GetValueAtT(t).FloatDataAt(0);
                 //float delRatio = delT / (delT + durT);
                 //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
-                float easedT = _easing?.GetSeriesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
+                float easedT = Easing?.GetSeriesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
                 result.InterpolateInto(end, easedT);
             }
 	        else
