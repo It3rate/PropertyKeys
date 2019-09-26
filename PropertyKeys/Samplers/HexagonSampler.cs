@@ -14,7 +14,7 @@ namespace DataArcs.Samplers
             if ((curRow & 1) == 1)
             {
 	            var data = result.FloatData;
-	            data[0] += series.Size.FloatDataAt(0) / (Strides[0] - 1f) * 0.5f;
+	            data[0] += series.Size.X / (Strides[0] - 1f) * 0.5f;
                 result = SeriesUtils.Create(series, data);
             }
 	        return result;

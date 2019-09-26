@@ -143,10 +143,10 @@ namespace DataArcs.SeriesData
 
         public abstract Series Copy();
 
-        public float X => DataSize > 0 ? FloatDataAt(0) : 0;
-        public float Y => DataSize > 1 ? FloatDataAt(1) : 0;
-        public float Z => DataSize > 2 ? FloatDataAt(2) : 0;
-        public float W => DataSize > 3 ? FloatDataAt(3) : 0;
+        public float X => FloatDataAt(0);
+        public float Y => FloatDataAt(Math.Min(1, DataSize - 1));
+        public float Z => FloatDataAt(Math.Min(2, DataSize - 1));
+        public float W => FloatDataAt(Math.Min(3, DataSize - 1));
 
         #region Enumeration
         public IEnumerator GetEnumerator()

@@ -6,11 +6,11 @@ namespace DataArcs.Adapters.Color
     {
         public static float Red(this Series series)
         {
-            return series.FloatDataAt(0);
+            return series.X;
         }
         public static float Green(this Series series)
         {
-            return series.FloatDataAt(1);
+            return series.Y;
         }
         public static float Blue(this Series series)
         {

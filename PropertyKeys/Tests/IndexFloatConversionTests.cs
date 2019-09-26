@@ -138,25 +138,25 @@ namespace DataArcs.Tests
 		{
 			// series_1 = new FloatSeries(1, 1f, 2f, 11f, 22f);
 			float sample;
-			sample = series_1.GetValueAtT(0f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(0f).X;
 			Assert.AreEqual(1f, sample, delta);
 
-			sample = series_1.GetValueAtT(0.25f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(0.25f).X;
 			Assert.AreEqual(1.75f, sample, delta);
-			sample = series_1.GetValueAtT(1f / 3f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(1f / 3f).X;
 			Assert.AreEqual(2f, sample, delta);
-			sample = series_1.GetValueAtT(0.5f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(0.5f).X;
 			Assert.AreEqual(6.5f, sample, delta);
-			sample = series_1.GetValueAtT(2f / 3f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(2f / 3f).X;
 			Assert.AreEqual(11f, sample, delta);
-			sample = series_1.GetValueAtT(0.75f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(0.75f).X;
 			Assert.AreEqual(13.75f, sample, delta);
 
-			sample = series_1.GetValueAtT(1f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(1f).X;
 			Assert.AreEqual(22f, sample, delta);
-			sample = series_1.GetValueAtT(1.2f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(1.2f).X;
 			Assert.AreEqual(22f, sample, delta);
-			sample = series_1.GetValueAtT(11f).FloatDataAt(0);
+			sample = series_1.GetValueAtT(11f).X;
 			Assert.AreEqual(22f, sample, delta);
 		}
 
@@ -165,39 +165,39 @@ namespace DataArcs.Tests
 			float sample;
             int count = 31;
 
-            sample = series_1_31.GetSeriesAtIndex(-10).FloatDataAt(0);
+            sample = series_1_31.GetSeriesAtIndex(-10).X;
 			Assert.AreEqual(1f, sample, delta);
-			sample = series_1_31.GetSeriesAtIndex(0).FloatDataAt(0);
+			sample = series_1_31.GetSeriesAtIndex(0).X;
 			Assert.AreEqual(1f, sample, delta);
 
 			int lastIndex = series_1_31.DataSize > 4 ? 60 : 3;
-			sample = series_1_31.GetSeriesAtIndex(lastIndex).FloatDataAt(0);
+			sample = series_1_31.GetSeriesAtIndex(lastIndex).X;
 			Assert.AreEqual(22f, sample, delta);
-			sample = series_1_31.GetSeriesAtIndex(99).FloatDataAt(0);
+			sample = series_1_31.GetSeriesAtIndex(99).X;
 			Assert.AreEqual(22f, sample, delta);
 
-			sample = series_1_31.GetValueAtVirtualIndex(-10, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(-10, count).X;
 			Assert.AreEqual(1f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(0, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(0, count).X;
 			Assert.AreEqual(1f, sample, delta);
 
-			sample = series_1_31.GetValueAtVirtualIndex(1, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(1, count).X;
 			Assert.AreEqual(1.1f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(2, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(2, count).X;
 			Assert.AreEqual(1.2f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(3, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(3, count).X;
 			Assert.AreEqual(1.3f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(4, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(4, count).X;
 			Assert.AreEqual(1.4f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(5, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(5, count).X;
 			Assert.AreEqual(1.5f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(10, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(10, count).X;
 			Assert.AreEqual(2f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(15, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(15, count).X;
 			Assert.AreEqual(6.5f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(20, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(20, count).X;
 			Assert.AreEqual(11f, sample, delta);
-			sample = series_1_31.GetValueAtVirtualIndex(30, count).FloatDataAt(0);
+			sample = series_1_31.GetValueAtVirtualIndex(30, count).X;
 			Assert.AreEqual(22f, sample, delta);
 		}
 
@@ -224,15 +224,15 @@ namespace DataArcs.Tests
 			sample = series_2.GetValueAtT(10f).FloatData;
 			ArraysEqual(new float[] {310f, 420f}, sample, delta);
 
-			//float testSample = series_2.GetSeriesAtT(1f / 3f).FloatDataAt(0);
+			//float testSample = series_2.GetSeriesAtT(1f / 3f).X;
 			//Assert.AreEqual(2f, testSample, delta);
-			//testSample = series_2.GetSeriesAtT(2f / 3f).FloatDataAt(0);
+			//testSample = series_2.GetSeriesAtT(2f / 3f).X;
 			//Assert.AreEqual(11f, testSample, delta);
-			//testSample = series_2.GetSeriesAtT(0.25f).FloatDataAt(0);
+			//testSample = series_2.GetSeriesAtT(0.25f).X;
 			//Assert.AreEqual(1.75f, testSample, delta);
-			//testSample = series_2.GetSeriesAtT(0.5f).FloatDataAt(0);
+			//testSample = series_2.GetSeriesAtT(0.5f).X;
 			//Assert.AreEqual(6.5f, testSample, delta);
-			//testSample = series_2.GetSeriesAtT(0.75f).FloatDataAt(0);
+			//testSample = series_2.GetSeriesAtT(0.75f).X;
 			//Assert.AreEqual(13.75f, testSample, delta);
 		}
 

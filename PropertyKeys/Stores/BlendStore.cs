@@ -52,7 +52,7 @@ namespace DataArcs.Stores
             ParametricSeries result;
 
             SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-            vT = _easing?.GetValuesAtT(vT).FloatDataAt(0) ?? vT;
+            vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
             if (startIndex == endIndex)
             {
@@ -98,7 +98,7 @@ namespace DataArcs.Stores
 			Series result;
 
 			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-			vT = _easing?.GetValuesAtT(vT).FloatDataAt(0) ?? vT;
+			vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
             if (startIndex == endIndex)
 			{
@@ -117,7 +117,7 @@ namespace DataArcs.Stores
 			Series result;
 
 			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-			vT = _easing?.GetValuesAtT(vT).FloatDataAt(0) ?? vT;
+			vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
             if (startIndex == endIndex)
 			{

@@ -69,13 +69,13 @@ namespace DataArcs.Components
 
 	        ParametricSeries ps = GetSampledT(PropertyId.Location, it);
 
-	        var c = GetSeriesAtT(PropertyId.FillColor, ps.FloatDataAt(0)).RGB();
+	        var c = GetSeriesAtT(PropertyId.FillColor, ps.Red()).RGB();
 
 	        Brush b = new SolidBrush(c);
 	        var state = g.Save();
 	        var scale = 1f; // + it * 0.8f;
 	        g.ScaleTransform(scale, scale);
-	        g.TranslateTransform(v.X() / scale, v.Y() / scale);
+	        g.TranslateTransform(v.X / scale, v.Y / scale);
 	        Graphic.Draw(g, b, null, CurrentT);
 	        g.Restore(state);
         }

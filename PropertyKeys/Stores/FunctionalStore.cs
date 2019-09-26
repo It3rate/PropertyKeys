@@ -42,7 +42,7 @@ namespace DataArcs.Stores
 			{
 				if (store.CombineTarget == CombineTarget.T)
 				{
-					t = store.GetValuesAtT(t).FloatDataAt(0);
+					t = store.GetValuesAtT(t).X;
 				}
 				else if(series != null)
 				{
@@ -65,7 +65,7 @@ namespace DataArcs.Stores
             {
                 if (store.CombineTarget == CombineTarget.T)
                 {
-                    t = store.GetSampledTs(t).FloatDataAt(0);
+                    t = store.GetSampledTs(t).X;
                 }
                 else if (result != null)
                 {

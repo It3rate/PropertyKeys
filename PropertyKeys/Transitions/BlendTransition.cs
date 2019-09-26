@@ -89,7 +89,7 @@ namespace DataArcs.Transitions
         {
 	        if (_isComplete) return;
 
-	        float dur = _duration.FloatDataAt(0);
+	        float dur = _duration.X;
 	        if (currentTime > _startTime + dur)
 	        {
 		        _isComplete = true;
@@ -97,7 +97,7 @@ namespace DataArcs.Transitions
 	        }
 	        else
 	        {
-		        //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.FloatDataAt(0) ? 1f : (deltaTime - _startTime) / _duration.FloatDataAt(0);
+		        //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.X ? 1f : (deltaTime - _startTime) / _duration.X;
 		        CurrentT = currentTime < _startTime ? 0 :
 			        currentTime > _startTime + dur ? 1f :
 			        (currentTime - _startTime) / dur;
@@ -128,7 +128,7 @@ namespace DataArcs.Transitions
 
                 float indexT = index / (Start.GetStore(propertyId).Capacity - 1f) + CurrentT; // delay per element.
 
-                float easedT = Easing?.GetValuesAtT(CurrentT * indexT).FloatDataAt(0) ?? CurrentT;
+                float easedT = Easing?.GetValuesAtT(CurrentT * indexT).X ?? CurrentT;
                 result.InterpolateInto(end, easedT);
             }
             else
@@ -145,11 +145,11 @@ namespace DataArcs.Transitions
 	        {
 		        result = Start.GetSeriesAtT(propertyId, t);
 		        Series end = End.GetSeriesAtT(propertyId, t);
-                //float delT = _delay.GetValueAtT(t).FloatDataAt(0);
-                //float durT = _duration.GetValueAtT(t).FloatDataAt(0);
+                //float delT = _delay.GetValueAtT(t).X;
+                //float durT = _duration.GetValueAtT(t).X;
                 //float delRatio = delT / (delT + durT);
                 //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
-                float easedT = Easing?.GetValuesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
+                float easedT = Easing?.GetValuesAtT(CurrentT).X ?? CurrentT;
                 result.InterpolateInto(end, easedT);
             }
 	        else
