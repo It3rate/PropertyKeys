@@ -18,9 +18,9 @@ namespace DataArcs.Players
 	    public static DateTime StartTime { get; }
 	    static Player() { StartTime = DateTime.Now;}
 
-		private readonly Dictionary<int, CompositeBase> _elements = new Dictionary<int, CompositeBase>();
+        private readonly Dictionary<int, CompositeBase> _elements = new Dictionary<int, CompositeBase>();
 
-		private readonly Form _display;
+        private readonly Form _display;
         private Timer _timer;
         private TimeSpan _lastTime;
         private TimeSpan _currentTime;
@@ -92,7 +92,42 @@ namespace DataArcs.Players
 		        element.Draw(e.Graphics);
 	        }
         }
-        public CompositeBase this[int index] => _elements[index];
+        public CompositeBase this[int index]
+        {
+            get
+            {
+                CompositeBase result = null;
+                foreach (var item in _elements)
+                {
+                    var value = item.Value;
+                    if (value.CompositeId == index)
+                    {
+                        result = value;
+                        break;
+                    }
+                    else
+                    {
+                        // todo: make element search properly recursive. May want to store unused elements that aren't dead in collection.
+                        if (item.Value is BlendTransition)
+                        {
+                            var bt = (BlendTransition)item.Value;
+                            if (bt.Start.CompositeId == index)
+                            {
+                                result = bt.Start;
+                                break;
+                            }
+                            else if (bt.End.CompositeId == index)
+                            {
+                                result = bt.End;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                return result;
+            }
+        }
 
         public void AddElement(CompositeBase composite) => _toAdd.Add(composite.CompositeId, composite);
         public void RemoveElement(CompositeBase composite)

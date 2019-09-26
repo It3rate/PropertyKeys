@@ -76,7 +76,7 @@ namespace DataArcs.Components
 	        var scale = 1f; // + it * 0.8f;
 	        g.ScaleTransform(scale, scale);
 	        g.TranslateTransform(v.X / scale, v.Y / scale);
-	        Graphic.Draw(g, b, null, CurrentT);
+	        Graphic.Draw(g, b, null, it*CurrentT);
 	        g.Restore(state);
         }
     }

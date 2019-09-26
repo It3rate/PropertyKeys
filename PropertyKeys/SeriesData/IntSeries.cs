@@ -72,9 +72,9 @@ namespace DataArcs.SeriesData
 				}
 			}
 
-			CachedFrame = new IntSeries(VectorSize, SeriesUtils.CombineIntArrays(min, max));
+			Frame = new IntSeries(VectorSize, SeriesUtils.CombineIntArrays(min, max));
 			SeriesUtils.SubtractIntArrayFrom(max, min);
-			CachedSize = new IntSeries(VectorSize, max);
+			Size = new IntSeries(VectorSize, max);
 		}
 
 		public override void CombineInto(Series b, CombineFunction combineFunction)
@@ -171,8 +171,6 @@ namespace DataArcs.SeriesData
 		public override Series Copy()
 		{
 			IntSeries result = new IntSeries(VectorSize, IntData);
-			result.CachedFrame = CachedFrame;
-			result.CachedSize = CachedSize;
 			return result;
 		}
     }

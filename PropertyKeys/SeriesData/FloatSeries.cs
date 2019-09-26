@@ -58,15 +58,15 @@ namespace DataArcs.SeriesData
 				}
 			}
 
-			CachedFrame = new FloatSeries(VectorSize, SeriesUtils.CombineFloatArrays(min, max));
+			Frame = new FloatSeries(VectorSize, SeriesUtils.CombineFloatArrays(min, max));
 			SeriesUtils.SubtractFloatArrayFrom(max, min);
-			CachedSize = new FloatSeries(VectorSize, max);
+			Size = new FloatSeries(VectorSize, max);
 		}
 
 		public void Normalize()
         {
-            float[] frameMin = CachedFrame.GetValueAtT(0).FloatData;
-            float[] frameMax = CachedFrame.GetValueAtT(1).FloatData;
+            float[] frameMin = Frame.GetValueAtT(0).FloatData;
+            float[] frameMax = Frame.GetValueAtT(1).FloatData;
             float maxDif = int.MinValue;
             for (int i = 0; i < frameMax.Length; i++)
             {
@@ -133,43 +133,54 @@ namespace DataArcs.SeriesData
 					}
 
 					break;
-				case CombineFunction.Subtract:
-					for (var i = 0; i < DataSize; i++)
-					{
-						_floatValues[i] -= b.FloatDataAt(i);
-					}
-
-					break;
-				case CombineFunction.Multiply:
+                case CombineFunction.Subtract:
+                    for (var i = 0; i < DataSize; i++)
+                    {
+                        _floatValues[i] -= b.FloatDataAt(i);
+                    }
+                    break;
+                case CombineFunction.SubtractFrom:
+                    for (var i = 0; i < DataSize; i++)
+                    {
+                        _floatValues[i] = b.FloatDataAt(i) - _floatValues[i];
+                    }
+                    break;
+                case CombineFunction.Multiply:
 					for (var i = 0; i < DataSize; i++)
 					{
 						_floatValues[i] *= b.FloatDataAt(i);
 					}
 
 					break;
-				case CombineFunction.Divide:
-					for (var i = 0; i < DataSize; i++)
-					{
-						var div = b.FloatDataAt(i);
-						_floatValues[i] = div != 0 ? _floatValues[i] / div : _floatValues[i];
-					}
-
-					break;
-				case CombineFunction.Average:
+                case CombineFunction.Divide:
+                    for (var i = 0; i < DataSize; i++)
+                    {
+                        var div = b.FloatDataAt(i);
+                        _floatValues[i] = div != 0 ? _floatValues[i] / div : _floatValues[i];
+                    }
+                    break;
+                case CombineFunction.DivideFrom:
+                    for (var i = 0; i < DataSize; i++)
+                    {
+                        var div = b.FloatDataAt(i);
+                        _floatValues[i] = _floatValues[i] != 0 ? div /_floatValues[i] : div;
+                    }
+                    break;
+                case CombineFunction.Average:
 					for (var i = 0; i < DataSize; i++)
 					{
 						_floatValues[i] = (_floatValues[i] + b.FloatDataAt(i)) / 2.0f;
 					}
 
 					break;
-				case CombineFunction.Replace:
-					for (var i = 0; i < DataSize; i++)
-					{
-						_floatValues[i] = b.FloatDataAt(i);
-					}
+                case CombineFunction.Replace:
+                    for (var i = 0; i < DataSize; i++)
+                    {
+                        _floatValues[i] = b.FloatDataAt(i);
+                    }
 
-					break;
-			}
+                    break;
+            }
 		}
 
 		public void CombineWith(float b, CombineFunction combineFunction)
@@ -266,8 +277,6 @@ namespace DataArcs.SeriesData
 		public override Series Copy()
 		{
 			FloatSeries result = new FloatSeries(VectorSize, FloatData);
-			result.CachedFrame = CachedFrame;
-			result.CachedSize = CachedSize;
 			return result;
 		}
 	}

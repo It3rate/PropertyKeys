@@ -31,13 +31,14 @@ namespace DataArcs.SeriesData
         {
             get
             {
-                if (CachedFrame == null)
+                if (_cachedFrame == null)
                 {
                     CalculateFrame();
                 }
 
-                return CachedFrame;
+                return _cachedFrame;
             }
+            protected set => _cachedFrame = value;
         }
 
         /// <summary>
@@ -47,17 +48,18 @@ namespace DataArcs.SeriesData
         {
             get
             {
-                if (CachedSize == null)
+                if (_cachedSize == null)
                 {
                     CalculateFrame();
                 }
 
-                return CachedSize;
+                return _cachedSize;
             }
+            protected set => _cachedSize = value;
         }
 
-        protected Series CachedFrame;
-        protected Series CachedSize;
+        private Series _cachedFrame;
+        private Series _cachedSize;
 
         protected Series(int vectorSize, SeriesType type)
         {

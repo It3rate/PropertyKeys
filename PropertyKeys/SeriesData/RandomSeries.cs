@@ -112,10 +112,10 @@ namespace DataArcs.SeriesData
 
 		protected override void CalculateFrame()
 		{
-            CachedFrame = _minMax.Copy();
+            Frame = _minMax.Copy();
             float[] max = _minMax.GetValueAtT(1f).FloatData;
             SeriesUtils.SubtractFloatArrayFrom(max, _minMax.GetValueAtT(0).FloatData);
-            CachedSize = new FloatSeries(VectorSize, max);
+            Size = new FloatSeries(VectorSize, max);
         }
 
 		public override void CombineInto(Series b, CombineFunction combineFunction)
@@ -169,8 +169,6 @@ namespace DataArcs.SeriesData
 		public override Series Copy()
 		{
 			RandomSeries result = new RandomSeries(VectorSize, Type, Count, _minMax.Copy(), _seed);
-			result.CachedFrame = CachedFrame;
-			result.CachedSize = CachedSize;
 			result._series = _series.Copy();
 			return result;
 		}

@@ -54,8 +54,8 @@ namespace DataArcs
             await Task.Delay(timeoutInMilliseconds);
             _b0.Invalidate();
             _player = new Player(this);
-            _testScreen = new CompositeTestObjects(_player);
-            //_testScreen = new CompositeTest2(_player);
+            //_testScreen = new CompositeTestObjects(_player);
+            _testScreen = new CompositeTest2(_player);
             _testScreen.NextVersion();
         }
 

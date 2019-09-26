@@ -144,8 +144,6 @@ namespace DataArcs.SeriesData
 		public override Series Copy()
 		{
 			BezierSeries result = new BezierSeries(FloatData, (BezierMove[])Moves.Clone());
-			result.CachedFrame = CachedFrame;
-			result.CachedSize = CachedSize;
 			return result;
 		}
     }
