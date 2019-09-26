@@ -16,7 +16,7 @@ namespace DataArcs.Transitions
 
     public class BlendTransition : CompositeBase
     {
-	    public Store Easing { get; set; }
+	    public IStore Easing { get; set; }
 
 	    private float _startTime; // todo: All time should be one class, maybe even a store.
         private Series _delay;

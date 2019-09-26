@@ -118,7 +118,7 @@ namespace DataArcs.Tests.GraphicTests
             float growth = 60;
             var armLen = totalWidth / (float)(cols - 1) / 3f;
             var height = armLen * (float)Math.Sqrt(3) / 2f * (rows - 1f);
-            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f).Store;
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f).Store);
 
             float[] start = { 150, 150, 150 + totalWidth, 150 + height };
             Sampler hexSampler = new HexagonSampler(new[] { cols, rows });
@@ -152,7 +152,7 @@ namespace DataArcs.Tests.GraphicTests
             AddGraphic(composite);
             AddColor(composite);
 
-            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 6f, 6f, 9f, 9f, 6f, 6f).Store;
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 6f, 6f, 9f, 9f, 6f, 6f).Store);
             const int count = 150;
             Series maxMinA = new FloatSeries(2, 200f, 100f, 600f, 300f); //0, 0, 800f, 400f);
             Series maxMinB = new FloatSeries(2, 200f, 100f, 600f, 300f);
@@ -183,12 +183,12 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Items, new BlendStore(items));
 
             float[] pointArray = new float[] { 8f, 5f, 5f, 8f };
-            ((PolyShape)composite.Graphic).PointCount = new Store(pointArray, new Easing(EasingType.EaseInOut));
+            composite.AddProperty(PropertyId.PointCount, new Store(pointArray, new Easing(EasingType.EaseInOut)));
 
             Sampler ringSampler = new RingSampler(new int[] { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15 });
             //Sampler ringSampler = new RingSampler(new int[] { 30, 20, 15, 15, 15, 15, 15, 10, 10, 5 });
             //Sampler ringSampler = new RingSampler(new int[] { 60, 50, 40 });
-            ((PolyShape)composite.Graphic).Radius = new FloatSeries(2, 6f, 6f, 15f, 15f, 6f, 6f).Store;
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 6f, 6f, 15f, 15f, 6f, 6f).Store);
             var vectorSize = 2;
             var start = new float[] { 50, 50, 500, 400 };
             var end = new float[] { 50, 50, 500, 400 };
@@ -213,12 +213,18 @@ namespace DataArcs.Tests.GraphicTests
 
         private static void AddGraphic(Composite composite)
         {
-	        composite.Graphic = new PolyShape(
-		        radius: new Store(new float[] {10f, 20f, 10f}),
-		        orientation: new Store(new float[] {0.3f, 1f / 12f, 0.3f}),
-		        starness: new Store(new float[] {0, -0.3f, 0}),
-		        pointCount: new FloatSeries(1, new float[] {6f, 9f, 6f}).CreateLinearStore(3)
-	        );
+	        composite.AddProperty(PropertyId.Radius, new Store(new float[] { 10f, 20f, 10f }));
+	        composite.AddProperty(PropertyId.PointCount, new FloatSeries(1, new float[] { 6f, 9f, 6f }).CreateLinearStore(3));
+	        composite.AddProperty(PropertyId.Starness, new Store(new float[] { 0, -0.3f, 0 }));
+	        composite.AddProperty(PropertyId.Orientation, new Store(new float[] { 0.3f, 1f / 12f, 0.3f }));
+            composite.Graphic = new PolyShape();
+
+         //   composite.Graphic = new PolyShape(
+		       // radius: new Store(new float[] {10f, 20f, 10f}),
+		       // orientation: new Store(new float[] {0.3f, 1f / 12f, 0.3f}),
+		       // starness: new Store(new float[] {0, -0.3f, 0}),
+		       // pointCount: new FloatSeries(1, new float[] {6f, 9f, 6f}).CreateLinearStore(3)
+	        //);
         }
 
         private static void AddColor(Composite composite)

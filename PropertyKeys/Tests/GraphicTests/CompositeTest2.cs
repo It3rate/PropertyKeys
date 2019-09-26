@@ -62,16 +62,20 @@ namespace DataArcs.Tests.GraphicTests
             var result = new BlendTransition(compositeStart, compositeEnd, 0, _player.CurrentMs, 3000, easeStore);
 
             var radiusLink = new LinkingStore(result.CompositeId, PropertyId.FillColor, new float[] { 16f, 32f }, new LineSampler(), CombineFunction.Multiply);
-            ((PolyShape)compositeStart.Graphic).Radius = radiusLink;
+            compositeStart.AddProperty(PropertyId.Radius, radiusLink);
+            //((PolyShape)compositeStart.Graphic).Radius = radiusLink;
 
             var starnessLink = new LinkingStore(compositeEnd.CompositeId, PropertyId.Location, new float[] { 500f }, new LineSampler(), CombineFunction.DivideFrom);
-            ((PolyShape)compositeStart.Graphic).Starness = starnessLink;
+            compositeStart.AddProperty(PropertyId.Starness, starnessLink);
+            //((PolyShape)compositeStart.Graphic).Starness = starnessLink;
             return result;
         }
 
         private static void AddGraphic(Composite composite)
         {
-	        composite.Graphic = new PolyShape(10, pointCount:5);
+	        composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 10f, 10f).Store);
+	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 10).Store);
+            composite.Graphic = new PolyShape();
         }
     }
 }

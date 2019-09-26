@@ -16,7 +16,7 @@ namespace DataArcs.Components
 
 	    public int CompositeId { get;}
 	    protected float CurrentT { get; set; }
-        public GraphicBase Graphic { get; set; } // will become store props or something
+        public PolyShape Graphic { get; set; }
 
         protected CompositeBase()
         {
@@ -76,7 +76,7 @@ namespace DataArcs.Components
 	        var scale = 1f; // + it * 0.8f;
 	        g.ScaleTransform(scale, scale);
 	        g.TranslateTransform(v.X / scale, v.Y / scale);
-	        Graphic.Draw(g, b, null, it*CurrentT);
+	        Graphic.Draw(this, g, b, null, it*CurrentT);
 	        g.Restore(state);
         }
     }
@@ -102,8 +102,11 @@ namespace DataArcs.Components
 	    SampleType,
 
 	    Graphic,
-	    Starness,
-	    Roundness,
+		// polyShape
+		Orientation,
+		PointCount,
+		Starness,
+        Roundness,
 	    Radius,
 	    RandomMotion,
 

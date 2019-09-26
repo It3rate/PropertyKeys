@@ -1,9 +1,12 @@
 ﻿using System.Drawing;
+using DataArcs.Components;
 
 namespace DataArcs.Graphic
 {
 	public abstract class GraphicBase
 	{
-		public abstract void Draw(Graphics g, Brush brush, Pen pen, float t);
+		// todo: return a drawable element, don't pass Graphics context.
+		public abstract void Draw(CompositeBase composite, Graphics g, Brush brush, Pen pen, float t);
+
 	}
 }
