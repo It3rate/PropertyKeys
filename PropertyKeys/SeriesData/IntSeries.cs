@@ -14,7 +14,7 @@ namespace DataArcs.SeriesData
 			_intValues = values;
 		}
 
-		public override Series GetDataAtIndex(int index)
+		public override Series GetSeriesAtIndex(int index)
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
@@ -30,7 +30,7 @@ namespace DataArcs.SeriesData
 			return new IntSeries(VectorSize, result);
 		}
 
-		public override void SetDataAtIndex(int index, Series series)
+		public override void SetSeriesAtIndex(int index, Series series)
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			Array.Copy(series.IntData, 0, _intValues, startIndex * VectorSize, VectorSize);

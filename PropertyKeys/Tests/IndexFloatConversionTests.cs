@@ -165,15 +165,15 @@ namespace DataArcs.Tests
 			float sample;
             int count = 31;
 
-            sample = series_1_31.GetDataAtIndex(-10).FloatDataAt(0);
+            sample = series_1_31.GetSeriesAtIndex(-10).FloatDataAt(0);
 			Assert.AreEqual(1f, sample, delta);
-			sample = series_1_31.GetDataAtIndex(0).FloatDataAt(0);
+			sample = series_1_31.GetSeriesAtIndex(0).FloatDataAt(0);
 			Assert.AreEqual(1f, sample, delta);
 
 			int lastIndex = series_1_31.DataSize > 4 ? 60 : 3;
-			sample = series_1_31.GetDataAtIndex(lastIndex).FloatDataAt(0);
+			sample = series_1_31.GetSeriesAtIndex(lastIndex).FloatDataAt(0);
 			Assert.AreEqual(22f, sample, delta);
-			sample = series_1_31.GetDataAtIndex(99).FloatDataAt(0);
+			sample = series_1_31.GetSeriesAtIndex(99).FloatDataAt(0);
 			Assert.AreEqual(22f, sample, delta);
 
 			sample = series_1_31.GetValueAtVirtualIndex(-10, count).FloatDataAt(0);

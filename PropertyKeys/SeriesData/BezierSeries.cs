@@ -34,10 +34,10 @@ namespace DataArcs.SeriesData
 		public override Series GetValueAtT(float t)
 		{
 			var index = (int) (t * Count);
-			return GetDataAtIndex(index);
+			return GetSeriesAtIndex(index);
 		}
 
-		public override Series GetDataAtIndex(int index)
+		public override Series GetSeriesAtIndex(int index)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 			var start = 0;
@@ -52,7 +52,7 @@ namespace DataArcs.SeriesData
 			return new BezierSeries(result, new[] {Moves[index]});
 		}
         // todo: need an insertDataAtIndex
-		public override void SetDataAtIndex(int index, Series series)
+		public override void SetSeriesAtIndex(int index, Series series)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 			var start = 0;

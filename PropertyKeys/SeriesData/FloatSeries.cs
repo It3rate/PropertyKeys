@@ -14,7 +14,7 @@ namespace DataArcs.SeriesData
 			_floatValues = values;
 		}
 
-		public override Series GetDataAtIndex(int index)
+		public override Series GetSeriesAtIndex(int index)
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new float[VectorSize];
@@ -30,7 +30,7 @@ namespace DataArcs.SeriesData
 			return new FloatSeries(VectorSize, result);
 		}
 
-		public override void SetDataAtIndex(int index, Series series)
+		public override void SetSeriesAtIndex(int index, Series series)
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));

@@ -36,6 +36,8 @@ namespace DataArcs.Stores
             return _series;
         }
 
+        // todo: Get indexGrid(t), tGrid(t), and valueGrid(t), maybe also for indexes.
+
 		public override Series GetSeriesAtIndex(int index)
 		{
 			return Sampler.GetValueAtIndex(_series, index);
@@ -50,6 +52,7 @@ namespace DataArcs.Stores
         {
             return Sampler.GetSampledT(t);
         }
+
 
         public override void Update(float deltaTime)
 		{
@@ -70,7 +73,7 @@ namespace DataArcs.Stores
                 for (var i = 0; i < Capacity; i++)
                 {
 	                float t = i / (float) (Capacity - 1);
-                    result.SetDataAtIndex(i, GetSeriesAtT(t));
+                    result.SetSeriesAtIndex(i, GetSeriesAtT(t));
                 }
                 _series = result;
             }

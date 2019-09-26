@@ -27,10 +27,10 @@ namespace DataArcs.SeriesData
 			{
 				var a = Random.Next(len);
 				var b = Random.Next(len);
-				var sa = series.GetDataAtIndex(a);
-				var sb = series.GetDataAtIndex(b);
-				series.SetDataAtIndex(a, sb);
-				series.SetDataAtIndex(b, sa);
+				var sa = series.GetSeriesAtIndex(a);
+				var sb = series.GetSeriesAtIndex(b);
+				series.SetSeriesAtIndex(a, sb);
+				series.SetSeriesAtIndex(b, sa);
 			}
 		}
 
@@ -74,8 +74,8 @@ namespace DataArcs.SeriesData
                     for (var i = 0; i < a.DataSize; i++)
                     {
                         var delta = 0.0001f;
-                        var ar = a.GetDataAtIndex(i).FloatData;
-                        var br = b.GetDataAtIndex(i).FloatData;
+                        var ar = a.GetSeriesAtIndex(i).FloatData;
+                        var br = b.GetSeriesAtIndex(i).FloatData;
                         for (var j = 0; j < ar.Length; j++)
                         {
                             if (Math.Abs(ar[j] - br[j]) > delta)
@@ -90,8 +90,8 @@ namespace DataArcs.SeriesData
                 {
                     for (var i = 0; i < a.DataSize; i++)
                     {
-                        var ar = a.GetDataAtIndex(i).IntData;
-                        var br = b.GetDataAtIndex(i).IntData;
+                        var ar = a.GetSeriesAtIndex(i).IntData;
+                        var br = b.GetSeriesAtIndex(i).IntData;
                         for (var j = 0; j < ar.Length; j++)
                         {
                             if (ar[j] != br[j])

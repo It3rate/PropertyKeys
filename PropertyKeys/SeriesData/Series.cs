@@ -75,12 +75,15 @@ namespace DataArcs.SeriesData
 
         protected abstract void CalculateFrame();
 
-        public abstract Series GetDataAtIndex(int index);
-        public abstract void SetDataAtIndex(int index, Series series);
+        public abstract Series GetSeriesAtIndex(int index);
+        public abstract void SetSeriesAtIndex(int index, Series series);
 
-        public virtual Series GetValueAtVirtualIndex(int index, int virtualCount)
+        /// <summary>
+        /// Gets data with an assumed count. Series do not know about capacities, so needs to be passed.
+        /// </summary>
+        public virtual Series GetValueAtVirtualIndex(int index, int capacity)
         {
-            var indexT = index / (virtualCount - 1f);
+            var indexT = index / (capacity - 1f);
             return GetValueAtT(indexT);
         }
 
@@ -90,7 +93,7 @@ namespace DataArcs.SeriesData
             Series result;
             if (t >= 1)
             {
-                result = GetDataAtIndex(Count - 1);
+                result = GetSeriesAtIndex(Count - 1);
             }
             else if (Count > 1)
             {
@@ -102,18 +105,18 @@ namespace DataArcs.SeriesData
                 if (pos < endIndex)
                 {
                     var remainderT = pos - startIndex;
-                    result = GetDataAtIndex(startIndex);
-                    var end = GetDataAtIndex(startIndex + 1);
+                    result = GetSeriesAtIndex(startIndex);
+                    var end = GetSeriesAtIndex(startIndex + 1);
                     result.InterpolateInto(end, remainderT);
                 }
                 else
                 {
-                    result = GetDataAtIndex(startIndex);
+                    result = GetSeriesAtIndex(startIndex);
                 }
             }
             else
             {
-                result = GetDataAtIndex(0);
+                result = GetSeriesAtIndex(0);
             }
 
             return result;
@@ -140,8 +143,12 @@ namespace DataArcs.SeriesData
 
         public abstract Series Copy();
 
-#region Enumeration
-        //public Series this[int index] => GetValueAtVirtualIndex(index);
+        public float X => DataSize > 0 ? FloatDataAt(0) : 0;
+        public float Y => DataSize > 1 ? FloatDataAt(1) : 0;
+        public float Z => DataSize > 2 ? FloatDataAt(2) : 0;
+        public float W => DataSize > 3 ? FloatDataAt(3) : 0;
+
+        #region Enumeration
         public IEnumerator GetEnumerator()
         {
             return new SeriesEnumerator(this);
@@ -160,7 +167,7 @@ namespace DataArcs.SeriesData
                 _position++;
                 return (_position < (int)(_instance.DataSize / _instance.VectorSize));
             }
-            public object Current => _instance.GetDataAtIndex(_position);
+            public object Current => _instance.GetSeriesAtIndex(_position);
 
             public void Reset()
             {
