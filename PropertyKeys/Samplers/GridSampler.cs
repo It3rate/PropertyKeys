@@ -31,7 +31,7 @@ namespace DataArcs.Samplers
 			return GetSeriesSample(series, index);
 		}
 
-		public override Series GetValueAtT(Series series, float t)
+		public override Series GetValuesAtT(Series series, float t)
         {
 			t = Math.Max(0, Math.Min(1f, t));
 			var index = (int) Math.Round(t * (Capacity - 1f));

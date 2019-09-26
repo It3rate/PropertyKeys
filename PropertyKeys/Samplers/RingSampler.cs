@@ -29,7 +29,7 @@ namespace DataArcs.Samplers
 			return GetSeriesSample(series, indexT);
 		}
 
-		public override Series GetValueAtT(Series series, float t)
+		public override Series GetValuesAtT(Series series, float t)
         {
             return GetSeriesSample(series, t);
 		}

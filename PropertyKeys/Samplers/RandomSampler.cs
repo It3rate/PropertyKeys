@@ -20,7 +20,7 @@ namespace DataArcs.Samplers
 			return series.GetSeriesAtIndex(index);
 		}
 
-		public override Series GetValueAtT(Series series, float t)
+		public override Series GetValuesAtT(Series series, float t)
 		{
 			t = (float) _random.NextDouble() * t;
 			return series.GetValueAtT(t);

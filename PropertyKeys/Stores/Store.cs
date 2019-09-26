@@ -6,7 +6,7 @@ namespace DataArcs.Stores
 {
 	public class Store : StoreBase
     {
-		private Series _series;
+		protected Series _series;
 
 		public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
             CombineTarget combineTarget = CombineTarget.Destination)
@@ -43,7 +43,7 @@ namespace DataArcs.Stores
 
 		public override Series GetValuesAtT(float t)
 		{
-			return Sampler.GetValueAtT(_series, t);
+			return Sampler.GetValuesAtT(_series, t);
 		}
         
         public override ParametricSeries GetSampledTs(float t)

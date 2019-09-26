@@ -56,10 +56,10 @@ namespace DataArcs.Samplers
 		{
 			// todo: check if this virtualCount assignment should happen in easing at this point or pass through.
 			var indexT = index / (float) Capacity;
-			return GetValueAtT(series, indexT);
+			return GetValuesAtT(series, indexT);
 		}
 
-		public override Series GetValueAtT(Series series, float t)
+		public override Series GetValuesAtT(Series series, float t)
 		{
 			t = GetValueAt(t, EasingType);
 			return series.GetValueAtT(t);

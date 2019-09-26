@@ -11,7 +11,7 @@ namespace DataArcs.Samplers
 			return series.GetSeriesAtIndex(index);
 		}
 
-		public override Series GetValueAtT(Series series, float t)
+		public override Series GetValuesAtT(Series series, float t)
 		{
 			var index = (int) Math.Round(t * series.DataSize);
 			return series.GetSeriesAtIndex(index);

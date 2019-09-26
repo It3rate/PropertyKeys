@@ -17,10 +17,10 @@ namespace DataArcs.Samplers
 		public override Series GetValueAtIndex(Series series, int index)
         {
             float t = Capacity != 1 ? index / (Capacity - 1f) : 0;
-            return GetValueAtT(series, t);
+            return GetValuesAtT(series, t);
         }
 
-        public override Series GetValueAtT(Series series, float t)
+        public override Series GetValuesAtT(Series series, float t)
         {
             t = Math.Max(0, Math.Min(1f, t));
             return GetSeriesSample(series, t);

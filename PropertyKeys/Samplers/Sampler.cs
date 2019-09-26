@@ -8,7 +8,7 @@ namespace DataArcs.Samplers
 	{
 		public int Capacity { get; protected set; } = 1;
         public abstract Series GetValueAtIndex(Series series, int index);
-		public abstract Series GetValueAtT(Series series, float t);
+		public abstract Series GetValuesAtT(Series series, float t);
         public virtual ParametricSeries GetSampledTs(float t)
         {
             return new ParametricSeries(1, t);

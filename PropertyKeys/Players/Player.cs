@@ -12,6 +12,9 @@ namespace DataArcs.Players
 {
     public class Player
     {
+        private static Player _currentPlayer;
+        public static Player GetPlayerById(int id) => _currentPlayer;
+
 	    public static DateTime StartTime { get; }
 	    static Player() { StartTime = DateTime.Now;}
 
@@ -28,6 +31,7 @@ namespace DataArcs.Players
 
         public Player(Form display)
 		{
+            _currentPlayer = this;
 			_display = display;
 			Initialize();
 		}
@@ -88,6 +92,7 @@ namespace DataArcs.Players
 		        element.Draw(e.Graphics);
 	        }
         }
+        public CompositeBase this[int index] => _elements[index];
 
         public void AddElement(CompositeBase composite) => _toAdd.Add(composite.CompositeId, composite);
         public void RemoveElement(CompositeBase composite)
