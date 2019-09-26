@@ -19,45 +19,45 @@ namespace DataArcs.Stores
 			_stores = new List<IStore>(stores);
 		}
 
-        public Series this[int index] => GetSeriesAtIndex(index);
+        public Series this[int index] => GetValuesAtIndex(index);
 
 		public override Series GetFullSeries(int index) => _stores[index].GetFullSeries(0);
 
-        public override Series GetSeriesAtIndex(int index)
+        public override Series GetValuesAtIndex(int index)
 		{
-			var series = _stores[0].GetSeriesAtIndex(index);
+			var series = _stores[0].GetValuesAtIndex(index);
 			for (var i = 1; i < _stores.Count; i++)
 			{
-				var b = _stores[i].GetSeriesAtIndex(index);
+				var b = _stores[i].GetValuesAtIndex(index);
 				series.CombineInto(b, _stores[i].CombineFunction);
 			}
 
 			return series;
 		}
 
-        public override Series GetSeriesAtT(float t)
+        public override Series GetValuesAtT(float t)
 		{
 			Series series = null;
 			foreach (var store in _stores)
 			{
 				if (store.CombineTarget == CombineTarget.T)
 				{
-					t = store.GetSeriesAtT(t).FloatDataAt(0);
+					t = store.GetValuesAtT(t).FloatDataAt(0);
 				}
 				else if(series != null)
 				{
-					var b = store.GetSeriesAtT(t);
+					var b = store.GetValuesAtT(t);
 					series.CombineInto(b, store.CombineFunction);
                 }
 				else
 				{
-					series = store.GetSeriesAtT(t);
+					series = store.GetValuesAtT(t);
                 }
 			}
 			return series;
         }
 
-        public override ParametricSeries GetSampledT(float t)
+        public override ParametricSeries GetSampledTs(float t)
         {
             ParametricSeries result = null;
 
@@ -65,16 +65,16 @@ namespace DataArcs.Stores
             {
                 if (store.CombineTarget == CombineTarget.T)
                 {
-                    t = store.GetSampledT(t).FloatDataAt(0);
+                    t = store.GetSampledTs(t).FloatDataAt(0);
                 }
                 else if (result != null)
                 {
-                    var b = store.GetSampledT(t);
+                    var b = store.GetSampledTs(t);
                     result.CombineInto(b, store.CombineFunction);
                 }
                 else
                 {
-                    result = store.GetSampledT(t);
+                    result = store.GetSampledTs(t);
                 }
             }
             

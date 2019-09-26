@@ -10,7 +10,7 @@ namespace DataArcs.Samplers
     public class SamplerUtils
     {
 
-        public static int[] GetDimsForIndex(int virtualCount, int[] strides, int index)
+        public static int[] GetPositionsForIndex(int virtualCount, int[] strides, int index)
         {
             var result = new int[strides.Length];
 	        var count = Math.Max(0, Math.Min(virtualCount - 1, index));
@@ -29,7 +29,7 @@ namespace DataArcs.Samplers
 
         public static float[] GetStrideTsForIndex(int virtualCount, int[] strides, int index)
         {
-            var indexes = GetDimsForIndex(virtualCount, strides, index);
+            var indexes = GetPositionsForIndex(virtualCount, strides, index);
             var dSize = 1;
             var maxLen = virtualCount - 1;
             var result = new float[indexes.Length];

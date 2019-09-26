@@ -22,11 +22,11 @@ namespace DataArcs.Stores
 
         public abstract Series GetFullSeries(int index);
 
-        public abstract Series GetSeriesAtIndex(int index);
+        public abstract Series GetValuesAtIndex(int index);
 
-        public abstract Series GetSeriesAtT(float t);
-
-        public abstract ParametricSeries GetSampledT(float t);
+        public abstract Series GetValuesAtT(float t);
+        
+        public abstract ParametricSeries GetSampledTs(float t);
 
         public abstract void Update(float deltaTime);
 

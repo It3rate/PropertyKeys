@@ -123,13 +123,13 @@ namespace DataArcs.Graphic
 		public void GeneratePolyShape(float radiusT, float pointCountT = 0, float orientationT = 0,
 			float roundnessT = 0, float starnessT = 0)
 		{
-			var orientation = Orientation.GetSeriesAtT(orientationT).FloatDataAt(0);
-			var roundness = Roundness.GetSeriesAtT(roundnessT).FloatDataAt(0);
-			var radius = Radius.GetSeriesAtT(radiusT).FloatData;
+			var orientation = Orientation.GetValuesAtT(orientationT).FloatDataAt(0);
+			var roundness = Roundness.GetValuesAtT(roundnessT).FloatDataAt(0);
+			var radius = Radius.GetValuesAtT(radiusT).FloatData;
 			var radiusX = radius[0];
 			var radiusY = radius.Length > 1 ? radius[1] : radius[0];
-			var starness = Starness.GetSeriesAtT(starnessT).FloatDataAt(0);
-			var pointCount = PointCount.GetSeriesAtT(pointCountT).IntDataAt(0);
+			var starness = Starness.GetValuesAtT(starnessT).FloatDataAt(0);
+			var pointCount = PointCount.GetValuesAtT(pointCountT).IntDataAt(0);
 			Polygon = GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
 		}
 

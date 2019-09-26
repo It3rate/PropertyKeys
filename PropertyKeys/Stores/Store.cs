@@ -29,28 +29,26 @@ namespace DataArcs.Stores
 		{
 		}
 
-		public Series this[int index] => GetSeriesAtIndex(index);
+		public Series this[int index] => GetValuesAtIndex(index);
 
         public override Series GetFullSeries(int index)
         {
             return _series;
         }
 
-        // todo: Get indexGrid(t), tGrid(t), and valueGrid(t), maybe also for indexes.
-
-		public override Series GetSeriesAtIndex(int index)
+		public override Series GetValuesAtIndex(int index)
 		{
 			return Sampler.GetValueAtIndex(_series, index);
 		}
 
-		public override Series GetSeriesAtT(float t)
+		public override Series GetValuesAtT(float t)
 		{
 			return Sampler.GetValueAtT(_series, t);
 		}
-
-        public override ParametricSeries GetSampledT(float t)
+        
+        public override ParametricSeries GetSampledTs(float t)
         {
-            return Sampler.GetSampledT(t);
+            return Sampler.GetSampledTs(t);
         }
 
 
@@ -73,7 +71,7 @@ namespace DataArcs.Stores
                 for (var i = 0; i < Capacity; i++)
                 {
 	                float t = i / (float) (Capacity - 1);
-                    result.SetSeriesAtIndex(i, GetSeriesAtT(t));
+                    result.SetSeriesAtIndex(i, GetValuesAtT(t));
                 }
                 _series = result;
             }

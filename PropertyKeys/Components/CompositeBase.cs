@@ -32,17 +32,17 @@ namespace DataArcs.Components
         public virtual Series GetSeriesAtT(PropertyId propertyId, float t)
         {
             var store = GetStore(propertyId);
-            return store != null ? store.GetSeriesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
+            return store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
         }
         public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index)
         {
             var store = GetStore(propertyId);
-            return store != null ? store.GetSeriesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
+            return store != null ? store.GetValuesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
         }
         public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
         {
             var store = GetStore(propertyId);
-            return store != null ? store.GetSampledT(t) : new ParametricSeries(1, t);
+            return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
         }
 
         public virtual void Draw(Graphics g)
@@ -63,7 +63,7 @@ namespace DataArcs.Components
 	        int count = itemStore.Capacity;
 	        var it = count > 1 ? countIndex / (count - 1f) : 0;
 
-	        int index = GetStore(PropertyId.Items)?.GetSeriesAtIndex(countIndex).IntDataAt(0) ?? countIndex;
+	        int index = GetStore(PropertyId.Items)?.GetValuesAtIndex(countIndex).IntDataAt(0) ?? countIndex;
 	        Series v = GetSeriesAtIndex(PropertyId.Location, index);
 	        //Series v = GetSeriesAtT(PropertyId.Location, it);
 

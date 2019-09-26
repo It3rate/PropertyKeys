@@ -37,31 +37,31 @@ namespace DataArcs.Stores
 			return GetSeriesAtIndex(index, CurrentT);
 		}
 
-		public override Series GetSeriesAtIndex(int index)
+		public override Series GetValuesAtIndex(int index)
 		{
 			return GetSeriesAtIndex(index, CurrentT);
 		}
 
-		public override Series GetSeriesAtT(float t)
+		public override Series GetValuesAtT(float t)
 		{
 			return GetSeriesAtT(t, CurrentT);
 		}
 
-        public override ParametricSeries GetSampledT(float t)
+        public override ParametricSeries GetSampledTs(float t)
         {
             ParametricSeries result;
 
             SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-            vT = _easing?.GetSeriesAtT(vT).FloatDataAt(0) ?? vT;
+            vT = _easing?.GetValuesAtT(vT).FloatDataAt(0) ?? vT;
 
             if (startIndex == endIndex)
             {
-                result = _stores[startIndex].GetSampledT(vT);
+                result = _stores[startIndex].GetSampledTs(vT);
             }
             else
             {
-                result = _stores[startIndex].GetSampledT(t);
-                var endPS = _stores[endIndex].GetSampledT(t);
+                result = _stores[startIndex].GetSampledTs(t);
+                var endPS = _stores[endIndex].GetSampledTs(t);
                 result.InterpolateInto(endPS, vT);
             }
 
@@ -98,11 +98,11 @@ namespace DataArcs.Stores
 			Series result;
 
 			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-			vT = _easing?.GetSeriesAtT(vT).FloatDataAt(0) ?? vT;
+			vT = _easing?.GetValuesAtT(vT).FloatDataAt(0) ?? vT;
 
             if (startIndex == endIndex)
 			{
-				result = _stores[startIndex].GetSeriesAtIndex(index);
+				result = _stores[startIndex].GetValuesAtIndex(index);
 			}
 			else
 			{
@@ -117,11 +117,11 @@ namespace DataArcs.Stores
 			Series result;
 
 			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-			vT = _easing?.GetSeriesAtT(vT).FloatDataAt(0) ?? vT;
+			vT = _easing?.GetValuesAtT(vT).FloatDataAt(0) ?? vT;
 
             if (startIndex == endIndex)
 			{
-				result = _stores[startIndex].GetSeriesAtT(indexT);
+				result = _stores[startIndex].GetValuesAtT(indexT);
 			}
 			else
 			{
@@ -153,10 +153,10 @@ namespace DataArcs.Stores
 
         public static Series BlendValueAtIndex(IStore start, IStore end, int index, float t)
         {
-            var result = start.GetSeriesAtIndex(index);
+            var result = start.GetValuesAtIndex(index);
             if (end != null)
             {
-                var endAr = end.GetSeriesAtIndex(index);
+                var endAr = end.GetValuesAtIndex(index);
                 result.InterpolateInto(endAr, t);
             }
 
@@ -165,10 +165,10 @@ namespace DataArcs.Stores
 
         public static Series BlendValueAtT(IStore start, IStore end, float indexT, float t)
         {
-            var result = start.GetSeriesAtT(indexT);
+            var result = start.GetValuesAtT(indexT);
             if (end != null)
             {
-                var endAr = end.GetSeriesAtT(indexT);
+                var endAr = end.GetValuesAtT(indexT);
 
                 result.InterpolateInto(endAr, t);
             }

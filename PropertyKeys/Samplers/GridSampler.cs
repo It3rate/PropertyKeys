@@ -38,7 +38,7 @@ namespace DataArcs.Samplers
 			return GetSeriesSample(series, index);
 		}
 
-        public override ParametricSeries GetSampledT(float t)
+        public override ParametricSeries GetSampledTs(float t)
         {
             var index = (int)Math.Round(t * (Capacity - 1f));
             float[] strideTs = SamplerUtils.GetStrideTsForIndex(Capacity, Strides, index);
@@ -47,6 +47,16 @@ namespace DataArcs.Samplers
 	            Array.Reverse(strideTs);
             }
             return new ParametricSeries(Strides.Length, strideTs);
+        }
+        public override IntSeries GetSampledIndexes(float t)
+        {
+            var index = (int)Math.Round(t * (Capacity - 1f));
+            var positions = SamplerUtils.GetPositionsForIndex(Capacity, Strides, index);
+            if (!IsRowCol)
+            {
+                Array.Reverse(positions);
+            }
+            return new IntSeries(Strides.Length, positions);
         }
 
         protected virtual Series GetSeriesSample(Series series, int index)

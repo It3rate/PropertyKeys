@@ -14,9 +14,11 @@ namespace DataArcs.Stores
 		Sampler Sampler { get; set; }
 
         Series GetFullSeries(int index);
-		Series GetSeriesAtIndex(int index);
-		Series GetSeriesAtT(float t);
-        ParametricSeries GetSampledT(float t);
+
+		Series GetValuesAtIndex(int index);
+		Series GetValuesAtT(float t);
+        
+        ParametricSeries GetSampledTs(float t);
 
         void Update(float deltaTime);
 		void ResetData();
@@ -38,7 +40,7 @@ namespace DataArcs.Stores
             return (_position < _instance.Capacity);
         }
 
-        public object Current => _instance.GetSeriesAtIndex(_position);
+        public object Current => _instance.GetValuesAtIndex(_position);
 
         public void Reset()
         {

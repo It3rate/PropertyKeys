@@ -128,13 +128,13 @@ namespace DataArcs.Transitions
 
                 float indexT = index / (Start.GetStore(propertyId).Capacity - 1f) + CurrentT; // delay per element.
 
-                float easedT = Easing?.GetSeriesAtT(CurrentT * indexT).FloatDataAt(0) ?? CurrentT;
+                float easedT = Easing?.GetValuesAtT(CurrentT * indexT).FloatDataAt(0) ?? CurrentT;
                 result.InterpolateInto(end, easedT);
             }
             else
             {
                 var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
-                result = store != null ? store.GetSeriesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
+                result = store != null ? store.GetValuesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
             }
             return result;
         }
@@ -149,13 +149,13 @@ namespace DataArcs.Transitions
                 //float durT = _duration.GetValueAtT(t).FloatDataAt(0);
                 //float delRatio = delT / (delT + durT);
                 //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
-                float easedT = Easing?.GetSeriesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
+                float easedT = Easing?.GetValuesAtT(CurrentT).FloatDataAt(0) ?? CurrentT;
                 result.InterpolateInto(end, easedT);
             }
 	        else
 	        {
 		        var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
-		        result = store != null ? store.GetSeriesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
+		        result = store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
             }
 	        return result;
         }

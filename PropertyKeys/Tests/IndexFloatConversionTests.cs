@@ -27,23 +27,23 @@ namespace DataArcs.Tests
             int virtualCount = 100;
 			int[] strides = {10,10};
 			int[] sample;
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, -3);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, -3);
 			ArraysEqual(new int[] {0, 0}, sample);
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, 0);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, 0);
 			ArraysEqual(new int[] {0, 0}, sample);
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, 1);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, 1);
 			ArraysEqual(new int[] {1, 0}, sample);
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, 10);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, 10);
 			ArraysEqual(new int[] {0, 1}, sample);
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, 11);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, 11);
 			ArraysEqual(new int[] {1, 1}, sample);
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, 53);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, 53);
 			ArraysEqual(new int[] {3, 5}, sample);
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, 99);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, 99);
 			ArraysEqual(new int[] {9, 9}, sample);
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, 100);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, 100);
 			ArraysEqual(new int[] {9, 9}, sample);
-			sample = SamplerUtils.GetDimsForIndex(virtualCount, strides, 101);
+			sample = SamplerUtils.GetPositionsForIndex(virtualCount, strides, 101);
 			ArraysEqual(new int[] {9, 9}, sample);
 		}
 

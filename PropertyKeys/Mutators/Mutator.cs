@@ -15,12 +15,12 @@ namespace DataArcs.Mutators
 
 		public virtual Series GetValueAtIndex(Series series, int index)
 		{
-			return Store.GetSeriesAtIndex(index);
+			return Store.GetValuesAtIndex(index);
 		}
 
 		public virtual Series GetValueAtT(Series series, float t)
 		{
-			return Store.GetSeriesAtT(t);
+			return Store.GetValuesAtT(t);
 		}
 
 		public abstract void Update(float t);
