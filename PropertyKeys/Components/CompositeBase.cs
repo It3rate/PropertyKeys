@@ -71,13 +71,26 @@ namespace DataArcs.Components
 
 	        var c = GetSeriesAtT(PropertyId.FillColor, ps.Red()).RGB();
 
-	        Brush b = new SolidBrush(c);
+	        Pen pen = null;
+	        Brush brush = new SolidBrush(c);
 	        var state = g.Save();
 	        var scale = 1f; // + it * 0.8f;
 	        g.ScaleTransform(scale, scale);
 	        g.TranslateTransform(v.X / scale, v.Y / scale);
-	        Graphic.Draw(this, g, b, null, it*CurrentT);
-	        g.Restore(state);
+
+	        BezierSeries bezier = Graphic.GetDrawableAtT(this, it*CurrentT);
+
+	        if (brush != null)
+	        {
+		        g.FillPath(brush, bezier.Path());
+	        }
+
+	        if (pen != null)
+	        {
+		        g.DrawPath(pen, bezier.Path());
+	        }
+
+            g.Restore(state);
         }
     }
 

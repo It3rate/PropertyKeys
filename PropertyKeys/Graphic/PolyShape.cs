@@ -9,32 +9,17 @@ namespace DataArcs.Graphic
 {
 	public class PolyShape : GraphicBase
 	{
-		private BezierSeries Polygon { get; set; }
-
-		public PolyShape()
-		{
-		}
-		
-        public override void Draw(CompositeBase composite, Graphics g, Brush brush, Pen pen, float t)
-        {
-	        GeneratePolyShape(composite, t);
-	        if (brush != null)
-	        {
-		        g.FillPath(brush, Polygon.Path());
-	        }
-
-	        if (pen != null)
-	        {
-		        g.DrawPath(pen, Polygon.Path());
-	        }
-        }
-
         private float _defaultOrientation = 0;
         private int _defaultPointCount = 4;
         private float _defaultStarness = 0f;
         private float _defaultRoundness = 0f;
         private float _defaultRadius = 10f;
-        public void GeneratePolyShape(CompositeBase composite, float t)
+
+
+		public PolyShape()
+		{
+		}
+        public override BezierSeries GetDrawableAtT(CompositeBase composite, float t)
         {
 	        var orientation = composite.GetStore(PropertyId.Orientation)?.GetValuesAtT(t).X ?? _defaultOrientation;
 	        var pointCount = (int)(composite.GetStore(PropertyId.PointCount)?.GetValuesAtT(t).X ?? _defaultPointCount);
@@ -42,7 +27,7 @@ namespace DataArcs.Graphic
 	        var roundness = composite.GetStore(PropertyId.Roundness)?.GetValuesAtT(t).X ?? _defaultRoundness;
 	        var radiusX = composite.GetStore(PropertyId.Radius)?.GetValuesAtT(t).X ?? _defaultRadius;
 	        var radiusY = composite.GetStore(PropertyId.Radius)?.GetValuesAtT(t).Y ?? _defaultRadius;
-            Polygon = GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
+            return GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
         }
 		
 		public static BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
