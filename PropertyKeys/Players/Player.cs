@@ -87,7 +87,8 @@ namespace DataArcs.Players
         private void OnDraw(object sender, PaintEventArgs e)
         {
 	        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-	        foreach (var element in _elements.Values)
+            var elements = new List<CompositeBase>(_elements.Values);
+	        foreach (var element in elements)
 	        {
 		        element.Draw(e.Graphics);
 	        }

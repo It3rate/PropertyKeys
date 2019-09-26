@@ -218,13 +218,6 @@ namespace DataArcs.Tests.GraphicTests
 	        composite.AddProperty(PropertyId.Starness, new Store(new float[] { 0, -0.3f, 0 }));
 	        composite.AddProperty(PropertyId.Orientation, new Store(new float[] { 0.3f, 1f / 12f, 0.3f }));
             composite.Graphic = new PolyShape();
-
-         //   composite.Graphic = new PolyShape(
-		       // radius: new Store(new float[] {10f, 20f, 10f}),
-		       // orientation: new Store(new float[] {0.3f, 1f / 12f, 0.3f}),
-		       // starness: new Store(new float[] {0, -0.3f, 0}),
-		       // pointCount: new FloatSeries(1, new float[] {6f, 9f, 6f}).CreateLinearStore(3)
-	        //);
         }
 
         private static void AddColor(Composite composite)
@@ -235,6 +228,9 @@ namespace DataArcs.Tests.GraphicTests
 	        var colorStartStore = new Store(new FloatSeries(3, start), colorSampler);
 	        var colorEndStore = new Store(new FloatSeries(3, end), colorSampler);
 	        composite.AddProperty(PropertyId.FillColor, new BlendStore(colorStartStore, colorEndStore));
+
+            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0, 0, 0, .4f, 0, 0).Store);
+            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 0f, 2f, 0f).Store);
         }
     }
 }

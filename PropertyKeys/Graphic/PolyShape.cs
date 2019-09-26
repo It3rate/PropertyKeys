@@ -14,11 +14,7 @@ namespace DataArcs.Graphic
         private float _defaultStarness = 0f;
         private float _defaultRoundness = 0f;
         private float _defaultRadius = 10f;
-
-
-		public PolyShape()
-		{
-		}
+        
         public override BezierSeries GetDrawableAtT(CompositeBase composite, float t)
         {
 	        var orientation = composite.GetStore(PropertyId.Orientation)?.GetValuesAtT(t).X ?? _defaultOrientation;
@@ -36,8 +32,8 @@ namespace DataArcs.Graphic
 			var count = hasStarness ? pointCount * 2 : pointCount;
 			var pointsPerStep = hasStarness ? 4 : 2;
 			var movesPerStep = pointsPerStep / 2;
-			var values = new float[count * 2];
-			var moves = new BezierMove[count];
+			var values = new float[count * 2 + 2];
+			var moves = new BezierMove[count + 1];
 
 			var step = Utils.M_PIx2 / pointCount;
 			for (var i = 0; i < pointCount; i++)
@@ -56,7 +52,11 @@ namespace DataArcs.Graphic
 					moves[i * pointsPerStep / 2 + 1] = BezierMove.LineTo;
 				}
 			}
-			return new BezierSeries(values, moves);
+            moves[count] = BezierMove.LineTo;
+            values[count * 2] = values[0];
+            values[count * 2 + 1] = values[1];
+
+            return new BezierSeries(values, moves);
 		}
 
     }

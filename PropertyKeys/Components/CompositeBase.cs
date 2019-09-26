@@ -7,6 +7,7 @@ using DataArcs.Adapters.Color;
 using DataArcs.Adapters.Geometry;
 using DataArcs.Graphic;
 using DataArcs.Samplers;
+using System.Drawing.Drawing2D;
 
 namespace DataArcs.Components
 {
@@ -69,26 +70,27 @@ namespace DataArcs.Components
 
 	        ParametricSeries ps = GetSampledT(PropertyId.Location, it);
 
-	        var c = GetSeriesAtT(PropertyId.FillColor, ps.Red()).RGB();
-
-	        Pen pen = null;
-	        Brush brush = new SolidBrush(c);
 	        var state = g.Save();
 	        var scale = 1f; // + it * 0.8f;
 	        g.ScaleTransform(scale, scale);
 	        g.TranslateTransform(v.X / scale, v.Y / scale);
 
 	        BezierSeries bezier = Graphic.GetDrawableAtT(this, it*CurrentT);
+            GraphicsPath gp = bezier.Path();
 
-	        if (brush != null)
-	        {
-		        g.FillPath(brush, bezier.Path());
-	        }
+            var fillColor = GetStore(PropertyId.FillColor)?.GetValuesAtT(ps.X);
+            if (fillColor != null)
+            {
+                g.FillPath(new SolidBrush(fillColor.RGB()), gp);
+            }
+            var penColor = GetStore(PropertyId.PenColor)?.GetValuesAtT(ps.X);
+            if (penColor != null)
+            {
+                var penWidth = GetStore(PropertyId.PenWidth)?.GetValuesAtT(ps.X);
+                float pw = penWidth?.X ?? 1f;
 
-	        if (pen != null)
-	        {
-		        g.DrawPath(pen, bezier.Path());
-	        }
+                g.DrawPath(new Pen(penColor.RGB(), pw), gp);
+            }
 
             g.Restore(state);
         }
@@ -107,8 +109,9 @@ namespace DataArcs.Components
 	    Scale,
 	    Rotation,
 	    FillColor,
-	    PenColor,
-	    T,
+        PenColor,
+        PenWidth,
+        T,
 	    StartTime,
 	    Duration,
 	    Easing,
