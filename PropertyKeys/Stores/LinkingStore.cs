@@ -14,26 +14,33 @@ namespace DataArcs.Stores
     {
         public int CompositeId { get; }
         public PropertyId PropertyId { get; }
+        public Slot[] SlotMapping { get; }
         private Player _player;
 
-        public LinkingStore(int compisiteId, PropertyId propertyId, Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, CombineTarget combineTarget = CombineTarget.Destination) : base(series, sampler, combineFunction, combineTarget)
+        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
+            Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, CombineTarget combineTarget = CombineTarget.Destination) : base(series, sampler, combineFunction, combineTarget)
         {
-            CompositeId = compisiteId;
+            CompositeId = compositeId;
             PropertyId = propertyId;
+            SlotMapping = slotMapping;
             _player = Player.GetPlayerById(0); // todo: create player versioning.
         }
 
-        public LinkingStore(int compisiteId, PropertyId propertyId, int[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) : base(data, sampler, combineFunction)
+        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
+            int[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) : base(data, sampler, combineFunction)
         {
-            CompositeId = compisiteId;
+            CompositeId = compositeId;
             PropertyId = propertyId;
+            SlotMapping = slotMapping;
             _player = Player.GetPlayerById(0);
         }
 
-        public LinkingStore(int compisiteId, PropertyId propertyId, float[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) : base(data, sampler, combineFunction)
+        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
+            float[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) : base(data, sampler, combineFunction)
         {
-            CompositeId = compisiteId;
+            CompositeId = compositeId;
             PropertyId = propertyId;
+            SlotMapping = slotMapping;
             _player = Player.GetPlayerById(0);
         }
 
@@ -48,7 +55,8 @@ namespace DataArcs.Stores
             Series link = GetLinkedStore()?.GetValuesAtIndex(index);
             if(link != null)
             {
-                result.CombineInto(link, CombineFunction);
+                Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
+                result.CombineInto(mappedValues, CombineFunction);
             }
             return result;
         }
@@ -59,7 +67,8 @@ namespace DataArcs.Stores
             Series link = GetLinkedStore()?.GetValuesAtT(t);
             if (link != null)
             {
-                result.CombineInto(link, CombineFunction);
+                Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
+                result.CombineInto(mappedValues, CombineFunction);
             }
             return result;
         }
@@ -70,7 +79,8 @@ namespace DataArcs.Stores
             ParametricSeries link = GetLinkedStore()?.GetSampledTs(t);
             if (link != null)
             {
-                result.CombineInto(link, CombineFunction);
+                Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
+                result.CombineInto(mappedValues, CombineFunction);
             }
             return result;
         }

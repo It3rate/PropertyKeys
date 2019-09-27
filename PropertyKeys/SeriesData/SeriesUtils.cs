@@ -3,9 +3,35 @@ using System;
 
 namespace DataArcs.SeriesData
 {
-	public class SeriesUtils
-	{
-		public static void InterpolateInto(float[] result, float[] b, float t)
+    [Flags]
+    public enum Slot{X, Y, Z, W, S4, S5, S6, S7, S8, S9,}
+
+    public class SeriesUtils
+    {
+        public static readonly Slot[] X = new Slot[] { Slot.X };
+        public static readonly Slot[] Y = new Slot[] { Slot.Y };
+        public static readonly Slot[] Z = new Slot[] { Slot.Z };
+        public static readonly Slot[] W = new Slot[] { Slot.W };
+        public static readonly Slot[] XY = new Slot[] { Slot.X, Slot.Y };
+        public static readonly Slot[] XYZ = new Slot[] { Slot.X, Slot.Y, Slot.Z };
+        public static readonly Slot[] XYZW = new Slot[] { Slot.X, Slot.Y, Slot.Z, Slot.W };
+        public static readonly Slot[] YX = new Slot[] { Slot.Y, Slot.X };
+        public static readonly Slot[] ZYX = new Slot[] { Slot.Z, Slot.Y, Slot.X };
+        public static readonly Slot[] WZYX = new Slot[] { Slot.W, Slot.Z, Slot.Y, Slot.Z };
+
+        public static Series GetSubseries(Slot[] slots, Series series)
+        {
+            Series result = series.GetZeroSeries(slots.Length);
+            for (int i = 0; i < slots.Length; i++)
+            {
+                int index = Math.Max(0, Math.Min(series.Count, (int)slots[i]));
+                Series value = series.GetSeriesAtIndex(index);
+                result.SetSeriesAtIndex(i, value);
+            }
+            return result;
+        }
+
+        public static void InterpolateInto(float[] result, float[] b, float t)
 		{
 			for (var i = 0; i < result.Length; i++)
 			{
