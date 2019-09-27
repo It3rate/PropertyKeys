@@ -14,8 +14,12 @@ namespace DataArcs.Components
 		int CompositeId { get; }
 		float CurrentT { get; set; }
 		PolyShape Graphic { get; set; }
+		/// <summary>
+		/// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
+		/// </summary>
+		IComposite Parent { get; set; }
 
-		IStore GetStore(PropertyId propertyId);
+        IStore GetStore(PropertyId propertyId);
 		void GetDefinedStores(HashSet<PropertyId> ids);
 		void Update(float currentTime, float deltaTime);
 

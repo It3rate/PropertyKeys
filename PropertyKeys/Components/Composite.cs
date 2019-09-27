@@ -10,16 +10,11 @@ using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-	public class Composite : CompositeBase
+	public class Composite : DrawableComposite
 	{
 		private Dictionary<PropertyId, IStore> _stores { get; }
 
-        /// <summary>
-        /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
-        /// </summary>
-        public Composite Parent { get; set; }
-
-		public Composite(Composite parent = null)
+		public Composite(IComposite parent = null)
 		{
 			Parent = parent;
 			_stores = new Dictionary<PropertyId, IStore>();

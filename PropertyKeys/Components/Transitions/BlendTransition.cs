@@ -14,7 +14,7 @@ namespace DataArcs.Transitions
 {
 	public delegate void TransitionEventHandler(object sender, EventArgs e);
 
-    public class BlendTransition : CompositeBase
+    public class BlendTransition : DrawableComposite
     {
 	    public IStore Easing { get; set; }
 

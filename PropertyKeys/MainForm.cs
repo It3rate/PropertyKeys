@@ -54,14 +54,34 @@ namespace DataArcs
             await Task.Delay(timeoutInMilliseconds);
             _b0.Invalidate();
             _player = new Player(this);
-            //_testScreen = new CompositeTestObjects(_player);
-            _testScreen = new CompositeTest2(_player);
-            _testScreen.NextVersion();
+            NextTest();
+        }
+
+        private int testIndex = -1;
+        private int testCount = 2;
+        private void NextTest()
+        {
+	        testIndex++;
+	        if (testIndex >= testCount)
+	        {
+		        testIndex = 0;
+	        }
+	        _player.Clear();
+	        switch (testIndex)
+	        {
+		        case 0:
+			        _testScreen = new CompositeTest2(_player);
+                    break;
+		        case 1:
+					_testScreen = new CompositeTestObjects(_player);
+				break;
+            }
+	        _testScreen.NextVersion();
         }
 
         private void B0_Click(object sender, EventArgs e)
         {
-	        _testScreen.NextVersion();
+	        NextTest();
         }
 
     }
