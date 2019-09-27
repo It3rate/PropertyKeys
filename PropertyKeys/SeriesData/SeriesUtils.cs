@@ -21,14 +21,15 @@ namespace DataArcs.SeriesData
 
         public static Series GetSubseries(Slot[] slots, Series series)
         {
-            Series result = series.GetZeroSeries(slots.Length);
+            //Series result = series.GetZeroSeries(slots.Length);
+            float[] result = new float[slots.Length];
+            Series value = series.GetSeriesAtIndex(0);
             for (int i = 0; i < slots.Length; i++)
             {
-                int index = Math.Max(0, Math.Min(series.Count, (int)slots[i]));
-                Series value = series.GetSeriesAtIndex(index);
-                result.SetSeriesAtIndex(i, value);
+                int index = Math.Max(0, Math.Min(value.Count, (int)slots[i]));
+                result[i] = value.FloatDataAt(index);
             }
-            return result;
+            return new FloatSeries(slots.Length, result);
         }
 
         public static void InterpolateInto(float[] result, float[] b, float t)

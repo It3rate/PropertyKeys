@@ -68,6 +68,7 @@ namespace DataArcs.Tests.GraphicTests
             var starnessLink = new LinkingStore(compositeEnd.CompositeId, PropertyId.Location, SeriesUtils.Y,
                 new float[] { 500f }, new LineSampler(), CombineFunction.DivideFrom);
             compositeStart.AddProperty(PropertyId.Starness, starnessLink);
+            compositeEnd.AddProperty(PropertyId.Starness, starnessLink);
             return result;
         }
 
