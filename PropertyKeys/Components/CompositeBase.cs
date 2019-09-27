@@ -18,7 +18,7 @@ namespace DataArcs.Components
 
 	    public int CompositeId { get;}
 	    public float CurrentT { get; set; }
-        public PolyShape Graphic { get; set; }
+        public IDrawable Graphic { get; set; }
         public IComposite Parent { get; set; }
 
         protected CompositeBase()

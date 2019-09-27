@@ -13,7 +13,7 @@ namespace DataArcs.Components
 	{
 		int CompositeId { get; }
 		float CurrentT { get; set; }
-		PolyShape Graphic { get; set; }
+		IDrawable Graphic { get; set; }
 		/// <summary>
 		/// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
 		/// </summary>

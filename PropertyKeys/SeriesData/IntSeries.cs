@@ -11,7 +11,16 @@ namespace DataArcs.SeriesData
         
 		public IntSeries(int vectorSize, params int[] values) : base(vectorSize, SeriesType.Int)
 		{
-			_intValues = values;
+			// insure at least vectorSize elements in values array.
+			if (values.Length < vectorSize)
+			{
+				values = new int[vectorSize];
+				for (int i = 0; i < vectorSize; i++)
+				{
+					values[i] = i < values.Length ? values[i] : values[values.Length - 1];
+				}
+			}
+            _intValues = values;
 		}
 
 		public override Series GetSeriesAtIndex(int index)

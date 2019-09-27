@@ -38,8 +38,9 @@ namespace DataArcs.Samplers
 		EaseInOut4,
 		EaseInOut5,
 		EaseInOut6,
+		Sigmoid,
 
-		EaseInOut3AndBack,
+        EaseInOut3AndBack,
     }
 
 	public class Easing : Sampler
@@ -170,7 +171,11 @@ namespace DataArcs.Samplers
 					result = InOut(6, t);
 					break;
 
-				case EasingType.EaseInOut3AndBack:
+				case EasingType.Sigmoid:
+					result = 1f / (1f + (float)Math.Exp(-t));
+					break;
+
+                case EasingType.EaseInOut3AndBack:
 					if (t < 0.5f)
 					{
 						result = InOut(3, t*2);

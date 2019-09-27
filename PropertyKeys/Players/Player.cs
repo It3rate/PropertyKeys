@@ -21,8 +21,9 @@ namespace DataArcs.Players
 	    private readonly Dictionary<int, IComposite> _allComposites = new Dictionary<int, IComposite>();
 
 	    private readonly Dictionary<int, IComposite> _activeElements = new Dictionary<int, IComposite>();
-        private readonly Dictionary<int, IComposite> _toAdd = new Dictionary<int, IComposite>();
-        private readonly List<int> _toRemove = new List<int>();
+        private readonly Dictionary<int, IComposite> _toAddActive = new Dictionary<int, IComposite>();
+        private readonly List<int> _toRemoveActive = new List<int>();
+        private readonly List<int> _toDestroy = new List<int>();
 
         private readonly Form _display;
         private Timer _timer;
@@ -56,17 +57,24 @@ namespace DataArcs.Players
         {
             _currentTime = e.SignalTime - StartTime;
 
-            for (int i = 0; i < _toRemove.Count; i++)
-            {
-	            _activeElements.Remove(_toRemove[i]);
-            }
-			_toRemove.Clear();
 
-			foreach (var item in _toAdd)
+            for (int i = 0; i < _toRemoveActive.Count; i++)
+            {
+	            _activeElements.Remove(_toRemoveActive[i]);
+            }
+			for (int i = 0; i < _toDestroy.Count; i++)
+			{
+				_activeElements.Remove(_toDestroy[i]);
+                _allComposites.Remove(_toDestroy[i]);
+			}
+
+			foreach (var item in _toAddActive)
 			{
 				_activeElements.Add(item.Key, item.Value);
 			}
-			_toAdd.Clear();
+			_toAddActive.Clear();
+			_toRemoveActive.Clear();
+			_toDestroy.Clear();
 
             t += 0.01f;
             var floorT = (int)t;
@@ -94,37 +102,38 @@ namespace DataArcs.Players
 	        {
 		        if (element is IDrawable drawable)
 		        {
-					drawable.Draw(e.Graphics);
+					drawable.Draw(element, e.Graphics);
 		        }
 	        }
         }
 
-        public void AddActiveElement(IComposite composite) => _toAdd.Add(composite.CompositeId, composite);
+        public void AddActiveElement(IComposite composite) => _toAddActive.Add(composite.CompositeId, composite);
         public void RemoveActiveElement(IComposite composite)
         {
 	        if (_activeElements.ContainsKey(composite.CompositeId))
 	        {
-		        _toRemove.Add(composite.CompositeId);
+		        _toRemoveActive.Add(composite.CompositeId);
 	        }
         }
         public void RemoveActiveElementById(int id)
         {
 	        if (_activeElements.ContainsKey(id))
 	        {
-		        _toRemove.Add(id);
+		        _toRemoveActive.Add(id);
 	        }
         }
-        public void Clear() => _toRemove.AddRange(_activeElements.Keys);
+        public void Clear() => _toRemoveActive.AddRange(_activeElements.Keys);
 
         public IComposite this[int index] => _allComposites[index];
         public void AddCompositeToLibrary(IComposite composite)
         {
+			// todo: use ref counting to remove dead elements.
 			_allComposites.Add(composite.CompositeId, composite);
         }
         public void Reset()
         {
-			Clear();
-			_allComposites.Clear();
+            Clear();
+	        _toDestroy.AddRange(_allComposites.Keys);
         }
 
     }

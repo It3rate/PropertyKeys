@@ -10,7 +10,7 @@ namespace DataArcs.Components
 {
 	public interface IDrawable
 	{
-		void Draw(Graphics g);
-		void DrawAtIndex(int countIndex, IStore itemStore, Graphics g);
+		void Draw(IComposite composite, Graphics g);
+		void DrawAtIndex(int countIndex, IComposite composite, Graphics g);
 	}
 }
