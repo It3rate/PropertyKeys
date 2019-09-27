@@ -11,12 +11,12 @@ using System.Drawing.Drawing2D;
 
 namespace DataArcs.Components
 {
-    public abstract class CompositeBase
+	public abstract class CompositeBase : IComposite, IDrawable
     {
 	    private static int _idCounter = 1;
 
 	    public int CompositeId { get;}
-	    protected float CurrentT { get; set; }
+	    public float CurrentT { get; set; }
         public PolyShape Graphic { get; set; }
 
         protected CompositeBase()
@@ -28,7 +28,7 @@ namespace DataArcs.Components
         public abstract IStore GetStore(PropertyId propertyId);
         public abstract void GetDefinedStores(HashSet<PropertyId> ids);
         public abstract void Update(float currentTime, float deltaTime);
-        public abstract CompositeBase CreateChild();
+        public abstract IComposite CreateChild();
 
         public virtual Series GetSeriesAtT(PropertyId propertyId, float t)
         {

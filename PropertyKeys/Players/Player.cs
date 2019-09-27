@@ -18,7 +18,7 @@ namespace DataArcs.Players
 	    public static DateTime StartTime { get; }
 	    static Player() { StartTime = DateTime.Now;}
 
-        private readonly Dictionary<int, CompositeBase> _elements = new Dictionary<int, CompositeBase>();
+        private readonly Dictionary<int, IComposite> _elements = new Dictionary<int, IComposite>();
 
         private readonly Form _display;
         private Timer _timer;
@@ -26,7 +26,7 @@ namespace DataArcs.Players
         private TimeSpan _currentTime;
         public float CurrentMs => (float)_currentTime.TotalMilliseconds;
 		
-        private readonly Dictionary<int, CompositeBase> _toAdd = new Dictionary<int, CompositeBase>();
+        private readonly Dictionary<int, IComposite> _toAdd = new Dictionary<int, IComposite>();
         public readonly List<int> _toRemove = new List<int>();
 
         public Player(Form display)
@@ -87,17 +87,20 @@ namespace DataArcs.Players
         private void OnDraw(object sender, PaintEventArgs e)
         {
 	        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            var elements = new List<CompositeBase>(_elements.Values);
+            var elements = new List<IComposite>(_elements.Values);
 	        foreach (var element in elements)
 	        {
-		        element.Draw(e.Graphics);
+		        if (element is IDrawable drawable)
+		        {
+					drawable.Draw(e.Graphics);
+		        }
 	        }
         }
-        public CompositeBase this[int index]
+        public IComposite this[int index]
         {
             get
             {
-                CompositeBase result = null;
+                IComposite result = null;
                 foreach (var item in _elements)
                 {
                     var value = item.Value;
@@ -130,8 +133,8 @@ namespace DataArcs.Players
             }
         }
 
-        public void AddElement(CompositeBase composite) => _toAdd.Add(composite.CompositeId, composite);
-        public void RemoveElement(CompositeBase composite)
+        public void AddElement(IComposite composite) => _toAdd.Add(composite.CompositeId, composite);
+        public void RemoveElement(IComposite composite)
         {
 	        if (_elements.ContainsKey(composite.CompositeId))
 	        {

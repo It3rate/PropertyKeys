@@ -101,7 +101,7 @@ namespace DataArcs.Components
             CurrentT = deltaTime;
         }
 
-        public override CompositeBase CreateChild()
+        public override IComposite CreateChild()
         {
             return new Composite(this);
         }

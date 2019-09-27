@@ -6,6 +6,6 @@ namespace DataArcs.Graphic
 {
 	public abstract class GraphicBase
 	{
-		public abstract BezierSeries GetDrawableAtT(CompositeBase composite, float t);
+		public abstract BezierSeries GetDrawableAtT(IComposite composite, float t);
 	}
 }

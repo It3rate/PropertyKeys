@@ -15,7 +15,7 @@ namespace DataArcs.Graphic
         private float _defaultRoundness = 0f;
         private float _defaultRadius = 10f;
         
-        public override BezierSeries GetDrawableAtT(CompositeBase composite, float t)
+        public override BezierSeries GetDrawableAtT(IComposite composite, float t)
         {
 	        var orientation = composite.GetStore(PropertyId.Orientation)?.GetValuesAtT(t).X ?? _defaultOrientation;
 	        var pointCount = (int)(composite.GetStore(PropertyId.PointCount)?.GetValuesAtT(t).X ?? _defaultPointCount);

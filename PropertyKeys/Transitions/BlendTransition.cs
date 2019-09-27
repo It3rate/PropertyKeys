@@ -27,14 +27,14 @@ namespace DataArcs.Transitions
 
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
-        public CompositeBase Start { get; set; }
-        public CompositeBase End { get; set; }
+        public IComposite Start { get; set; }
+        public IComposite End { get; set; }
 
         public event TransitionEventHandler StartTransitionEvent;
         public event TransitionEventHandler StepTransitionEvent;
         public event TransitionEventHandler EndTransitionEvent;
 
-        public BlendTransition(CompositeBase start, CompositeBase end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null)
+        public BlendTransition(IComposite start, IComposite end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null)
         {
 	        Start = start;
 	        End = end;
@@ -45,7 +45,7 @@ namespace DataArcs.Transitions
 	        GenerateBlends(); // eventually immutable after creation, so no new blends
         }
 
-        public BlendTransition(CompositeBase start, CompositeBase end, Series delay, float startTime, Series duration)
+        public BlendTransition(IComposite start, IComposite end, Series delay, float startTime, Series duration)
         {
 	        Start = start;
 	        End = end;
@@ -189,7 +189,7 @@ namespace DataArcs.Transitions
             End.GetDefinedStores(ids);
         }
 
-        public override CompositeBase CreateChild()
+        public override IComposite CreateChild()
         {
             throw new NotImplementedException();
         }
