@@ -34,7 +34,7 @@ namespace DataArcs.Tests.GraphicTests
         {
             _version = NextVersionIndex();
             BlendTransition comp = GetVersion(_version);
-            _player.AddElement(comp);
+            _player.AddActiveElement(comp);
         }
 
         private int NextVersionIndex()
@@ -88,13 +88,13 @@ namespace DataArcs.Tests.GraphicTests
 
                 var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Multiply, CombineTarget.T);
                 //BlendTransition newBT = new BlendTransition(bt, comp, 0, _player.CurrentMs, 3000, easeStore);
-                //_player.AddElement(newBT);
+                //_player.AddActiveElement(newBT);
 
                 nextComp.End = nextComp.Start;
                 nextComp.Start = bt.Start;
                 nextComp.Easing = easeStore;
                 nextComp.GenerateBlends();
-                _player.AddElement(nextComp);
+                _player.AddActiveElement(nextComp);
             }
             else
             {

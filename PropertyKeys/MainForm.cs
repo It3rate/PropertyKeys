@@ -66,7 +66,7 @@ namespace DataArcs
 	        {
 		        testIndex = 0;
 	        }
-	        _player.Clear();
+	        _player.Reset();
 	        switch (testIndex)
 	        {
 		        case 0:

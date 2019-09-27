@@ -8,6 +8,7 @@ using DataArcs.Adapters.Geometry;
 using DataArcs.Graphic;
 using DataArcs.Samplers;
 using System.Drawing.Drawing2D;
+using DataArcs.Players;
 
 namespace DataArcs.Components
 {
@@ -23,6 +24,7 @@ namespace DataArcs.Components
         protected CompositeBase()
         {
 	        CompositeId = _idCounter++;
+			Player.GetPlayerById(0).AddCompositeToLibrary(this);
         }
 
         //public abstract void AddProperty(PropertyId id, IStore store);

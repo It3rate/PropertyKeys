@@ -18,7 +18,11 @@ namespace DataArcs.Players
 	    public static DateTime StartTime { get; }
 	    static Player() { StartTime = DateTime.Now;}
 
-        private readonly Dictionary<int, IComposite> _elements = new Dictionary<int, IComposite>();
+	    private readonly Dictionary<int, IComposite> _allComposites = new Dictionary<int, IComposite>();
+
+	    private readonly Dictionary<int, IComposite> _activeElements = new Dictionary<int, IComposite>();
+        private readonly Dictionary<int, IComposite> _toAdd = new Dictionary<int, IComposite>();
+        private readonly List<int> _toRemove = new List<int>();
 
         private readonly Form _display;
         private Timer _timer;
@@ -26,8 +30,6 @@ namespace DataArcs.Players
         private TimeSpan _currentTime;
         public float CurrentMs => (float)_currentTime.TotalMilliseconds;
 		
-        private readonly Dictionary<int, IComposite> _toAdd = new Dictionary<int, IComposite>();
-        public readonly List<int> _toRemove = new List<int>();
 
         public Player(Form display)
 		{
@@ -56,13 +58,13 @@ namespace DataArcs.Players
 
             for (int i = 0; i < _toRemove.Count; i++)
             {
-	            _elements.Remove(_toRemove[i]);
+	            _activeElements.Remove(_toRemove[i]);
             }
 			_toRemove.Clear();
 
 			foreach (var item in _toAdd)
 			{
-				_elements.Add(item.Key, item.Value);
+				_activeElements.Add(item.Key, item.Value);
 			}
 			_toAdd.Clear();
 
@@ -75,7 +77,7 @@ namespace DataArcs.Players
             }
 
             float dt = (float) (_currentTime - _lastTime).TotalMilliseconds;
-            foreach (var element in _elements.Values)
+            foreach (var element in _activeElements.Values)
             {
 	            element.Update(CurrentMs, dt);
             }
@@ -87,7 +89,7 @@ namespace DataArcs.Players
         private void OnDraw(object sender, PaintEventArgs e)
         {
 	        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            var elements = new List<IComposite>(_elements.Values);
+            var elements = new List<IComposite>(_activeElements.Values);
 	        foreach (var element in elements)
 	        {
 		        if (element is IDrawable drawable)
@@ -96,59 +98,34 @@ namespace DataArcs.Players
 		        }
 	        }
         }
-        public IComposite this[int index]
-        {
-            get
-            {
-                IComposite result = null;
-                foreach (var item in _elements)
-                {
-                    var value = item.Value;
-                    if (value.CompositeId == index)
-                    {
-                        result = value;
-                        break;
-                    }
-                    else
-                    {
-                        // todo: make element search properly recursive. May want to store unused elements that aren't dead in collection.
-                        if (item.Value is BlendTransition)
-                        {
-                            var bt = (BlendTransition)item.Value;
-                            if (bt.Start.CompositeId == index)
-                            {
-                                result = bt.Start;
-                                break;
-                            }
-                            else if (bt.End.CompositeId == index)
-                            {
-                                result = bt.End;
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                return result;
-            }
-        }
 
-        public void AddElement(IComposite composite) => _toAdd.Add(composite.CompositeId, composite);
-        public void RemoveElement(IComposite composite)
+        public void AddActiveElement(IComposite composite) => _toAdd.Add(composite.CompositeId, composite);
+        public void RemoveActiveElement(IComposite composite)
         {
-	        if (_elements.ContainsKey(composite.CompositeId))
+	        if (_activeElements.ContainsKey(composite.CompositeId))
 	        {
 		        _toRemove.Add(composite.CompositeId);
 	        }
         }
-        public void RemoveElementById(int id)
+        public void RemoveActiveElementById(int id)
         {
-	        if (_elements.ContainsKey(id))
+	        if (_activeElements.ContainsKey(id))
 	        {
 		        _toRemove.Add(id);
 	        }
         }
-        public void Clear() => _toRemove.AddRange(_elements.Keys);
+        public void Clear() => _toRemove.AddRange(_activeElements.Keys);
+
+        public IComposite this[int index] => _allComposites[index];
+        public void AddCompositeToLibrary(IComposite composite)
+        {
+			_allComposites.Add(composite.CompositeId, composite);
+        }
+        public void Reset()
+        {
+			Clear();
+			_allComposites.Clear();
+        }
 
     }
 }

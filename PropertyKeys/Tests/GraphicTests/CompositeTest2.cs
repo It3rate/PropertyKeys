@@ -25,7 +25,7 @@ namespace DataArcs.Tests.GraphicTests
         public void NextVersion()
         {
             BlendTransition comp = GetComposite1();
-	        _player.AddElement(comp);
+	        _player.AddActiveElement(comp);
 
             comp.EndTransitionEvent += CompOnEndTransitionEvent;
         }
