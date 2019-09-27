@@ -100,10 +100,7 @@ namespace DataArcs.Players
             var elements = new List<IComposite>(_activeElements.Values);
 	        foreach (var element in elements)
 	        {
-		        if (element is IDrawable drawable)
-		        {
-					drawable.Draw(element, e.Graphics);
-		        }
+		        element.Draw(element, e.Graphics);
 	        }
         }
 

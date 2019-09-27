@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace DataArcs.Components
 		Series GetSeriesAtIndex(PropertyId propertyId, int index);
 		ParametricSeries GetSampledT(PropertyId propertyId, float t);
 
-		IComposite CreateChild();
+		void Draw(IComposite composite, Graphics g);
+
+        IComposite CreateChild();
     }
 }

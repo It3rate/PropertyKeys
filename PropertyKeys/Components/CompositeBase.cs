@@ -26,12 +26,12 @@ namespace DataArcs.Components
 	        CompositeId = _idCounter++;
 			Player.GetPlayerById(0).AddCompositeToLibrary(this);
         }
-
-        //public abstract void AddProperty(PropertyId id, IStore store);
+		
         public abstract IStore GetStore(PropertyId propertyId);
         public abstract void GetDefinedStores(HashSet<PropertyId> ids);
         public abstract void Update(float currentTime, float deltaTime);
         public abstract IComposite CreateChild();
+        public abstract void Draw(IComposite composite, Graphics g);
 
         public virtual Series GetSeriesAtT(PropertyId propertyId, float t)
         {

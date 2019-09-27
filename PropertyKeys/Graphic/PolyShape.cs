@@ -61,37 +61,13 @@ namespace DataArcs.Graphic
 
 			return new BezierSeries(values, moves);
 		}
+		
 
-		public override void Draw(IComposite composite, Graphics g)
+        public override void DrawAtT(float t, IComposite composite, Graphics g)
 		{
-			float t = composite.CurrentT;
+			ParametricSeries ps = composite.GetSampledT(PropertyId.Location, t);
+
 			BezierSeries bezier = GetDrawableAtT(composite, t * composite.CurrentT);
-			GraphicsPath gp = bezier.Path();
-
-			var fillColor = composite.GetStore(PropertyId.FillColor)?.GetValuesAtT(t);
-			if (fillColor != null)
-			{
-				g.FillPath(new SolidBrush(fillColor.RGB()), gp);
-			}
-
-			var penColor = composite.GetStore(PropertyId.PenColor)?.GetValuesAtT(t);
-			if (penColor != null)
-			{
-				var penWidth = composite.GetStore(PropertyId.PenWidth)?.GetValuesAtT(t);
-				float pw = penWidth?.X ?? 1f;
-
-				g.DrawPath(new Pen(penColor.RGB(), pw), gp);
-			}
-        }
-
-        public override void DrawAtIndex(int countIndex, IComposite composite, Graphics g)
-		{
-			IStore items = composite.GetStore(PropertyId.Items) ?? composite.GetStore(PropertyId.Location);
-			int capacity = items.Capacity;
-			var it = capacity > 1 ? countIndex / (capacity - 1f) : 0;
-			ParametricSeries ps = composite.GetSampledT(PropertyId.Location, it);
-
-			BezierSeries bezier = GetDrawableAtT(composite, it * composite.CurrentT);
 			GraphicsPath gp = bezier.Path();
 
 			var fillColor = composite.GetStore(PropertyId.FillColor)?.GetValuesAtT(ps.X);
