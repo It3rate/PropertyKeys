@@ -38,5 +38,14 @@ namespace DataArcs.Components
 		RandomMotion,
 
 		Custom = 0x1000,
-	}
+		Custom1 = 0x1001,
+		Custom2 = 0x1002,
+		Custom3 = 0x1003,
+		Custom4 = 0x1004,
+		Custom5 = 0x1005,
+		Custom6 = 0x1006,
+		Custom7 = 0x1007,
+		Custom8 = 0x1008,
+		Custom9 = 0x1009,
+    }
 }

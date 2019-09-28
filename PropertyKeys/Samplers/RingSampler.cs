@@ -14,7 +14,7 @@ namespace DataArcs.Samplers
         {
             RingCounts = ringCounts;
             Orientation = orientation;
-            Capacity = ringCounts[0];
+            Capacity = ringCounts[0] + 1;
             for (int i = 1; i < ringCounts.Length; i++)
             {
                 if (ringCounts[i] != 0)

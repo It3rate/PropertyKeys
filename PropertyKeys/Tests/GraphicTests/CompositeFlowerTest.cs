@@ -45,7 +45,7 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(6));
 
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.X, new FloatSeries(1, 0f, 1f));
-            Store loc = new Store(new FloatSeries(2, 100f, 100f, 400f, 400f), new RingSampler(new int[] {6}, ls));
+            Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] {6}, ls));
             composite.AddProperty(PropertyId.Location, loc);
 
 	        var graphic = GetRing();
@@ -79,25 +79,16 @@ namespace DataArcs.Tests.GraphicTests
             float r = 30f;
             float r2 = 15f;
 
-            var ringSampler = new RingSampler(new int[] { 6 });
-
-            //         LinkingStore lsr = new LinkingStore(_timer.CompositeId, PropertyId.CurrentT, SeriesUtils.X, new FloatSeries(1, 0f, 1f));
-            //         Store loc1 = new Store(new FloatSeries(2, -r, -r, r, r), ringSampler, CombineFunction.Interpolate);
-            //         Store loc2 = new Store(new FloatSeries(2, -r2, -r2, r2, r2), ringSampler, CombineFunction.Interpolate);
-            //var loc = new BlendStore(new IStore[]{loc1, loc2});
-
-            LinkingStore loc = new LinkingStore(_timer.CompositeId, PropertyId.Easing, SeriesUtils.X, 
+            var ringSampler = new RingSampler(new int[] { 5 });
+            
+			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
+            LinkingStore loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, 
 				new FloatSeries(2, -r, -r, r, r, -r2, -r2, r2, r2), ringSampler, CombineFunction.Multiply);
-
-            //Store locx = new Store(new FloatSeries(2, -r, -r, r, r), ringSampler, CombineFunction.Replace);
             composite.AddProperty(PropertyId.Location, loc);
-
-            //LinkingStore lsr = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.XY, new FloatSeries(2, 12f, 12f, 6f, 6f));
+            
             composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 12f, 12f)));
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
-
-            //LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.XYZ,
-            //    new FloatSeries(3, 1f, 0f, 0.1f,  1f, 1f, 0.1f,  0f, 0f, 1f), combineFunction: CombineFunction.Replace);
+            
             var col2 = GetBlendColor();
             composite.AddProperty(PropertyId.FillColor, col2);// new FunctionalStore(col, col2));
 

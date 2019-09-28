@@ -57,24 +57,15 @@ namespace DataArcs.Stores
         public override Series GetValuesAtT(float t)
         {
             Series result;
-            // todo: probably linking store always runs on t, the Easing case
             if (PropertyId == PropertyId.T)
             {
                 float newT = GetLinkedStore()?.GetValuesAtT(t).X ?? t;
 	            result = base.GetValuesAtT(newT);
             }
-            else if (PropertyId == PropertyId.Easing) // todo: clean up
-            {
-	            float curT = GetLinkedStore()?.GetValuesAtT(t).X ?? t;
-	            result = base.GetValuesAtT(t);
-	            Series link = new FloatSeries(1, curT);
-	            Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
-	            result.CombineInto(mappedValues, CombineFunction, curT);
-            }
             else if (PropertyId == PropertyId.CurrentT)
             {
-	            float curT = _player[CompositeId]?.CurrentT ?? 0;
 	            result = base.GetValuesAtT(t);
+	            float curT = _player[CompositeId]?.CurrentT ?? 0;
 	            Series link = new FloatSeries(1, curT);
 	            Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
 	            result.CombineInto(mappedValues, CombineFunction, curT);
@@ -82,7 +73,8 @@ namespace DataArcs.Stores
             else
             {
                 result = base.GetValuesAtT(t);
-                Series link = GetLinkedStore()?.GetValuesAtT(t);
+                float curT = _player[CompositeId]?.CurrentT ?? 0;
+                Series link = GetLinkedStore()?.GetValuesAtT(curT);
                 if (link != null)
                 {
                     Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
