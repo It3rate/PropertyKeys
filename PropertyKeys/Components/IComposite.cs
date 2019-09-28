@@ -20,8 +20,12 @@ namespace DataArcs.Components
 		/// </summary>
 		IComposite Parent { get; set; }
 
+		void AddProperty(PropertyId id, IStore store);
+		void AppendProperty(PropertyId id, IStore store);
+		void RemoveProperty(PropertyId id, BlendStore store);
         IStore GetStore(PropertyId propertyId);
 		void GetDefinedStores(HashSet<PropertyId> ids);
+
 		void Update(float currentTime, float deltaTime);
 
 		Series GetSeriesAtT(PropertyId propertyId, float t);

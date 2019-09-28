@@ -118,9 +118,9 @@ namespace DataArcs.SeriesData
             Size = new FloatSeries(VectorSize, max);
         }
 
-		public override void CombineInto(Series b, CombineFunction combineFunction)
+		public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
 		{
-			_series.CombineInto(b, combineFunction);
+			_series.CombineInto(b, combineFunction, t);
 		}
 
 		public override float FloatDataAt(int index)

@@ -132,7 +132,7 @@ namespace DataArcs.SeriesData
         public abstract int[] IntData { get; }
         public abstract bool[] BoolData { get; }
 
-        public abstract void CombineInto(Series b, CombineFunction combineFunction);
+        public abstract void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
         public abstract void InterpolateInto(Series b, float t);
 
         public abstract Series GetZeroSeries();

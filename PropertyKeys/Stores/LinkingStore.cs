@@ -17,12 +17,21 @@ namespace DataArcs.Stores
         public Slot[] SlotMapping { get; }
         private Player _player;
 
+        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping) : base(null)
+        {
+	        CompositeId = compositeId;
+	        PropertyId = propertyId;
+	        SlotMapping = slotMapping;
+	        _player = Player.GetPlayerById(0); 
+			_series = _player[compositeId]?.GetStore(propertyId)?.GetFullSeries(0);
+        }
+
         public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping, Store store) : base(store)
         {
-            CompositeId = compositeId;
-            PropertyId = propertyId;
-            SlotMapping = slotMapping;
-            _player = Player.GetPlayerById(0); // todo: create player versioning.
+	        CompositeId = compositeId;
+	        PropertyId = propertyId;
+	        SlotMapping = slotMapping;
+	        _player = Player.GetPlayerById(0); // todo: create player versioning.
         }
 
         public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
@@ -35,24 +44,6 @@ namespace DataArcs.Stores
             _player = Player.GetPlayerById(0); // todo: create player versioning.
         }
 
-        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
-            int[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) : base(data, sampler, combineFunction)
-        {
-            CompositeId = compositeId;
-            PropertyId = propertyId;
-            SlotMapping = slotMapping;
-            _player = Player.GetPlayerById(0);
-        }
-
-        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
-            float[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) : base(data, sampler, combineFunction)
-        {
-            CompositeId = compositeId;
-            PropertyId = propertyId;
-            SlotMapping = slotMapping;
-            _player = Player.GetPlayerById(0);
-        }
-
         private IStore GetLinkedStore()
         {
             return _player[CompositeId]?.GetStore(PropertyId);
@@ -60,24 +51,33 @@ namespace DataArcs.Stores
 
         public override Series GetValuesAtIndex(int index)
         {
-            Series result = base.GetValuesAtIndex(index);
-            Series link = GetLinkedStore()?.GetValuesAtIndex(index);
-            if(link != null)
-            {
-                Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
-                result.CombineInto(mappedValues, CombineFunction);
-            }
-            return result;
+	        return GetValuesAtT(index / (Capacity - 1f));
         }
 
         public override Series GetValuesAtT(float t)
         {
             Series result;
-            // todo: probably linking store always runs on t, the first case
-            if (PropertyId == PropertyId.T || PropertyId == PropertyId.Easing)
+            // todo: probably linking store always runs on t, the Easing case
+            if (PropertyId == PropertyId.T)
             {
                 float newT = GetLinkedStore()?.GetValuesAtT(t).X ?? t;
-                result = base.GetValuesAtT(newT);
+	            result = base.GetValuesAtT(newT);
+            }
+            else if (PropertyId == PropertyId.Easing) // todo: clean up
+            {
+	            float curT = GetLinkedStore()?.GetValuesAtT(t).X ?? t;
+	            result = base.GetValuesAtT(t);
+	            Series link = new FloatSeries(1, curT);
+	            Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
+	            result.CombineInto(mappedValues, CombineFunction, curT);
+            }
+            else if (PropertyId == PropertyId.CurrentT)
+            {
+	            float curT = _player[CompositeId]?.CurrentT ?? 0;
+	            result = base.GetValuesAtT(t);
+	            Series link = new FloatSeries(1, curT);
+	            Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
+	            result.CombineInto(mappedValues, CombineFunction, curT);
             }
             else
             {

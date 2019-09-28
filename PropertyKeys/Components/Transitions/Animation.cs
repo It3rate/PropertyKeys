@@ -81,6 +81,9 @@ namespace DataArcs.Components.Transitions
                 case PropertyId.T:
                     result = new FloatSeries(1, CurrentT).Store;
                     break;
+				default:
+					result = base.GetStore(propertyId);
+					break;
             }
             return result;
         }

@@ -131,7 +131,7 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		public override void CombineInto(Series b, CombineFunction combineFunction)
+		public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
 		{
 			switch (combineFunction)
 			{
@@ -180,15 +180,19 @@ namespace DataArcs.SeriesData
 					{
 						_floatValues[i] = (_floatValues[i] + b.FloatDataAt(i)) / 2.0f;
 					}
-
 					break;
-                case CombineFunction.Replace:
-                    for (var i = 0; i < DataSize; i++)
-                    {
-                        _floatValues[i] = b.FloatDataAt(i);
-                    }
-
-                    break;
+				case CombineFunction.Replace:
+					for (var i = 0; i < DataSize; i++)
+					{
+						_floatValues[i] = b.FloatDataAt(i);
+					}
+					break;
+				case CombineFunction.Interpolate:
+					for (var i = 0; i < DataSize; i++)
+					{
+						_floatValues[i] += (b.FloatDataAt(i) - _floatValues[i]) * t;
+					}
+					break;
             }
 		}
 

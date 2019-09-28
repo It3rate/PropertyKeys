@@ -182,7 +182,7 @@ namespace DataArcs.Tests.GraphicTests
             //SeriesUtils.Shuffle(items.GetFullSeries(0));
             composite.AddProperty(PropertyId.Items, new BlendStore(items));
 
-            float[] pointArray = new float[] { 8f, 5f, 5f, 8f };
+            var pointArray = new FloatSeries(1, 8f, 5f, 5f, 8f);
             composite.AddProperty(PropertyId.PointCount, new Store(pointArray, new Easing(EasingType.EaseInOut)));
 
             Sampler ringSampler = new RingSampler(new int[] { 15, 15, 15, 15, 15, 15, 15, 15, 15, 15 });
@@ -213,10 +213,10 @@ namespace DataArcs.Tests.GraphicTests
 
         private static void AddGraphic(Composite composite)
         {
-	        composite.AddProperty(PropertyId.Radius, new Store(new float[] { 10f, 20f, 10f }));
+	        composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(1, 10f, 20f, 10f) ));
 	        composite.AddProperty(PropertyId.PointCount, new FloatSeries(1, new float[] { 6f, 9f, 6f }).CreateLinearStore(3));
-	        composite.AddProperty(PropertyId.Starness, new Store(new float[] { 0, -0.3f, 0 }));
-	        composite.AddProperty(PropertyId.Orientation, new Store(new float[] { 0.3f, 1f / 12f, 0.3f }));
+	        composite.AddProperty(PropertyId.Starness, new Store(new FloatSeries(1,  0, -0.3f, 0) ));
+	        composite.AddProperty(PropertyId.Orientation, new Store(new FloatSeries(1, 0.3f, 1f / 12f, 0.3f) ));
             composite.Graphic = new PolyShape();
         }
 

@@ -1,87 +1,102 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using DataArcs.Adapters;
 using DataArcs.Adapters.Color;
 using DataArcs.Adapters.Geometry;
 using DataArcs.Graphic;
+using DataArcs.Players;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-	public class Composite : DrawableComposite
+	public class Composite : IComposite
 	{
-		private Dictionary<PropertyId, IStore> _stores { get; }
 
-		public Composite(IComposite parent = null)
-		{
-			Parent = parent;
-			_stores = new Dictionary<PropertyId, IStore>();
-		}
-        
-		public override IStore GetStore(PropertyId propertyId)
-		{
-			_stores.TryGetValue(propertyId, out var result);
-			if (result == null && Parent != null)
-			{
-				result = Parent.GetStore(propertyId);
-			}
+        private static int _idCounter = 1;
 
-			return result;
-		}
+        private readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
+        public int CompositeId { get; }
+        public float CurrentT { get; set; }
+        public IDrawable Graphic { get; set; }
+        public IComposite Parent { get; set; }
 
-		public void AddProperty(PropertyId id, IStore store)
-		{
-			_stores[id] = store;
-		}
-		public void AppendProperty(PropertyId id, IStore store)
-		{
-			if (_stores.ContainsKey(id))
-			{
-				IStore curStore = _stores[id];
-				if (curStore is FunctionalStore)
-				{
-					((FunctionalStore) curStore).Add(curStore);
-				}
-				else
-				{
-					_stores[id] = new FunctionalStore(curStore, store);
-				}
-			}
-			else
-			{
-				AddProperty(id, store);
-			}
-		}
+        protected Composite()
+        {
+            CompositeId = _idCounter++;
+            Player.GetPlayerById(0).AddCompositeToLibrary(this);
+        }
 
-        public void RemoveProperty(PropertyId id, BlendStore store)
-		{
-			_stores.Remove(id);
-		}
-		
-        public override void GetDefinedStores(HashSet<PropertyId> ids)
+        public Composite(IComposite parent = null) : this()
+        {
+            Parent = parent;
+        }
+
+        public virtual void AddProperty(PropertyId id, IStore store)
+        {
+            _stores[id] = store;
+        }
+        public virtual void AppendProperty(PropertyId id, IStore store)
+        {
+            if (_stores.ContainsKey(id))
+            {
+                IStore curStore = _stores[id];
+                if (curStore is FunctionalStore)
+                {
+                    ((FunctionalStore)curStore).Add(curStore);
+                }
+                else
+                {
+                    _stores[id] = new FunctionalStore(curStore, store);
+                }
+            }
+            else
+            {
+                AddProperty(id, store);
+            }
+        }
+        public virtual void RemoveProperty(PropertyId id, BlendStore store)
+        {
+            _stores.Remove(id);
+        }
+        public virtual IStore GetStore(PropertyId propertyId)
+        {
+            _stores.TryGetValue(propertyId, out var result);
+            if (result == null && Parent != null)
+            {
+                result = Parent.GetStore(propertyId);
+            }
+
+            return result;
+        }
+        public virtual void GetDefinedStores(HashSet<PropertyId> ids)
         {
             foreach (var item in _stores.Keys)
             {
                 ids.Add(item);
             }
-            if(Parent != null)
+            if (Parent != null)
             {
                 Parent.GetDefinedStores(ids);
             }
         }
 
-		public bool shouldShuffle; // basis for switching to events
+        public void Update(float currentTime, float deltaTime)
+        {
+            StartUpdate(currentTime, deltaTime);
+            EndUpdate(currentTime, deltaTime);
+        }
+        public bool shouldShuffle; // basis for switching to events
+        public virtual void StartUpdate(float currentTime, float deltaTime)
+        {
+            foreach (var store in _stores.Values)
+            {
+                store.Update(deltaTime);
+            }
 
-		public override void StartUpdate(float currentTime, float deltaTime)
-		{
-			foreach (var store in _stores.Values)
-			{
-				store.Update(deltaTime);
-			}
-
-			float t = CurrentT % 1f;
+            float t = CurrentT % 1f;
             if (t <= 0.05f && shouldShuffle)
             {
                 SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetFullSeries(0));
@@ -95,13 +110,59 @@ namespace DataArcs.Components
 
             CurrentT = deltaTime;
         }
-        public override void EndUpdate(float currentTime, float deltaTime) { }
+        public virtual void EndUpdate(float currentTime, float deltaTime) { }
 
-        public override IComposite CreateChild()
+        public virtual IComposite CreateChild()
         {
             return new Composite(this);
         }
 
+        public virtual void Draw(IComposite composite, Graphics g)
+        {
+	        IStore items = GetStore(PropertyId.Items) ?? GetStore(PropertyId.Location);
+	        if (items != null)
+	        {
+		        int capacity = items.Capacity;
+		        for (int i = 0; i < capacity; i++)
+		        {
+			        int index = GetStore(PropertyId.Items)?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
+			        Series v = GetSeriesAtIndex(PropertyId.Location, index);
+
+			        var state = g.Save();
+			        var scale = 1f; // + it * 0.8f;
+			        g.ScaleTransform(scale, scale);
+			        g.TranslateTransform(v.X / scale, v.Y / scale);
+
+			        if (this is IDrawable selfDrawable)
+			        {
+				        selfDrawable.DrawAtT(index / (capacity - 1f), this, g);
+			        }
+
+			        if (Graphic is IComposite drawable)
+			        {
+				        drawable.Draw(this, g); //DrawAtIndex(index, capacity, graphic, g);
+			        }
+
+			        g.Restore(state);
+		        }
+	        }
+        }
+
+        public virtual Series GetSeriesAtT(PropertyId propertyId, float t)
+        {
+            var store = GetStore(propertyId);
+            return store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
+        }
+        public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index)
+        {
+            var store = GetStore(propertyId);
+            return store != null ? store.GetValuesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
+        }
+        public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
+        {
+            var store = GetStore(propertyId);
+            return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
+        }
     }
 
 }

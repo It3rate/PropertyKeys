@@ -62,11 +62,11 @@ namespace DataArcs.Tests.GraphicTests
             var result = new BlendTransition(compositeStart, compositeEnd, 0, _player.CurrentMs, 3000, easeStore);
 
             var radiusLink = new LinkingStore(result.CompositeId, PropertyId.FillColor, SeriesUtils.XY,
-                new float[] { 14f, 15f, 22f, 23f }, new LineSampler(), CombineFunction.Multiply);
+                new FloatSeries(1, 14f, 15f, 22f, 23f), new LineSampler(), CombineFunction.Multiply);
             compositeStart.AddProperty(PropertyId.Radius, radiusLink);
 
             var starnessLink = new LinkingStore(compositeEnd.CompositeId, PropertyId.Location, SeriesUtils.Y,
-                new float[] { 500f }, new LineSampler(), CombineFunction.DivideFrom);
+	            new FloatSeries(1, 500f), new LineSampler(), CombineFunction.DivideFrom);
             compositeStart.AddProperty(PropertyId.Starness, starnessLink);
             compositeEnd.AddProperty(PropertyId.Starness, starnessLink);
             return result;

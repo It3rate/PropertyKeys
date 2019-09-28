@@ -10,7 +10,10 @@ namespace DataArcs.Stores
 
         public Store(Store store):base(store)
         {
-            _series = store._series;
+            _series = store?._series;
+            Sampler = store?.Sampler ?? new LineSampler();
+            CombineFunction = store?.CombineFunction ?? CombineFunction.Add;
+            CombineTarget = store?.CombineTarget ?? CombineTarget.Destination;
         }
 
         public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
@@ -21,18 +24,6 @@ namespace DataArcs.Stores
 			CombineFunction = combineFunction;
 			CombineTarget = combineTarget;
         }
-
-		public Store(int[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) :
-			this(new IntSeries(1, data), sampler, combineFunction)
-
-		{
-		}
-
-		public Store(float[] data, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add) :
-			this(new FloatSeries(1, data), sampler, combineFunction)
-
-		{
-		}
 
 		public Series this[int index] => GetValuesAtIndex(index);
 

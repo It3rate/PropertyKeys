@@ -134,10 +134,14 @@ namespace DataArcs.Components.Transitions
 
         public override void GetDefinedStores(HashSet<PropertyId> ids)
         {
+			base.GetDefinedStores(ids);
             Start.GetDefinedStores(ids);
             End.GetDefinedStores(ids);
         }
 
+        public override void AddProperty(PropertyId id, IStore store) { throw new NotImplementedException(); }
+        public override void AppendProperty(PropertyId id, IStore store) { throw new NotImplementedException(); }
+        public override void RemoveProperty(PropertyId id, BlendStore store) { throw new NotImplementedException(); }
         public override IComposite CreateChild()
         {
             throw new NotImplementedException();

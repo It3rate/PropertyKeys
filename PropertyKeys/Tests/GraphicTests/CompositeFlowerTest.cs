@@ -44,9 +44,10 @@ namespace DataArcs.Tests.GraphicTests
 	        var composite = new Composite();
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(6));
 
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.X, new float[] { 0f, 1f });
-            Store loc = new Store(new FloatSeries(2, 100f, 100f, 400f, 400f), new RingSampler(new int[] { 6 }, ls));
-	        composite.AddProperty(PropertyId.Location, loc);
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.X, new FloatSeries(1, 0f, 1f));
+            Store loc = new Store(new FloatSeries(2, 100f, 100f, 400f, 400f), new RingSampler(new int[] {6}, ls));
+            composite.AddProperty(PropertyId.Location, loc);
+
 	        var graphic = GetRing();
 	        composite.Graphic = graphic;
 	        graphic.Parent = composite;
@@ -70,24 +71,38 @@ namespace DataArcs.Tests.GraphicTests
             }
         }
 
-        public Composite GetRing()
+        public DrawableComposite GetRing()
         {
-            var composite = new Composite();
+            var composite = new DrawableComposite();
 
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(6));
             float r = 30f;
-            Store loc = new Store(new FloatSeries(2, -r, -r, r, r), new RingSampler(new int[] { 6 }), CombineFunction.Replace);
+            float r2 = 15f;
+
+            var ringSampler = new RingSampler(new int[] { 6 });
+
+            //         LinkingStore lsr = new LinkingStore(_timer.CompositeId, PropertyId.CurrentT, SeriesUtils.X, new FloatSeries(1, 0f, 1f));
+            //         Store loc1 = new Store(new FloatSeries(2, -r, -r, r, r), ringSampler, CombineFunction.Interpolate);
+            //         Store loc2 = new Store(new FloatSeries(2, -r2, -r2, r2, r2), ringSampler, CombineFunction.Interpolate);
+            //var loc = new BlendStore(new IStore[]{loc1, loc2});
+
+            LinkingStore loc = new LinkingStore(_timer.CompositeId, PropertyId.Easing, SeriesUtils.X, 
+				new FloatSeries(2, -r, -r, r, r, -r2, -r2, r2, r2), ringSampler, CombineFunction.Multiply);
+
+            //Store locx = new Store(new FloatSeries(2, -r, -r, r, r), ringSampler, CombineFunction.Replace);
             composite.AddProperty(PropertyId.Location, loc);
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 12f, 12f).Store);
+
+            //LinkingStore lsr = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.XY, new FloatSeries(2, 12f, 12f, 6f, 6f));
+            composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 12f, 12f)));
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
 
-            LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.XYZ,
-                new FloatSeries(3, 1f, 0f, 0.1f,  1f, 1f, 0.1f,  0f, 0f, 1f), combineFunction: CombineFunction.Replace);
+            //LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.XYZ,
+            //    new FloatSeries(3, 1f, 0f, 0.1f,  1f, 1f, 0.1f,  0f, 0f, 1f), combineFunction: CombineFunction.Replace);
             var col2 = GetBlendColor();
             composite.AddProperty(PropertyId.FillColor, col2);// new FunctionalStore(col, col2));
 
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.Easing, SeriesUtils.X, 
-                new float[] { 0f, 1f }, combineFunction:CombineFunction.Replace);
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.Easing, SeriesUtils.X,
+                new FloatSeries(1, 0f, 1f), combineFunction:CombineFunction.Replace);
             composite.AddProperty(PropertyId.Orientation, ls);
             composite.AddProperty(PropertyId.Starness, ls);
 

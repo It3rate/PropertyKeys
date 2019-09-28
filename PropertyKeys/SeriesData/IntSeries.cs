@@ -86,7 +86,7 @@ namespace DataArcs.SeriesData
 			Size = new IntSeries(VectorSize, max);
 		}
 
-		public override void CombineInto(Series b, CombineFunction combineFunction)
+		public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
 		{
 			switch (combineFunction)
 			{
