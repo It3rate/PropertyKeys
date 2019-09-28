@@ -10,7 +10,6 @@ using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
 using DataArcs.Tests.GraphicTests;
-using DataArcs.Transitions;
 
 namespace DataArcs
 {

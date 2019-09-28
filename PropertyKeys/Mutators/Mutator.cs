@@ -10,7 +10,7 @@ namespace DataArcs.Mutators
 		public Mutator(Store store)
 		{
 			Store = store;
-			Store.HardenToData();
+			Store.BakeData();
 		}
 
 		public virtual Series GetValueAtIndex(Series series, int index)

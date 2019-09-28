@@ -74,7 +74,7 @@ namespace DataArcs.Components
 
 		public bool shouldShuffle; // basis for switching to events
 
-		public override void Update(float currentTime, float deltaTime)
+		public override void StartUpdate(float currentTime, float deltaTime)
 		{
 			foreach (var store in _stores.Values)
 			{
@@ -95,6 +95,7 @@ namespace DataArcs.Components
 
             CurrentT = deltaTime;
         }
+        public override void EndUpdate(float currentTime, float deltaTime) { }
 
         public override IComposite CreateChild()
         {

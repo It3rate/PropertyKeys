@@ -9,51 +9,32 @@ using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Players;
 using DataArcs.SeriesData;
+using DataArcs.Components.Transitions;
 
-namespace DataArcs.Transitions
+namespace DataArcs.Components.Transitions
 {
-	public delegate void TransitionEventHandler(object sender, EventArgs e);
-
-    public class BlendTransition : DrawableComposite
+    public class BlendTransition : Animation
     {
-	    public IStore Easing { get; set; }
-
-	    private float _startTime; // todo: All time should be one class, maybe even a store.
-        private Series _delay;
-        private Series _duration;
-
-        private bool _isComplete = false;
-        private bool _isReverse = false;
-
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
         public IComposite Start { get; set; }
         public IComposite End { get; set; }
 
-        public event TransitionEventHandler StartTransitionEvent;
-        public event TransitionEventHandler StepTransitionEvent;
-        public event TransitionEventHandler EndTransitionEvent;
-
-        public BlendTransition(IComposite start, IComposite end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null)
+        public BlendTransition(IComposite start, IComposite end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null):
+            base(delay, startTime, duration, easing)
         {
 	        Start = start;
 	        End = end;
-	        _delay = new FloatSeries(1, delay);
-	        _startTime = startTime < 0 ? (float)(DateTime.Now - Player.StartTime).TotalMilliseconds : startTime;
-	        _duration = new FloatSeries(1, duration);
-	        Easing = easing;
 	        GenerateBlends(); // eventually immutable after creation, so no new blends
         }
 
-        public BlendTransition(IComposite start, IComposite end, Series delay, float startTime, Series duration)
-        {
-	        Start = start;
-	        End = end;
-	        _delay = delay;
-	        _startTime = startTime < 0 ? (float)(DateTime.Now - Player.StartTime).TotalMilliseconds : startTime;
-	        _duration = duration;
-	        GenerateBlends();
-        }
+        //public BlendTransition(IComposite start, IComposite end, Series delay, float startTime, Series duration) :
+        //    base(delay, startTime, duration, easing)
+        //{
+	       // Start = start;
+	       // End = end;
+	       // GenerateBlends();
+        //}
 
         public void GenerateBlends()
         {
@@ -74,47 +55,15 @@ namespace DataArcs.Transitions
             }
         }
 
-        public void Restart()
+        public override void StartUpdate(float currentTime, float deltaTime)
         {
-	        _startTime = (float) (DateTime.Now - Player.StartTime).TotalMilliseconds;
-	        _isComplete = false;
-        }
-
-        public void Reverse()
-        {
-	        _isReverse = !_isReverse;
-        }
-
-        public override void Update(float currentTime, float deltaTime)
-        {
-	        if (_isComplete) return;
-
-	        float dur = _duration.X;
-	        if (currentTime > _startTime + dur)
-	        {
-		        _isComplete = true;
-		        CurrentT = 1f;
-	        }
-	        else
-	        {
-		        //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.X ? 1f : (deltaTime - _startTime) / _duration.X;
-		        CurrentT = currentTime < _startTime ? 0 :
-			        currentTime > _startTime + dur ? 1f :
-			        (currentTime - _startTime) / dur;
-	        }
-
-	        CurrentT = _isReverse ? 1f - CurrentT : CurrentT;
+            base.StartUpdate(currentTime, deltaTime);
 
             Start.Update(currentTime, deltaTime);
             End.Update(currentTime, deltaTime);
             foreach (var item in _blends.Values)
             {
                 item.Update(CurrentT);
-            }
-
-            if (_isComplete)
-            {
-				EndTransitionEvent?.Invoke(this, EventArgs.Empty);
             }
         }
 

@@ -17,8 +17,17 @@ namespace DataArcs.Stores
         public Slot[] SlotMapping { get; }
         private Player _player;
 
+        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping, Store store) : base(store)
+        {
+            CompositeId = compositeId;
+            PropertyId = propertyId;
+            SlotMapping = slotMapping;
+            _player = Player.GetPlayerById(0); // todo: create player versioning.
+        }
+
         public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
-            Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, CombineTarget combineTarget = CombineTarget.Destination) : base(series, sampler, combineFunction, combineTarget)
+            Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
+            CombineTarget combineTarget = CombineTarget.Destination) : base(series, sampler, combineFunction, combineTarget)
         {
             CompositeId = compositeId;
             PropertyId = propertyId;
@@ -63,12 +72,22 @@ namespace DataArcs.Stores
 
         public override Series GetValuesAtT(float t)
         {
-            Series result = base.GetValuesAtT(t);
-            Series link = GetLinkedStore()?.GetValuesAtT(t);
-            if (link != null)
+            Series result;
+            // todo: probably linking store always runs on t, the first case
+            if (PropertyId == PropertyId.T || PropertyId == PropertyId.Easing)
             {
-                Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
-                result.CombineInto(mappedValues, CombineFunction);
+                float newT = GetLinkedStore()?.GetValuesAtT(t).X ?? t;
+                result = base.GetValuesAtT(newT);
+            }
+            else
+            {
+                result = base.GetValuesAtT(t);
+                Series link = GetLinkedStore()?.GetValuesAtT(t);
+                if (link != null)
+                {
+                    Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
+                    result.CombineInto(mappedValues, CombineFunction);
+                }
             }
             return result;
         }

@@ -65,21 +65,19 @@ namespace DataArcs.Graphic
 
         public override void DrawAtT(float t, IComposite composite, Graphics g)
 		{
-			ParametricSeries ps = composite.GetSampledT(PropertyId.Location, t);
-
-			BezierSeries bezier = GetDrawableAtT(composite, t * composite.CurrentT);
+            BezierSeries bezier = GetDrawableAtT(composite, t);// * composite.CurrentT);
 			GraphicsPath gp = bezier.Path();
 
-			var fillColor = composite.GetStore(PropertyId.FillColor)?.GetValuesAtT(ps.X);
+			var fillColor = composite.GetStore(PropertyId.FillColor)?.GetValuesAtT(t);
 			if (fillColor != null)
 			{
 				g.FillPath(new SolidBrush(fillColor.RGB()), gp);
 			}
 
-			var penColor = composite.GetStore(PropertyId.PenColor)?.GetValuesAtT(ps.X);
+			var penColor = composite.GetStore(PropertyId.PenColor)?.GetValuesAtT(t);
 			if (penColor != null)
 			{
-				var penWidth = composite.GetStore(PropertyId.PenWidth)?.GetValuesAtT(ps.X);
+				var penWidth = composite.GetStore(PropertyId.PenWidth)?.GetValuesAtT(t);
 				float pw = penWidth?.X ?? 1f;
 
 				g.DrawPath(new Pen(penColor.RGB(), pw), gp);

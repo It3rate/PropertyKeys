@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Timers;
 using System.Windows.Forms;
 using DataArcs.Components;
-using DataArcs.Transitions;
+using DataArcs.Components.Transitions;
 using Timer = System.Timers.Timer;
 
 namespace DataArcs.Players
@@ -121,7 +121,7 @@ namespace DataArcs.Players
         }
         public void Clear() => _toRemoveActive.AddRange(_activeElements.Keys);
 
-        public IComposite this[int index] => _allComposites[index];
+        public IComposite this[int index] => _allComposites.ContainsKey(index) ? _allComposites[index] : null;
         public void AddCompositeToLibrary(IComposite composite)
         {
 			// todo: use ref counting to remove dead elements.

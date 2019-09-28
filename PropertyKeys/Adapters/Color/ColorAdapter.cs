@@ -1,4 +1,5 @@
 ﻿using DataArcs.SeriesData;
+using System;
 
 namespace DataArcs.Adapters.Color
 {
@@ -24,9 +25,9 @@ namespace DataArcs.Adapters.Color
         public static System.Drawing.Color RGB(this Series a)
 	    {
 		    System.Drawing.Color result;
-            float r = a.Red();
-            float g = a.Green();
-            float b = a.Blue();
+            float r = Math.Max(0, Math.Min(1, a.Red()));
+            float g = Math.Max(0, Math.Min(1, a.Green()));
+            float b = Math.Max(0, Math.Min(1, a.Blue()));
             switch (a.Count * a.VectorSize)
 		    {
                 case 1:

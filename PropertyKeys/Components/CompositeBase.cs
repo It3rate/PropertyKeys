@@ -29,7 +29,15 @@ namespace DataArcs.Components
 		
         public abstract IStore GetStore(PropertyId propertyId);
         public abstract void GetDefinedStores(HashSet<PropertyId> ids);
-        public abstract void Update(float currentTime, float deltaTime);
+
+        public void Update(float currentTime, float deltaTime)
+        {
+            StartUpdate(currentTime, deltaTime);
+            EndUpdate(currentTime, deltaTime);
+        }
+        public abstract void StartUpdate(float currentTime, float deltaTime);
+        public abstract void EndUpdate(float currentTime, float deltaTime);
+
         public abstract IComposite CreateChild();
         public abstract void Draw(IComposite composite, Graphics g);
 

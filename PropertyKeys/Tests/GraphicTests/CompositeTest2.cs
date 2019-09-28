@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Components;
+using DataArcs.Components.Transitions;
 using DataArcs.Graphic;
 using DataArcs.Players;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
-using DataArcs.Transitions;
 
 namespace DataArcs.Tests.GraphicTests
 {

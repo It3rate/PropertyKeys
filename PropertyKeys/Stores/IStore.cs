@@ -6,11 +6,11 @@ using DataArcs.Samplers;
 namespace DataArcs.Stores
 {
 	public interface IStore : IEnumerable
-	{
-		int StoreId { get; }
+    {
+        int StoreId { get; }
+        int Capacity { get; }
         CombineFunction CombineFunction { get; set; }
 		CombineTarget CombineTarget { get; set; }
-		int Capacity { get; }
 		Sampler Sampler { get; set; }
 
         Series GetFullSeries(int index);
@@ -22,7 +22,7 @@ namespace DataArcs.Stores
 
         void Update(float deltaTime);
 		void ResetData();
-		void HardenToData();
+		void BakeData();
 
     }
 

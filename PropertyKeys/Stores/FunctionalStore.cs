@@ -97,11 +97,11 @@ namespace DataArcs.Stores
 			}
 		}
 
-        public override void HardenToData()
+        public override void BakeData()
 		{
 			foreach (var store in _stores)
 			{
-				store.HardenToData();
+				store.BakeData();
 			}
 		}
 

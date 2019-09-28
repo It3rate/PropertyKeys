@@ -16,9 +16,16 @@ namespace DataArcs.Stores
         public virtual int Capacity => Sampler.Capacity;
 
         protected StoreBase()
-	    {
-		    StoreId = _idCounter++;
-	    }
+        {
+            StoreId = _idCounter++;
+        }
+        protected StoreBase(IStore store)
+        {
+            StoreId = _idCounter++;
+            Sampler = store.Sampler;
+            CombineFunction = store.CombineFunction;
+            CombineTarget = store.CombineTarget;
+        }
 
         public abstract Series GetFullSeries(int index);
 
@@ -32,7 +39,7 @@ namespace DataArcs.Stores
 
         public abstract void ResetData();
 
-        public abstract void HardenToData();
+        public abstract void BakeData();
 
         public IEnumerator GetEnumerator()
         {

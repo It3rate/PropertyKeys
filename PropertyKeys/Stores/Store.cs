@@ -8,7 +8,12 @@ namespace DataArcs.Stores
     {
 		protected Series _series;
 
-		public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
+        public Store(Store store):base(store)
+        {
+            _series = store._series;
+        }
+
+        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
             CombineTarget combineTarget = CombineTarget.Destination)
 		{
 			_series = series;
@@ -62,7 +67,7 @@ namespace DataArcs.Stores
 			_series.ResetData();
 		}
 
-		public override void HardenToData()
+		public override void BakeData()
         {
             var len = Capacity * _series.VectorSize;
             if (_series.DataSize != len)

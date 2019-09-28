@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Diagnostics;
 using DataArcs.SeriesData;
+using DataArcs.Stores;
 
 namespace DataArcs.Samplers
 {
 	public class RingSampler : Sampler
 	{
         protected int[] RingCounts { get; }
+        protected IStore Orientation { get; }
 
-        public RingSampler(int[] ringCounts)
+        public RingSampler(int[] ringCounts, IStore orientation = null)
         {
             RingCounts = ringCounts;
+            Orientation = orientation;
             Capacity = ringCounts[0];
             for (int i = 1; i < ringCounts.Length; i++)
             {
@@ -50,6 +54,13 @@ namespace DataArcs.Samplers
         private Series GetSeriesSample(Series series, float t)
 		{
 			SamplerUtils.GetJaggedT(RingCounts, t, out var ringIndexT, out var ringT);
+            float orientation = 0;
+            if (Orientation != null)
+            {
+                orientation = Orientation.GetValuesAtT(ringT).X;
+                orientation -= (int)orientation;
+                orientation *= (float)(Math.PI * 2);
+            }
 
             var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
 			var frame = series.Frame.FloatData; // x0,y0...n0, x1,y1..n1
@@ -57,10 +68,10 @@ namespace DataArcs.Samplers
 
             var centerX = size[0] / 2.0f;
 			var radiusX = centerX - ringIndexT * (size[0] / 2.0f);
-			result[0] = (float) (Math.Sin(ringT * 2.0f * Math.PI + Math.PI) * radiusX + frame[0] + centerX);
+			result[0] = (float) (Math.Sin(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusX + frame[0] + centerX);
             var centerY = size[1] / 2.0f;
             var radiusY = centerY - ringIndexT * (size[1] / 2.0f);
-			result[1] = (float) (Math.Cos(ringT * 2.0f * Math.PI + Math.PI) * radiusY + frame[1] + centerY);
+			result[1] = (float) (Math.Cos(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusY + frame[1] + centerY);
 			return SeriesUtils.Create(series, result);
 		}
 	}
