@@ -76,9 +76,11 @@ namespace DataArcs.Components.Transitions
             switch (propertyId)
             {
                 case PropertyId.EasedT:
+                case PropertyId.EasedTCombined:
                     result = new FloatSeries(1, Easing?.GetValuesAtT(InputT).X ?? InputT).Store;
                     break;
                 case PropertyId.SampleAtT:
+                case PropertyId.SampleAtTCombined:
                     result = new FloatSeries(1, InputT).Store;
                     break;
 				default:
@@ -90,7 +92,7 @@ namespace DataArcs.Components.Transitions
 
         public override void GetDefinedStores(HashSet<PropertyId> ids)
         {
-            ids.Add(PropertyId.EasedT);
+            ids.Add(PropertyId.EasedTCombined);
         }
 
         public override IComposite CreateChild()

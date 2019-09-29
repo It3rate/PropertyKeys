@@ -16,58 +16,71 @@ namespace DataArcs.Stores
         public PropertyId PropertyId { get; }
         public Slot[] SlotMapping { get; }
         private Player _player;
+        private IStore _mixStore;
 
-        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping) : base(null)
-        {
-	        CompositeId = compositeId;
-	        PropertyId = propertyId;
-	        SlotMapping = slotMapping;
-	        _player = Player.GetPlayerById(0); 
-			_series = _player[compositeId]?.GetStore(propertyId)?.GetFullSeries(0);
-        }
-
-        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping, IStore store) : this(compositeId, propertyId, slotMapping)
-        {
-            _series = store?.GetFullSeries(0);
-        }
-
-        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
-            Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
-            CombineTarget combineTarget = CombineTarget.Destination) : base(series, sampler, combineFunction, combineTarget)
+        private IStore MaskedStore => _mixStore ?? _player[CompositeId]?.GetStore(PropertyId);
+        public override CombineFunction CombineFunction { get => MaskedStore.CombineFunction; set => MaskedStore.CombineFunction = value; }
+        public override CombineTarget CombineTarget { get => MaskedStore.CombineTarget; set => MaskedStore.CombineTarget = value; }
+        public override Sampler Sampler { get => MaskedStore.Sampler; set => MaskedStore.Sampler = value; }
+        public override int Capacity => MaskedStore.Capacity;
+        
+        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping, IStore store)
         {
             CompositeId = compositeId;
             PropertyId = propertyId;
             SlotMapping = slotMapping;
-            _player = Player.GetPlayerById(0); // todo: create player versioning.
+            _player = Player.GetPlayerById(0);
+            _mixStore = store;
+            //_series = store?.GetFullSeries(0);
         }
+        
 
         private IStore GetLinkedStore()
         {
             return _player[CompositeId]?.GetStore(PropertyId);
         }
+        private IStore GetMixStore()
+        {
+            return _mixStore;
+        }
 
         public override Series GetValuesAtIndex(int index)
         {
-	        return GetValuesAtT(index / (Capacity - 1f));
+            return GetValuesAtT(index / (Capacity - 1f));
         }
 
         public override Series GetValuesAtT(float t)
         {
-            Series result;
-            if (PropertyId == PropertyId.SampleAtT)
+            Series result = null;
+            float curT = _player[CompositeId]?.InputT ?? 0;
+            if (PropertyIdSet.IsTSampling(PropertyId))
             {
-                float newT = GetLinkedStore()?.GetValuesAtT(t).X ?? t;
-	            result = base.GetValuesAtT(newT);
+                Series link = GetLinkedStore()?.GetValuesAtT(t);
+                if (link != null)
+                {
+                    var curTSeries = SeriesUtils.GetSubseries(SlotMapping, link);
+                    if(PropertyIdSet.IsTCombining(PropertyId))
+                    {
+                        curTSeries.CombineInto(new FloatSeries(1, t), CombineFunction, t);
+                    }
+                    result = GetMixStore()?.GetValuesAtT(curTSeries.X);
+                }
             }
             else
             {
-                result = base.GetValuesAtT(t);
-                float curT = _player[CompositeId]?.InputT ?? 0;
-                Series link = GetLinkedStore()?.GetValuesAtT(curT);
-                if (link != null)
+                result = GetMixStore()?.GetValuesAtT(t);
+                if (result != null)
                 {
-                    Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
-                    result.CombineInto(mappedValues, CombineFunction, curT);
+                    Series link = GetLinkedStore()?.GetValuesAtT(curT);
+                    if (link != null)
+                    {
+                        Series linkMapped = SeriesUtils.GetSubseries(SlotMapping, link);
+                        result.CombineInto(linkMapped, CombineFunction, curT);
+                    }
+                }
+                else
+                {
+                    result = GetLinkedStore()?.GetValuesAtT(curT);
                 }
             }
             return result;
@@ -75,7 +88,7 @@ namespace DataArcs.Stores
 
         public override ParametricSeries GetSampledTs(float t)
         {
-            ParametricSeries result = base.GetSampledTs(t);
+            ParametricSeries result = _mixStore.GetSampledTs(t);
             ParametricSeries link = GetLinkedStore()?.GetSampledTs(t);
             if (link != null)
             {
@@ -83,6 +96,22 @@ namespace DataArcs.Stores
                 result.CombineInto(mappedValues, CombineFunction);
             }
             return result;
+        }
+
+
+        public override void Update(float deltaTime)
+        {
+            _mixStore?.Update(deltaTime);
+        }
+
+        public override void ResetData()
+        {
+            _mixStore?.ResetData();
+        }
+
+        public override void BakeData()
+        {
+            _mixStore?.BakeData();
         }
     }
 }

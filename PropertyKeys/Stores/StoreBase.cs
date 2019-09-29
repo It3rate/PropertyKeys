@@ -10,9 +10,9 @@ namespace DataArcs.Stores
 	    private static int _idCounter = 1;
 	    public int StoreId { get; }
 
-        public CombineFunction CombineFunction { get; set; }
-        public CombineTarget CombineTarget { get; set; }
-        public Sampler Sampler { get; set; }
+        public virtual CombineFunction CombineFunction { get; set; }
+        public virtual CombineTarget CombineTarget { get; set; }
+        public virtual Sampler Sampler { get; set; }
         public virtual int Capacity => Sampler.Capacity;
 
         protected StoreBase()

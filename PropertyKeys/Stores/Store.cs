@@ -18,7 +18,7 @@ namespace DataArcs.Stores
         //    CombineTarget = store?.CombineTarget ?? CombineTarget.Destination;
         //}
 
-        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
+        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace, 
             CombineTarget combineTarget = CombineTarget.Destination)
 		{
 			_series = series;

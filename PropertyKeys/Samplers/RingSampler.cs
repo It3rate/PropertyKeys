@@ -14,7 +14,7 @@ namespace DataArcs.Samplers
         {
             RingCounts = ringCounts;
             Orientation = orientation;
-            Capacity = ringCounts[0] + 1;
+            Capacity = ringCounts[0];
             for (int i = 1; i < ringCounts.Length; i++)
             {
                 if (ringCounts[i] != 0)
@@ -66,6 +66,7 @@ namespace DataArcs.Samplers
 			var frame = series.Frame.FloatData; // x0,y0...n0, x1,y1..n1
 			var size = series.Size.FloatData; // s0,s1...sn
 
+            //ringT += 1f / RingCounts[(int)Math.Round(ringIndexT * RingCounts.Length)];
             var centerX = size[0] / 2.0f;
 			var radiusX = centerX - ringIndexT * (size[0] / 2.0f);
 			result[0] = (float) (Math.Sin(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusX + frame[0] + centerX);

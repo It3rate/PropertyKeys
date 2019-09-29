@@ -140,7 +140,7 @@ namespace DataArcs.Tests.GraphicTests
             IStore endLocStore = bt.End.GetStore(PropertyId.Location);
             Series minMax = new FloatSeries(2, -200f, -100f, 200f, 100f);
             var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.Capacity, minMax, 1111, CombineFunction.ContinuousAdd).CreateLinearStore(endLocStore.Capacity);
-            //randomStore.Capacity = endLocStore.Capacity;
+            randomStore.CombineFunction = CombineFunction.Add;
             var fs = new FunctionalStore(endLocStore, randomStore);
             ((Composite)bt.End).AddProperty(PropertyId.Location, fs);
             return bt;

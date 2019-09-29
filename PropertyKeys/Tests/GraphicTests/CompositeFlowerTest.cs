@@ -44,7 +44,7 @@ namespace DataArcs.Tests.GraphicTests
 	        var composite = new Composite();
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(6));
 
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f));
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f).Store);
             Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] {6}, ls));
             composite.AddProperty(PropertyId.Location, loc);
 
@@ -75,7 +75,7 @@ namespace DataArcs.Tests.GraphicTests
         {
             var composite = new DrawableComposite();
 
-            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(6));
+            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(5));
             float r = 30f;
             float r2 = 15f;
 
@@ -83,19 +83,19 @@ namespace DataArcs.Tests.GraphicTests
             
             // Link a custom property and multiply to generate an animated scaling transform.
 			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
-            var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, 
-				new FloatSeries(2, -r, -r, r, r, -r2, -r2, r2, r2), ringSampler, CombineFunction.Multiply);
+            var locStore = new Store(new FloatSeries(2, -r, -r, r, r, -r2, -r2, r2, r2), ringSampler, CombineFunction.Multiply);
+            var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, locStore);
             composite.AddProperty(PropertyId.Location, loc);
             
             composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 12f, 12f)));
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
 
             BlendStore blendColors = GetBlendColor();
-            LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedT, SeriesUtils.X, blendColors);
+            LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedTCombined, SeriesUtils.X, blendColors);
             composite.AddProperty(PropertyId.FillColor, col);// new FunctionalStore(col, col2));
 
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.EasedT, SeriesUtils.X,
-                new FloatSeries(1, 0f, 1f), combineFunction:CombineFunction.Replace);
+            var growStore = new Store(new FloatSeries(1, 0f, 1f), combineFunction:CombineFunction.Add);
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, growStore);
             composite.AddProperty(PropertyId.Orientation, ls);
             composite.AddProperty(PropertyId.Starness, ls);
 
@@ -106,8 +106,8 @@ namespace DataArcs.Tests.GraphicTests
 
         private static BlendStore GetBlendColor()
         {
-            var start = new float[] { 0.3f, 0.1f, 0.2f, 1f, 1f, 0, 0, 0.15f, 1f, 0, 0.5f, 0.1f };
-            var end = new float[] { 0, 0.2f, 0.7f, 0.8f, 0, 0.3f, 0.7f, 1f, 0.1f, 0.4f, 0, 1f };
+            var start = new float[] { 0.5f, 0.1f, 0.2f,  1f, 1f, 0,      0, 0.15f, 1f,     0, 0.5f, 0.1f };
+            var end = new float[] { 0, 0.2f, 0.7f,       0.8f, 0, 0.3f,  0.7f, 1f, 0.1f,   0.4f, 0, 1f };
             var colorStartStore = new Store(new FloatSeries(3, start));
             var colorEndStore = new Store(new FloatSeries(3, end));
             return new BlendStore(colorStartStore, colorEndStore);

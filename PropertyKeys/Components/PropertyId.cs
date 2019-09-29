@@ -11,11 +11,14 @@ namespace DataArcs.Components
 		None = 0,
 		TModifier,
 
-		SampleAtT,
-		CurrentT,
-		EasedT,
+		InputT,
 
-		Items,
+        SampleAtT,
+        SampleAtTCombined,
+        EasedT,
+        EasedTCombined,
+
+        Items,
 		Shape,
 		Transform,
 		Location,
@@ -47,5 +50,34 @@ namespace DataArcs.Components
 		Custom7 = 0x1007,
 		Custom8 = 0x1008,
 		Custom9 = 0x1009,
+    }
+    static class PropertyIdSet
+    {
+        public static bool IsTSampling(PropertyId propId)
+        {
+            bool result = false;
+            switch (propId)
+            {
+                case PropertyId.SampleAtT:
+                case PropertyId.SampleAtTCombined:
+                case PropertyId.EasedT:
+                case PropertyId.EasedTCombined:
+                    result = true;
+                    break;
+            }
+            return result;
+        }
+        public static bool IsTCombining(PropertyId propId)
+        {
+            bool result = false;
+            switch (propId)
+            {
+                case PropertyId.SampleAtTCombined:
+                case PropertyId.EasedTCombined:
+                    result = true;
+                    break;
+            }
+            return result;
+        }
     }
 }

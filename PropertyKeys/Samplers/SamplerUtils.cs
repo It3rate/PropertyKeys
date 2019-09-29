@@ -65,7 +65,7 @@ namespace DataArcs.Samplers
                 ratio = segments[index] / capacity;
             }
             indexT = index / (float)segments.Length;
-            segmentT = t / ratio;
+            segmentT = t / ratio * ((segments[index] - 1f) / segments[index]);
         }
 
         public static float[] GetStrideTsForT(int virtualCount, int[] strides, float t)
