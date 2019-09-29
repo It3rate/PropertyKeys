@@ -93,44 +93,6 @@ namespace DataArcs.Stores
 			}
 		}
 
-		public Series GetSeriesAtIndex(int index, float t)
-		{
-			Series result;
-
-			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-			vT = _easing?.GetValuesAtT(vT).X ?? vT;
-
-            if (startIndex == endIndex)
-			{
-				result = _stores[startIndex].GetValuesAtIndex(index);
-			}
-			else
-			{
-				result = BlendValueAtIndex(_stores[startIndex], _stores[endIndex], index, vT);
-			}
-
-			return result;
-		}
-
-		public Series GetSeriesAtT(float indexT, float t)
-		{
-			Series result;
-
-			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-			vT = _easing?.GetValuesAtT(vT).X ?? vT;
-
-            if (startIndex == endIndex)
-			{
-				result = _stores[startIndex].GetValuesAtT(indexT);
-			}
-			else
-			{
-				result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT);
-			}
-
-			return result;
-		}
-
 		public int GetElementCountAt(float t)
 		{
 			int result;
@@ -150,6 +112,45 @@ namespace DataArcs.Stores
 
 			return result;
 		}
+
+        public Series GetSeriesAtIndex(int index, float t)
+        {
+            Series result;
+
+            SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
+            vT = _easing?.GetValuesAtT(vT).X ?? vT;
+
+            if (startIndex == endIndex)
+            {
+                result = _stores[startIndex].GetValuesAtIndex(index);
+            }
+            else
+            {
+                result = BlendValueAtIndex(_stores[startIndex], _stores[endIndex], index, vT);
+            }
+
+            return result;
+        }
+
+        public Series GetSeriesAtT(float indexT, float t)
+        {
+            Series result;
+
+            SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
+            vT = _easing?.GetValuesAtT(vT).X ?? vT;
+
+            if (startIndex == endIndex)
+            {
+                result = _stores[startIndex].GetValuesAtT(indexT);
+            }
+            else
+            {
+                result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT);
+            }
+
+            return result;
+        }
+    
 
         public static Series BlendValueAtIndex(IStore start, IStore end, int index, float t)
         {

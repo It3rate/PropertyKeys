@@ -81,16 +81,18 @@ namespace DataArcs.Tests.GraphicTests
 
             var ringSampler = new RingSampler(new int[] { 5 });
             
+            // Link a custom property and multiply to generate an animated scaling transform.
 			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
-            LinkingStore loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, 
+            var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, 
 				new FloatSeries(2, -r, -r, r, r, -r2, -r2, r2, r2), ringSampler, CombineFunction.Multiply);
             composite.AddProperty(PropertyId.Location, loc);
             
             composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 12f, 12f)));
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
-            
-            var col2 = GetBlendColor();
-            composite.AddProperty(PropertyId.FillColor, col2);// new FunctionalStore(col, col2));
+
+            BlendStore blendColors = GetBlendColor();
+            LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedT, SeriesUtils.X, blendColors);
+            composite.AddProperty(PropertyId.FillColor, col);// new FunctionalStore(col, col2));
 
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.EasedT, SeriesUtils.X,
                 new FloatSeries(1, 0f, 1f), combineFunction:CombineFunction.Replace);

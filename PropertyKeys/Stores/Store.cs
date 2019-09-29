@@ -8,13 +8,15 @@ namespace DataArcs.Stores
     {
 		protected Series _series;
 
-        public Store(Store store):base(store)
-        {
-            _series = store?._series;
-            Sampler = store?.Sampler ?? new LineSampler();
-            CombineFunction = store?.CombineFunction ?? CombineFunction.Add;
-            CombineTarget = store?.CombineTarget ?? CombineTarget.Destination;
-        }
+        protected Store() { }
+
+        //public Store(Store store):base(store)
+        //{
+        //    _series = store?._series;
+        //    Sampler = store?.Sampler ?? new LineSampler();
+        //    CombineFunction = store?.CombineFunction ?? CombineFunction.Add;
+        //    CombineTarget = store?.CombineTarget ?? CombineTarget.Destination;
+        //}
 
         public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Add, 
             CombineTarget combineTarget = CombineTarget.Destination)

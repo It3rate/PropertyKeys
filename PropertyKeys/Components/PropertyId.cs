@@ -30,7 +30,6 @@ namespace DataArcs.Components
 		SampleType,
 
 		Graphic,
-		// polyShape
 		Orientation,
 		PointCount,
 		Starness,

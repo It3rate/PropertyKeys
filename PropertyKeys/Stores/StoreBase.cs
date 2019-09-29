@@ -19,13 +19,13 @@ namespace DataArcs.Stores
         {
             StoreId = _idCounter++;
         }
-        protected StoreBase(IStore store)
-        {
-            StoreId = _idCounter++;
-            Sampler = store.Sampler;
-            CombineFunction = store.CombineFunction;
-            CombineTarget = store.CombineTarget;
-        }
+        //protected StoreBase(IStore store)
+        //{
+        //    StoreId = _idCounter++;
+        //    Sampler = store.Sampler;
+        //    CombineFunction = store.CombineFunction;
+        //    CombineTarget = store.CombineTarget;
+        //}
 
         public abstract Series GetFullSeries(int index);
 

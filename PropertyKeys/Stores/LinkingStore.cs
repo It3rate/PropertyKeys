@@ -26,12 +26,9 @@ namespace DataArcs.Stores
 			_series = _player[compositeId]?.GetStore(propertyId)?.GetFullSeries(0);
         }
 
-        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping, Store store) : base(store)
+        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping, IStore store) : this(compositeId, propertyId, slotMapping)
         {
-	        CompositeId = compositeId;
-	        PropertyId = propertyId;
-	        SlotMapping = slotMapping;
-	        _player = Player.GetPlayerById(0); // todo: create player versioning.
+            _series = store?.GetFullSeries(0);
         }
 
         public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping,
