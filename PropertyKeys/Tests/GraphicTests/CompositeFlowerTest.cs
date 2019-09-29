@@ -94,7 +94,7 @@ namespace DataArcs.Tests.GraphicTests
             LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedTCombined, SeriesUtils.X, blendColors);
             composite.AddProperty(PropertyId.FillColor, col);// new FunctionalStore(col, col2));
 
-            var growStore = new Store(new FloatSeries(1, 0f, 1f), combineFunction:CombineFunction.Add);
+            var growStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Add);
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, growStore);
             composite.AddProperty(PropertyId.Orientation, ls);
             composite.AddProperty(PropertyId.Starness, ls);
