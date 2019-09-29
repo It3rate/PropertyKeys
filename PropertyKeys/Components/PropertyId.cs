@@ -11,6 +11,10 @@ namespace DataArcs.Components
 		None = 0,
 		TModifier,
 
+		SampleAtT,
+		CurrentT,
+		EasedT,
+
 		Items,
 		Shape,
 		Transform,
@@ -21,11 +25,8 @@ namespace DataArcs.Components
 		FillColor,
 		PenColor,
 		PenWidth,
-		T,
-		CurrentT,
         StartTime,
 		Duration,
-		Easing,
 		SampleType,
 
 		Graphic,

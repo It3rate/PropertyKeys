@@ -44,7 +44,7 @@ namespace DataArcs.Tests.GraphicTests
 	        var composite = new Composite();
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(6));
 
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.T, SeriesUtils.X, new FloatSeries(1, 0f, 1f));
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f));
             Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] {6}, ls));
             composite.AddProperty(PropertyId.Location, loc);
 
@@ -92,7 +92,7 @@ namespace DataArcs.Tests.GraphicTests
             var col2 = GetBlendColor();
             composite.AddProperty(PropertyId.FillColor, col2);// new FunctionalStore(col, col2));
 
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.Easing, SeriesUtils.X,
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.EasedT, SeriesUtils.X,
                 new FloatSeries(1, 0f, 1f), combineFunction:CombineFunction.Replace);
             composite.AddProperty(PropertyId.Orientation, ls);
             composite.AddProperty(PropertyId.Starness, ls);

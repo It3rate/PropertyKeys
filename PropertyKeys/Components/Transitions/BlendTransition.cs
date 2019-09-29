@@ -63,7 +63,7 @@ namespace DataArcs.Components.Transitions
             End.Update(currentTime, deltaTime);
             foreach (var item in _blends.Values)
             {
-                item.Update(CurrentT);
+                item.Update(InputT);
             }
         }
 
@@ -75,9 +75,9 @@ namespace DataArcs.Components.Transitions
                 result = Start.GetSeriesAtIndex(propertyId, index);
                 Series end = End.GetSeriesAtIndex(propertyId, index);
 
-                float indexT = index / (Start.GetStore(propertyId).Capacity - 1f) + CurrentT; // delay per element.
+                float indexT = index / (Start.GetStore(propertyId).Capacity - 1f) + InputT; // delay per element.
 
-                float easedT = Easing?.GetValuesAtT(CurrentT * indexT).X ?? CurrentT;
+                float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
                 result.InterpolateInto(end, easedT);
             }
             else
@@ -98,7 +98,7 @@ namespace DataArcs.Components.Transitions
                 //float durT = _duration.GetValueAtT(t).X;
                 //float delRatio = delT / (delT + durT);
                 //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
-                float easedT = Easing?.GetValuesAtT(CurrentT).X ?? CurrentT;
+                float easedT = Easing?.GetValuesAtT(InputT).X ?? InputT;
                 result.InterpolateInto(end, easedT);
             }
 	        else

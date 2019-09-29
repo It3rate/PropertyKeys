@@ -49,17 +49,17 @@ namespace DataArcs.Components.Transitions
             if (currentTime > _startTime + dur)
             {
                 IsComplete = true;
-                CurrentT = 1f;
+                InputT = 1f;
             }
             else
             {
                 //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.X ? 1f : (deltaTime - _startTime) / _duration.X;
-                CurrentT = currentTime < _startTime ? 0 :
+                InputT = currentTime < _startTime ? 0 :
                     currentTime > _startTime + dur ? 1f :
                     (currentTime - _startTime) / dur;
             }
 
-            CurrentT = _isReverse ? 1f - CurrentT : CurrentT;
+            InputT = _isReverse ? 1f - InputT : InputT;
         }
 
         public override void EndUpdate(float currentTime, float deltaTime)
@@ -75,11 +75,11 @@ namespace DataArcs.Components.Transitions
             IStore result = null;
             switch (propertyId)
             {
-                case PropertyId.Easing:
-                    result = new FloatSeries(1, Easing?.GetValuesAtT(CurrentT).X ?? CurrentT).Store;
+                case PropertyId.EasedT:
+                    result = new FloatSeries(1, Easing?.GetValuesAtT(InputT).X ?? InputT).Store;
                     break;
-                case PropertyId.T:
-                    result = new FloatSeries(1, CurrentT).Store;
+                case PropertyId.SampleAtT:
+                    result = new FloatSeries(1, InputT).Store;
                     break;
 				default:
 					result = base.GetStore(propertyId);
@@ -90,7 +90,7 @@ namespace DataArcs.Components.Transitions
 
         public override void GetDefinedStores(HashSet<PropertyId> ids)
         {
-            ids.Add(PropertyId.Easing);
+            ids.Add(PropertyId.EasedT);
         }
 
         public override IComposite CreateChild()

@@ -19,7 +19,7 @@ namespace DataArcs.Components
 
         private readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
         public int CompositeId { get; }
-        public float CurrentT { get; set; }
+        public float InputT { get; set; }
         public IDrawable Graphic { get; set; }
         public IComposite Parent { get; set; }
 
@@ -96,7 +96,7 @@ namespace DataArcs.Components
                 store.Update(deltaTime);
             }
 
-            float t = CurrentT % 1f;
+            float t = InputT % 1f;
             if (t <= 0.05f && shouldShuffle)
             {
                 SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetFullSeries(0));
@@ -108,7 +108,7 @@ namespace DataArcs.Components
                 rs.Seed = rs.Seed + 1;
             }
 
-            CurrentT = deltaTime;
+            InputT = deltaTime;
         }
         public virtual void EndUpdate(float currentTime, float deltaTime) { }
 

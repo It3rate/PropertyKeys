@@ -57,28 +57,20 @@ namespace DataArcs.Stores
         public override Series GetValuesAtT(float t)
         {
             Series result;
-            if (PropertyId == PropertyId.T)
+            if (PropertyId == PropertyId.SampleAtT)
             {
                 float newT = GetLinkedStore()?.GetValuesAtT(t).X ?? t;
 	            result = base.GetValuesAtT(newT);
             }
-            else if (PropertyId == PropertyId.CurrentT)
-            {
-	            result = base.GetValuesAtT(t);
-	            float curT = _player[CompositeId]?.CurrentT ?? 0;
-	            Series link = new FloatSeries(1, curT);
-	            Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
-	            result.CombineInto(mappedValues, CombineFunction, curT);
-            }
             else
             {
                 result = base.GetValuesAtT(t);
-                float curT = _player[CompositeId]?.CurrentT ?? 0;
+                float curT = _player[CompositeId]?.InputT ?? 0;
                 Series link = GetLinkedStore()?.GetValuesAtT(curT);
                 if (link != null)
                 {
                     Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);
-                    result.CombineInto(mappedValues, CombineFunction);
+                    result.CombineInto(mappedValues, CombineFunction, curT);
                 }
             }
             return result;
