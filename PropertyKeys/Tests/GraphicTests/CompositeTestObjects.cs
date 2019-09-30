@@ -206,7 +206,7 @@ namespace DataArcs.Tests.GraphicTests
             endComp.AddProperty(PropertyId.Location, endStore);
 
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
-            return new BlendTransition(startComp, startComp, delay, startTime, duration, easeStore);
+            return new BlendTransition(startComp, endComp, delay, startTime, duration, easeStore);
         }
 
         private static void AddGraphic(Composite composite)

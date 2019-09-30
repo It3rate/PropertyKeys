@@ -44,10 +44,10 @@ namespace DataArcs.Tests.GraphicTests
         public IComposite GetComposite0()
         {
 	        var composite = new Composite();
-            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(15));
+            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(groupCount));
 
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f).Store);
-            Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] { 10,5 }));
+            Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] { groupCount }, ls));
             composite.AddProperty(PropertyId.Location, loc);
 
 	        var graphic = GetRing();
@@ -76,19 +76,19 @@ namespace DataArcs.Tests.GraphicTests
         public DrawableComposite GetRing()
         {
             var composite = new DrawableComposite();
+            starCount = 15;
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(starCount));
             float r = 30f;
             float r2 = 15f;
-
-            var ringSampler = new RingSampler(new int[] {starCount});
+            var ringSampler = new RingSampler(new int[] {7,4,0,4});
             
             // Link a custom property and multiply to generate an animated scaling transform.
 			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
             var locStore = new Store(new FloatSeries(2, -r, -r, r, r, -r2, -r2, r2, r2), ringSampler, CombineFunction.Multiply);
             var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, locStore);
             composite.AddProperty(PropertyId.Location, loc);
-            
-            composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 12f, 12f)));
+
+            composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 4f, 4f)));// 12f, 12f)));
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
 
             BlendStore blendColors = GetBlendColor();

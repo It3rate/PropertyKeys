@@ -17,14 +17,7 @@ namespace DataArcs.Samplers
             Capacity = ringCounts[0];
             for (int i = 1; i < ringCounts.Length; i++)
             {
-                if (ringCounts[i] != 0)
-                {
-                    Capacity += ringCounts[i];
-                }
-                else
-                {
-                    break;
-                }
+                Capacity += ringCounts[i];
             }
         }
         public override Series GetValueAtIndex(Series series, int index)
@@ -65,13 +58,15 @@ namespace DataArcs.Samplers
             var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
 			var frame = series.Frame.FloatData; // x0,y0...n0, x1,y1..n1
 			var size = series.Size.FloatData; // s0,s1...sn
-            
+            float minRadius = 0.3f; // todo: make class property
+            //float ringScale = (ringIndexT / RingCounts.Length)
+
             var centerX = size[0] / 2.0f;
-			var radiusX = centerX - ringIndexT * (size[0] / 2.0f);
+            var radiusX = centerX - ringIndexT * ((size[0] / 2.0f) * (1f - minRadius));
 			result[0] = (float) (Math.Sin(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusX + frame[0] + centerX);
             var centerY = size[1] / 2.0f;
-            var radiusY = centerY - ringIndexT * (size[1] / 2.0f);
-			result[1] = (float) (Math.Cos(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusY + frame[1] + centerY);
+            var radiusY = centerY - ringIndexT * ((size[1] / 2.0f) * (1f - minRadius));
+            result[1] = (float) (Math.Cos(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusY + frame[1] + centerY);
 			return SeriesUtils.Create(series, result);
 		}
 	}

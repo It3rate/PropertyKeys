@@ -135,7 +135,7 @@ namespace DataArcs.Components
 
 			        if (this is IDrawable selfDrawable)
 			        {
-				        selfDrawable.DrawAtT(index / (capacity - 1f), this, g);
+				        selfDrawable.DrawAtT(index / (capacity - 0f), this, g);
 			        }
 
 			        if (Graphic is IComposite drawable)
