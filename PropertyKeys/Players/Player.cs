@@ -15,8 +15,10 @@ namespace DataArcs.Players
         private static Player _currentPlayer;
         public static Player GetPlayerById(int id) => _currentPlayer;
 
-	    public static DateTime StartTime { get; }
-	    static Player() { StartTime = DateTime.Now;}
+        private static DateTime _pauseTime;
+        private static TimeSpan _delayTime = new TimeSpan(0);
+        public static DateTime StartTime { get; private set; }
+        static Player() { StartTime = DateTime.Now;}
 
 	    private readonly Dictionary<int, IComposite> _allComposites = new Dictionary<int, IComposite>();
 
@@ -52,46 +54,40 @@ namespace DataArcs.Players
 			_display.Paint += OnDraw;
         }
 
-        private float t = 0;
+        //private float t = 0;
         private void Tick(object sender, ElapsedEventArgs e)
         {
-            _currentTime = e.SignalTime - StartTime;
-
-
-            for (int i = 0; i < _toRemoveActive.Count; i++)
+            if (!_isPaused)
             {
-	            _activeElements.Remove(_toRemoveActive[i]);
+
+                for (int i = 0; i < _toRemoveActive.Count; i++)
+                {
+                    _activeElements.Remove(_toRemoveActive[i]);
+                }
+                for (int i = 0; i < _toDestroy.Count; i++)
+                {
+                    _activeElements.Remove(_toDestroy[i]);
+                    _allComposites.Remove(_toDestroy[i]);
+                }
+
+                foreach (var item in _toAddActive)
+                {
+                    _activeElements.Add(item.Key, item.Value);
+                }
+                _toAddActive.Clear();
+                _toRemoveActive.Clear();
+                _toDestroy.Clear();
+
+                _currentTime = e.SignalTime - (StartTime + _delayTime);
+                float dt = (float)(_currentTime - _lastTime).TotalMilliseconds;
+                foreach (var element in _activeElements.Values)
+                {
+                    element.Update(CurrentMs, dt);
+                }
+                _display.Invalidate();
+
+                _lastTime = _currentTime;
             }
-			for (int i = 0; i < _toDestroy.Count; i++)
-			{
-				_activeElements.Remove(_toDestroy[i]);
-                _allComposites.Remove(_toDestroy[i]);
-			}
-
-			foreach (var item in _toAddActive)
-			{
-				_activeElements.Add(item.Key, item.Value);
-			}
-			_toAddActive.Clear();
-			_toRemoveActive.Clear();
-			_toDestroy.Clear();
-
-            t += 0.01f;
-            var floorT = (int)t;
-            float time = t - floorT;
-            if (floorT % 2 == 0)
-            {
-	            time = 1.0f - time;
-            }
-
-            float dt = (float) (_currentTime - _lastTime).TotalMilliseconds;
-            foreach (var element in _activeElements.Values)
-            {
-	            element.Update(CurrentMs, dt);
-            }
-	        _display.Invalidate();
-
-	        _lastTime = _currentTime;
         }
 
         private void OnDraw(object sender, PaintEventArgs e)
@@ -131,6 +127,20 @@ namespace DataArcs.Players
         {
             Clear();
 	        _toDestroy.AddRange(_allComposites.Keys);
+        }
+
+        private bool _isPaused;
+        public void OnPause(object sender, EventArgs e)
+        {
+            _isPaused = !_isPaused;
+            if (_isPaused)
+            {
+                _pauseTime = DateTime.Now;
+            }
+            else
+            {
+                _delayTime += DateTime.Now - _pauseTime;
+            }
         }
 
     }

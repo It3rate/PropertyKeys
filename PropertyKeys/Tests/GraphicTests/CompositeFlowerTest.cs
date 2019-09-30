@@ -12,6 +12,8 @@ namespace DataArcs.Tests.GraphicTests
     public class CompositeFlowerTest : ITestScreen
     {
         private readonly Player _player;
+        int groupCount = 7;
+        int starCount = 5;
 
         public CompositeFlowerTest(Player player)
         {
@@ -42,10 +44,10 @@ namespace DataArcs.Tests.GraphicTests
         public IComposite GetComposite0()
         {
 	        var composite = new Composite();
-            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(6));
+            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(15));
 
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f).Store);
-            Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] {6}, ls));
+            Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] { 10,5 }));
             composite.AddProperty(PropertyId.Location, loc);
 
 	        var graphic = GetRing();
@@ -74,12 +76,11 @@ namespace DataArcs.Tests.GraphicTests
         public DrawableComposite GetRing()
         {
             var composite = new DrawableComposite();
-
-            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(5));
+            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(starCount));
             float r = 30f;
             float r2 = 15f;
 
-            var ringSampler = new RingSampler(new int[] { 5 });
+            var ringSampler = new RingSampler(new int[] {starCount});
             
             // Link a custom property and multiply to generate an animated scaling transform.
 			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
@@ -106,7 +107,7 @@ namespace DataArcs.Tests.GraphicTests
 
         private static BlendStore GetBlendColor()
         {
-            var start = new float[] { 0.5f, 0.1f, 0.2f,  1f, 1f, 0,      0, 0.15f, 1f,     0, 0.5f, 0.1f };
+            var start = new float[] { 0.5f, 0.1f, 0.2f,  .9f, .5f, 0,      0, 0.15f, 1f,     0, 0.5f, 0.1f };
             var end = new float[] { 0, 0.2f, 0.7f,       0.8f, 0, 0.3f,  0.7f, 1f, 0.1f,   0.4f, 0, 1f };
             var colorStartStore = new Store(new FloatSeries(3, start));
             var colorEndStore = new Store(new FloatSeries(3, end));

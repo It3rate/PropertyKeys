@@ -45,7 +45,9 @@ namespace DataArcs.Stores
         }
 
         public override Series GetValuesAtIndex(int index)
-        {
+        { 
+            // TODO: can't just pass this in because capacity may mean row capacity.
+            // t needs to be a series always, and can get multi dim t from sampler.
             return GetValuesAtT(index / (Capacity - 1f));
         }
 

@@ -26,7 +26,8 @@ namespace DataArcs
 
 	    private Player _player;
 	    private ITestScreen _testScreen;
-	    private Button _b0;
+        private Button _b0;
+        private Button _bPause;
 
         private static void Main(string[] args)
 		{
@@ -43,8 +44,14 @@ namespace DataArcs
             _b0 = new Button();
             _b0.Text = "Next";
             _b0.Click += B0_Click;
-			_b0.Location = new Point(700, 10);
+            _b0.Location = new Point(700, 10);
             Controls.Add(_b0);
+
+            _bPause = new Button();
+            _bPause.Text = "Pause";
+            _bPause.Location = new Point(700, 60);
+            Controls.Add(_bPause);
+
             _ = Execute(null, 50);
         }
 
@@ -53,6 +60,7 @@ namespace DataArcs
             await Task.Delay(timeoutInMilliseconds);
             _b0.Invalidate();
             _player = new Player(this);
+            _bPause.Click += _player.OnPause;
             NextTest();
         }
 
@@ -83,8 +91,9 @@ namespace DataArcs
 
         private void B0_Click(object sender, EventArgs e)
         {
-	        NextTest();
+            NextTest();
         }
+
 
     }
 }
