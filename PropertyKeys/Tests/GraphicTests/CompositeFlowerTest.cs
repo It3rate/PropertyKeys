@@ -23,9 +23,13 @@ namespace DataArcs.Tests.GraphicTests
         public void NextVersion()
         {
             CreateTimer();
-	        IComposite comp = GetComposite0();
-	        //IComposite comp = GetRing();
+            IComposite comp = GetComposite0();
+            IComposite hex = GetHex();
+            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Replace, CombineTarget.T);
+            var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 6000, easeStore);
+            //IComposite comp = GetRing();
             _player.AddActiveElement(comp);
+           // _player.AddActiveElement(blend);
             if (comp is BlendTransition bt)
             {
 	            bt.EndTransitionEvent += CompOnEndTransitionEvent;
@@ -76,11 +80,11 @@ namespace DataArcs.Tests.GraphicTests
         public DrawableComposite GetRing()
         {
             var composite = new DrawableComposite();
-            starCount = 15;
+            starCount = 10;// 22;
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(starCount));
             float r = 30f;
             float r2 = 15f;
-            var ringSampler = new RingSampler(new int[] {7,4,0,4});
+            var ringSampler = new RingSampler(new int[] { 6, 3, 1 });// 7,6,5,4});
             
             // Link a custom property and multiply to generate an animated scaling transform.
 			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
@@ -88,7 +92,7 @@ namespace DataArcs.Tests.GraphicTests
             var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, locStore);
             composite.AddProperty(PropertyId.Location, loc);
 
-            composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 4f, 4f)));// 12f, 12f)));
+            composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
 
             BlendStore blendColors = GetBlendColor();
@@ -105,6 +109,18 @@ namespace DataArcs.Tests.GraphicTests
             return composite;
         }
 
+        public Composite GetHex()
+        {
+            var composite = new Composite();
+
+            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(56));
+            Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
+            composite.AddProperty(PropertyId.Location, loc);
+            composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 1f, 0.1f).Store);
+            composite.Graphic = new PolyShape();
+
+            return composite;
+        }
         private static BlendStore GetBlendColor()
         {
             var start = new float[] { 0.5f, 0.1f, 0.2f,  .9f, .5f, 0,      0, 0.15f, 1f,     0, 0.5f, 0.1f };
