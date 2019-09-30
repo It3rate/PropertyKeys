@@ -28,8 +28,9 @@ namespace DataArcs.Tests.GraphicTests
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Replace, CombineTarget.T);
             var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 6000, easeStore);
             //IComposite comp = GetRing();
-            _player.AddActiveElement(comp);
-           // _player.AddActiveElement(blend);
+            //_player.AddActiveElement(comp);
+            //_player.AddActiveElement(hex);
+            _player.AddActiveElement(blend);
             if (comp is BlendTransition bt)
             {
 	            bt.EndTransitionEvent += CompOnEndTransitionEvent;
@@ -111,12 +112,14 @@ namespace DataArcs.Tests.GraphicTests
 
         public Composite GetHex()
         {
-            var composite = new Composite();
+            var composite = new DrawableComposite();
 
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(56));
             Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
             composite.AddProperty(PropertyId.Location, loc);
-            composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 1f, 0.1f).Store);
+            composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, .5f, 0.1f).Store);
+            composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));
+            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
             composite.Graphic = new PolyShape();
 
             return composite;
