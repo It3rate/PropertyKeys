@@ -18,9 +18,9 @@ namespace DataArcs.Components
         private static int _idCounter = 1;
 
         private readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
+        private readonly List<IComposite> _children = new List<IComposite>();
         public int CompositeId { get; }
         public float InputT { get; set; }
-        public IDrawable Graphic { get; set; }
         public IComposite Parent { get; set; }
         private IStore _items;
         public IStore Items => _items ?? GetStore(PropertyId.Items);
@@ -45,9 +45,12 @@ namespace DataArcs.Components
             get
             {
                 int result = (_items?.Capacity ?? 0);
-                if (Graphic is IComposite comp)
+                foreach (var child in _children)
                 {
-                    result += comp.TotalItemCount;
+                    if (child is IComposite comp)
+                    {
+                        result += comp.TotalItemCount;
+                    }
                 }
                 return result;
             }
@@ -83,6 +86,16 @@ namespace DataArcs.Components
         {
             _stores.Remove(id);
         }
+
+        public void AddChild(IComposite child)
+        {
+            _children.Add(child);
+        }
+        public void RemoveChild(IComposite child)
+        {
+            _children.Remove(child);
+        }
+
         public virtual IStore GetStore(PropertyId propertyId)
         {
             _stores.TryGetValue(propertyId, out var result);
@@ -154,17 +167,20 @@ namespace DataArcs.Components
 			        var scale = 1f; // + it * 0.8f;
 			        g.ScaleTransform(scale, scale);
 			        g.TranslateTransform(v.X / scale, v.Y / scale);
-
+               
 			        if (this is IDrawable selfDrawable)
 			        {
 				        selfDrawable.DrawAtT(index / (capacity - 0f), this, g);
-			        }
+                    }
 
-			        if (Graphic is IComposite drawable)
-			        {
-				        drawable.Draw(this, g); //DrawAtIndex(index, capacity, graphic, g);
-			        }
-
+                    foreach (var child in _children)
+                    {
+                        if (child is IComposite drawable)
+                        {
+                            drawable.Draw(this, g);
+                        }
+                    }
+                    
 			        g.Restore(state);
 		        }
 	        }

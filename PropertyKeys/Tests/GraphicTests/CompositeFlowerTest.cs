@@ -28,9 +28,9 @@ namespace DataArcs.Tests.GraphicTests
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Replace, CombineTarget.T);
             var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 6000, easeStore);
             //IComposite comp = GetRing();
-            //_player.AddActiveElement(comp);
+            _player.AddActiveElement(comp);
             //_player.AddActiveElement(hex);
-            _player.AddActiveElement(blend);
+            //_player.AddActiveElement(blend);
             if (comp is BlendTransition bt)
             {
 	            bt.EndTransitionEvent += CompOnEndTransitionEvent;
@@ -48,15 +48,16 @@ namespace DataArcs.Tests.GraphicTests
 
         public IComposite GetComposite0()
         {
-	        var composite = new Composite(Store.CreateItemStore(groupCount));
+	        var composite = new DrawableComposite(Store.CreateItemStore(groupCount));
 
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f).Store);
             Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] { groupCount }, ls));
             composite.AddProperty(PropertyId.Location, loc);
 
-	        var graphic = GetRing();
-	        composite.Graphic = graphic;
-	        graphic.Parent = composite;
+	        var flower = GetRing();
+	        composite.AddChild(flower);
+            composite.Renderer = flower.Renderer;
+	        flower.Parent = composite;
 
             return composite;
         }
@@ -104,7 +105,7 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Orientation, ls);
             composite.AddProperty(PropertyId.Starness, ls);
 
-            composite.Graphic = new PolyShape();
+            composite.Renderer = new PolyShape();
 
             return composite;
         }
@@ -118,7 +119,7 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, .5f, 0.1f).Store);
             composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
-            composite.Graphic = new PolyShape();
+            composite.Renderer = new PolyShape();
 
             return composite;
         }

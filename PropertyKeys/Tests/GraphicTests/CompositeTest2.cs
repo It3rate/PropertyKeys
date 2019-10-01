@@ -39,7 +39,7 @@ namespace DataArcs.Tests.GraphicTests
 
         public Composite GetComposite0()
         {
-            var composite = new Composite(Store.CreateItemStore(56));
+            var composite = new DrawableComposite(Store.CreateItemStore(56));
             
             Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
             composite.AddProperty(PropertyId.Location, loc);
@@ -72,11 +72,11 @@ namespace DataArcs.Tests.GraphicTests
             return result;
         }
 
-        private static void AddGraphic(Composite composite)
+        private static void AddGraphic(DrawableComposite composite)
         {
 	        composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 10f, 10f).Store);
 	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 8).Store);
-            composite.Graphic = new PolyShape();
+            composite.Renderer = new PolyShape();
 
             composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.5f, 0, 0, 0f, 0, 0.5f).Store);
             composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, .2f, 5f, .2f).Store);

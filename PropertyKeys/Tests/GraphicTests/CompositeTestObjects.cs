@@ -109,7 +109,7 @@ namespace DataArcs.Tests.GraphicTests
             var cols = 15;
             var rows = 10;
 
-	        var composite = new Composite(Store.CreateItemStore(rows * cols));
+	        var composite = new DrawableComposite(Store.CreateItemStore(rows * cols));
             AddGraphic(composite);
             AddColor(composite);
 
@@ -149,7 +149,7 @@ namespace DataArcs.Tests.GraphicTests
         public static BlendTransition GetTest2(float delay, float startTime, float duration)
         {
             const int count = 150;
-            var composite = new Composite(Store.CreateItemStore(count));
+            var composite = new DrawableComposite(Store.CreateItemStore(count));
             AddGraphic(composite);
             AddColor(composite);
 
@@ -174,7 +174,7 @@ namespace DataArcs.Tests.GraphicTests
         public static BlendTransition GetTest3(float delay, float startTime, float duration)
         {
             Store items = Store.CreateItemStore(150);
-            var startComp = new Composite(new BlendStore(items));
+            var startComp = new DrawableComposite(new BlendStore(items));
             AddGraphic(startComp);
             AddColor(startComp);
 			
@@ -208,13 +208,13 @@ namespace DataArcs.Tests.GraphicTests
             return new BlendTransition(startComp, endComp, delay, startTime, duration, easeStore);
         }
 
-        private static void AddGraphic(Composite composite)
+        private static void AddGraphic(DrawableComposite composite)
         {
 	        composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(1, 10f, 20f, 10f) ));
 	        composite.AddProperty(PropertyId.PointCount, new FloatSeries(1, new float[] { 6f, 9f, 6f }).CreateLinearStore(3));
 	        composite.AddProperty(PropertyId.Starness, new Store(new FloatSeries(1,  0, -0.3f, 0) ));
 	        composite.AddProperty(PropertyId.Orientation, new Store(new FloatSeries(1, 0.3f, 1f / 12f, 0.3f) ));
-            composite.Graphic = new PolyShape();
+            composite.Renderer = new PolyShape();
         }
 
         private static void AddColor(Composite composite)

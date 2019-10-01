@@ -27,18 +27,11 @@ namespace DataArcs.Components.Transitions
 	        End = end;
 	        GenerateBlends(); // eventually immutable after creation, so no new blends
         }
-
-        //public BlendTransition(IComposite start, IComposite end, Series delay, float startTime, Series duration) :
-        //    base(delay, startTime, duration, easing)
-        //{
-	       // Start = start;
-	       // End = end;
-	       // GenerateBlends();
-        //}
-
+        
         public void GenerateBlends()
         {
-	        Graphic = Start.Graphic;
+            // todo: render children maps from subcollection to subcollection as needed.
+            Renderer = (Start is IDrawable) ? ((IDrawable)Start).Renderer : null;
 
             _blends.Clear();
             HashSet<PropertyId> commonKeys = new HashSet<PropertyId>();

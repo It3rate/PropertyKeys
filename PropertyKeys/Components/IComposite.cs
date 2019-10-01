@@ -14,7 +14,6 @@ namespace DataArcs.Components
 	{
 		int CompositeId { get; }
 		float InputT { get; set; }
-		IDrawable Graphic { get; set; }
         IStore Items { get; }
         int TotalItemCount { get; }
 
@@ -29,7 +28,10 @@ namespace DataArcs.Components
         IStore GetStore(PropertyId propertyId);
 		void GetDefinedStores(HashSet<PropertyId> ids);
 
-		void Update(float currentTime, float deltaTime);
+        void AddChild(IComposite child);
+        void RemoveChild(IComposite child);
+
+        void Update(float currentTime, float deltaTime);
 
 		Series GetSeriesAtT(PropertyId propertyId, float t);
 		Series GetSeriesAtIndex(PropertyId propertyId, int index);
