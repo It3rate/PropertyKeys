@@ -182,5 +182,8 @@ namespace DataArcs.SeriesData
 			IntSeries result = new IntSeries(VectorSize, IntData);
 			return result;
 		}
+
+        private static readonly IntSeries _empty = new IntSeries(1,0);
+        public static IntSeries Empty => _empty;
     }
 }

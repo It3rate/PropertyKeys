@@ -26,7 +26,7 @@ namespace DataArcs.Components.Transitions
         public event TransitionEventHandler StepTransitionEvent;
         public event TransitionEventHandler EndTransitionEvent;
 
-        public Animation(float delay = 0, float startTime = -1, float duration = 0, Store easing = null)
+        public Animation(float delay = 0, float startTime = -1, float duration = 0, Store easing = null):base(null)
         {
             _delay = new FloatSeries(1, delay);
             _startTime = startTime < 0 ? (float)(DateTime.Now - Player.StartTime).TotalMilliseconds : startTime;

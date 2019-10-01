@@ -22,20 +22,42 @@ namespace DataArcs.Components
         public float InputT { get; set; }
         public IDrawable Graphic { get; set; }
         public IComposite Parent { get; set; }
+        private IStore _items;
+        public IStore Items => _items ?? GetStore(PropertyId.Items);
 
-        protected Composite()
+        protected Composite(IStore items)
         {
+            if (items != null)
+            {
+                AddProperty(PropertyId.Items, items);
+            }
             CompositeId = _idCounter++;
             Player.GetPlayerById(0).AddCompositeToLibrary(this);
         }
 
-        public Composite(IComposite parent = null) : this()
+        public Composite(IStore items, IComposite parent = null) : this(items)
         {
             Parent = parent;
         }
 
+        public int TotalItemCount
+        {
+            get
+            {
+                int result = (_items?.Capacity ?? 0);
+                if (Graphic is IComposite comp)
+                {
+                    result += comp.TotalItemCount;
+                }
+                return result;
+            }
+        }
         public virtual void AddProperty(PropertyId id, IStore store)
         {
+            if(id == PropertyId.Items)
+            {
+                _items = store;
+            }
             _stores[id] = store;
         }
         public virtual void AppendProperty(PropertyId id, IStore store)
@@ -114,7 +136,7 @@ namespace DataArcs.Components
 
         public virtual IComposite CreateChild()
         {
-            return new Composite(this);
+            return new Composite(null, this);
         }
 
         public virtual void Draw(IComposite composite, Graphics g)

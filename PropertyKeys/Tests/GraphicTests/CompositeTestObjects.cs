@@ -106,13 +106,13 @@ namespace DataArcs.Tests.GraphicTests
 
         public static BlendTransition GetTest0(float delay, float startTime, float duration)
         {
-	        var composite = new Composite();
+            var cols = 15;
+            var rows = 10;
+
+	        var composite = new Composite(Store.CreateItemStore(rows * cols));
             AddGraphic(composite);
             AddColor(composite);
 
-            var cols = 15;
-            var rows = 10;
-            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(rows * cols));
 
             var totalWidth = 500f;
             float growth = 60;
@@ -148,12 +148,12 @@ namespace DataArcs.Tests.GraphicTests
 
         public static BlendTransition GetTest2(float delay, float startTime, float duration)
         {
-            var composite = new Composite();
+            const int count = 150;
+            var composite = new Composite(Store.CreateItemStore(count));
             AddGraphic(composite);
             AddColor(composite);
 
             composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 6f, 6f, 9f, 9f, 6f, 6f).Store);
-            const int count = 150;
             Series maxMinA = new FloatSeries(2, 200f, 100f, 600f, 300f); //0, 0, 800f, 400f);
             Series maxMinB = new FloatSeries(2, 200f, 100f, 600f, 300f);
             var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).CreateLinearStore(count);
@@ -173,14 +173,13 @@ namespace DataArcs.Tests.GraphicTests
         }
         public static BlendTransition GetTest3(float delay, float startTime, float duration)
         {
-            var startComp = new Composite();
+            Store items = Store.CreateItemStore(150);
+            var startComp = new Composite(new BlendStore(items));
             AddGraphic(startComp);
             AddColor(startComp);
 			
-            Store items = Store.CreateItemStore(150);
             // items.BakeData();
             //SeriesUtils.Shuffle(items.GetFullSeries(0));
-            startComp.AddProperty(PropertyId.Items, new BlendStore(items));
 
             var pointArray = new FloatSeries(1, 8f, 5f, 5f, 8f);
             startComp.AddProperty(PropertyId.PointCount, new Store(pointArray, new Easing(EasingType.EaseInOut)));

@@ -15,12 +15,15 @@ namespace DataArcs.Components
 		int CompositeId { get; }
 		float InputT { get; set; }
 		IDrawable Graphic { get; set; }
-		/// <summary>
-		/// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
-		/// </summary>
-		IComposite Parent { get; set; }
+        IStore Items { get; }
+        int TotalItemCount { get; }
 
-		void AddProperty(PropertyId id, IStore store);
+        /// <summary>
+        /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
+        /// </summary>
+        IComposite Parent { get; set; }
+
+        void AddProperty(PropertyId id, IStore store);
 		void AppendProperty(PropertyId id, IStore store);
 		void RemoveProperty(PropertyId id, BlendStore store);
         IStore GetStore(PropertyId propertyId);

@@ -15,10 +15,13 @@ namespace DataArcs.Components
 {
     public class DrawableComposite : Composite, IDrawable
     {
+        public DrawableComposite(IStore items = null) : base(items)
+        {
 
+        }
 	    public void DrawAtT(float t, IComposite composite, Graphics g)
 	    {
-		    Graphic.DrawAtT(t, this, g);
+		    Graphic?.DrawAtT(t, this, g);
         }
     }
 }

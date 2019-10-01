@@ -48,8 +48,7 @@ namespace DataArcs.Tests.GraphicTests
 
         public IComposite GetComposite0()
         {
-	        var composite = new Composite();
-            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(groupCount));
+	        var composite = new Composite(Store.CreateItemStore(groupCount));
 
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f).Store);
             Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] { groupCount }, ls));
@@ -112,10 +111,9 @@ namespace DataArcs.Tests.GraphicTests
 
         public Composite GetHex()
         {
-            var composite = new DrawableComposite();
-
-            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(56));
-            Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
+            var composite = new DrawableComposite(Store.CreateItemStore(70));
+            
+            Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 10 }));
             composite.AddProperty(PropertyId.Location, loc);
             composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, .5f, 0.1f).Store);
             composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));

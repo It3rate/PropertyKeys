@@ -39,9 +39,8 @@ namespace DataArcs.Tests.GraphicTests
 
         public Composite GetComposite0()
         {
-            var composite = new Composite();
-
-            composite.AddProperty(PropertyId.Items, Store.CreateItemStore(56));
+            var composite = new Composite(Store.CreateItemStore(56));
+            
             Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
             composite.AddProperty(PropertyId.Location, loc);
             composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 1f, 0.1f).Store);

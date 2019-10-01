@@ -26,6 +26,8 @@ namespace DataArcs.Players
         private readonly Dictionary<int, IComposite> _toAddActive = new Dictionary<int, IComposite>();
         private readonly List<int> _toRemoveActive = new List<int>();
         private readonly List<int> _toDestroy = new List<int>();
+        private bool _needsDestroy = false;
+        private bool _canDestroy = true;
 
         private readonly Form _display;
         private Timer _timer;
@@ -64,10 +66,14 @@ namespace DataArcs.Players
                 {
                     _activeElements.Remove(_toRemoveActive[i]);
                 }
-                for (int i = 0; i < _toDestroy.Count; i++)
+                if (_canDestroy)
                 {
-                    _activeElements.Remove(_toDestroy[i]);
-                    _allComposites.Remove(_toDestroy[i]);
+                    for (int i = 0; i < _toDestroy.Count; i++)
+                    {
+                        _activeElements.Remove(_toDestroy[i]);
+                        _allComposites.Remove(_toDestroy[i]);
+                    }
+                    _needsDestroy = false;
                 }
 
                 foreach (var item in _toAddActive)
@@ -92,12 +98,19 @@ namespace DataArcs.Players
 
         private void OnDraw(object sender, PaintEventArgs e)
         {
-	        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            var elements = new List<IComposite>(_activeElements.Values);
-	        foreach (var element in elements)
-	        {
-		        element.Draw(element, e.Graphics);
-	        }
+            if (!_needsDestroy)
+            {
+                _canDestroy = false;
+                {
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    var elements = new List<IComposite>(_activeElements.Values);
+                    foreach (var element in elements)
+                    {
+                        element.Draw(element, e.Graphics);
+                    }
+                }
+            }
+            _canDestroy = true;
         }
 
         public void AddActiveElement(IComposite composite) => _toAddActive.Add(composite.CompositeId, composite);
@@ -125,6 +138,7 @@ namespace DataArcs.Players
         }
         public void Reset()
         {
+            _needsDestroy = false;
             Clear();
 	        _toDestroy.AddRange(_allComposites.Keys);
         }
