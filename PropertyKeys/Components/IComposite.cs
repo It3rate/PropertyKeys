@@ -16,6 +16,7 @@ namespace DataArcs.Components
 		float InputT { get; set; }
         IStore Items { get; }
         int TotalItemCount { get; }
+        int[] ChildCounts { get; }
 
         /// <summary>
         /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.

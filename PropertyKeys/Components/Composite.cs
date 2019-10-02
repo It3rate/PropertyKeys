@@ -47,14 +47,25 @@ namespace DataArcs.Components
                 int result = (_items?.Capacity ?? 0);
                 foreach (var child in _children)
                 {
-                    if (child is IComposite comp)
-                    {
-                        result += comp.TotalItemCount;
-                    }
+                    result += child.TotalItemCount;
                 }
                 return result;
             }
         }
+
+        public int[] ChildCounts
+        {
+            get
+            {
+                int[] result = new int[_children.Count];
+                for (int i = 0; i < _children.Count; i++)
+                {
+                    result[i] = _children[i].TotalItemCount;
+                }
+                return result;
+            }
+        }
+
         public virtual void AddProperty(PropertyId id, IStore store)
         {
             if(id == PropertyId.Items)
@@ -175,10 +186,7 @@ namespace DataArcs.Components
 
                     foreach (var child in _children)
                     {
-                        if (child is IComposite drawable)
-                        {
-                            drawable.Draw(this, g);
-                        }
+                        child.Draw(this, g);
                     }
                     
 			        g.Restore(state);
