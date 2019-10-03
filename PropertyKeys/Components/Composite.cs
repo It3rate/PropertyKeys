@@ -20,7 +20,7 @@ namespace DataArcs.Components
         private readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
         private readonly List<IComposite> _children = new List<IComposite>();
         public int CompositeId { get; }
-        public float InputT { get; set; }
+        public float InputT { get; set; } // todo: this should probably be a store property on a collection for per element, and a single base timespan on a transition.
         public IComposite Parent { get; set; }
         private IStore _items;
         public IStore Items => _items ?? GetStore(PropertyId.Items);

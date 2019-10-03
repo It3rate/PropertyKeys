@@ -31,6 +31,7 @@ namespace DataArcs.Components.Transitions
         public void GenerateBlends()
         {
             // todo: render children maps from subcollection to subcollection as needed.
+            // to do this, don't precompute blends as the composite target may change as t drifts over the child elements.
             Renderer = (Start is IDrawable) ? ((IDrawable)Start).Renderer : null;
 
             _blends.Clear();
