@@ -4,12 +4,12 @@ using DataArcs.Stores;
 
 namespace DataArcs.Commands
 {
-	public class InterpolationCommand : CommandBase
+	public class StoreInterpolationCommand : CommandBase
 	{
 		public readonly Store[] Stores;
 		public readonly EasingType EasingType;
 
-		public InterpolationCommand(Store[] stores, EasingType easingType)
+		public StoreInterpolationCommand(Store[] stores, EasingType easingType)
 		{
 			Stores = stores;
 			EasingType = easingType;

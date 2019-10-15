@@ -106,7 +106,7 @@ namespace DataArcs.Players
                     var elements = new List<IComposite>(_activeElements.Values);
                     foreach (var element in elements)
                     {
-                        element.Draw(element, e.Graphics);
+                        element.Draw(element, e.Graphics, new Dictionary<PropertyId, SeriesData.Series>());
                     }
                 }
             }

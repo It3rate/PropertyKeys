@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using DataArcs.Adapters;
@@ -7,6 +8,7 @@ using DataArcs.Adapters.Color;
 using DataArcs.Adapters.Geometry;
 using DataArcs.Graphic;
 using DataArcs.Players;
+using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
 
@@ -24,6 +26,9 @@ namespace DataArcs.Components
         public IComposite Parent { get; set; }
         private IStore _items;
         public IStore Items => _items ?? GetStore(PropertyId.Items);
+        public int Capacity => GetStore(PropertyId.Location)?.Sampler?.Capacity ?? Items.Capacity;
+        public IComposite Background { get; set; }
+        public string Name { get; set; }
 
         protected Composite(IStore items)
         {
@@ -44,23 +49,39 @@ namespace DataArcs.Components
         {
             get
             {
-                int result = (_items?.Capacity ?? 0);
-                foreach (var child in _children)
+                int result = 0;
+                if (_children.Count > 0)
                 {
-                    result += child.TotalItemCount;
+                    for (int i = 0; i < Capacity; i++)
+                    {
+                        int index = Math.Min(_children.Count - 1, i);
+                        result += _children[index].TotalItemCount;
+                    }
+                }
+                else
+                {
+                    result = _items?.Capacity ?? 0;
                 }
                 return result;
             }
         }
 
-        public int[] ChildCounts
+        public virtual int[] ChildCounts
         {
             get
             {
-                int[] result = new int[_children.Count];
-                for (int i = 0; i < _children.Count; i++)
+                int[] result;
+                if (_children.Count == 0) {
+                    result = new int[] { Capacity };
+                }
+                else
                 {
-                    result[i] = _children[i].TotalItemCount;
+                    result = new int[Capacity];
+                    for (int i = 0; i < Capacity; i++)
+                    {
+                        int index = Math.Max(0, Math.Min(_children.Count - 1, i));
+                        result[i] = _children[index].TotalItemCount;
+                    }
                 }
                 return result;
             }
@@ -100,6 +121,7 @@ namespace DataArcs.Components
 
         public void AddChild(IComposite child)
         {
+            child.Parent = this;
             _children.Add(child);
         }
         public void RemoveChild(IComposite child)
@@ -163,7 +185,7 @@ namespace DataArcs.Components
             return new Composite(null, this);
         }
 
-        public virtual void Draw(IComposite composite, Graphics g)
+        public virtual void Draw(IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict)
         {
 	        IStore items = GetStore(PropertyId.Items) ?? GetStore(PropertyId.Location);
 	        if (items != null)
@@ -171,43 +193,106 @@ namespace DataArcs.Components
 		        int capacity = items.Capacity;
 		        for (int i = 0; i < capacity; i++)
 		        {
-			        int index = GetStore(PropertyId.Items)?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
-			        Series v = GetSeriesAtIndex(PropertyId.Location, index);
+                    int index = i;// GetStore(PropertyId.Items)?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
+			        Series v = GetSeriesAtIndex(PropertyId.Location, index, GetValueOrNull(dict, PropertyId.Location));
 
-			        var state = g.Save();
-			        var scale = 1f; // + it * 0.8f;
-			        g.ScaleTransform(scale, scale);
-			        g.TranslateTransform(v.X / scale, v.Y / scale);
+                    // todo: swicth to matrix, child determines multiply add etc, get values from parents each call
                
+                    Series temp = GetValueOrNull(dict, PropertyId.Location);
+                    dict[PropertyId.Location] = v;
 			        if (this is IDrawable selfDrawable)
 			        {
-				        selfDrawable.DrawAtT(index / (capacity - 0f), this, g);
+                        var state = g.Save();
+			            var scale = 1f; // + it * 0.8f;
+			            //g.ScaleTransform(scale, scale);
+			            g.TranslateTransform(v.X / scale, v.Y / scale);
+				        selfDrawable.DrawAtT(index / (capacity - 0f), this, g, dict);
+                        g.Restore(state);
                     }
 
                     foreach (var child in _children)
                     {
-                        child.Draw(this, g);
+                        child.Draw(this, g, dict);
                     }
-                    
-			        g.Restore(state);
-		        }
+                    dict[PropertyId.Location] = temp;
+                }
 	        }
         }
 
-        public virtual Series GetSeriesAtT(PropertyId propertyId, float t)
+        protected Series GetValueOrNull(Dictionary<PropertyId, Series> dict, PropertyId propertyId)
+        {
+            return dict.ContainsKey(propertyId) ? dict[propertyId] : null;
+        }
+
+        public virtual Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             var store = GetStore(propertyId);
-            return store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
+            var result = store.GetValuesAtT(t);
+            if(parentSeries != null)
+            {
+                if (result != null)
+                {
+                    result.CombineInto(parentSeries, store.CombineFunction, t);
+                }
+                else
+                {
+                    result = parentSeries;
+                }
+            }
+            return result;
+            //return store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
         }
-        public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index)
+        public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
         {
             var store = GetStore(propertyId);
-            return store != null ? store.GetValuesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
+            var result = store.GetValuesAtIndex(index);
+            if (parentSeries != null)
+            {
+                if (result != null)
+                {
+                    result.CombineInto(parentSeries, store.CombineFunction);
+                }
+                else
+                {
+                    result = parentSeries;
+                }
+            }
+            return result;
+            //var store = GetStore(propertyId);
+            //return store != null ? store.GetValuesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
         }
+
         public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
         {
             var store = GetStore(propertyId);
             return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
+        }
+
+        public virtual Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        {
+            Series result;
+            if (Background == null || Background.Capacity == 0)
+            {
+                result = GetSeriesAtT(propertyId, t, parentSeries);
+            }
+            else
+            {
+                SamplerUtils.GetJaggedT(ChildCounts, t, out float indexT, out float segmentT);
+                IComposite composite;
+                if (false) // ChildCounts.Length <= 1)
+                {
+                    result = GetSeriesAtT(propertyId, segmentT, parentSeries);
+                }
+                else
+                {
+                    //Debug.WriteLine(indexT + " : " + segmentT);
+                    int index = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
+                    composite = _children[index];
+                    Series val = GetSeriesAtT(propertyId, indexT, parentSeries);
+                    result = composite.GetSeriesAtT(propertyId, segmentT, val);
+                }
+            }
+            return result;
         }
     }
 

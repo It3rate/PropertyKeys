@@ -17,7 +17,6 @@ namespace DataArcs.Stores
 
 		Series GetValuesAtIndex(int index);
 		Series GetValuesAtT(float t);
-        
         ParametricSeries GetSampledTs(float t);
 
         void Update(float deltaTime);

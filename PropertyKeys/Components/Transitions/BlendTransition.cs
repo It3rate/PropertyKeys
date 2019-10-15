@@ -16,16 +16,22 @@ namespace DataArcs.Components.Transitions
     public class BlendTransition : Animation
     {
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
+        private readonly List<PropertyId> _blendProperties = new List<PropertyId>();
 
         public IComposite Start { get; set; }
         public IComposite End { get; set; }
+
+        public int[] StartStrides { get; }
+        public int[] EndStrides { get; }
 
         public BlendTransition(IComposite start, IComposite end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null):
             base(delay, startTime, duration, easing)
         {
 	        Start = start;
 	        End = end;
-	        GenerateBlends(); // eventually immutable after creation, so no new blends
+            StartStrides = start.ChildCounts; // todo:  include own items
+            EndStrides = end.ChildCounts;
+            GenerateBlends(); // eventually immutable after creation, so no new blends
         }
         
         public void GenerateBlends()
@@ -60,15 +66,16 @@ namespace DataArcs.Components.Transitions
                 item.Update(InputT);
             }
         }
-
-        public override Series GetSeriesAtIndex(PropertyId propertyId, int index)
+        public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
         {
+            //float indexT = (index / (Start.Items.Capacity - 1f) + index / (End.Items.Capacity - 1f) ) / 2f;
+            //return GetSeriesAtT(propertyId, indexT);
             Series result;
             if (_blends.ContainsKey(propertyId))
             {
-                result = Start.GetSeriesAtIndex(propertyId, index);
-                Series end = End.GetSeriesAtIndex(propertyId, index);
-
+                result = Start.GetChildSeriesAtT(propertyId, index / (Start.TotalItemCount - 1f), parentSeries);
+                Series end = End.GetChildSeriesAtT(propertyId, index / (End.TotalItemCount - 1f), parentSeries);
+                
                 float indexT = index / (Start.GetStore(propertyId).Capacity - 1f) + InputT; // delay per element.
 
                 float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
@@ -81,13 +88,13 @@ namespace DataArcs.Components.Transitions
             }
             return result;
         }
-        public override Series GetSeriesAtT(PropertyId propertyId, float t)
+        public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
 	        Series result;
 	        if (_blends.ContainsKey(propertyId))
 	        {
-		        result = Start.GetSeriesAtT(propertyId, t);
-		        Series end = End.GetSeriesAtT(propertyId, t);
+		        result = Start.GetSeriesAtT(propertyId, t, parentSeries);
+		        Series end = End.GetSeriesAtT(propertyId, t, parentSeries);
                 //float delT = _delay.GetValueAtT(t).X;
                 //float durT = _duration.GetValueAtT(t).X;
                 //float delRatio = delT / (delT + durT);

@@ -23,14 +23,16 @@ namespace DataArcs.Tests.GraphicTests
         public void NextVersion()
         {
             CreateTimer();
+            IComposite ring = GetRing();
             IComposite comp = GetComposite0();
             IComposite hex = GetHex();
-            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Replace, CombineTarget.T);
-            var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 6000, easeStore);
+            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.Arch), CombineFunction.Replace, CombineTarget.T);
+            var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 10000, easeStore);
             //IComposite comp = GetRing();
-            _player.AddActiveElement(comp);
+            //_player.AddActiveElement(comp);
             //_player.AddActiveElement(hex);
-            //_player.AddActiveElement(blend);
+            //_player.AddActiveElement(ring);
+            _player.AddActiveElement(blend);
             if (comp is BlendTransition bt)
             {
 	            bt.EndTransitionEvent += CompOnEndTransitionEvent;
@@ -55,9 +57,11 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Location, loc);
 
 	        var flower = GetRing();
-	        composite.AddChild(flower);
+	        composite.Background = flower;
             composite.Renderer = flower.Renderer;
-	        flower.Parent = composite;
+	        //flower.Parent = composite;
+            composite.AddChild(flower);
+            composite.Name = "comp0";
 
             return composite;
         }
@@ -85,12 +89,13 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(starCount));
             float r = 30f;
             float r2 = 15f;
-            var ringSampler = new RingSampler(new int[] { 6, 3, 1 });// 7,6,5,4});
+            var ringSampler = new RingSampler(new int[] { 6, 4 });// 7,6,5,4});
             
             // Link a custom property and multiply to generate an animated scaling transform.
 			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
             var locStore = new Store(new FloatSeries(2, -r, -r, r, r, -r2, -r2, r2, r2), ringSampler, CombineFunction.Multiply);
             var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, locStore);
+            loc.CombineFunction = CombineFunction.Add;
             composite.AddProperty(PropertyId.Location, loc);
 
             composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));
@@ -100,13 +105,14 @@ namespace DataArcs.Tests.GraphicTests
             LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedTCombined, SeriesUtils.X, blendColors);
             composite.AddProperty(PropertyId.FillColor, col);// new FunctionalStore(col, col2));
 
-            var growStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Add);
+            var growStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply);
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, growStore);
             composite.AddProperty(PropertyId.Orientation, ls);
             composite.AddProperty(PropertyId.Starness, ls);
 
             composite.Renderer = new PolyShape();
 
+            composite.Name = "Ring";
             return composite;
         }
 

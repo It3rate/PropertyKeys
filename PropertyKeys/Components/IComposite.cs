@@ -11,12 +11,15 @@ using DataArcs.Stores;
 namespace DataArcs.Components
 {
 	public interface IComposite
-	{
-		int CompositeId { get; }
-		float InputT { get; set; }
+    {
+        string Name { get; set; }
+        int CompositeId { get; }
+        float InputT { get; set; }
         IStore Items { get; }
+        int Capacity { get; }
         int TotalItemCount { get; }
         int[] ChildCounts { get; }
+        IComposite Background { get; set; }
 
         /// <summary>
         /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
@@ -34,11 +37,12 @@ namespace DataArcs.Components
 
         void Update(float currentTime, float deltaTime);
 
-		Series GetSeriesAtT(PropertyId propertyId, float t);
-		Series GetSeriesAtIndex(PropertyId propertyId, int index);
+		Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
+		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 		ParametricSeries GetSampledT(PropertyId propertyId, float t);
+        Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
 
-		void Draw(IComposite composite, Graphics g);
+        void Draw(IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict);
 
         IComposite CreateChild();
     }

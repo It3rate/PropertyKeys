@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Graphic;
+using DataArcs.SeriesData;
 using DataArcs.Stores;
 
 namespace DataArcs.Components
@@ -12,6 +13,6 @@ namespace DataArcs.Components
 	public interface IDrawable
     {
         IRenderable Renderer { get; set; }
-        void DrawAtT(float t, IComposite composite, Graphics g);
+        void DrawAtT(float t, IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict);
 	}
 }

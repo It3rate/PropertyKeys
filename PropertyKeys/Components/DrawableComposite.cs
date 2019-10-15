@@ -21,7 +21,7 @@ namespace DataArcs.Components
         {
 
         }
-        public void DrawAtT(float t, IComposite composite, Graphics g)
+        public void DrawAtT(float t, IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict)
         {
             BezierSeries bezier = Renderer?.GetDrawableAtT(composite, t);// * composite.CurrentT);
             if(bezier != null)
