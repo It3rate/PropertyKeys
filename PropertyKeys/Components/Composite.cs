@@ -193,7 +193,8 @@ namespace DataArcs.Components
 		        int capacity = items.Capacity;
 		        for (int i = 0; i < capacity; i++)
 		        {
-                    int index = i;// GetStore(PropertyId.Items)?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
+                    int index = i; // GetSeriesAtIndex(PropertyId.Items, i, null)?.IntDataAt(0) ?? i;
+                    //    GetStore(PropertyId.Items)?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
 			        Series v = GetSeriesAtIndex(PropertyId.Location, index, GetValueOrNull(dict, PropertyId.Location));
 
                     // todo: swicth to matrix, child determines multiply add etc, get values from parents each call
@@ -227,7 +228,7 @@ namespace DataArcs.Components
         public virtual Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             var store = GetStore(propertyId);
-            var result = store.GetValuesAtT(t);
+            var result = store?.GetValuesAtT(t);
             if(parentSeries != null)
             {
                 if (result != null)
@@ -271,26 +272,20 @@ namespace DataArcs.Components
         public virtual Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             Series result;
-            if (Background == null || Background.Capacity == 0)
+            SamplerUtils.GetJaggedT(ChildCounts, t, out float indexT, out float segmentT);
+            if (ChildCounts.Length <= 1)
             {
-                result = GetSeriesAtT(propertyId, t, parentSeries);
+                result = GetSeriesAtT(propertyId, segmentT, parentSeries);
             }
             else
             {
-                SamplerUtils.GetJaggedT(ChildCounts, t, out float indexT, out float segmentT);
-                IComposite composite;
-                if (false) // ChildCounts.Length <= 1)
-                {
-                    result = GetSeriesAtT(propertyId, segmentT, parentSeries);
-                }
-                else
-                {
-                    //Debug.WriteLine(indexT + " : " + segmentT);
-                    int index = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
-                    composite = _children[index];
-                    Series val = GetSeriesAtT(propertyId, indexT, parentSeries);
-                    result = composite.GetSeriesAtT(propertyId, segmentT, val);
-                }
+                //Debug.WriteLine(indexT + " : " + segmentT + " :: " + propertyId);
+                int index = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
+                IComposite composite = _children[index];
+                Series val = GetSeriesAtT(propertyId, indexT, parentSeries);
+                int segCount = ChildCounts[(int)(indexT * (ChildCounts.Length - 1f))];
+                float normSeg = segmentT * ((segCount + 1f) / segCount);
+                result = composite.GetSeriesAtT(propertyId, normSeg, val);
             }
             return result;
         }

@@ -73,16 +73,16 @@ namespace DataArcs.Stores
                 result = GetMixStore()?.GetValuesAtT(t);
                 if (result != null)
                 {
-                    Series link = GetLinkedStore()?.GetValuesAtT(curT);
-                    if (link != null)
+                    IStore linkStore = GetLinkedStore();
+                    if (linkStore != null)
                     {
-                        Series linkMapped = SeriesUtils.GetSubseries(SlotMapping, link);
-                        result.CombineInto(linkMapped, CombineFunction, curT);
+                        Series linkMapped = SeriesUtils.GetSubseries(SlotMapping, linkStore.GetValuesAtT(t));
+                        result.CombineInto(linkMapped, CombineFunction, t);
                     }
                 }
                 else
                 {
-                    result = GetLinkedStore()?.GetValuesAtT(curT);
+                    result = GetLinkedStore()?.GetValuesAtT(t);
                 }
             }
             return result;

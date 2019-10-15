@@ -26,8 +26,8 @@ namespace DataArcs.Tests.GraphicTests
             IComposite ring = GetRing();
             IComposite comp = GetComposite0();
             IComposite hex = GetHex();
-            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.Arch), CombineFunction.Replace, CombineTarget.T);
-            var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 10000, easeStore);
+            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
+            var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 4000, easeStore);
             //IComposite comp = GetRing();
             //_player.AddActiveElement(comp);
             //_player.AddActiveElement(hex);
@@ -120,7 +120,7 @@ namespace DataArcs.Tests.GraphicTests
         {
             var composite = new DrawableComposite(Store.CreateItemStore(70));
             
-            Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 10 }));
+            Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 10, 7 }));
             composite.AddProperty(PropertyId.Location, loc);
             composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, .5f, 0.1f).Store);
             composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));

@@ -23,18 +23,17 @@ namespace DataArcs.Components
         }
         public void DrawAtT(float t, IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict)
         {
-            BezierSeries bezier = Renderer?.GetDrawableAtT(composite, t);// * composite.CurrentT);
+            BezierSeries bezier = Renderer?.GetDrawableAtT(composite, t);
             if(bezier != null)
             {
                 GraphicsPath gp = bezier.Path();
-
-                var fillColor = composite.GetStore(PropertyId.FillColor)?.GetValuesAtT(t);
+                var fillColor = composite.GetSeriesAtT(PropertyId.FillColor, t, null);
                 if (fillColor != null)
                 {
                     g.FillPath(new SolidBrush(fillColor.RGB()), gp);
                 }
 
-                var penColor = composite.GetStore(PropertyId.PenColor)?.GetValuesAtT(t);
+                var penColor = composite.GetSeriesAtT(PropertyId.PenColor, t, null); 
                 if (penColor != null)
                 {
                     var penWidth = composite.GetStore(PropertyId.PenWidth)?.GetValuesAtT(t);

@@ -68,15 +68,13 @@ namespace DataArcs.Components.Transitions
         }
         public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
         {
-            //float indexT = (index / (Start.Items.Capacity - 1f) + index / (End.Items.Capacity - 1f) ) / 2f;
-            //return GetSeriesAtT(propertyId, indexT);
             Series result;
             if (_blends.ContainsKey(propertyId))
             {
                 result = Start.GetChildSeriesAtT(propertyId, index / (Start.TotalItemCount - 1f), parentSeries);
                 Series end = End.GetChildSeriesAtT(propertyId, index / (End.TotalItemCount - 1f), parentSeries);
                 
-                float indexT = index / (Start.GetStore(propertyId).Capacity - 1f) + InputT; // delay per element.
+                float indexT = index / (Start.TotalItemCount - 1f) + InputT; // delay per element.
 
                 float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
                 result.InterpolateInto(end, easedT);
@@ -90,24 +88,40 @@ namespace DataArcs.Components.Transitions
         }
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
-	        Series result;
-	        if (_blends.ContainsKey(propertyId))
-	        {
-		        result = Start.GetSeriesAtT(propertyId, t, parentSeries);
-		        Series end = End.GetSeriesAtT(propertyId, t, parentSeries);
-                //float delT = _delay.GetValueAtT(t).X;
-                //float durT = _duration.GetValueAtT(t).X;
-                //float delRatio = delT / (delT + durT);
-                //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
-                float easedT = Easing?.GetValuesAtT(InputT).X ?? InputT;
+            Series result = Start.GetChildSeriesAtT(propertyId, t, parentSeries);
+            if (_blends.ContainsKey(propertyId))
+            {
+                Series end = End.GetChildSeriesAtT(propertyId, t, parentSeries);
+
+                float indexT = t + InputT; // delay per element.
+
+                float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
                 result.InterpolateInto(end, easedT);
             }
-	        else
-	        {
-		        var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
-		        result = store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
+            else if(result == null)
+            {
+                result = End.GetChildSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.GetZeroFloatSeries(1, 0);
             }
-	        return result;
+            return result;
+
+         //   Series result;
+	        //if (_blends.ContainsKey(propertyId))
+	        //{
+		       // result = Start.GetSeriesAtT(propertyId, t, parentSeries);
+		       // Series end = End.GetSeriesAtT(propertyId, t, parentSeries);
+         //       //float delT = _delay.GetValueAtT(t).X;
+         //       //float durT = _duration.GetValueAtT(t).X;
+         //       //float delRatio = delT / (delT + durT);
+         //       //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
+         //       float easedT = Easing?.GetValuesAtT(InputT).X ?? InputT;
+         //       result.InterpolateInto(end, easedT);
+         //   }
+	        //else
+	        //{
+		       // var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
+		       // result = store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
+         //   }
+	        //return result;
         }
 
         public override IStore GetStore(PropertyId propertyId)

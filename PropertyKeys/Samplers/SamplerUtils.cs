@@ -50,37 +50,37 @@ namespace DataArcs.Samplers
             return result;
         }
 
-        public static void GetJaggedT(int[] segments, float t, out float indexT, out float segmentT)
+        public static void GetJaggedT(int[] segments, float t, out float rowIndex, out float segmentT)
         {
             float capacity = (float)segments.Sum();
 
             int index = (int)Math.Round(t * (capacity - 1f));
             float step = 1f / segments[0];
             int nextRow = segments[0];
-            indexT = 0;
+            rowIndex = 0;
             segmentT = 0;
             for (int i = 0; i <= index; i++)
             {
                 if(i >= nextRow)
                 {
-                    indexT += 1;
+                    rowIndex += 1;
                     // accounting for zero length segments used for spacing
-                    while(indexT < segments.Length - 1 && segments[(int)indexT] == 0)
+                    while(rowIndex < segments.Length - 1 && segments[(int)rowIndex] == 0)
                     {
-                        indexT += 1;
+                        rowIndex += 1;
                     }
                     // accounting for potential overflow
-                    int segIndex = Math.Min(segments.Length - 1, (int)indexT);
+                    int segIndex = Math.Min(segments.Length - 1, (int)rowIndex);
                     nextRow += segments[segIndex];
                     step = segments[segIndex] == 0 ? step : 1f / segments[segIndex];
                     segmentT = 0;
                 }
-                else
+                else if(i > 0)
                 {
                     segmentT += step;
                 }
             }
-            indexT = segments.Length > 2 ? indexT / (segments.Length - 1f) : indexT;
+            rowIndex = segments.Length > 2 ? rowIndex / (segments.Length - 1f) : rowIndex;
         }
 
         public static float[] GetStrideTsForT(int virtualCount, int[] strides, float t)

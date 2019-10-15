@@ -47,6 +47,7 @@ namespace DataArcs.Samplers
         private Series GetSeriesSample(Series series, float t)
 		{
 			SamplerUtils.GetJaggedT(RingCounts, t, out var ringIndexT, out var ringT);
+            //Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
             float orientation = 0;
             if (Orientation != null)
             {
