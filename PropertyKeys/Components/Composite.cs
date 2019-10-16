@@ -207,7 +207,7 @@ namespace DataArcs.Components
 			            var scale = 1f; // + it * 0.8f;
 			            //g.ScaleTransform(scale, scale);
 			            g.TranslateTransform(v.X / scale, v.Y / scale);
-				        selfDrawable.DrawAtT(index / (capacity - 0f), this, g, dict);
+				        selfDrawable.DrawAtT(index / (capacity - 1f), this, g, dict);
                         g.Restore(state);
                     }
 
@@ -283,9 +283,10 @@ namespace DataArcs.Components
                 int index = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
                 IComposite composite = _children[index];
                 Series val = GetSeriesAtT(propertyId, indexT, parentSeries);
-                int segCount = ChildCounts[(int)(indexT * (ChildCounts.Length - 1f))];
-                float normSeg = segmentT * ((segCount + 1f) / segCount);
-                result = composite.GetSeriesAtT(propertyId, normSeg, val);
+
+                //int segCount = ChildCounts[(int)(indexT * (ChildCounts.Length - 1f))];
+                //float normSeg = segmentT * ((segCount + 1f) / segCount);
+                result = composite.GetSeriesAtT(propertyId, segmentT, val);
             }
             return result;
         }

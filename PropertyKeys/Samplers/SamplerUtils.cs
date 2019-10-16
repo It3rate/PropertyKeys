@@ -37,7 +37,7 @@ namespace DataArcs.Samplers
             {
                 if (i < strides.Length && strides[i] > 0)
                 {
-                    result[i] = indexes[i] / (float)(strides[i] - 1);
+                    result[i] = indexes[i] / (float)(strides[i] - 1); // needs to be 0-1, recursive like jagged sampler
                     dSize *= strides[i];
                 }
                 else
@@ -67,30 +67,30 @@ namespace DataArcs.Samplers
             indexT = 0;
             remainder = 0;
             int partialIndex = index;
-            int refRemainder = 0;
+            int refRemainder = index;
             int refIndex = 0;
-            int curSeg = 0;
-            for (int i = 0; i < segments.Length; i++)
+            int lastSegment = 0;
+            foreach (var seg in segments)
             {
-                curSeg = segments[i];
-                SummedIndexAndRemainder(curSeg, partialIndex, ref refIndex, out refRemainder);
-                partialIndex = refRemainder;
-                if(refRemainder < curSeg)
-                {
-                    break;
-                }
+	            if(refRemainder < seg)
+	            {
+					lastSegment = seg;
+		            break;
+	            }
+	            SummedIndexAndRemainder(seg, partialIndex, ref refIndex, out refRemainder);
+	            partialIndex = refRemainder;
             }
             // the index could overflow the sum of segments, so finish the calculation regardless
-            indexT = segments.Length > 1 ? refIndex / (float)(segments.Length - 1f) : 0;
-            remainder = curSeg > 0 ? refRemainder / (float)curSeg : 0;
+            indexT = segments.Length > 1 ? refIndex / (segments.Length - 1f) : 0;
+            remainder = lastSegment > 0 ? refRemainder / (float)lastSegment: 0;
         }
 
         public static void DividedIndexAndRemainder(int stride, float t, out int index, out float remainder)
         {
             float position = t * (stride - 1f);
-            index = (int)(position + .00001f);
+            index = (int)Math.Round(position);
             remainder = position - index;
-            remainder = (remainder + .00001f) > 1f ? 0 : remainder;
+            remainder = (remainder < .00001f) ? 0 : (remainder > 0.9999f) ? 1 : remainder;
         }
         public static void GetDividedJaggedT(int[] segments, float t, out float indexT, out float remainder)
         {

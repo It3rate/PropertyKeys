@@ -41,14 +41,20 @@ namespace DataArcs.Samplers
 
         public override IntSeries GetSampledIndexes(float t)
         {
-            SamplerUtils.GetSummedJaggedT(RingCounts, (int)(t * RingCounts.Sum()), out var ringIndexT, out var ringT);
-            return new IntSeries(2, (int)(ringIndexT * RingCounts[0]), (int)(ringT * RingCounts[0]));
+	        int index = (int)(t * (RingCounts.Sum() - 1));
+            SamplerUtils.GetSummedJaggedT(RingCounts, index, out var ringIndexT, out var ringT);
+            int ringIndex = (int)(ringIndexT * RingCounts.Length);
+            return new IntSeries(2, ringIndex, (int)(ringT * RingCounts[ringIndex]));
         }
 
         private Series GetSeriesSample(Series series, float t)
-		{
-			SamplerUtils.GetSummedJaggedT(RingCounts, (int)(t * RingCounts.Sum()), out var ringIndexT, out var ringT);
-            //Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
+        {
+	        int index = (int)(t * (RingCounts.Sum() - 1));
+            SamplerUtils.GetSummedJaggedT(RingCounts, index, out var ringIndexT, out var ringT);
+			//int lastSegment = RingCounts[(int) ringIndexT];
+			//ringT = ringT * (lastSegment - 1f) / lastSegment; // make discrete
+
+           // Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
             float orientation = 0;
             if (Orientation != null)
             {
@@ -68,7 +74,8 @@ namespace DataArcs.Samplers
             var centerY = size[1] / 2.0f;
             var radiusY = centerY - ringIndexT * ((size[1] / 2.0f) * (1f - minRadius));
             result[1] = (float) (Math.Cos(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusY + frame[1] + centerY);
-			return SeriesUtils.Create(series, result);
+
+            return SeriesUtils.Create(series, result);
 		}
 	}
 }

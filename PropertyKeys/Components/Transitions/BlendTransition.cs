@@ -71,10 +71,13 @@ namespace DataArcs.Components.Transitions
             Series result;
             if (_blends.ContainsKey(propertyId))
             {
-                result = Start.GetChildSeriesAtT(propertyId, index / (Start.TotalItemCount - 1f), parentSeries);
-                Series end = End.GetChildSeriesAtT(propertyId, index / (End.TotalItemCount - 1f), parentSeries);
-                
-                float indexT = index / (Start.TotalItemCount - 1f) + InputT; // delay per element.
+	            int startCount = Start.TotalItemCount;
+	            int endCount = End.TotalItemCount;
+                result = Start.GetChildSeriesAtT(propertyId, index / (startCount - 1f), parentSeries);
+                Series end = End.GetChildSeriesAtT(propertyId, index / (endCount - 1f), parentSeries);
+
+                int finalCount = startCount + (int)((endCount - startCount) * InputT);
+                float indexT = index / (finalCount - 1f) + InputT; // delay per element.
 
                 float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
                 result.InterpolateInto(end, easedT);
