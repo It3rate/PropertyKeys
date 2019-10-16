@@ -272,7 +272,7 @@ namespace DataArcs.Components
         public virtual Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             Series result;
-            SamplerUtils.GetJaggedT(ChildCounts, t, out float indexT, out float segmentT);
+            SamplerUtils.GetSummedJaggedT(ChildCounts, (int)(t * (TotalItemCount - 1f)), out float indexT, out float segmentT);
             if (ChildCounts.Length <= 1)
             {
                 result = GetSeriesAtT(propertyId, segmentT, parentSeries);

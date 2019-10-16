@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
 
@@ -34,19 +35,19 @@ namespace DataArcs.Samplers
         public override ParametricSeries GetSampledTs(float t)
         {
             // todo: refactor Ring sampler to be more like GridSampler, return arbitrary number of rings.
-            SamplerUtils.GetJaggedT(RingCounts, t, out var ringIndexT, out var ringT);
+            SamplerUtils.GetSummedJaggedT(RingCounts, (int)(t * RingCounts.Sum()), out var ringIndexT, out var ringT);
             return new ParametricSeries(2, ringIndexT, ringT);
         }
 
         public override IntSeries GetSampledIndexes(float t)
         {
-            SamplerUtils.GetJaggedT(RingCounts, t, out var ringIndexT, out var ringT);
+            SamplerUtils.GetSummedJaggedT(RingCounts, (int)(t * RingCounts.Sum()), out var ringIndexT, out var ringT);
             return new IntSeries(2, (int)(ringIndexT * RingCounts[0]), (int)(ringT * RingCounts[0]));
         }
 
         private Series GetSeriesSample(Series series, float t)
 		{
-			SamplerUtils.GetJaggedT(RingCounts, t, out var ringIndexT, out var ringT);
+			SamplerUtils.GetSummedJaggedT(RingCounts, (int)(t * RingCounts.Sum()), out var ringIndexT, out var ringT);
             //Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
             float orientation = 0;
             if (Orientation != null)

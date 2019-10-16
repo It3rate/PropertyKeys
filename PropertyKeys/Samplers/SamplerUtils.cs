@@ -50,7 +50,63 @@ namespace DataArcs.Samplers
             return result;
         }
 
-        public static void GetJaggedT(int[] segments, float t, out float rowIndex, out float segmentT)
+        public static void SummedIndexAndRemainder(int stride, int partialIndex, ref int index, out int remainder)
+        {
+            if(partialIndex > stride)
+            {
+                remainder = partialIndex - stride;
+                index++;
+            }
+            else
+            {
+                remainder = partialIndex;
+            }
+        }
+        public static void GetSummedJaggedT(int[] segments, int index, out float indexT, out float remainder)
+        {
+            indexT = 0;
+            remainder = 0;
+            int partialIndex = index;
+            int refRemainder = 0;
+            int refIndex = 0;
+            int curSeg = 0;
+            for (int i = 0; i < segments.Length; i++)
+            {
+                curSeg = segments[i];
+                SummedIndexAndRemainder(curSeg, partialIndex, ref refIndex, out refRemainder);
+                partialIndex = refRemainder;
+                if(refRemainder < curSeg)
+                {
+                    break;
+                }
+            }
+            // the index could overflow the sum of segments, so finish the calculation regardless
+            indexT = segments.Length > 1 ? refIndex / (float)(segments.Length - 1f) : 0;
+            remainder = curSeg > 0 ? refRemainder / (float)curSeg : 0;
+        }
+
+        public static void DividedIndexAndRemainder(int stride, float t, out int index, out float remainder)
+        {
+            float position = t * (stride - 1f);
+            index = (int)(position + .00001f);
+            remainder = position - index;
+            remainder = (remainder + .00001f) > 1f ? 0 : remainder;
+        }
+        public static void GetDividedJaggedT(int[] segments, float t, out float indexT, out float remainder)
+        {
+            float varT = t;
+            indexT = 0;
+            remainder = t;
+            for (int i = 0; i < segments.Length; i++)
+            {
+                DividedIndexAndRemainder(segments[i], varT, out int index, out remainder);
+                indexT = segments[i] > 0 ? index / (float)segments[i] : 0;
+                varT = remainder;
+            }
+            GetJaggedTx(segments, t, out float rowT, out float segT);
+        }
+
+        public static void GetJaggedTx(int[] segments, float t, out float rowIndex, out float segmentT)
         {
             float capacity = (float)segments.Sum();
 
