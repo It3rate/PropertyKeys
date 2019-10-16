@@ -41,6 +41,7 @@ namespace DataArcs.Components
 		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 		ParametricSeries GetSampledT(PropertyId propertyId, float t);
         Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
+        Series GetChildSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 
         void Draw(IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict);
 

@@ -73,8 +73,10 @@ namespace DataArcs.Components.Transitions
             {
 	            int startCount = Start.TotalItemCount;
 	            int endCount = End.TotalItemCount;
-                result = Start.GetChildSeriesAtT(propertyId, index / (startCount - 1f), parentSeries);
-                Series end = End.GetChildSeriesAtT(propertyId, index / (endCount - 1f), parentSeries);
+	            //result = Start.GetChildSeriesAtT(propertyId, index / (startCount - 1f), parentSeries);
+	            //Series end = End.GetChildSeriesAtT(propertyId, index / (endCount - 1f), parentSeries);
+	            result = Start.GetChildSeriesAtIndex(propertyId, index, parentSeries);
+	            Series end = End.GetChildSeriesAtIndex(propertyId, index, parentSeries);
 
                 int finalCount = startCount + (int)((endCount - startCount) * InputT);
                 float indexT = index / (finalCount - 1f) + InputT; // delay per element.

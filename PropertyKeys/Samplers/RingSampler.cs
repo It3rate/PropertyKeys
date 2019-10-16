@@ -51,10 +51,10 @@ namespace DataArcs.Samplers
         {
 	        int index = (int)(t * (RingCounts.Sum() - 1));
             SamplerUtils.GetSummedJaggedT(RingCounts, index, out var ringIndexT, out var ringT);
-			//int lastSegment = RingCounts[(int) ringIndexT];
-			//ringT = ringT * (lastSegment - 1f) / lastSegment; // make discrete
+			int lastSegment = RingCounts[(int)Math.Round(RingCounts.Length * ringIndexT)];
+			ringT = ringT * ((lastSegment - 1f) / lastSegment); // make discrete
 
-           // Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
+            //Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
             float orientation = 0;
             if (Orientation != null)
             {

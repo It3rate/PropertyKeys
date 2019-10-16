@@ -271,24 +271,35 @@ namespace DataArcs.Components
 
         public virtual Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
-            Series result;
-            SamplerUtils.GetSummedJaggedT(ChildCounts, (int)(t * (TotalItemCount - 1f)), out float indexT, out float segmentT);
-            if (ChildCounts.Length <= 1)
-            {
-                result = GetSeriesAtT(propertyId, segmentT, parentSeries);
-            }
-            else
-            {
-                //Debug.WriteLine(indexT + " : " + segmentT + " :: " + propertyId);
-                int index = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
-                IComposite composite = _children[index];
-                Series val = GetSeriesAtT(propertyId, indexT, parentSeries);
+	        return GetChildSeriesAtIndex(propertyId, (int)(t * (TotalItemCount - 1f)), parentSeries);
+        }
 
-                //int segCount = ChildCounts[(int)(indexT * (ChildCounts.Length - 1f))];
-                //float normSeg = segmentT * ((segCount + 1f) / segCount);
-                result = composite.GetSeriesAtT(propertyId, segmentT, val);
-            }
-            return result;
+        public virtual Series GetChildSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
+        {
+	        Series result;
+	        SamplerUtils.GetSummedJaggedT(ChildCounts, index, out float indexT, out float segmentT);
+	        if (ChildCounts.Length <= 1)
+	        {
+		        result = GetSeriesAtT(propertyId, segmentT, parentSeries);
+	        }
+	        else
+	        {
+		        int childIndex = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
+		        IComposite composite = _children[childIndex];
+
+				// todo: adjust to make indexT 0-1
+		        float indexTNorm = indexT * (composite.Capacity / (composite.Capacity - 1f)); // normalize
+
+                Series val = GetSeriesAtT(propertyId, indexTNorm, parentSeries);
+
+		        if (propertyId == PropertyId.Location)
+		        {
+			        Debug.WriteLine(indexTNorm + " : " + segmentT + " :: " + propertyId);
+		        }
+
+		        result = composite.GetChildSeriesAtT(propertyId, segmentT, val);
+	        }
+	        return result;
         }
     }
 

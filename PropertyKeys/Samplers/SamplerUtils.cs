@@ -81,8 +81,8 @@ namespace DataArcs.Samplers
 	            partialIndex = refRemainder;
             }
             // the index could overflow the sum of segments, so finish the calculation regardless
-            indexT = segments.Length > 1 ? refIndex / (segments.Length - 1f) : 0;
-            remainder = lastSegment > 0 ? refRemainder / (float)lastSegment: 0;
+            indexT = segments.Length > 0 ? refIndex / (segments.Length - 0f) : 0;
+            remainder = lastSegment > 1 ? refRemainder / (lastSegment - 1f) : 0;
         }
 
         public static void DividedIndexAndRemainder(int stride, float t, out int index, out float remainder)
