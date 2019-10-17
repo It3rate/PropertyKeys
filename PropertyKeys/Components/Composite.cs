@@ -60,7 +60,7 @@ namespace DataArcs.Components
                 }
                 else
                 {
-                    result = _items?.Capacity ?? 0;
+                    result = Items?.Capacity ?? 0;
                 }
                 return result;
             }

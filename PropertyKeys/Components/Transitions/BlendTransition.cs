@@ -96,11 +96,8 @@ namespace DataArcs.Components.Transitions
             var startDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
             Start.QueryPropertiesAtT(startDict, t);
             Series result = startDict[propertyId];
-            //Series result = Start.GetChildSeriesAtT(propertyId, t, parentSeries);
             if (_blends.ContainsKey(propertyId))
             {
-                //Series end = End.GetChildSeriesAtT(propertyId, t, parentSeries);
-				
                 var endDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
                 End.QueryPropertiesAtT(endDict, t);
 
@@ -114,25 +111,6 @@ namespace DataArcs.Components.Transitions
                 result = End.GetChildSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.GetZeroFloatSeries(1, 0);
             }
             return result;
-
-         //   Series result;
-	        //if (_blends.ContainsKey(propertyId))
-	        //{
-		       // result = Start.GetSeriesAtT(propertyId, t, parentSeries);
-		       // Series end = End.GetSeriesAtT(propertyId, t, parentSeries);
-         //       //float delT = _delay.GetValueAtT(t).X;
-         //       //float durT = _duration.GetValueAtT(t).X;
-         //       //float delRatio = delT / (delT + durT);
-         //       //float blendT = delRatio < t || delRatio <= 0 ? 0 : (t - delRatio) * (1f / delRatio);
-         //       float easedT = Easing?.GetValuesAtT(InputT).X ?? InputT;
-         //       result.InterpolateInto(end, easedT);
-         //   }
-	        //else
-	        //{
-		       // var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
-		       // result = store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
-         //   }
-	        //return result;
         }
 
         public override IStore GetStore(PropertyId propertyId)
