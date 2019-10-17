@@ -93,15 +93,21 @@ namespace DataArcs.Components.Transitions
         }
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
-            Series result = Start.GetChildSeriesAtT(propertyId, t, parentSeries);
+            var startDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
+            Start.QueryPropertiesAtT(startDict, t);
+            Series result = startDict[propertyId];
+            //Series result = Start.GetChildSeriesAtT(propertyId, t, parentSeries);
             if (_blends.ContainsKey(propertyId))
             {
-                Series end = End.GetChildSeriesAtT(propertyId, t, parentSeries);
+                //Series end = End.GetChildSeriesAtT(propertyId, t, parentSeries);
+				
+                var endDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
+                End.QueryPropertiesAtT(endDict, t);
 
                 float indexT = t + InputT; // delay per element.
 
                 float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
-                result.InterpolateInto(end, easedT);
+                result.InterpolateInto(endDict[propertyId], easedT);
             }
             else if(result == null)
             {

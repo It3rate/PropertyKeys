@@ -41,7 +41,7 @@ namespace DataArcs.Samplers
 
         public override IntSeries GetSampledIndexes(float t)
         {
-	        int index = (int)(t * (RingCounts.Sum() - 1));
+	        int index = (int)Math.Floor(t * (RingCounts.Sum() - 1) + 0.5f);
             SamplerUtils.GetSummedJaggedT(RingCounts, index, out var ringIndexT, out var ringT);
             int ringIndex = (int)(ringIndexT * RingCounts.Length);
             return new IntSeries(2, ringIndex, (int)(ringT * RingCounts[ringIndex]));
@@ -49,10 +49,11 @@ namespace DataArcs.Samplers
 
         private Series GetSeriesSample(Series series, float t)
         {
-	        int index = (int)(t * (RingCounts.Sum() - 1));
+	        int index = (int)Math.Floor(t * (RingCounts.Sum() - 1) + 0.5f);
             SamplerUtils.GetSummedJaggedT(RingCounts, index, out var ringIndexT, out var ringT);
-			int lastSegment = RingCounts[(int)Math.Round(RingCounts.Length * ringIndexT)];
-			ringT = ringT * ((lastSegment - 1f) / lastSegment); // make discrete
+
+            int lastSegment = RingCounts[(int)Math.Round(RingCounts.Length * ringIndexT)];
+            ringT = ringT * ((lastSegment - 1f) / lastSegment); // make discrete
 
             //Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
             float orientation = 0;

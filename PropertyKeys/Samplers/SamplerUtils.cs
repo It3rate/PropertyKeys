@@ -52,7 +52,7 @@ namespace DataArcs.Samplers
 
         public static void SummedIndexAndRemainder(int stride, int partialIndex, ref int index, out int remainder)
         {
-            if(partialIndex > stride)
+            if(partialIndex >= stride)
             {
                 remainder = partialIndex - stride;
                 index++;

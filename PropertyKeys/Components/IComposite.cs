@@ -37,7 +37,9 @@ namespace DataArcs.Components
 
         void Update(float currentTime, float deltaTime);
 
-		Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
+        IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t);
+
+        Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
 		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 		ParametricSeries GetSampledT(PropertyId propertyId, float t);
         Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries);

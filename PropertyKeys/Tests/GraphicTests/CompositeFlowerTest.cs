@@ -27,11 +27,12 @@ namespace DataArcs.Tests.GraphicTests
             IComposite hex = GetHex();
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
             var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 4000, easeStore);
+            //var blend = new BlendTransition(comp, comp, 0, _player.CurrentMs, 4000, easeStore);
             //IComposite comp = GetRing();
-	        //_player.AddActiveElement(comp);
+            //_player.AddActiveElement(comp);
             //_player.AddActiveElement(hex);
             //_player.AddActiveElement(ring);
-	        _player.AddActiveElement(blend);
+            _player.AddActiveElement(blend);
             if (comp is BlendTransition bt)
             {
 	            bt.EndTransitionEvent += CompOnEndTransitionEvent;
@@ -138,8 +139,10 @@ namespace DataArcs.Tests.GraphicTests
 
         private static BlendStore GetBlendColor()
         {
-            var start = new float[] { 0.5f, 0.1f, 0.2f,  .9f, .5f, 0,      0, 0.15f, 1f,     0, 0.5f, 0.1f };
-            var end = new float[] { 0, 0.2f, 0.7f,       0.8f, 0, 0.3f,  0.7f, 1f, 0.1f,   0.4f, 0, 1f };
+	        //var start = new float[] { 0.5f, 0.1f, 0.2f, .9f, .5f, 0, 0, 0.15f, 1f, 0, 0.5f, 0.1f };
+	        //var end = new float[] { 0, 0.2f, 0.7f, 0.8f, 0, 0.3f, 0.7f, 1f, 0.1f, 0.4f, 0, 1f };
+	        var start = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
+	        var end = new float[] { 1f, 0f, 0f,  0f,0f,1f };
             var colorStartStore = new Store(new FloatSeries(3, start));
             var colorEndStore = new Store(new FloatSeries(3, end));
             return new BlendStore(colorStartStore, colorEndStore);

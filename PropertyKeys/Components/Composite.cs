@@ -191,6 +191,7 @@ namespace DataArcs.Components
 	        if (items != null)
 	        {
 		        int capacity = items.Capacity;
+                //float scaleAdd = .3f;
 		        for (int i = 0; i < capacity; i++)
 		        {
                     int index = i; // GetSeriesAtIndex(PropertyId.Items, i, null)?.IntDataAt(0) ?? i;
@@ -206,8 +207,13 @@ namespace DataArcs.Components
 			        if (this is IDrawable selfDrawable)
 			        {
                         var state = g.Save();
-			            var scale = 1f; // + it * 0.8f;
-			            //g.ScaleTransform(scale, scale);
+                        var scale = 1f;//(i >= 135 && i <= 45) ? scaleAdd + 1f : 1f;
+					    //        if (scale > 1)
+					    //        {
+						   //         scaleAdd += .2f;
+									////Debug.WriteLine(i + " : " + scale);
+					    //        }
+			            g.ScaleTransform(scale, scale);
 			            g.TranslateTransform(v.X / scale, v.Y / scale);
 				        selfDrawable.DrawAtT(index / (capacity - 1f), this, g, dict);
                         g.Restore(state);
@@ -220,6 +226,39 @@ namespace DataArcs.Components
                     dict[PropertyId.Location] = temp;
                 }
 	        }
+        }
+
+        public IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t)
+        {
+	        IRenderable result = null;
+	        if (this is IDrawable drawable && drawable.Renderer != null)
+	        {
+		        result = drawable.Renderer;
+	        }
+
+	        var keys = data.Keys.ToList();
+	        foreach (var key in keys)
+	        {
+
+				SamplerUtils.GetSummedJaggedT(ChildCounts, (int)Math.Floor(t * (TotalItemCount - 1f) + 0.5f), out float indexT, out float segmentT);
+
+				if (_children.Count > 0)
+				{
+					int childIndex = (int)Math.Floor(indexT * (ChildCounts.Length - 0f) + 0.5f);
+					float selfT = ChildCounts.Length > 1 ? childIndex / (ChildCounts.Length - 1f) : t;
+
+                    data[key] = GetSeriesAtT(key, selfT, data[key]);// indexT, data[key]);
+                    childIndex = Math.Max(0, Math.Min(_children.Count - 1, childIndex));
+                    result = _children[childIndex].QueryPropertiesAtT(data, segmentT) ?? result;
+                }
+		        else
+		        {
+			        data[key] = GetSeriesAtT(key, segmentT, data[key]);
+                }
+	        }
+			// todo: ask the renderer (and/or composite?) to add it's own related properties required to function properly given the nature of the query.
+
+	        return result;
         }
 
         protected Series GetValueOrNull(Dictionary<PropertyId, Series> dict, PropertyId propertyId)
