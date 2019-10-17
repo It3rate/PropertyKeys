@@ -37,7 +37,8 @@ namespace DataArcs.Components
 
         void Update(float currentTime, float deltaTime);
 
-        IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t);
+        void AddLocalPropertiesAtT(Dictionary<PropertyId, Series> data, float t);
+        IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties);
 
         Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
 		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);

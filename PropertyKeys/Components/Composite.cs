@@ -228,9 +228,24 @@ namespace DataArcs.Components
 	        }
         }
 
-        public IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t)
+        public void AddLocalPropertiesAtT(Dictionary<PropertyId, Series> data, float t)
+        {
+	        foreach (var store in _stores)
+	        {
+		        if (!data.ContainsKey(store.Key))
+		        {
+			        data.Add(store.Key, null);
+		        }
+	        }
+        }
+        public IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
         {
 	        IRenderable result = null;
+	        if (addLocalProperties)
+	        {
+				AddLocalPropertiesAtT(data, t);
+	        }
+
 	        if (this is IDrawable drawable && drawable.Renderer != null)
 	        {
 		        result = drawable.Renderer;
@@ -249,7 +264,7 @@ namespace DataArcs.Components
 
                     data[key] = GetSeriesAtT(key, selfT, data[key]);// indexT, data[key]);
                     childIndex = Math.Max(0, Math.Min(_children.Count - 1, childIndex));
-                    result = _children[childIndex].QueryPropertiesAtT(data, segmentT) ?? result;
+                    result = _children[childIndex].QueryPropertiesAtT(data, segmentT, addLocalProperties) ?? result;
                 }
 		        else
 		        {

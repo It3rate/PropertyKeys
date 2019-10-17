@@ -94,12 +94,12 @@ namespace DataArcs.Components.Transitions
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             var startDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
-            Start.QueryPropertiesAtT(startDict, t);
+            Start.QueryPropertiesAtT(startDict, t, false);
             Series result = startDict[propertyId];
             if (_blends.ContainsKey(propertyId))
             {
                 var endDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
-                End.QueryPropertiesAtT(endDict, t);
+                End.QueryPropertiesAtT(endDict, t, false);
 
                 float indexT = t + InputT; // delay per element.
 

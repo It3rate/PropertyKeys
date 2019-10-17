@@ -28,15 +28,14 @@ namespace DataArcs.Tests.GraphicTests
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
             var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 4000, easeStore);
             //var blend = new BlendTransition(comp, comp, 0, _player.CurrentMs, 4000, easeStore);
-            //IComposite comp = GetRing();
-            //_player.AddActiveElement(comp);
-            //_player.AddActiveElement(hex);
-            //_player.AddActiveElement(ring);
-            _player.AddActiveElement(blend);
-            if (comp is BlendTransition bt)
-            {
-	            bt.EndTransitionEvent += CompOnEndTransitionEvent;
-            }
+            blend.EndTransitionEvent += CompOnEndTransitionEvent;
+
+            //IComposite itemToAdd = comp;
+            //IComposite itemToAdd = hex;
+            //IComposite itemToAdd = ring;
+            IComposite itemToAdd = blend;
+			
+            _player.AddActiveElement(itemToAdd);
         }
 
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
