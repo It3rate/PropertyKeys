@@ -39,7 +39,7 @@ namespace DataArcs.Stores
 
 		public override Series GetValuesAtIndex(int index)
 		{
-			return GetSeriesAtIndex(index, CurrentT);
+			return GetSeriesAtIndex(index, CurrentT * Capacity);
 		}
 
 		public override Series GetValuesAtT(float t)

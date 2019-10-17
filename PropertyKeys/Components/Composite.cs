@@ -194,11 +194,13 @@ namespace DataArcs.Components
 		        for (int i = 0; i < capacity; i++)
 		        {
                     int index = i; // GetSeriesAtIndex(PropertyId.Items, i, null)?.IntDataAt(0) ?? i;
-                    //    GetStore(PropertyId.Items)?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
-			        Series v = GetSeriesAtIndex(PropertyId.Location, index, GetValueOrNull(dict, PropertyId.Location));
+                    //Series v = GetSeriesAtIndex(PropertyId.Location, index, GetValueOrNull(dict, PropertyId.Location));
+                    Series v = GetSeriesAtT(PropertyId.Location, index / (capacity - 1f), GetValueOrNull(dict, PropertyId.Location));
+                    //Series v = GetChildSeriesAtIndex(PropertyId.Location, index, GetValueOrNull(dict, PropertyId.Location));
+                    //Series v = GetChildSeriesAtT(PropertyId.Location, index / (capacity - 1f), GetValueOrNull(dict, PropertyId.Location));
 
                     // todo: swicth to matrix, child determines multiply add etc, get values from parents each call
-               
+
                     Series temp = GetValueOrNull(dict, PropertyId.Location);
                     dict[PropertyId.Location] = v;
 			        if (this is IDrawable selfDrawable)
@@ -241,12 +243,17 @@ namespace DataArcs.Components
                 }
             }
             return result;
-            //return store != null ? store.GetValuesAtT(t) : SeriesUtils.GetZeroFloatSeries(1, 0);
         }
+
+        public virtual Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        {
+	        return GetChildSeriesAtIndex(propertyId, (int)(t * (TotalItemCount - 1f)), parentSeries);
+        }
+
         public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
         {
             var store = GetStore(propertyId);
-            var result = store.GetValuesAtIndex(index);
+            var result = store?.GetValuesAtIndex(index);
             if (parentSeries != null)
             {
                 if (result != null)
@@ -259,23 +266,10 @@ namespace DataArcs.Components
                 }
             }
             return result;
-            //var store = GetStore(propertyId);
-            //return store != null ? store.GetValuesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
         }
-
-        public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
-        {
-            var store = GetStore(propertyId);
-            return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
-        }
-
-        public virtual Series GetChildSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
-        {
-	        return GetChildSeriesAtIndex(propertyId, (int)(t * (TotalItemCount - 1f)), parentSeries);
-        }
-
         public virtual Series GetChildSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
         {
+	        // this uses t because many interpolations have no specific capacity information (eg a shared color store)
 	        Series result;
 	        SamplerUtils.GetSummedJaggedT(ChildCounts, index, out float indexT, out float segmentT);
 	        if (ChildCounts.Length <= 1)
@@ -287,10 +281,10 @@ namespace DataArcs.Components
 		        int childIndex = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
 		        IComposite composite = _children[childIndex];
 
-				// todo: adjust to make indexT 0-1
+		        // todo: adjust to make indexT 0-1
 		        float indexTNorm = indexT * (composite.Capacity / (composite.Capacity - 1f)); // normalize
 
-                Series val = GetSeriesAtT(propertyId, indexTNorm, parentSeries);
+		        Series val = GetSeriesAtT(propertyId, indexTNorm, parentSeries);
 
 		        if (propertyId == PropertyId.Location)
 		        {
@@ -301,6 +295,13 @@ namespace DataArcs.Components
 	        }
 	        return result;
         }
+
+        public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
+        {
+            var store = GetStore(propertyId);
+            return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
+        }
+
     }
 
 }
