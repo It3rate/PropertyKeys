@@ -45,7 +45,6 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Location, loc);
             composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 1f, 0.1f).Store);
             AddGraphic(composite);
-
             return composite;
         }
         public BlendTransition GetComposite1()
@@ -60,14 +59,13 @@ namespace DataArcs.Tests.GraphicTests
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
             var result = new BlendTransition(compositeStart, compositeEnd, 0, _player.CurrentMs, 3000, easeStore);
 
-            var radStore = new Store(new FloatSeries(1, 14f, 15f, 22f, 23f), new LineSampler(), CombineFunction.Multiply);
-            var radiusLink = new LinkingStore(result.CompositeId, PropertyId.FillColor, SeriesUtils.XY, radStore);
+            var radStore = new Store(new FloatSeries(1, 14f, 15f, 29f, 29f), new LineSampler(), CombineFunction.Multiply);
+            var radiusLink = new LinkingStore(result.CompositeId, PropertyId.FillColor, SeriesUtils.Y, radStore);
             compositeStart.AddProperty(PropertyId.Radius, radiusLink);
 
-            var starStore = new Store(new FloatSeries(1, 500f), new LineSampler(), CombineFunction.DivideFrom);
+            var starStore = new Store(new FloatSeries(1, 400f), new LineSampler(), CombineFunction.DivideFrom);
             var starnessLink = new LinkingStore(compositeEnd.CompositeId, PropertyId.Location, SeriesUtils.Y, starStore);
             compositeStart.AddProperty(PropertyId.Starness, starnessLink);
-            compositeEnd.AddProperty(PropertyId.Starness, starnessLink);
 
             return result;
         }
@@ -76,10 +74,12 @@ namespace DataArcs.Tests.GraphicTests
         {
 	        composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 10f, 10f).Store);
 	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 8).Store);
-            composite.Renderer = new PolyShape();
+	        composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.5f, 0, 0, 0f, 0, 0.5f).Store);
 
-            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.5f, 0, 0, 0f, 0, 0.5f).Store);
-            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, .2f, 5f, .2f).Store);
+	        var lineStore = new Store(new FloatSeries(1, .05f, .2f), new LineSampler(), CombineFunction.Multiply);
+	        var lineLink = new LinkingStore(composite.CompositeId, PropertyId.Radius, SeriesUtils.X, lineStore);
+            composite.AddProperty(PropertyId.PenWidth, lineLink);
+            composite.Renderer = new PolyShape();
         }
     }
 }

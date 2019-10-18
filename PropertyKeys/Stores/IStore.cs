@@ -13,7 +13,7 @@ namespace DataArcs.Stores
 		CombineTarget CombineTarget { get; set; }
 		Sampler Sampler { get; set; }
 
-        Series GetFullSeries(int index);
+        Series GetFullSeries();
 
 		Series GetValuesAtIndex(int index);
 		Series GetValuesAtT(float t);

@@ -14,6 +14,8 @@ namespace DataArcs.Tests.GraphicTests
         private readonly Player _player;
         int starCount = 5;
 
+        private static int standOutStar = 53;
+
         public CompositeFlowerTest(Player player)
         {
             _player = player;
@@ -52,12 +54,17 @@ namespace DataArcs.Tests.GraphicTests
 	        var composite = new Composite(Store.CreateItemStore(70));
 
 	        Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] {10, 7}));
-	        composite.AddProperty(PropertyId.Location, loc);
-	        composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));
+            composite.AddProperty(PropertyId.Location, loc);
 	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
+
+	        Store radiusStore = new Store(new FloatSeries(2, 8f, 8f), new LineSampler(70));
+	        composite.AddProperty(PropertyId.Radius, radiusStore);
+	        radiusStore.BakeData();
+	        radiusStore.GetFullSeries().SetSeriesAtIndex(standOutStar, new FloatSeries(2, 16f,16f));
 	        composite.Renderer = new PolyShape();
 
             BlendStore blendColors = GetBlendColor();
+			blendColors.Reverse();
             composite.AddProperty(PropertyId.FillColor, blendColors);
 
             return composite;
@@ -144,7 +151,11 @@ namespace DataArcs.Tests.GraphicTests
 	        //var end = new float[] { 0, 0.2f, 0.7f, 0.8f, 0, 0.3f, 0.7f, 1f, 0.1f, 0.4f, 0, 1f };
 	        var start = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
 	        var end = new float[] { 1f, 0f, 0f,  0f,0f,1f };
-            var colorStartStore = new Store(new FloatSeries(3, start));
+
+            var colorStartStore = new Store(new FloatSeries(3, start), new LineSampler(70));
+			colorStartStore.BakeData();
+			colorStartStore.GetFullSeries().SetSeriesAtIndex(standOutStar, new FloatSeries(3, 0f,1f,0f));
+
             var colorEndStore = new Store(new FloatSeries(3, end));
             return new BlendStore(colorStartStore, colorEndStore);
         }

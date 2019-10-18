@@ -29,7 +29,7 @@ namespace DataArcs.Stores
 
 		public Series this[int index] => GetValuesAtIndex(index);
 
-        public override Series GetFullSeries(int index)
+        public override Series GetFullSeries()
         {
             return _series;
         }

@@ -21,7 +21,7 @@ namespace DataArcs.Stores
 
         public Series this[int index] => GetValuesAtIndex(index);
 
-		public override Series GetFullSeries(int index) => _stores[index].GetFullSeries(0);
+		public override Series GetFullSeries() => _stores[0].GetFullSeries();
 
         public override Series GetValuesAtIndex(int index)
 		{

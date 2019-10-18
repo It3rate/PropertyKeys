@@ -27,7 +27,7 @@ namespace DataArcs.Stores
         //    CombineTarget = store.CombineTarget;
         //}
 
-        public abstract Series GetFullSeries(int index);
+        public abstract Series GetFullSeries();
 
         public abstract Series GetValuesAtIndex(int index);
 

@@ -32,9 +32,11 @@ namespace DataArcs.Stores
 	        _easing = easing;
         }
 
-        public override Series GetFullSeries(int index)
+        public void Reverse() { _stores.Reverse();}
+
+        public override Series GetFullSeries()
 		{
-			return GetSeriesAtIndex(index, CurrentT);
+			return GetSeriesAtIndex(0, CurrentT);
 		}
 
 		public override Series GetValuesAtIndex(int index)
@@ -50,7 +52,7 @@ namespace DataArcs.Stores
         public override ParametricSeries GetSampledTs(float t)
         {
             ParametricSeries result;
-
+			// todo: This is a two t blend, set depth in call or animation, or have one static.
             SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
             vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
@@ -135,17 +137,16 @@ namespace DataArcs.Stores
         public Series GetSeriesAtT(float indexT, float t)
         {
             Series result;
+            indexT = _easing?.GetValuesAtT(indexT).X ?? indexT;
 
-            SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-            vT = _easing?.GetValuesAtT(vT).X ?? vT;
+            SeriesUtils.GetScaledT(indexT, _stores.Count, out var vT, out var startIndex, out var endIndex);
 
-            if (startIndex == endIndex)
+            result = _stores[startIndex].GetValuesAtT(indexT);
+            if (startIndex != endIndex)
             {
-                result = _stores[startIndex].GetValuesAtT(indexT);
-            }
-            else
-            {
-                result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT);
+				Series endSeries = _stores[endIndex].GetValuesAtT(indexT);
+				result.InterpolateInto(endSeries, vT);
+                //result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT);
             }
 
             return result;

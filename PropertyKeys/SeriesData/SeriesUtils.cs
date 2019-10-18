@@ -13,9 +13,14 @@ namespace DataArcs.SeriesData
         public static readonly Slot[] Z = new Slot[] { Slot.Z };
         public static readonly Slot[] W = new Slot[] { Slot.W };
         public static readonly Slot[] XY = new Slot[] { Slot.X, Slot.Y };
+        public static readonly Slot[] YX = new Slot[] { Slot.Y, Slot.X };
+        public static readonly Slot[] XZ = new Slot[] { Slot.X, Slot.Z };
+        public static readonly Slot[] ZX = new Slot[] { Slot.Z, Slot.X };
+        public static readonly Slot[] YZ = new Slot[] { Slot.Y, Slot.Z };
+        public static readonly Slot[] ZY = new Slot[] { Slot.Z, Slot.Y };
+
         public static readonly Slot[] XYZ = new Slot[] { Slot.X, Slot.Y, Slot.Z };
         public static readonly Slot[] XYZW = new Slot[] { Slot.X, Slot.Y, Slot.Z, Slot.W };
-        public static readonly Slot[] YX = new Slot[] { Slot.Y, Slot.X };
         public static readonly Slot[] ZYX = new Slot[] { Slot.Z, Slot.Y, Slot.X };
         public static readonly Slot[] WZYX = new Slot[] { Slot.W, Slot.Z, Slot.Y, Slot.Z };
 
