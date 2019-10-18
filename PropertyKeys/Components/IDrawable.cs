@@ -13,6 +13,5 @@ namespace DataArcs.Components
 	public interface IDrawable
     {
         IRenderable Renderer { get; set; }
-        void DrawAtT(float t, IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict);
 	}
 }

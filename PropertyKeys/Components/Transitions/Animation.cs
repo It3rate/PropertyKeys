@@ -11,7 +11,7 @@ namespace DataArcs.Components.Transitions
 {
     public delegate void TransitionEventHandler(object sender, EventArgs e);
 
-    public class Animation : DrawableComposite
+    public class Animation : Composite
     {
         public IStore Easing { get; set; }
         public bool IsComplete { get; protected set; } = false;
@@ -19,7 +19,6 @@ namespace DataArcs.Components.Transitions
         protected float _startTime; // todo: All time should be one class, maybe even a store.
         protected Series _delay;
         protected Series _duration;
-
         protected bool _isReverse = false;
 
         public event TransitionEventHandler StartTransitionEvent;
@@ -33,16 +32,17 @@ namespace DataArcs.Components.Transitions
             _duration = new FloatSeries(1, duration);
             Easing = easing;
         }
+
         public void Restart()
         {
             _startTime = (float)(DateTime.Now - Player.StartTime).TotalMilliseconds;
             IsComplete = false;
         }
-
         public void Reverse()
         {
             _isReverse = !_isReverse;
         }
+
         public override void StartUpdate(float currentTime, float deltaTime)
         {
             float dur = _duration.X;
@@ -61,7 +61,6 @@ namespace DataArcs.Components.Transitions
 
             InputT = _isReverse ? 1f - InputT : InputT;
         }
-
         public override void EndUpdate(float currentTime, float deltaTime)
         {
             if (IsComplete)
@@ -89,15 +88,9 @@ namespace DataArcs.Components.Transitions
             }
             return result;
         }
-
         public override void GetDefinedStores(HashSet<PropertyId> ids)
         {
             ids.Add(PropertyId.EasedTCombined);
-        }
-
-        public override IComposite CreateChild()
-        {
-            throw new NotImplementedException();
         }
     }
 }

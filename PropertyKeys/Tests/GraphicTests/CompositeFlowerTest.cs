@@ -26,7 +26,7 @@ namespace DataArcs.Tests.GraphicTests
             IComposite comp = GetComposite0();
             IComposite hex = GetHex();
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
-            var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 4000, easeStore);
+            var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 4300, easeStore);
             //var blend = new BlendTransition(comp, comp, 0, _player.CurrentMs, 4000, easeStore);
             blend.EndTransitionEvent += CompOnEndTransitionEvent;
 
@@ -49,7 +49,7 @@ namespace DataArcs.Tests.GraphicTests
 
         public Composite GetHex()
         {
-	        var composite = new DrawableComposite(Store.CreateItemStore(70));
+	        var composite = new Composite(Store.CreateItemStore(70));
 
 	        Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] {10, 7}));
 	        composite.AddProperty(PropertyId.Location, loc);
@@ -66,7 +66,7 @@ namespace DataArcs.Tests.GraphicTests
         public IComposite GetComposite0()
         {
 			int groupCount = 7;
-	        var composite = new DrawableComposite(Store.CreateItemStore(groupCount));
+	        var composite = new Composite(Store.CreateItemStore(groupCount));
 
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f).Store);
             Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] { groupCount }, ls));
@@ -78,7 +78,6 @@ namespace DataArcs.Tests.GraphicTests
             //composite.Renderer = new PolyShape();
 
             var flower = GetRing();
-            composite.Background = flower;
             composite.Renderer = flower.Renderer;
             composite.AddChild(flower);
 
@@ -103,9 +102,9 @@ namespace DataArcs.Tests.GraphicTests
             }
         }
 
-        public DrawableComposite GetRing()
+        public Composite GetRing()
         {
-            var composite = new DrawableComposite();
+            var composite = new Composite();
             starCount = 10;// 22;
             composite.AddProperty(PropertyId.Items, Store.CreateItemStore(starCount));
             float r = 30f;

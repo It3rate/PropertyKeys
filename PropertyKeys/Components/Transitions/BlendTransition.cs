@@ -17,7 +17,6 @@ namespace DataArcs.Components.Transitions
     public class BlendTransition : Animation
     {
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
-        private readonly List<PropertyId> _blendProperties = new List<PropertyId>();
 
         public IComposite Start { get; set; }
         public IComposite End { get; set; }
@@ -25,34 +24,19 @@ namespace DataArcs.Components.Transitions
         public int[] StartStrides { get; }
         public int[] EndStrides { get; }
 
-        //public override IStore Items
-        //{
-        //    get
-        //    {
-        //        IStore result = Start.Items;
-        //        var endItems = End.Items;
-        //        if (result == null || endItems?.Capacity > result.Capacity)
-        //        {
-        //            result = endItems;
-        //        }
-        //        return result;
-        //    }
-        //}
-
-        public override int TotalItemCount
+        public override int NestedItemCount
         {
             get
             {
-                var startCount = Start.TotalItemCount;
-                var endCount = End.TotalItemCount;
+                var startCount = Start.NestedItemCount;
+                var endCount = End.NestedItemCount;
                 return (int)Math.Max(startCount, endCount);
             }
         }
-
-        public override int TotalItemCountAtT(float t)
+        public override int NestedItemCountAtT(float t)
         {
-            var startCount = Start.TotalItemCount;
-            var endCount = End.TotalItemCount;
+            var startCount = Start.NestedItemCount;
+            var endCount = End.NestedItemCount;
             return (int)(startCount + (endCount - startCount) * t);
         }
 
@@ -98,30 +82,40 @@ namespace DataArcs.Components.Transitions
                 item.Update(InputT);
             }
         }
+
+        public override IStore GetStore(PropertyId propertyId)
+        {
+	        IStore result;
+	        if (_blends.ContainsKey(propertyId))
+	        {
+		        result = _blends[propertyId];
+	        }
+	        else
+	        {
+		        result = Start.GetStore(propertyId);
+		        IStore end = End.GetStore(propertyId);
+		        if (result == null)
+		        {
+			        result = end;
+		        }
+		        else if (end != null)
+		        {
+			        result = new BlendStore(result, end);
+		        }
+	        }
+	        return result;
+        }
+        public override void GetDefinedStores(HashSet<PropertyId> ids)
+        {
+	        base.GetDefinedStores(ids);
+	        Start.GetDefinedStores(ids);
+	        End.GetDefinedStores(ids);
+        }
+
         public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
         {
-            Series result;
-            if (_blends.ContainsKey(propertyId))
-            {
-	            int startCount = Start.TotalItemCount;
-	            int endCount = End.TotalItemCount;
-	            //result = Start.GetChildSeriesAtT(propertyId, index / (startCount - 1f), parentSeries);
-	            //Series end = End.GetChildSeriesAtT(propertyId, index / (endCount - 1f), parentSeries);
-	            result = Start.GetChildSeriesAtIndex(propertyId, index, parentSeries);
-	            Series end = End.GetChildSeriesAtIndex(propertyId, index, parentSeries);
-
-                int finalCount = startCount + (int)((endCount - startCount) * InputT);
-                float indexT = index / (finalCount - 1f) + InputT; // delay per element.
-
-                float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
-                result.InterpolateInto(end, easedT);
-            }
-            else
-            {
-                var store = Start.GetStore(propertyId) ?? End.GetStore(propertyId);
-                result = store != null ? store.GetValuesAtIndex(index) : SeriesUtils.GetZeroFloatSeries(1, 0);
-            }
-            return result;
+			// Uses total item count, but may want to look up separate counts? Or put blend counts on a delegate function.
+	        return GetSeriesAtT(propertyId, index / (float)NestedItemCount, parentSeries);
         }
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
@@ -140,7 +134,7 @@ namespace DataArcs.Components.Transitions
             }
             else if(result == null)
             {
-                result = End.GetChildSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.GetZeroFloatSeries(1, 0);
+                result = End.GetNestedSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.GetZeroFloatSeries(1, 0);
             }
             return result;
         }
@@ -154,9 +148,9 @@ namespace DataArcs.Components.Transitions
             float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
             foreach (var key in endDict.Keys)
             {
-                if (data.ContainsKey(key))
+                if (data.TryGetValue(key, out Series value))
                 {
-                    data[key].InterpolateInto(endDict[key], easedT);
+                    value.InterpolateInto(endDict[key], easedT);
                 }
                 else
                 {
@@ -167,42 +161,5 @@ namespace DataArcs.Components.Transitions
             return result;
         }
 
-        public override IStore GetStore(PropertyId propertyId)
-        {
-            IStore result;
-            if (_blends.ContainsKey(propertyId))
-            {
-                result = _blends[propertyId];
-            }
-            else
-            {
-                result = Start.GetStore(propertyId);
-                IStore end = End.GetStore(propertyId);
-                if (result == null)
-                {
-                    result = end;
-                }
-                else if (end != null)
-                {
-                    result = new BlendStore(result, end);
-                }
-            }
-            return result;
-        }
-
-        public override void GetDefinedStores(HashSet<PropertyId> ids)
-        {
-			base.GetDefinedStores(ids);
-            Start.GetDefinedStores(ids);
-            End.GetDefinedStores(ids);
-        }
-
-        public override void AddProperty(PropertyId id, IStore store) { throw new NotImplementedException(); }
-        public override void AppendProperty(PropertyId id, IStore store) { throw new NotImplementedException(); }
-        public override void RemoveProperty(PropertyId id, BlendStore store) { throw new NotImplementedException(); }
-        public override IComposite CreateChild()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
