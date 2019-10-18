@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using DataArcs.Adapters.Color;
@@ -61,7 +62,45 @@ namespace DataArcs.Graphic
 
 			return new BezierSeries(values, moves);
 		}
-		
 
-	}
+        public override BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict)
+        {
+            var orientation = dict.ContainsKey(PropertyId.Orientation) ? dict[PropertyId.Orientation].X : _defaultOrientation;
+            var pointCount = dict.ContainsKey(PropertyId.PointCount) ? (int)dict[PropertyId.PointCount].X : _defaultPointCount;
+            var starness = dict.ContainsKey(PropertyId.Starness) ? dict[PropertyId.Starness].X : _defaultStarness;
+            var roundness = dict.ContainsKey(PropertyId.Roundness) ? dict[PropertyId.Roundness].X : _defaultRoundness;
+            var radiusX  = dict.ContainsKey(PropertyId.Radius) ? dict[PropertyId.Radius].X : _defaultRadius;
+            var radiusY  = dict.ContainsKey(PropertyId.Radius) ? dict[PropertyId.Radius].Y : _defaultRadius;
+            
+            return GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
+        }
+
+        public override void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g)
+        {
+            BezierSeries bezier = GetDrawable(dict);
+            if (bezier != null)
+            {
+                GraphicsPath gp = bezier.Path();
+
+                var v = dict[PropertyId.Location];
+                var state = g.Save();
+                var scale = 1f;
+                g.ScaleTransform(scale, scale);
+                g.TranslateTransform(v.X / scale, v.Y / scale);
+
+                if (dict.ContainsKey(PropertyId.FillColor))
+                {
+                    g.FillPath(new SolidBrush(dict[PropertyId.FillColor].RGB()), gp);
+                }
+
+                if (dict.ContainsKey(PropertyId.PenColor))
+                {
+                    var penWidth = dict.ContainsKey(PropertyId.PenWidth) ? dict[PropertyId.PenWidth].X : 1f;
+
+                    g.DrawPath(new Pen(dict[PropertyId.PenColor].RGB(), penWidth), gp);
+                }
+                g.Restore(state);
+            }
+        }
+    }
 }

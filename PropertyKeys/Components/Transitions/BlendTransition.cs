@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using DataArcs.Players;
 using DataArcs.SeriesData;
 using DataArcs.Components.Transitions;
+using DataArcs.Graphic;
 
 namespace DataArcs.Components.Transitions
 {
@@ -23,6 +24,37 @@ namespace DataArcs.Components.Transitions
 
         public int[] StartStrides { get; }
         public int[] EndStrides { get; }
+
+        //public override IStore Items
+        //{
+        //    get
+        //    {
+        //        IStore result = Start.Items;
+        //        var endItems = End.Items;
+        //        if (result == null || endItems?.Capacity > result.Capacity)
+        //        {
+        //            result = endItems;
+        //        }
+        //        return result;
+        //    }
+        //}
+
+        public override int TotalItemCount
+        {
+            get
+            {
+                var startCount = Start.TotalItemCount;
+                var endCount = End.TotalItemCount;
+                return (int)Math.Max(startCount, endCount);
+            }
+        }
+
+        public override int TotalItemCountAtT(float t)
+        {
+            var startCount = Start.TotalItemCount;
+            var endCount = End.TotalItemCount;
+            return (int)(startCount + (endCount - startCount) * t);
+        }
 
         public BlendTransition(IComposite start, IComposite end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null):
             base(delay, startTime, duration, easing)
@@ -110,6 +142,28 @@ namespace DataArcs.Components.Transitions
             {
                 result = End.GetChildSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.GetZeroFloatSeries(1, 0);
             }
+            return result;
+        }
+        public override IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
+        {
+            var endDict = new Dictionary<PropertyId, Series>(data);
+            IRenderable result = Start.QueryPropertiesAtT(data, t, true);
+            result = End.QueryPropertiesAtT(endDict, t, true) ?? result;
+
+            float indexT = t + InputT; // delay per element.
+            float easedT = Easing?.GetValuesAtT(InputT * indexT).X ?? InputT;
+            foreach (var key in endDict.Keys)
+            {
+                if (data.ContainsKey(key))
+                {
+                    data[key].InterpolateInto(endDict[key], easedT);
+                }
+                else
+                {
+                    data[key] = endDict[key];
+                }
+            }
+
             return result;
         }
 

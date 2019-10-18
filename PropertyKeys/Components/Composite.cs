@@ -45,7 +45,7 @@ namespace DataArcs.Components
             Parent = parent;
         }
 
-        public int TotalItemCount
+        public virtual int TotalItemCount
         {
             get
             {
@@ -85,6 +85,10 @@ namespace DataArcs.Components
                 }
                 return result;
             }
+        }
+        public virtual int TotalItemCountAtT(float t)
+        {
+            return TotalItemCount;
         }
 
         public virtual void AddProperty(PropertyId id, IStore store)
@@ -187,6 +191,24 @@ namespace DataArcs.Components
 
         public virtual void Draw(IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict)
         {
+            var capacity = TotalItemCount;// TotalItemCountAtT(InputT);
+            if (capacity > 0)// != null)
+            {
+                //float scaleAdd = .3f;
+                for (int i = 0; i < capacity; i++)
+                {
+                    float indexT = i / (capacity - 1f);
+                    dict.Clear();
+                    IRenderable renderer = QueryPropertiesAtT(dict, indexT, true);
+                    if(renderer != null)
+                    {
+                        renderer.DrawWithProperties(dict, g);
+                    }
+                }
+            }
+        }
+        public virtual void Drawx(IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict)
+        {
 	        IStore items = GetStore(PropertyId.Items) ?? GetStore(PropertyId.Location);
 	        if (items != null)
 	        {
@@ -194,9 +216,9 @@ namespace DataArcs.Components
                 //float scaleAdd = .3f;
 		        for (int i = 0; i < capacity; i++)
 		        {
-                    int index = i; // GetSeriesAtIndex(PropertyId.Items, i, null)?.IntDataAt(0) ?? i;
+                    float indexT = i / (capacity - 1f);
                     //Series v = GetSeriesAtIndex(PropertyId.Location, index, GetValueOrNull(dict, PropertyId.Location));
-                    Series v = GetSeriesAtT(PropertyId.Location, index / (capacity - 1f), GetValueOrNull(dict, PropertyId.Location));
+                    Series v = GetSeriesAtT(PropertyId.Location, indexT, GetValueOrNull(dict, PropertyId.Location));
                     //Series v = GetChildSeriesAtIndex(PropertyId.Location, index, GetValueOrNull(dict, PropertyId.Location));
                     //Series v = GetChildSeriesAtT(PropertyId.Location, index / (capacity - 1f), GetValueOrNull(dict, PropertyId.Location));
 
@@ -215,7 +237,7 @@ namespace DataArcs.Components
 					    //        }
 			            g.ScaleTransform(scale, scale);
 			            g.TranslateTransform(v.X / scale, v.Y / scale);
-				        selfDrawable.DrawAtT(index / (capacity - 1f), this, g, dict);
+				        selfDrawable.DrawAtT(indexT, this, g, dict);
                         g.Restore(state);
                     }
 
@@ -238,7 +260,7 @@ namespace DataArcs.Components
 		        }
 	        }
         }
-        public IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
+        public virtual IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
         {
 	        IRenderable result = null;
 	        if (addLocalProperties)
@@ -246,34 +268,36 @@ namespace DataArcs.Components
 				AddLocalPropertiesAtT(data, t);
 	        }
 
-	        if (this is IDrawable drawable && drawable.Renderer != null)
-	        {
-		        result = drawable.Renderer;
-	        }
+            SamplerUtils.GetSummedJaggedT(ChildCounts, (int)Math.Floor(t * (TotalItemCount - 1f) + 0.5f), out float indexT, out float segmentT);
 
-	        var keys = data.Keys.ToList();
-	        foreach (var key in keys)
-	        {
+            if (_children.Count > 0)
+            {
+                int childIndex = (int)Math.Floor(indexT * (ChildCounts.Length - 0f) + 0.5f);
+                float selfT = ChildCounts.Length > 1 ? childIndex / (ChildCounts.Length - 1f) : t;
 
-				SamplerUtils.GetSummedJaggedT(ChildCounts, (int)Math.Floor(t * (TotalItemCount - 1f) + 0.5f), out float indexT, out float segmentT);
-
-				if (_children.Count > 0)
-				{
-					int childIndex = (int)Math.Floor(indexT * (ChildCounts.Length - 0f) + 0.5f);
-					float selfT = ChildCounts.Length > 1 ? childIndex / (ChildCounts.Length - 1f) : t;
-
-                    data[key] = GetSeriesAtT(key, selfT, data[key]);// indexT, data[key]);
-                    childIndex = Math.Max(0, Math.Min(_children.Count - 1, childIndex));
-                    result = _children[childIndex].QueryPropertiesAtT(data, segmentT, addLocalProperties) ?? result;
+                var keys = data.Keys.ToList();
+                foreach (var key in keys)
+                {
+                    data[key] = GetSeriesAtT(key, selfT, data[key]);
                 }
-		        else
-		        {
-			        data[key] = GetSeriesAtT(key, segmentT, data[key]);
+               //data[key] = GetSeriesAtT(key, selfT, data[key]);// indexT, data[key]);
+                childIndex = Math.Max(0, Math.Min(_children.Count - 1, childIndex));
+                result = _children[childIndex].QueryPropertiesAtT(data, segmentT, addLocalProperties) ?? result;
+            }
+            else
+            {
+                var keys = data.Keys.ToList();
+                foreach (var key in keys)
+                {
+                    data[key] = GetSeriesAtT(key, segmentT, data[key]);
                 }
-	        }
-			// todo: ask the renderer (and/or composite?) to add it's own related properties required to function properly given the nature of the query.
+            }
 
-	        return result;
+            if (this is IDrawable drawable && drawable.Renderer != null)
+            {
+                result = drawable.Renderer;
+            }
+            return result;
         }
 
         protected Series GetValueOrNull(Dictionary<PropertyId, Series> dict, PropertyId propertyId)

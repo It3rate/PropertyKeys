@@ -53,12 +53,14 @@ namespace DataArcs.Tests.GraphicTests
 
 	        Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] {10, 7}));
 	        composite.AddProperty(PropertyId.Location, loc);
-	        composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, .5f, 0.1f).Store);
 	        composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));
 	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
 	        composite.Renderer = new PolyShape();
 
-	        return composite;
+            BlendStore blendColors = GetBlendColor();
+            composite.AddProperty(PropertyId.FillColor, blendColors);
+
+            return composite;
         }
 
         public IComposite GetComposite0()
@@ -120,6 +122,7 @@ namespace DataArcs.Tests.GraphicTests
 
             composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 8f, 8f)));
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
+            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0f, 0f, 0f).Store);
 
             BlendStore blendColors = GetBlendColor();
             LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedTCombined, SeriesUtils.X, blendColors);

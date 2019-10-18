@@ -20,6 +20,7 @@ namespace DataArcs.Components
         int TotalItemCount { get; }
         int[] ChildCounts { get; }
         IComposite Background { get; set; }
+        int TotalItemCountAtT(float t);
 
         /// <summary>
         /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
