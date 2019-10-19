@@ -52,7 +52,9 @@ namespace DataArcs.Stores
         public override ParametricSeries GetSampledTs(float t)
         {
             ParametricSeries result;
-			// todo: This is a two t blend, set depth in call or animation, or have one static.
+            // todo: This is a two t blend, set depth in call or animation, or have one static.
+            // Need to be able to 'set' the indexT (how far in series) with a link, 
+            // and use the passed t to vary between start and end.
             SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
             vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
