@@ -75,6 +75,8 @@ namespace DataArcs.SeriesData
         {
         }
 
+        public abstract void Reverse();
+
         protected abstract void CalculateFrame();
 
         public abstract Series GetSeriesAtIndex(int index);

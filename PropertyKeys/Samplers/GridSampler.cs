@@ -41,12 +41,12 @@ namespace DataArcs.Samplers
         public override ParametricSeries GetSampledTs(float t)
         {
             var index = (int)Math.Round(t * (Capacity - 1f));
-            float[] strideTs = SamplerUtils.GetStrideTsForIndex(Capacity, Strides, index);
+            var strideTs = SamplerUtils.GetStrideTsForIndex(Capacity, Strides, index);
             if (!IsRowCol)
             {
-	            Array.Reverse(strideTs);
+				strideTs.Reverse();
             }
-            return new ParametricSeries(Strides.Length, strideTs);
+            return strideTs;
         }
         public override IntSeries GetSampledIndexes(float t)
         {

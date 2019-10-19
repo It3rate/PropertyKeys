@@ -154,7 +154,6 @@ namespace DataArcs.SeriesData
 		}
 
 
-		public const float TOLERANCE = 0.00001f;
 		public static readonly Random Random = new Random();
         
         public static void GetScaledT(float t, int len, out float virtualT, out int startIndex, out int endIndex)

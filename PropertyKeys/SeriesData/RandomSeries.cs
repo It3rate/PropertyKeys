@@ -32,6 +32,13 @@ namespace DataArcs.SeriesData
 			_combineFunction = combineFunction;
 			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.GetZeroFloatSeries(vectorSize, _count) : GenerateData();
 		}
+		
+		public float[] this[int index] => _series.GetSeriesAtIndex(index).FloatData;
+
+        public override void Reverse()
+		{
+			_series.Reverse();
+		}
 
 		private Series GenerateData()
 		{

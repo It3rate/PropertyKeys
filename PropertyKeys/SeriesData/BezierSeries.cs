@@ -88,7 +88,13 @@ namespace DataArcs.SeriesData
             }
 		}
 
-		public GraphicsPath Path()
+		public override void Reverse()
+		{
+			base.Reverse();
+			Array.Reverse(Moves);
+		}
+
+        public GraphicsPath Path()
 		{
 			var path = new GraphicsPath();
 			path.FillMode = FillMode.Alternate;

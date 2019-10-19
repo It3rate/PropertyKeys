@@ -209,8 +209,9 @@ namespace DataArcs.Components
 				AddLocalPropertiesAtT(data, t);
 	        }
 
-            SamplerUtils.GetSummedJaggedT(ChildCounts, (int)Math.Floor(t * (NestedItemCount - 1f) + 0.5f), out float indexT, out float segmentT);
-
+            var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, (int)Math.Floor(t * (NestedItemCount - 1f) + 0.5f));
+	        float indexT = sample.X;
+	        float segmentT = sample.Y;
             if (_children.Count > 0)
             {
                 int childIndex = (int)Math.Floor(indexT * (ChildCounts.Length - 0f) + 0.5f);
@@ -284,7 +285,9 @@ namespace DataArcs.Components
         {
 	        // this uses t because many interpolations have no specific capacity information (eg a shared color store)
 	        Series result;
-	        SamplerUtils.GetSummedJaggedT(ChildCounts, index, out float indexT, out float segmentT);
+	        var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, index);
+	        float indexT = sample.X;
+	        float segmentT = sample.Y;
 	        if (ChildCounts.Length <= 1)
 	        {
 		        result = GetSeriesAtT(propertyId, segmentT, parentSeries);

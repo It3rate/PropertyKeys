@@ -23,7 +23,9 @@ namespace DataArcs.SeriesData
 			_floatValues = values;
 		}
 
-		public override Series GetSeriesAtIndex(int index)
+		//public float[] this[int index] => GetSeriesAtIndex(index).FloatData;
+
+        public override Series GetSeriesAtIndex(int index)
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new float[VectorSize];
@@ -71,6 +73,16 @@ namespace DataArcs.SeriesData
 			SeriesUtils.SubtractFloatArrayFrom(max, min);
 			Size = new FloatSeries(VectorSize, max);
 		}
+
+		public override void Reverse()
+		{
+			for (int i = 0; i < Count; i++)
+			{
+				var org = GetSeriesAtIndex(i).FloatData;
+				Array.Reverse(org);
+				SetSeriesAtIndex(i, new FloatSeries(VectorSize, org));
+			}
+        }
 
 		public void Normalize()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataArcs.SeriesData;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace DataArcs.Samplers
 {
     public class SamplerUtils
     {
+	    public const float TOLERANCE = 0.00001f;
 
         public static int[] GetPositionsForIndex(int virtualCount, int[] strides, int index)
         {
@@ -27,7 +29,7 @@ namespace DataArcs.Samplers
 	        return result;
         }
 
-        public static float[] GetStrideTsForIndex(int virtualCount, int[] strides, int index)
+        public static ParametricSeries GetStrideTsForIndex(int virtualCount, int[] strides, int index)
         {
             var indexes = GetPositionsForIndex(virtualCount, strides, index);
             var dSize = 1;
@@ -47,7 +49,7 @@ namespace DataArcs.Samplers
                 }
             }
 
-            return result;
+            return new ParametricSeries(indexes.Length, result);
         }
 
         public static void SummedIndexAndRemainder(int stride, int partialIndex, ref int index, out int remainder)
@@ -62,10 +64,17 @@ namespace DataArcs.Samplers
                 remainder = partialIndex;
             }
         }
-        public static void GetSummedJaggedT(int[] segments, int index, out float indexT, out float remainder)
+		/// <summary>
+        /// Returns normalized indexes into a jagged set of elements at the passed index.
+        /// Normally the last parameter will be 0-1 in order to pass to children,
+        /// but in the case of eg grid sampling it can return a normalized index based on the count of the last segment.
+        /// </summary>
+        /// <param name="segments">The lengths of elements in a jagged array.</param>
+        /// <param name="index">The index to sample.</param>
+        /// <param name="isLastSegmentDiscrete">Decides if the last parameter is 0-1 (default), or discrete based on the count of the last sampled segment.</param>
+        /// <returns></returns>
+        public static ParametricSeries GetSummedJaggedT(int[] segments, int index, bool isLastSegmentDiscrete = false)
         {
-            indexT = 0;
-            remainder = 0;
             int partialIndex = index;
             int refRemainder = index;
             int refIndex = 0;
@@ -81,65 +90,31 @@ namespace DataArcs.Samplers
 	            partialIndex = refRemainder;
             }
             // the index could overflow the sum of segments, so finish the calculation regardless
-            indexT = segments.Length > 0 ? refIndex / (segments.Length - 0f) : 0;
-            remainder = lastSegment > 1 ? refRemainder / (lastSegment - 1f) : 0;
+            float indexT = segments.Length > 0 ? refIndex / (segments.Length - 0f) : 0;
+            float discreteAdjust = isLastSegmentDiscrete ? 0f : 1f;
+            float remainder = lastSegment > 1 ? refRemainder / (lastSegment - discreteAdjust) : 0;
+            return new ParametricSeries(2, indexT, remainder);
         }
-
-        public static void DividedIndexAndRemainder(int stride, float t, out int index, out float remainder)
+		
+		/// <summary>
+        /// Gets interploated position along a given length, the start index and how far into it to sample.
+        /// Assures index is greater than zero and less than len.
+        /// Remainder may be greater than one if t is greater than one.
+        /// </summary>
+        /// <param name="len">Total length to consider.</param>
+        /// <param name="t">Interpolation point.</param>
+        /// <param name="startIndex">Returned index into the length.</param>
+        /// <param name="remainder">Returned remainder into the length.</param>
+        public static void IndexAndRemainder(int len, float t, out int startIndex, out float remainder)
         {
-            float position = t * (stride - 1f);
-            index = (int)Math.Round(position);
-            remainder = position - index;
-            remainder = (remainder < .00001f) ? 0 : (remainder > 0.9999f) ? 1 : remainder;
+	        var dist = t * (len - 1f);
+	        dist = Math.Max(dist, 0);
+	        startIndex = (int)dist;
+	        remainder = dist - startIndex;
+	        remainder = (remainder < TOLERANCE) ? 0 : remainder;
         }
-        public static void GetDividedJaggedT(int[] segments, float t, out float indexT, out float remainder)
-        {
-            float varT = t;
-            indexT = 0;
-            remainder = t;
-            for (int i = 0; i < segments.Length; i++)
-            {
-                DividedIndexAndRemainder(segments[i], varT, out int index, out remainder);
-                indexT = segments[i] > 0 ? index / (float)segments[i] : 0;
-                varT = remainder;
-            }
-            GetJaggedTx(segments, t, out float rowT, out float segT);
-        }
-
-        public static void GetJaggedTx(int[] segments, float t, out float rowIndex, out float segmentT)
-        {
-            float capacity = (float)segments.Sum();
-
-            int index = (int)Math.Round(t * (capacity - 1f));
-            float step = 1f / segments[0];
-            int nextRow = segments[0];
-            rowIndex = 0;
-            segmentT = 0;
-            for (int i = 0; i <= index; i++)
-            {
-                if(i >= nextRow)
-                {
-                    rowIndex += 1;
-                    // accounting for zero length segments used for spacing
-                    while(rowIndex < segments.Length - 1 && segments[(int)rowIndex] == 0)
-                    {
-                        rowIndex += 1;
-                    }
-                    // accounting for potential overflow
-                    int segIndex = Math.Min(segments.Length - 1, (int)rowIndex);
-                    nextRow += segments[segIndex];
-                    step = segments[segIndex] == 0 ? step : 1f / segments[segIndex];
-                    segmentT = 0;
-                }
-                else if(i > 0)
-                {
-                    segmentT += step;
-                }
-            }
-            rowIndex = segments.Length > 2 ? rowIndex / (segments.Length - 1f) : rowIndex;
-        }
-
-        public static float[] GetStrideTsForT(int virtualCount, int[] strides, float t)
+		
+        public static ParametricSeries GetStrideTsForT(int virtualCount, int[] strides, float t)
         {
             var index = (int)(t * (virtualCount - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
             return GetStrideTsForIndex(virtualCount, strides, index);

@@ -34,26 +34,23 @@ namespace DataArcs.Samplers
 
         public override ParametricSeries GetSampledTs(float t)
         {
-            // todo: refactor Ring sampler to be more like GridSampler, return arbitrary number of rings.
-            SamplerUtils.GetSummedJaggedT(RingCounts, (int)(t * RingCounts.Sum()), out var ringIndexT, out var ringT);
-            return new ParametricSeries(2, ringIndexT, ringT);
+            int index = (int)Math.Floor(t * (RingCounts.Sum() - 1) + 0.5f);
+            return SamplerUtils.GetSummedJaggedT(RingCounts, index, false);
         }
 
         public override IntSeries GetSampledIndexes(float t)
         {
-	        int index = (int)Math.Floor(t * (RingCounts.Sum() - 1) + 0.5f);
-            SamplerUtils.GetSummedJaggedT(RingCounts, index, out var ringIndexT, out var ringT);
-            int ringIndex = (int)(ringIndexT * RingCounts.Length);
-            return new IntSeries(2, ringIndex, (int)(ringT * RingCounts[ringIndex]));
+	        var sample = GetSampledTs(t);
+	        int ringIndex = (int)(sample.X * RingCounts.Length);
+            return new IntSeries(2, ringIndex, (int)(sample.Y * RingCounts[ringIndex]));
         }
 
         private Series GetSeriesSample(Series series, float t)
         {
-	        int index = (int)Math.Floor(t * (RingCounts.Sum() - 1) + 0.5f);
-            SamplerUtils.GetSummedJaggedT(RingCounts, index, out var ringIndexT, out var ringT);
+	        var sample = GetSampledTs(t);
 
-            int lastSegment = RingCounts[(int)Math.Round(RingCounts.Length * ringIndexT)];
-            ringT = ringT * ((lastSegment - 1f) / lastSegment); // make discrete
+			float ringIndexT = sample.X;
+			float ringT = sample.Y;
 
             //Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
             float orientation = 0;

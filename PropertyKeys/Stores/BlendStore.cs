@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Forms.Layout;
+using DataArcs.Samplers;
 using DataArcs.SeriesData;
 
 namespace DataArcs.Stores
@@ -51,25 +53,43 @@ namespace DataArcs.Stores
 
         public override ParametricSeries GetSampledTs(float t)
         {
-            ParametricSeries result;
-            // todo: This is a two t blend, set depth in call or animation, or have one static.
-            // Need to be able to 'set' the indexT (how far in series) with a link, 
-            // and use the passed t to vary between start and end.
-            SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
+	        ParametricSeries result;
+            SamplerUtils.IndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
             vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
-            if (startIndex == endIndex)
+            if (vT < SamplerUtils.TOLERANCE || startIndex == _stores.Count - 1)
             {
-                result = _stores[startIndex].GetSampledTs(vT);
+	            result = _stores[startIndex].GetSampledTs(vT);
             }
             else
             {
-                result = _stores[startIndex].GetSampledTs(t);
-                var endPS = _stores[endIndex].GetSampledTs(t);
-                result.InterpolateInto(endPS, vT);
+	            result = _stores[startIndex].GetSampledTs(t);
+	            var endValue = _stores[startIndex + 1].GetSampledTs(t);
+	            result.InterpolateInto(endValue, vT);
             }
 
             return result;
+
+
+            //ParametricSeries result;
+            //// todo: This is a two t blend, set depth in call or animation, or have one static.
+            //// Need to be able to 'set' the indexT (how far in series) with a link, 
+            //// and use the passed t to vary between start and end.
+            //SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
+            //vT = _easing?.GetValuesAtT(vT).X ?? vT;
+
+            //if (startIndex == endIndex)
+            //{
+            //    result = _stores[startIndex].GetSampledTs(vT);
+            //}
+            //else
+            //{
+            //    result = _stores[startIndex].GetSampledTs(t);
+            //    var endPS = _stores[endIndex].GetSampledTs(t);
+            //    result.InterpolateInto(endPS, vT);
+            //}
+
+            //return result;
         }
 
         public override void Update(float deltaTime)

@@ -23,7 +23,9 @@ namespace DataArcs.SeriesData
             _intValues = values;
 		}
 
-		public override Series GetSeriesAtIndex(int index)
+		//public int[] this[int index] => GetSeriesAtIndex(index).IntData;
+
+        public override Series GetSeriesAtIndex(int index)
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
@@ -45,7 +47,17 @@ namespace DataArcs.SeriesData
 			Array.Copy(series.IntData, 0, _intValues, startIndex * VectorSize, VectorSize);
 		}
 
-		public override void InterpolateInto(Series b, float t)
+		public override void Reverse()
+		{
+			for (int i = 0; i < Count; i++)
+			{
+				var org = GetSeriesAtIndex(i).IntData;
+				Array.Reverse(org);
+				SetSeriesAtIndex(i, new IntSeries(VectorSize, org));
+			}
+		}
+
+        public override void InterpolateInto(Series b, float t)
 		{
 			for (var i = 0; i < DataSize; i++)
 			{
