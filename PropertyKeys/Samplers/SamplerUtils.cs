@@ -107,9 +107,9 @@ namespace DataArcs.Samplers
         /// <param name="remainder">Returned remainder into the length.</param>
         public static void IndexAndRemainder(int len, float t, out int startIndex, out float remainder)
         {
-	        var dist = t * (len - 1f);
+	        var dist = t * (len - 0f);
 	        dist = Math.Max(dist, 0);
-	        startIndex = (int)dist;
+	        startIndex = (int)Math.Min(dist, len - 1);
 	        remainder = dist - startIndex;
 	        remainder = (remainder < TOLERANCE) ? 0 : remainder;
         }

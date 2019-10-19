@@ -161,7 +161,7 @@ namespace DataArcs.Tests.GraphicTests
 			colorStartStore.GetFullSeries().SetSeriesAtIndex(standOutStar, new FloatSeries(3, 0f,1f,0f));
 
             var colorEndStore = new Store(new FloatSeries(3, end), hexSampler);
-            return new BlendStore(colorStartStore, colorEndStore);
+            return new BlendStore(new IStore[]{colorStartStore, colorEndStore}, hexSampler);
         }
     }
 }

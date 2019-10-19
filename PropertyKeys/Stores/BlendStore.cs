@@ -28,10 +28,10 @@ namespace DataArcs.Stores
         {
 	        _stores = new List<IStore>(stores);
         }
-        public BlendStore(IStore[] stores, IStore easing)
+        public BlendStore(IStore[] stores, Sampler sampler):base()
         {
 	        _stores = new List<IStore>(stores);
-	        _easing = easing;
+	        Sampler = sampler;
         }
 
         public void Reverse() { _stores.Reverse();}
@@ -40,57 +40,6 @@ namespace DataArcs.Stores
 		{
 			return GetSeriesAtIndex(0, CurrentT);
 		}
-
-		public override Series GetValuesAtIndex(int index)
-		{
-			return GetSeriesAtIndex(index, CurrentT * Capacity);
-		}
-
-		public override Series GetValuesAtT(float t)
-		{
-			return GetSeriesAtT(t, CurrentT);
-		}
-
-        public override ParametricSeries GetSampledTs(float t)
-        {
-	        ParametricSeries result;
-            SamplerUtils.IndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
-            vT = _easing?.GetValuesAtT(vT).X ?? vT;
-
-            if (vT < SamplerUtils.TOLERANCE || startIndex == _stores.Count - 1)
-            {
-	            result = _stores[startIndex].GetSampledTs(vT);
-            }
-            else
-            {
-	            result = _stores[startIndex].GetSampledTs(t);
-	            var endValue = _stores[startIndex + 1].GetSampledTs(t);
-	            result.InterpolateInto(endValue, vT);
-            }
-
-            return result;
-
-
-            //ParametricSeries result;
-            //// todo: This is a two t blend, set depth in call or animation, or have one static.
-            //// Need to be able to 'set' the indexT (how far in series) with a link, 
-            //// and use the passed t to vary between start and end.
-            //SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-            //vT = _easing?.GetValuesAtT(vT).X ?? vT;
-
-            //if (startIndex == endIndex)
-            //{
-            //    result = _stores[startIndex].GetSampledTs(vT);
-            //}
-            //else
-            //{
-            //    result = _stores[startIndex].GetSampledTs(t);
-            //    var endPS = _stores[endIndex].GetSampledTs(t);
-            //    result.InterpolateInto(endPS, vT);
-            //}
-
-            //return result;
-        }
 
         public override void Update(float deltaTime)
 		{
@@ -117,61 +66,68 @@ namespace DataArcs.Stores
 			}
 		}
 
-		public int GetElementCountAt(float t)
+        public override Series GetValuesAtIndex(int index)
+        {
+	        return GetSeriesAtIndex(index, CurrentT * Capacity);
+        }
+
+        public override Series GetValuesAtT(float t)
+        {
+	        return GetSeriesAtT(t, CurrentT);
+        }
+
+        public override ParametricSeries GetSampledTs(float t)
+        {
+	        SamplerUtils.IndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
+	        vT = _easing?.GetValuesAtT(vT).X ?? vT;
+
+	        ParametricSeries result = _stores[startIndex].GetSampledTs(vT);
+	        if (vT > SamplerUtils.TOLERANCE && startIndex < _stores.Count - 1)
+	        {
+		        var endValue = _stores[startIndex + 1].GetSampledTs(t);
+		        result.InterpolateInto(endValue, vT);
+	        }
+	        return result;
+        }
+
+        public int GetElementCountAt(float t)
 		{
-			int result;
+			SamplerUtils.IndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
+			vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
-			SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
+			int result = _stores[startIndex].Capacity;
 
-			if (startIndex == endIndex)
-			{
-				result = _stores[startIndex].Capacity;
+            if (vT > SamplerUtils.TOLERANCE && startIndex < _stores.Count - 1)
+            {
+	            var endCapacity = _stores[startIndex + 1].Capacity;
+	            result += (int)(vT * (endCapacity - result));
 			}
-			else
-			{
-				var sec = _stores[startIndex].Capacity;
-				var eec = _stores[startIndex + 1].Capacity;
-				result = sec + (int) (vT * (eec - sec));
-			}
-
 			return result;
 		}
 
         public Series GetSeriesAtIndex(int index, float t)
         {
-            Series result;
-
-            SeriesUtils.GetScaledT(t, _stores.Count, out var vT, out var startIndex, out var endIndex);
-            vT = _easing?.GetValuesAtT(vT).X ?? vT;
-
-            if (startIndex == endIndex)
-            {
-                result = _stores[startIndex].GetValuesAtIndex(index);
-            }
-            else
-            {
-                result = BlendValueAtIndex(_stores[startIndex], _stores[endIndex], index, vT);
-            }
-
-            return result;
+	        return GetSeriesAtT(index / (_stores.Count - 1f), t);
         }
 
         public Series GetSeriesAtT(float indexT, float t)
         {
-            Series result;
-            indexT = _easing?.GetValuesAtT(indexT).X ?? indexT;
+	        SamplerUtils.IndexAndRemainder(_stores.Count, indexT, out var startIndex, out var vT);
+	        vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
-            SeriesUtils.GetScaledT(indexT, _stores.Count, out var vT, out var startIndex, out var endIndex);
+	        Series result = _stores[startIndex].GetValuesAtT(indexT);
 
-            result = _stores[startIndex].GetValuesAtT(indexT);
-            if (startIndex != endIndex)
+            if (vT > SamplerUtils.TOLERANCE && startIndex < _stores.Count - 1)
             {
-				Series endSeries = _stores[endIndex].GetValuesAtT(indexT);
-				result.InterpolateInto(endSeries, vT);
-                //result = BlendValueAtT(_stores[startIndex], _stores[endIndex], indexT, vT);
-            }
-
-            return result;
+	            Series endSeries = _stores[startIndex + 1].GetValuesAtT(indexT);
+	            if (Sampler != null)
+	            {
+		            var sample = Sampler.GetSampledTs(vT);
+		            vT = sample[sample.VectorSize - 1];
+	            }
+	            result.InterpolateInto(endSeries, vT);
+	        }
+	        return result;
         }
     
 
