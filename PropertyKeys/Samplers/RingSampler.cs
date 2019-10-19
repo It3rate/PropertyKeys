@@ -35,7 +35,7 @@ namespace DataArcs.Samplers
         public override ParametricSeries GetSampledTs(float t)
         {
             int index = (int)Math.Floor(t * (RingCounts.Sum() - 1) + 0.5f);
-            return SamplerUtils.GetSummedJaggedT(RingCounts, index, false);
+            return SamplerUtils.GetSummedJaggedT(RingCounts, index, true);
         }
 
         public override IntSeries GetSampledIndexes(float t)

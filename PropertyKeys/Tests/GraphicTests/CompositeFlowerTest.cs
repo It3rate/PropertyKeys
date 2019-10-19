@@ -152,11 +152,15 @@ namespace DataArcs.Tests.GraphicTests
 	        var start = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
 	        var end = new float[] { 1f, 0f, 0f,  0f,0f,1f };
 
-            var colorStartStore = new Store(new FloatSeries(3, start), new LineSampler(70));
+	        var ringSampler = new RingSampler(new int[] { 6, 4 });
+	        var hexSampler = new HexagonSampler(new int[] { 10, 7 });
+	        var lineSampler = new LineSampler(70);
+
+            var colorStartStore = new Store(new FloatSeries(3, start), lineSampler);// );
 			colorStartStore.BakeData();
 			colorStartStore.GetFullSeries().SetSeriesAtIndex(standOutStar, new FloatSeries(3, 0f,1f,0f));
 
-            var colorEndStore = new Store(new FloatSeries(3, end));
+            var colorEndStore = new Store(new FloatSeries(3, end), hexSampler);
             return new BlendStore(colorStartStore, colorEndStore);
         }
     }
