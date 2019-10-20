@@ -153,6 +153,7 @@ namespace DataArcs.Tests.GraphicTests
 	        var ringSampler = new RingSampler(new int[] { 6, 4 });
 	        var hexSampler = new HexagonSampler(new int[] { 10, 7 });
 	        var lineSampler = new LineSampler(70);
+	        var blurSampler = new CenterBlurSampler(new int[] { 10, 7 }, false);
 
 	        var start = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
             var colorStartStore = new Store(new FloatSeries(3, start), lineSampler);// );
@@ -161,12 +162,12 @@ namespace DataArcs.Tests.GraphicTests
 
             var end1 = new float[] { 1f, 1f, 0f, 0f, 1f, 1f };
             var colorEndStore1 = new Store(new FloatSeries(3, end1), lineSampler);
-            var end2 = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
+            var end2 = new float[] { 0f, 0f, 0f };
             var colorEndStore2 = new Store(new FloatSeries(3, end2), lineSampler);
 
             if (index == 0) return colorStartStore;
             else if (index == 1) return colorEndStore1;
-            else return new BlendStore(new IStore[] { colorEndStore1, colorEndStore2 }, hexSampler);
+            else return new BlendStore(new IStore[] { colorEndStore1, colorEndStore2 }, blurSampler);
         }
     }
 }

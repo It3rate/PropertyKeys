@@ -122,7 +122,7 @@ namespace DataArcs.Stores
             {
 		        var sample = Sampler.GetSampledTs(indexT);
                 storeIndexT = sample.X;
-                interp = sample.Y;
+                interp = sample[sample.VectorSize - 1];
 	        }
             
 	        Series result = _stores[startIndex].GetValuesAtT(storeIndexT);
@@ -132,7 +132,7 @@ namespace DataArcs.Stores
 	            Series endSeries = _stores[startIndex + 1].GetValuesAtT(storeIndexT);
 	            result.InterpolateInto(endSeries, interp);
 	        }
-	        return result;
+	        return  result; //new FloatSeries(3, new float[]{ interp, interp, interp });
         }
     
 
