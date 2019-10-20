@@ -121,7 +121,6 @@ namespace DataArcs.Stores
 	        if (Sampler != null)
             {
 		        var sample = Sampler.GetSampledTs(indexT);
-                storeIndexT = sample.X;
                 interp = sample[sample.VectorSize - 1];
 	        }
             

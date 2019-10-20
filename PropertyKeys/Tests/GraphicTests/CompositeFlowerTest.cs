@@ -14,8 +14,6 @@ namespace DataArcs.Tests.GraphicTests
         private readonly Player _player;
         int starCount = 5;
 
-        private static int standOutStar = 53;
-
         public CompositeFlowerTest(Player player)
         {
             _player = player;
@@ -145,6 +143,7 @@ namespace DataArcs.Tests.GraphicTests
             return composite;
         }
 
+        private static int standOutStar = 35;
         private static IStore GetBlendColor(int index)
         {
 	        //var start = new float[] { 0.5f, 0.1f, 0.2f, .9f, .5f, 0, 0, 0.15f, 1f, 0, 0.5f, 0.1f };
@@ -157,13 +156,14 @@ namespace DataArcs.Tests.GraphicTests
 
 	        var start = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
             var colorStartStore = new Store(new FloatSeries(3, start), lineSampler);// );
-			colorStartStore.BakeData();
-			colorStartStore.GetFullSeries().SetSeriesAtIndex(standOutStar, new FloatSeries(3, 0f,1f,0f));
 
             var end1 = new float[] { 1f, 1f, 0f, 0f, 1f, 1f };
-            var colorEndStore1 = new Store(new FloatSeries(3, end1), lineSampler);
+            var colorEndStore1 = new Store(new FloatSeries(3, end1), hexSampler);
             var end2 = new float[] { 0f, 0f, 0f };
-            var colorEndStore2 = new Store(new FloatSeries(3, end2), lineSampler);
+            var colorEndStore2 = new Store(new FloatSeries(3, end2), hexSampler);
+
+            colorEndStore1.BakeData();
+            colorEndStore1.GetFullSeries().SetSeriesAtIndex(standOutStar, new FloatSeries(3, 1f,0f,0f));
 
             if (index == 0) return colorStartStore;
             else if (index == 1) return colorEndStore1;
