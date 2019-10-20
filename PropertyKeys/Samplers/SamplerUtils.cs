@@ -97,7 +97,7 @@ namespace DataArcs.Samplers
         }
 		
 		/// <summary>
-        /// Gets interploated position along a given length, the start index and how far into it to sample.
+        /// Gets interplolated position along a given length, the start index and how far into it to sample.
         /// Assures index is greater than zero and less than len.
         /// Remainder may be greater than one if t is greater than one.
         /// </summary>
@@ -105,7 +105,7 @@ namespace DataArcs.Samplers
         /// <param name="t">Interpolation point.</param>
         /// <param name="startIndex">Returned index into the length.</param>
         /// <param name="remainder">Returned remainder into the length.</param>
-        public static void IndexAndRemainder(int len, float t, out int startIndex, out float remainder)
+        public static void InterpolatedIndexAndRemainder(int len, float t, out int startIndex, out float remainder)
         {
 	        var dist = t * (len - 1f);
 	        dist = Math.Max(dist, 0);

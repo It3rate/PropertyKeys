@@ -79,7 +79,7 @@ namespace DataArcs.Stores
 
         public override ParametricSeries GetSampledTs(float t)
         {
-	        SamplerUtils.IndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
+	        SamplerUtils.InterpolatedIndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
 	        vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
 	        ParametricSeries result = _stores[startIndex].GetSampledTs(vT);
@@ -93,7 +93,7 @@ namespace DataArcs.Stores
 
         public int GetElementCountAt(float t)
 		{
-			SamplerUtils.IndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
+			SamplerUtils.InterpolatedIndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
 			vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
 			int result = _stores[startIndex].Capacity;
@@ -113,7 +113,7 @@ namespace DataArcs.Stores
 
         public Series GetSeriesAtT(float indexT, float t)
         {
-	        SamplerUtils.IndexAndRemainder(_stores.Count, indexT, out var startIndex, out var remainder);
+	        SamplerUtils.InterpolatedIndexAndRemainder(_stores.Count, indexT, out var startIndex, out var remainder);
 	        remainder = _easing?.GetValuesAtT(remainder).X ?? remainder;
             float storeInterpolation = remainder;
             
