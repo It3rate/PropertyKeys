@@ -115,23 +115,21 @@ namespace DataArcs.Stores
         {
 	        SamplerUtils.IndexAndRemainder(_stores.Count, indexT, out var startIndex, out var remainder);
 	        remainder = _easing?.GetValuesAtT(remainder).X ?? remainder;
-            float storeIndexT = remainder;
-            float interp = remainder;
+            float storeInterpolation = remainder;
             
 	        if (Sampler != null)
             {
 		        var sample = Sampler.GetSampledTs(indexT);
-                interp = sample[sample.VectorSize - 1];
+                storeInterpolation = sample[sample.VectorSize - 1];
 	        }
             
-	        Series result = _stores[startIndex].GetValuesAtT(storeIndexT);
-            Series temp = result.Copy();
+	        Series result = _stores[startIndex].GetValuesAtT(remainder);
             if (startIndex < _stores.Count - 1)
             {
-	            Series endSeries = _stores[startIndex + 1].GetValuesAtT(storeIndexT);
-	            result.InterpolateInto(endSeries, interp);
+	            Series endSeries = _stores[startIndex + 1].GetValuesAtT(remainder);
+	            result.InterpolateInto(endSeries, storeInterpolation);
 	        }
-	        return  result; //new FloatSeries(3, new float[]{ interp, interp, interp });
+	        return  result; 
         }
     
 
@@ -159,13 +157,6 @@ namespace DataArcs.Stores
 
             return result;
         }
-
-
-        //public IStore this[int index] // todo: change to return series
-        //{
-        // get => _stores[index];
-        // set => _stores[index] = value;
-        //}
 
         public IStore GetStoreAt(int index) => _stores[Math.Max(0, Math.Min(_stores.Count - 1, index))];
         public void Add(IStore item) => _stores.Add(item);

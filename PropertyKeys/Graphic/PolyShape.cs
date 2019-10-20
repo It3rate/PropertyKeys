@@ -17,18 +17,7 @@ namespace DataArcs.Graphic
 		private float _defaultStarness = 0f;
 		private float _defaultRoundness = 0f;
 		private float _defaultRadius = 10f;
-
-		public override BezierSeries GetDrawableAtT(IComposite composite, float t)
-		{
-			var orientation = composite.GetStore(PropertyId.Orientation)?.GetValuesAtT(t).X ?? _defaultOrientation;
-			var pointCount = (int) (composite.GetStore(PropertyId.PointCount)?.GetValuesAtT(t).X ?? _defaultPointCount);
-			var starness = composite.GetStore(PropertyId.Starness)?.GetValuesAtT(t).X ?? _defaultStarness;
-			var roundness = composite.GetStore(PropertyId.Roundness)?.GetValuesAtT(t).X ?? _defaultRoundness;
-			var radiusX = composite.GetStore(PropertyId.Radius)?.GetValuesAtT(t).X ?? _defaultRadius;
-			var radiusY = composite.GetStore(PropertyId.Radius)?.GetValuesAtT(t).Y ?? _defaultRadius;
-			return GeneratePolyShape(orientation, pointCount, roundness, radiusX, radiusY, starness);
-		}
-
+		
 		public static BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
 		{
 			var hasStarness = Math.Abs(starness) > 0.001f;

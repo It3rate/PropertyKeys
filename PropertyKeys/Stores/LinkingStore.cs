@@ -19,6 +19,7 @@ namespace DataArcs.Stores
         private IStore _mixStore;
 
         private IStore MaskedStore => _mixStore ?? _player[CompositeId]?.GetStore(PropertyId);
+		// todo: consider implications of having own samplers and combines here. Or compy masked store into this.
         public override CombineFunction CombineFunction { get => MaskedStore.CombineFunction; set => MaskedStore.CombineFunction = value; }
         public override CombineTarget CombineTarget { get => MaskedStore.CombineTarget; set => MaskedStore.CombineTarget = value; }
         public override Sampler Sampler { get => MaskedStore.Sampler; set => MaskedStore.Sampler = value; }
@@ -31,7 +32,6 @@ namespace DataArcs.Stores
             SlotMapping = slotMapping;
             _player = Player.GetPlayerById(0);
             _mixStore = store;
-            //_series = store?.GetFullSeries(0);
         }
         
 

@@ -109,7 +109,7 @@ namespace DataArcs.Samplers
         {
 	        var dist = t * (len - 1f);
 	        dist = Math.Max(dist, 0);
-	        startIndex = (int)Math.Min(dist, len - 2);
+	        startIndex = (int)Math.Max(0, Math.Min(dist, len - 2));
 	        remainder = dist - startIndex;
 	        remainder = (remainder < TOLERANCE) ? 0 : remainder;
         }

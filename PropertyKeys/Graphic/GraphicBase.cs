@@ -10,7 +10,6 @@ namespace DataArcs.Graphic
 	{
 		protected static int _rendererCount = 1;
 		public int RendererId { get; }
-		public abstract BezierSeries GetDrawableAtT(IComposite composite, float t);
         public abstract void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g);
 
         public abstract BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict);
