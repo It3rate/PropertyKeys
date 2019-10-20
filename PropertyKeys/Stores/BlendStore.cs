@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms.Layout;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
@@ -112,20 +113,24 @@ namespace DataArcs.Stores
 
         public Series GetSeriesAtT(float indexT, float t)
         {
-	        SamplerUtils.IndexAndRemainder(_stores.Count, indexT, out var startIndex, out var vT);
-	        vT = _easing?.GetValuesAtT(vT).X ?? vT;
-
-	        Series result = _stores[startIndex].GetValuesAtT(indexT);
-
-            if (vT > SamplerUtils.TOLERANCE && startIndex < _stores.Count - 1)
+	        SamplerUtils.IndexAndRemainder(_stores.Count, indexT, out var startIndex, out var remainder);
+	        remainder = _easing?.GetValuesAtT(remainder).X ?? remainder;
+            float storeIndexT = remainder;
+            float interp = remainder;
+            
+	        if (Sampler != null)
             {
-	            Series endSeries = _stores[startIndex + 1].GetValuesAtT(indexT);
-	            if (Sampler != null)
-	            {
-		            var sample = Sampler.GetSampledTs(vT);
-		            vT = sample[sample.VectorSize - 1];
-	            }
-	            result.InterpolateInto(endSeries, vT);
+		        var sample = Sampler.GetSampledTs(indexT);
+                storeIndexT = sample.X;
+                interp = sample.Y;
+	        }
+            
+	        Series result = _stores[startIndex].GetValuesAtT(storeIndexT);
+            Series temp = result.Copy();
+            if (startIndex < _stores.Count - 1)
+            {
+	            Series endSeries = _stores[startIndex + 1].GetValuesAtT(storeIndexT);
+	            result.InterpolateInto(endSeries, interp);
 	        }
 	        return result;
         }

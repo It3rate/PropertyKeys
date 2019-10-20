@@ -63,8 +63,8 @@ namespace DataArcs.Tests.GraphicTests
 	        radiusStore.GetFullSeries().SetSeriesAtIndex(standOutStar, new FloatSeries(2, 16f,16f));
 	        composite.Renderer = new PolyShape();
 
-            BlendStore blendColors = GetBlendColor();
-			blendColors.Reverse();
+            IStore blendColors = GetBlendColor(2);
+			//blendColors.Reverse();
             composite.AddProperty(PropertyId.FillColor, blendColors);
 
             return composite;
@@ -130,7 +130,7 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
             composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0f, 0f, 0f).Store);
 
-            BlendStore blendColors = GetBlendColor();
+            IStore blendColors = GetBlendColor(0);
             LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedTCombined, SeriesUtils.X, blendColors);
             composite.AddProperty(PropertyId.FillColor, col);// new FunctionalStore(col, col2));
 
@@ -145,23 +145,28 @@ namespace DataArcs.Tests.GraphicTests
             return composite;
         }
 
-        private static BlendStore GetBlendColor()
+        private static IStore GetBlendColor(int index)
         {
 	        //var start = new float[] { 0.5f, 0.1f, 0.2f, .9f, .5f, 0, 0, 0.15f, 1f, 0, 0.5f, 0.1f };
 	        //var end = new float[] { 0, 0.2f, 0.7f, 0.8f, 0, 0.3f, 0.7f, 1f, 0.1f, 0.4f, 0, 1f };
-	        var start = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
-	        var end = new float[] { 1f, 0f, 0f,  0f,0f,1f };
 
 	        var ringSampler = new RingSampler(new int[] { 6, 4 });
 	        var hexSampler = new HexagonSampler(new int[] { 10, 7 });
 	        var lineSampler = new LineSampler(70);
 
+	        var start = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
             var colorStartStore = new Store(new FloatSeries(3, start), lineSampler);// );
 			colorStartStore.BakeData();
 			colorStartStore.GetFullSeries().SetSeriesAtIndex(standOutStar, new FloatSeries(3, 0f,1f,0f));
 
-            var colorEndStore = new Store(new FloatSeries(3, end), hexSampler);
-            return new BlendStore(new IStore[]{colorStartStore, colorEndStore}, hexSampler);
+            var end1 = new float[] { 1f, 1f, 0f, 0f, 1f, 1f };
+            var colorEndStore1 = new Store(new FloatSeries(3, end1), lineSampler);
+            var end2 = new float[] { 0f, 0f, 0f, 1f, 1f, 1f };
+            var colorEndStore2 = new Store(new FloatSeries(3, end2), lineSampler);
+
+            if (index == 0) return colorStartStore;
+            else if (index == 1) return colorEndStore1;
+            else return new BlendStore(new IStore[] { colorEndStore1, colorEndStore2 }, hexSampler);
         }
     }
 }
