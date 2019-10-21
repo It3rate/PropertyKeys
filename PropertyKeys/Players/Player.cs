@@ -6,6 +6,7 @@ using System.Timers;
 using System.Windows.Forms;
 using DataArcs.Components;
 using DataArcs.Components.Transitions;
+using DataArcs.SeriesData;
 using Timer = System.Timers.Timer;
 
 namespace DataArcs.Players
@@ -106,7 +107,10 @@ namespace DataArcs.Players
                     var elements = new List<IComposite>(_activeElements.Values);
                     foreach (var element in elements)
                     {
-                        element.Draw(element, e.Graphics, new Dictionary<PropertyId, SeriesData.Series>());
+	                    if (element is IDrawable drawable)
+	                    {
+		                    drawable.Draw(e.Graphics, new Dictionary<PropertyId, SeriesData.Series>());
+	                    }
                     }
                 }
             }

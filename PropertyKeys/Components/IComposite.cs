@@ -14,40 +14,19 @@ namespace DataArcs.Components
     {
         string Name { get; set; }
         int CompositeId { get; }
-        float InputT { get; set; }
-
-        IStore Items { get; }
-        int Capacity { get; }
-        int[] ChildCounts { get; }
-        int NestedItemCount { get; }
-        int NestedItemCountAtT(float t);
-
-        /// <summary>
-        /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
-        /// </summary>
-        IComposite Parent { get; set; }
 
         void AddProperty(PropertyId id, IStore store);
 		void AppendProperty(PropertyId id, IStore store);
 		void RemoveProperty(PropertyId id, BlendStore store);
         IStore GetStore(PropertyId propertyId);
 		void GetDefinedStores(HashSet<PropertyId> ids);
-		void AddChild(IComposite child);
-        void RemoveChild(IComposite child);
 
         void Update(float currentTime, float deltaTime);
 
-        void AddLocalPropertiesAtT(Dictionary<PropertyId, Series> data, float t);
-        IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties);
-
+		ParametricSeries GetSampledT(PropertyId propertyId, float t);
         Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
 		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
-		ParametricSeries GetSampledT(PropertyId propertyId, float t);
-        Series GetNestedSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
-        Series GetNestedSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
-        IComposite CreateChild();
-
-        void Draw(IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict);
+		
 
     }
 }

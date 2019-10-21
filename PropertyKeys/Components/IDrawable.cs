@@ -13,5 +13,7 @@ namespace DataArcs.Components
 	public interface IDrawable
     {
         IRenderable Renderer { get; set; }
-	}
+
+        void Draw(Graphics g, Dictionary<PropertyId, Series> dict);
+    }
 }

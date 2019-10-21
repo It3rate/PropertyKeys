@@ -14,24 +14,22 @@ using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-	public class Composite : IComposite, IDrawable
+	public class Container : IContainer, IDrawable
 	{
         private static int _idCounter = 1;
 
         private readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
-        private readonly List<IComposite> _children = new List<IComposite>();
+        private readonly List<IContainer> _children = new List<IContainer>();
         public int CompositeId { get; }
-        public IComposite Parent { get; set; }
+        public IContainer Parent { get; set; }
         public IRenderable Renderer { get; set; }
-
-        public float InputT { get; set; } // todo: this should probably be a store property on a collection for per element, and a single base timespan on a transition.
 
         private IStore _items;
         public IStore Items => _items ?? GetStore(PropertyId.Items);
         public int Capacity => GetStore(PropertyId.Location)?.Sampler?.Capacity ?? Items.Capacity;
         public string Name { get; set; }
 
-        protected Composite(IStore items)
+        protected Container(IStore items)
         {
             if (items != null)
             {
@@ -40,7 +38,7 @@ namespace DataArcs.Components
             CompositeId = _idCounter++;
             Player.GetPlayerById(0).AddCompositeToLibrary(this);
         }
-        public Composite(IStore items = null, IComposite parent = null) : this(items)
+        public Container(IStore items = null, IContainer parent = null) : this(items)
         {
             Parent = parent;
         }
@@ -142,18 +140,18 @@ namespace DataArcs.Components
             Parent?.GetDefinedStores(ids);
         }
 
-        public void AddChild(IComposite child)
+        public void AddChild(IContainer child)
         {
             child.Parent = this;
             _children.Add(child);
         }
-        public void RemoveChild(IComposite child)
+        public void RemoveChild(IContainer child)
         {
             _children.Remove(child);
         }
-        public virtual IComposite CreateChild()
+        public virtual IContainer CreateChild()
         {
-            return new Composite(null, this);
+            return new Container(null, this);
         }
 
 #endregion
@@ -173,7 +171,7 @@ namespace DataArcs.Components
                 store.Update(deltaTime);
             }
 
-            float t = InputT % 1f;
+            float t = deltaTime % 1f;
             if (t <= 0.05f && shouldShuffle)
             {
                 SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetFullSeries());
@@ -184,8 +182,6 @@ namespace DataArcs.Components
                 RandomSeries rs = (RandomSeries)s;
                 rs.Seed = rs.Seed + 1;
             }
-
-            InputT = deltaTime;
         }
         public virtual void EndUpdate(float currentTime, float deltaTime) { }
 #endregion
@@ -295,11 +291,11 @@ namespace DataArcs.Components
 	        else
 	        {
 		        int childIndex = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
-		        IComposite composite = _children[childIndex];
+		        IContainer child = _children[childIndex];
 				
-		        float indexTNorm = indexT * (composite.Capacity / (composite.Capacity - 1f)); // normalize
+		        float indexTNorm = indexT * (child.Capacity / (child.Capacity - 1f)); // normalize
 		        Series val = GetSeriesAtT(propertyId, indexTNorm, parentSeries);
-		        result = composite.GetNestedSeriesAtT(propertyId, segmentT, val);
+		        result = child.GetNestedSeriesAtT(propertyId, segmentT, val);
 	        }
 	        return result;
         }
@@ -312,9 +308,9 @@ namespace DataArcs.Components
 #endregion
 
 #region Draw
-        public virtual void Draw(IComposite composite, Graphics g, Dictionary<PropertyId, Series> dict)
+        public virtual void Draw(Graphics g, Dictionary<PropertyId, Series> dict)
         {
-            var capacity = NestedItemCount;// NestedItemCountAtT(InputT);
+            var capacity = NestedItemCount;// NestedItemCountAtT(AnimationT);
             if (capacity > 0)// != null)
             {
                 for (int i = 0; i < capacity; i++)

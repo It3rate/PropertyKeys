@@ -37,9 +37,9 @@ namespace DataArcs.Tests.GraphicTests
             bt.Restart();
         }
 
-        public Composite GetComposite0()
+        public Container GetComposite0()
         {
-            var composite = new Composite(Store.CreateItemStore(56));
+            var composite = new Container(Store.CreateItemStore(56));
             
             Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
             composite.AddProperty(PropertyId.Location, loc);
@@ -50,7 +50,7 @@ namespace DataArcs.Tests.GraphicTests
         public BlendTransition GetComposite1()
         {
             var compositeStart = GetComposite0();
-            var compositeEnd = (Composite)compositeStart.CreateChild();
+            var compositeEnd = (Container)compositeStart.CreateChild();
             
             Store loc = new Store(new FloatSeries(2, 100f, 100f, 500f, 400f), new HexagonSampler(new int[] { 7, 9 }));
             compositeEnd.AddProperty(PropertyId.Location, loc);
@@ -70,16 +70,16 @@ namespace DataArcs.Tests.GraphicTests
             return result;
         }
 
-        private static void AddGraphic(Composite composite)
+        private static void AddGraphic(Container container)
         {
-	        composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 10f, 10f).Store);
-	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 8).Store);
-	        composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.5f, 0, 0, 0f, 0, 0.5f).Store);
+	        container.AddProperty(PropertyId.Radius, new FloatSeries(2, 10f, 10f).Store);
+	        container.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 8).Store);
+	        container.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.5f, 0, 0, 0f, 0, 0.5f).Store);
 
 	        var lineStore = new Store(new FloatSeries(1, .05f, .2f), new LineSampler(), CombineFunction.Multiply);
-	        var lineLink = new LinkingStore(composite.CompositeId, PropertyId.Radius, SeriesUtils.X, lineStore);
-            composite.AddProperty(PropertyId.PenWidth, lineLink);
-            composite.Renderer = new PolyShape();
+	        var lineLink = new LinkingStore(container.CompositeId, PropertyId.Radius, SeriesUtils.X, lineStore);
+            container.AddProperty(PropertyId.PenWidth, lineLink);
+            container.Renderer = new PolyShape();
         }
     }
 }

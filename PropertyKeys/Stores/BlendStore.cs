@@ -8,7 +8,6 @@ using DataArcs.SeriesData;
 
 namespace DataArcs.Stores
 {
-	// todo: maybe. Remove blendStore as all transitions will happen at the composite level or functional blends.
 	public class BlendStore : StoreBase
     {
 		private readonly List<IStore> _stores;

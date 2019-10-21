@@ -11,8 +11,9 @@ namespace DataArcs.Components.Transitions
 {
     public delegate void TransitionEventHandler(object sender, EventArgs e);
 
-    public class Animation : Composite
+    public class Animation : Container
     {
+	    public float AnimationT { get; set; }
         public IStore Easing { get; set; }
         public bool IsComplete { get; protected set; } = false;
 
@@ -49,17 +50,17 @@ namespace DataArcs.Components.Transitions
             if (currentTime > _startTime + dur)
             {
                 IsComplete = true;
-                InputT = 1f;
+                AnimationT = 1f;
             }
             else
             {
                 //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.X ? 1f : (deltaTime - _startTime) / _duration.X;
-                InputT = currentTime < _startTime ? 0 :
+                AnimationT = currentTime < _startTime ? 0 :
                     currentTime > _startTime + dur ? 1f :
                     (currentTime - _startTime) / dur;
             }
 
-            InputT = _isReverse ? 1f - InputT : InputT;
+            AnimationT = _isReverse ? 1f - AnimationT : AnimationT;
         }
         public override void EndUpdate(float currentTime, float deltaTime)
         {
@@ -76,11 +77,11 @@ namespace DataArcs.Components.Transitions
             {
                 case PropertyId.EasedT:
                 case PropertyId.EasedTCombined:
-                    result = new FloatSeries(1, Easing?.GetValuesAtT(InputT).X ?? InputT).Store;
+                    result = new FloatSeries(1, Easing?.GetValuesAtT(AnimationT).X ?? AnimationT).Store;
                     break;
                 case PropertyId.SampleAtT:
                 case PropertyId.SampleAtTCombined:
-                    result = new FloatSeries(1, InputT).Store;
+                    result = new FloatSeries(1, AnimationT).Store;
                     break;
 				default:
 					result = base.GetStore(propertyId);

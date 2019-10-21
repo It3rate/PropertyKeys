@@ -12,22 +12,22 @@ namespace DataArcs.Stores
 {
     public class LinkingStore : Store
     {
-        public int CompositeId { get; }
+        public int LinkedCompositeId { get; }
         public PropertyId PropertyId { get; }
         public Slot[] SlotMapping { get; }
         private Player _player;
         private IStore _mixStore;
 
-        private IStore MaskedStore => _mixStore ?? _player[CompositeId]?.GetStore(PropertyId);
-		// todo: consider implications of having own samplers and combines here. Or compy masked store into this.
+        private IStore MaskedStore => _mixStore ?? _player[LinkedCompositeId]?.GetStore(PropertyId);
+		// todo: consider implications of having own samplers and combines here. Or copy masked store into this.
         public override CombineFunction CombineFunction { get => MaskedStore.CombineFunction; set => MaskedStore.CombineFunction = value; }
         public override CombineTarget CombineTarget { get => MaskedStore.CombineTarget; set => MaskedStore.CombineTarget = value; }
         public override Sampler Sampler { get => MaskedStore.Sampler; set => MaskedStore.Sampler = value; }
         public override int Capacity => MaskedStore.Capacity;
         
-        public LinkingStore(int compositeId, PropertyId propertyId, Slot[] slotMapping, IStore store)
+        public LinkingStore(int linkedCompositeId, PropertyId propertyId, Slot[] slotMapping, IStore store)
         {
-            CompositeId = compositeId;
+            LinkedCompositeId = linkedCompositeId;
             PropertyId = propertyId;
             SlotMapping = slotMapping;
             _player = Player.GetPlayerById(0);
@@ -37,7 +37,7 @@ namespace DataArcs.Stores
 
         private IStore GetLinkedStore()
         {
-            return _player[CompositeId]?.GetStore(PropertyId);
+            return _player[LinkedCompositeId]?.GetStore(PropertyId);
         }
         private IStore GetMixStore()
         {
@@ -54,7 +54,6 @@ namespace DataArcs.Stores
         public override Series GetValuesAtT(float t)
         {
             Series result = null;
-            float curT = _player[CompositeId]?.InputT ?? 0;
             if (PropertyIdSet.IsTSampling(PropertyId))
             {
                 Series link = GetLinkedStore()?.GetValuesAtT(t);

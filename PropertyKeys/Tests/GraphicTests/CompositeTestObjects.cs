@@ -109,7 +109,7 @@ namespace DataArcs.Tests.GraphicTests
             var cols = 15;
             var rows = 10;
 
-	        var composite = new Composite(Store.CreateItemStore(rows * cols));
+	        var composite = new Container(Store.CreateItemStore(rows * cols));
             AddGraphic(composite);
             AddColor(composite);
 
@@ -125,7 +125,7 @@ namespace DataArcs.Tests.GraphicTests
             var startStore = new Store(new FloatSeries(2, start), hexSampler);
             composite.AddProperty(PropertyId.Location, startStore);
 
-            Composite endComp = (Composite)composite.CreateChild();
+            Container endComp = (Container)composite.CreateChild();
             float[] end = { start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth };
             endComp.AddProperty(PropertyId.Location, new Store(new FloatSeries(2, end), hexSampler, CombineFunction.Replace));
 
@@ -142,14 +142,14 @@ namespace DataArcs.Tests.GraphicTests
             var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.Capacity, minMax, 1111, CombineFunction.ContinuousAdd).CreateLinearStore(endLocStore.Capacity);
             randomStore.CombineFunction = CombineFunction.Add;
             var fs = new FunctionalStore(endLocStore, randomStore);
-            ((Composite)bt.End).AddProperty(PropertyId.Location, fs);
+            ((Container)bt.End).AddProperty(PropertyId.Location, fs);
             return bt;
         }
 
         public static BlendTransition GetTest2(float delay, float startTime, float duration)
         {
             const int count = 150;
-            var composite = new Composite(Store.CreateItemStore(count));
+            var composite = new Container(Store.CreateItemStore(count));
             AddGraphic(composite);
             AddColor(composite);
 
@@ -159,7 +159,7 @@ namespace DataArcs.Tests.GraphicTests
             var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).CreateLinearStore(count);
             composite.AddProperty(PropertyId.Location, startStore);
 
-            Composite endComp = (Composite)composite.CreateChild();
+            Container endComp = (Container)composite.CreateChild();
             var endStore = new RandomSeries(2, SeriesType.Float, count, maxMinB, 0, CombineFunction.Replace).CreateLinearStore(count);
             endComp.AddProperty(PropertyId.Location, endStore);
 
@@ -174,7 +174,7 @@ namespace DataArcs.Tests.GraphicTests
         public static BlendTransition GetTest3(float delay, float startTime, float duration)
         {
             Store items = Store.CreateItemStore(150);
-            var startComp = new Composite(new BlendStore(items));
+            var startComp = new Container(new BlendStore(items));
             AddGraphic(startComp);
             AddColor(startComp);
 			
@@ -192,7 +192,7 @@ namespace DataArcs.Tests.GraphicTests
             var startStore = new Store(new FloatSeries(2, startRect), ringSampler);
             startComp.AddProperty(PropertyId.Location, startStore);
 
-            Composite endComp = (Composite)startComp.CreateChild();
+            Container endComp = (Container)startComp.CreateChild();
 
             IntSeries itemData2 = new IntSeries(1, new int[] { 0, 199 });
             Store items2 = itemData2.CreateLinearStore(200);
@@ -208,26 +208,26 @@ namespace DataArcs.Tests.GraphicTests
             return new BlendTransition(startComp, endComp, delay, startTime, duration, easeStore);
         }
 
-        private static void AddGraphic(Composite composite)
+        private static void AddGraphic(Container container)
         {
-	        composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(1, 10f, 20f, 10f) ));
-	        composite.AddProperty(PropertyId.PointCount, new FloatSeries(1, new float[] { 6f, 9f, 6f }).CreateLinearStore(3));
-	        composite.AddProperty(PropertyId.Starness, new Store(new FloatSeries(1,  0, -0.3f, 0) ));
-	        composite.AddProperty(PropertyId.Orientation, new Store(new FloatSeries(1, 0.3f, 1f / 12f, 0.3f) ));
-            composite.Renderer = new PolyShape();
+	        container.AddProperty(PropertyId.Radius, new Store(new FloatSeries(1, 10f, 20f, 10f) ));
+	        container.AddProperty(PropertyId.PointCount, new FloatSeries(1, new float[] { 6f, 9f, 6f }).CreateLinearStore(3));
+	        container.AddProperty(PropertyId.Starness, new Store(new FloatSeries(1,  0, -0.3f, 0) ));
+	        container.AddProperty(PropertyId.Orientation, new Store(new FloatSeries(1, 0.3f, 1f / 12f, 0.3f) ));
+            container.Renderer = new PolyShape();
         }
 
-        private static void AddColor(Composite composite)
+        private static void AddColor(Container container)
         {
 	        Sampler colorSampler = new LineSampler(); //new GridSampler(new []{10, 10});
 	        var start = new float[] { 0.3f, 0.1f, 0.2f, 1f, 1f, 0, 0, 0.15f, 1f, 0, 0.5f, 0.1f };
 	        var end = new float[] { 0, 0.2f, 0.7f, 0.8f, 0, 0.3f, 0.7f, 1f, 0.1f, 0.4f, 0, 1f };
 	        var colorStartStore = new Store(new FloatSeries(3, start), colorSampler);
 	        var colorEndStore = new Store(new FloatSeries(3, end), colorSampler);
-	        composite.AddProperty(PropertyId.FillColor, new BlendStore(colorStartStore, colorEndStore));
+	        container.AddProperty(PropertyId.FillColor, new BlendStore(colorStartStore, colorEndStore));
 
-            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0, 0, 0, .4f, 0, 0).Store);
-            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 0f, 2f, 0f).Store);
+            container.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0, 0, 0, .4f, 0, 0).Store);
+            container.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 0f, 2f, 0f).Store);
         }
     }
 }
