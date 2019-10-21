@@ -79,7 +79,7 @@ namespace DataArcs.Components.Transitions
             End.Update(currentTime, deltaTime);
             foreach (var item in _blends.Values)
             {
-                item.Update(AnimationT);
+                item.Update(InterpolationT);
             }
         }
 
@@ -127,9 +127,9 @@ namespace DataArcs.Components.Transitions
                 var endDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
                 End.QueryPropertiesAtT(endDict, t, false);
 
-                float indexT = t + AnimationT; // delay per element.
+                float indexT = t + InterpolationT; // delay per element.
 
-                float easedT = Easing?.GetValuesAtT(AnimationT * indexT).X ?? AnimationT;
+                float easedT = Easing?.GetValuesAtT(InterpolationT * indexT).X ?? InterpolationT;
                 result.InterpolateInto(endDict[propertyId], easedT);
             }
             else if(result == null)
@@ -144,8 +144,8 @@ namespace DataArcs.Components.Transitions
             IRenderable result = Start.QueryPropertiesAtT(data, t, true);
             result = End.QueryPropertiesAtT(endDict, t, true) ?? result;
 
-            float indexT = t + AnimationT; // delay per element.
-            float easedT = Easing?.GetValuesAtT(AnimationT * indexT).X ?? AnimationT;
+            float indexT = t + InterpolationT; // delay per element.
+            float easedT = Easing?.GetValuesAtT(InterpolationT * indexT).X ?? InterpolationT;
             foreach (var key in endDict.Keys)
             {
                 if (data.TryGetValue(key, out Series value))

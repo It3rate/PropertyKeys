@@ -16,13 +16,9 @@ namespace DataArcs.Players
         private static Player _currentPlayer;
         public static Player GetPlayerById(int id) => _currentPlayer;
 
-        private static DateTime _pauseTime;
-        private static TimeSpan _delayTime = new TimeSpan(0);
-        public static DateTime StartTime { get; private set; }
-        static Player() { StartTime = DateTime.Now;}
+        private readonly Form _display;
 
 	    private readonly Dictionary<int, IComposite> _allComposites = new Dictionary<int, IComposite>();
-
 	    private readonly Dictionary<int, IComposite> _activeElements = new Dictionary<int, IComposite>();
         private readonly Dictionary<int, IComposite> _toAddActive = new Dictionary<int, IComposite>();
         private readonly List<int> _toRemoveActive = new List<int>();
@@ -30,12 +26,15 @@ namespace DataArcs.Players
         private bool _needsDestroy = false;
         private bool _canDestroy = true;
 
-        private readonly Form _display;
+        private static DateTime _pauseTime;
+        private static TimeSpan _delayTime = new TimeSpan(0);
+        public static DateTime StartTime { get; private set; }
+        static Player() { StartTime = DateTime.Now;}
+
         private Timer _timer;
         private TimeSpan _lastTime;
         private TimeSpan _currentTime;
         public float CurrentMs => (float)_currentTime.TotalMilliseconds;
-		
 
         public Player(Form display)
 		{

@@ -40,7 +40,16 @@ namespace DataArcs.Components
 		Radius,
 		RandomMotion,
 
-		Custom = 0x1000,
+		Mouse, // composite of all mouse states in single series, mask with MousePropertiesEnum
+        MouseX, // mouse events on mouse composite
+		MouseY,
+		MouseWheel,
+        MouseButtonStates,
+        PenPressure,
+        PenAngle,
+        KeyboardState, // keyboard input events and text on composite
+
+        Custom = 0x1000,
 		Custom1 = 0x1001,
 		Custom2 = 0x1002,
 		Custom3 = 0x1003,

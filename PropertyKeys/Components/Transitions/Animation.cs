@@ -9,11 +9,9 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Components.Transitions
 {
-    public delegate void TransitionEventHandler(object sender, EventArgs e);
-
-    public class Animation : Container
+	public class Animation : Container
     {
-	    public float AnimationT { get; set; }
+	    public float InterpolationT { get; set; }
         public IStore Easing { get; set; }
         public bool IsComplete { get; protected set; } = false;
 
@@ -50,17 +48,17 @@ namespace DataArcs.Components.Transitions
             if (currentTime > _startTime + dur)
             {
                 IsComplete = true;
-                AnimationT = 1f;
+                InterpolationT = 1f;
             }
             else
             {
                 //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.X ? 1f : (deltaTime - _startTime) / _duration.X;
-                AnimationT = currentTime < _startTime ? 0 :
+                InterpolationT = currentTime < _startTime ? 0 :
                     currentTime > _startTime + dur ? 1f :
                     (currentTime - _startTime) / dur;
             }
 
-            AnimationT = _isReverse ? 1f - AnimationT : AnimationT;
+            InterpolationT = _isReverse ? 1f - InterpolationT : InterpolationT;
         }
         public override void EndUpdate(float currentTime, float deltaTime)
         {
@@ -77,11 +75,11 @@ namespace DataArcs.Components.Transitions
             {
                 case PropertyId.EasedT:
                 case PropertyId.EasedTCombined:
-                    result = new FloatSeries(1, Easing?.GetValuesAtT(AnimationT).X ?? AnimationT).Store;
+                    result = new FloatSeries(1, Easing?.GetValuesAtT(InterpolationT).X ?? InterpolationT).Store;
                     break;
                 case PropertyId.SampleAtT:
                 case PropertyId.SampleAtTCombined:
-                    result = new FloatSeries(1, AnimationT).Store;
+                    result = new FloatSeries(1, InterpolationT).Store;
                     break;
 				default:
 					result = base.GetStore(propertyId);

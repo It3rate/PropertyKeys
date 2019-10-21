@@ -310,7 +310,7 @@ namespace DataArcs.Components
 #region Draw
         public virtual void Draw(Graphics g, Dictionary<PropertyId, Series> dict)
         {
-            var capacity = NestedItemCount;// NestedItemCountAtT(AnimationT);
+            var capacity = NestedItemCount;// NestedItemCountAtT(InterpolationT);
             if (capacity > 0)// != null)
             {
                 for (int i = 0; i < capacity; i++)
