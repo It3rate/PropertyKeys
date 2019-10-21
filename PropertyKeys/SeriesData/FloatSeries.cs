@@ -14,13 +14,17 @@ namespace DataArcs.SeriesData
 			// insure at least vectorSize elements in values array.
 			if (values.Length < vectorSize)
 			{
-				values = new float[vectorSize];
+				_floatValues = new float[vectorSize];
 				for (int i = 0; i < vectorSize; i++)
 				{
-					values[i] = i < values.Length ? values[i] : values[values.Length - 1];
+					_floatValues[i] = i < values.Length ? values[i] : values[values.Length - 1];
 				}
 			}
-			_floatValues = values;
+			else
+			{
+				_floatValues = values;
+			}
+			
 		}
 
 		//public float[] this[int index] => GetSeriesAtIndex(index).FloatData;

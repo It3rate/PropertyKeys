@@ -19,6 +19,22 @@ namespace DataArcs.Tests.GraphicTests
             _player = player;
         }
 
+        private Animation _timer;
+        public void CreateTimer()
+        {
+	        var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack));
+	        _timer = _timer ?? new Animation(0, Player.GetPlayerById(0).CurrentMs, 3500, easeStore);
+	        _timer.EndTransitionEvent += CompOnEndTimerEvent;
+	        _player.AddActiveElement(_timer);
+        }
+        private void CompOnEndTimerEvent(object sender, EventArgs e)
+        {
+	        if (sender is Animation anim)
+	        {
+		        anim.Restart();
+	        }
+        }
+
         public void NextVersion()
         {
             CreateTimer();
@@ -89,22 +105,6 @@ namespace DataArcs.Tests.GraphicTests
             composite.Name = "comp0";
 
             return composite;
-        }
-
-        private Animation _timer;
-        public void CreateTimer()
-        {
-            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack));
-            _timer = _timer ?? new Animation(0, Player.GetPlayerById(0).CurrentMs, 3500, easeStore);
-            _timer.EndTransitionEvent += CompOnEndTimerEvent;
-            _player.AddActiveElement(_timer);
-        }
-        private void CompOnEndTimerEvent(object sender, EventArgs e)
-        {
-            if (sender is Animation anim)
-            {
-                anim.Restart();
-            }
         }
 
         public Composite GetRing()

@@ -14,13 +14,16 @@ namespace DataArcs.SeriesData
 			// insure at least vectorSize elements in values array.
 			if (values.Length < vectorSize)
 			{
-				values = new int[vectorSize];
+				_intValues = new int[vectorSize];
 				for (int i = 0; i < vectorSize; i++)
 				{
-					values[i] = i < values.Length ? values[i] : values[values.Length - 1];
+					_intValues[i] = i < values.Length ? values[i] : values[values.Length - 1];
 				}
 			}
-            _intValues = values;
+			else
+			{
+				_intValues = values;
+			}
 		}
 
 		//public int[] this[int index] => GetSeriesAtIndex(index).IntData;
