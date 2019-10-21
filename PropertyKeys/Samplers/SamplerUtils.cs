@@ -11,17 +11,17 @@ namespace DataArcs.Samplers
     public class SamplerUtils
     {
 	    public const float TOLERANCE = 0.00001f;
-        
+
         /// <summary>
         /// Returns normalized indexes into segmented array based on index and size. Passed size can be virtual (larger than implied segments total).
         /// </summary>
-        /// <param name="virtualCount">Virtual size of element container.</param>
         /// <param name="segments">The segments (e.g. row/cols) for the container.</param>
+        /// <param name="virtualCount">Virtual size of element container.</param>
         /// <param name="index">The index into the segments.</param>
         /// <returns></returns>
-        public static ParametricSeries GetMultipliedJaggedT(int virtualCount, int[] segments, int index)
+        public static ParametricSeries GetMultipliedJaggedT(int[] segments, int virtualCount, int index)
         {
-            var indexes = GetPositionsForIndex(virtualCount, segments, index);
+            var indexes = GetPositionsForIndex(segments, virtualCount, index);
             var dSize = 1;
             var maxLen = virtualCount - 1;
             var result = new float[indexes.Length];
@@ -41,7 +41,7 @@ namespace DataArcs.Samplers
 
             return new ParametricSeries(indexes.Length, result);
         }
-        public static int[] GetPositionsForIndex(int virtualCount, int[] segments, int index)
+        public static int[] GetPositionsForIndex(int[] segments, int virtualCount, int index)
         {
             var result = new int[segments.Length];
             var count = Math.Max(0, Math.Min(virtualCount - 1, index));
@@ -124,7 +124,7 @@ namespace DataArcs.Samplers
         public static ParametricSeries GetStrideTsForT(int virtualCount, int[] strides, float t)
         {
             var index = (int)(t * (virtualCount - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
-            return GetMultipliedJaggedT(virtualCount, strides, index);
+            return GetMultipliedJaggedT(strides, virtualCount, index);
         }
     }
 }
