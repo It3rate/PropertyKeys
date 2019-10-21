@@ -41,29 +41,19 @@ namespace DataArcs.Samplers
         public override ParametricSeries GetSampledTs(float t)
         {
             var index = (int)Math.Round(t * (Capacity - 1f));
-            var strideTs = SamplerUtils.GetStrideTsForIndex(Capacity, Strides, index);
+            var strideTs = SamplerUtils.GetMultipliedJaggedT(Capacity, Strides, index);
             if (!IsRowCol)
             {
 				strideTs.Reverse();
             }
             return strideTs;
         }
-        public override IntSeries GetSampledIndexes(float t)
-        {
-            var index = (int)Math.Round(t * (Capacity - 1f));
-            var positions = SamplerUtils.GetPositionsForIndex(Capacity, Strides, index);
-            if (!IsRowCol)
-            {
-                Array.Reverse(positions);
-            }
-            return new IntSeries(Strides.Length, positions);
-        }
 
         protected virtual Series GetSeriesSample(Series series, int index)
         {
 			var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
-			var strideTs = SamplerUtils.GetStrideTsForIndex(Capacity, Strides, index);
-
+            var strideTs = SamplerUtils.GetMultipliedJaggedT(Capacity, Strides, index);
+            
 			for (var i = 0; i < result.Length; i++)
 			{
 				result[i] = (i < Strides.Length) ? series.GetValueAtT(strideTs[i]).FloatDataAt(i) : 0;

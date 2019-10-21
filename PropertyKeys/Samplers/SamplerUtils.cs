@@ -11,36 +11,26 @@ namespace DataArcs.Samplers
     public class SamplerUtils
     {
 	    public const float TOLERANCE = 0.00001f;
-
-        public static int[] GetPositionsForIndex(int virtualCount, int[] strides, int index)
+        
+        /// <summary>
+        /// Returns normalized indexes into segmented array based on index and size. Passed size can be virtual (larger than implied segments total).
+        /// </summary>
+        /// <param name="virtualCount">Virtual size of element container.</param>
+        /// <param name="segments">The segments (e.g. row/cols) for the container.</param>
+        /// <param name="index">The index into the segments.</param>
+        /// <returns></returns>
+        public static ParametricSeries GetMultipliedJaggedT(int virtualCount, int[] segments, int index)
         {
-            var result = new int[strides.Length];
-	        var count = Math.Max(0, Math.Min(virtualCount - 1, index));
-	        for (var i = strides.Length - 1; i >= 0; i--)
-	        {
-		        int dimSize = 1;
-		        for (int j = 0; j < i; j++)
-		        {
-			        dimSize *= strides[j];
-		        }
-		        result[i] = count / dimSize;
-		        count -= result[i] * dimSize;
-	        }
-	        return result;
-        }
-
-        public static ParametricSeries GetStrideTsForIndex(int virtualCount, int[] strides, int index)
-        {
-            var indexes = GetPositionsForIndex(virtualCount, strides, index);
+            var indexes = GetPositionsForIndex(virtualCount, segments, index);
             var dSize = 1;
             var maxLen = virtualCount - 1;
             var result = new float[indexes.Length];
             for (var i = 0; i < indexes.Length; i++)
             {
-                if (i < strides.Length && strides[i] > 0)
+                if (i < segments.Length && segments[i] > 0)
                 {
-                    result[i] = indexes[i] / (float)(strides[i] - 1); // needs to be 0-1, recursive like jagged sampler
-                    dSize *= strides[i];
+                    result[i] = indexes[i] / (float)(segments[i] - 1); // needs to be 0-1, recursive like jagged sampler
+                    dSize *= segments[i];
                 }
                 else
                 {
@@ -51,19 +41,23 @@ namespace DataArcs.Samplers
 
             return new ParametricSeries(indexes.Length, result);
         }
-
-        public static void SummedIndexAndRemainder(int stride, int partialIndex, ref int index, out int remainder)
+        public static int[] GetPositionsForIndex(int virtualCount, int[] segments, int index)
         {
-            if(partialIndex >= stride)
+            var result = new int[segments.Length];
+            var count = Math.Max(0, Math.Min(virtualCount - 1, index));
+            for (var i = segments.Length - 1; i >= 0; i--)
             {
-                remainder = partialIndex - stride;
-                index++;
+                int dimSize = 1;
+                for (int j = 0; j < i; j++)
+                {
+                    dimSize *= segments[j];
+                }
+                result[i] = count / dimSize;
+                count -= result[i] * dimSize;
             }
-            else
-            {
-                remainder = partialIndex;
-            }
+            return result;
         }
+
 		/// <summary>
         /// Returns normalized indexes into a jagged set of elements at the passed index.
         /// Normally the last parameter will be 0-1 in order to pass to children,
@@ -95,7 +89,20 @@ namespace DataArcs.Samplers
             float remainder = lastSegment > 1 ? refRemainder / (lastSegment - discreteAdjust) : 0;
             return new ParametricSeries(2, indexT, remainder);
         }
-		
+        public static void SummedIndexAndRemainder(int stride, int partialIndex, ref int index, out int remainder)
+        {
+            if(partialIndex >= stride)
+            {
+                remainder = partialIndex - stride;
+
+                index++;
+            }
+            else
+            {
+                remainder = partialIndex;
+            }
+        }
+
 		/// <summary>
         /// Gets interplolated position along a given length, the start index and how far into it to sample.
         /// Assures index is greater than zero and less than len.
@@ -117,7 +124,7 @@ namespace DataArcs.Samplers
         public static ParametricSeries GetStrideTsForT(int virtualCount, int[] strides, float t)
         {
             var index = (int)(t * (virtualCount - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
-            return GetStrideTsForIndex(virtualCount, strides, index);
+            return GetMultipliedJaggedT(virtualCount, strides, index);
         }
     }
 }

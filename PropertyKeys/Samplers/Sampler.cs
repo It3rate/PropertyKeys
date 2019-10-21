@@ -13,9 +13,5 @@ namespace DataArcs.Samplers
         {
             return new ParametricSeries(1, t);
         }
-        public virtual IntSeries GetSampledIndexes(float t)
-        {
-            return new IntSeries(1, (int)Math.Round(t * Capacity));
-        }
     }
 }

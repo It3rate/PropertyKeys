@@ -39,13 +39,6 @@ namespace DataArcs.Samplers
             return SamplerUtils.GetSummedJaggedT(RingCounts, index, true);
         }
 
-        public override IntSeries GetSampledIndexes(float t)
-        {
-	        var sample = GetSampledTs(t);
-	        int ringIndex = (int)(sample.X * RingCounts.Length);
-            return new IntSeries(2, ringIndex, (int)(sample.Y * RingCounts[ringIndex]));
-        }
-
         private Series GetSeriesSample(Series series, float t)
         {
 	        var sample = GetSampledTs(t);

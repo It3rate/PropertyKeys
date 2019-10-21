@@ -55,25 +55,25 @@ namespace DataArcs.Tests
             int[] strides = {10, 10};
 			var cl = strides[0] - 1f;
 			float[] sample;
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, -3).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, -3).FloatData;
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 0).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 0).FloatData;
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 1).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 1).FloatData;
 			ArraysEqual(new float[] {1f / cl, 0}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 9).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 9).FloatData;
 			ArraysEqual(new float[] {1f, 0}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 10).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 10).FloatData;
 			ArraysEqual(new float[] {0, 1f / cl}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 11).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 11).FloatData;
 			ArraysEqual(new float[] {1f / cl, 1f / cl}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 53).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 53).FloatData;
 			ArraysEqual(new float[] {3f / cl, 5f / cl}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 99).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 99).FloatData;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 100).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 100).FloatData;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = SamplerUtils.GetStrideTsForIndex(virtualCount, strides, 101).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(virtualCount, strides, 101).FloatData;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
 		}
 
