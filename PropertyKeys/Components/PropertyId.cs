@@ -11,7 +11,7 @@ namespace DataArcs.Components
 		None = 0,
 		TModifier,
 
-		InputT,
+		InterpolationT,
 
         SampleAtT,
         SampleAtTCombined,

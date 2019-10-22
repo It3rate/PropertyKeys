@@ -18,7 +18,7 @@ namespace DataArcs.Stores
         private Player _player;
         private IStore _mixStore;
 
-        private IStore MaskedStore => _mixStore ?? _player[LinkedCompositeId]?.GetStore(PropertyId);
+        private IStore MaskedStore => _mixStore;// ?? _player[LinkedCompositeId]?.GetStore(PropertyId);
 		// todo: consider implications of having own samplers and combines here. Or copy masked store into this.
         public override CombineFunction CombineFunction { get => MaskedStore.CombineFunction; set => MaskedStore.CombineFunction = value; }
         public override CombineTarget CombineTarget { get => MaskedStore.CombineTarget; set => MaskedStore.CombineTarget = value; }
@@ -34,16 +34,6 @@ namespace DataArcs.Stores
             _mixStore = store;
         }
         
-
-        private IStore GetLinkedStore()
-        {
-            return _player[LinkedCompositeId]?.GetStore(PropertyId);
-        }
-        private IStore GetMixStore()
-        {
-            return _mixStore;
-        }
-
         public override Series GetValuesAtIndex(int index)
         { 
             // TODO: can't just pass this in because capacity may mean row capacity.
@@ -56,7 +46,7 @@ namespace DataArcs.Stores
             Series result = null;
             if (PropertyIdSet.IsTSampling(PropertyId))
             {
-                Series link = GetLinkedStore()?.GetValuesAtT(t);
+                Series link = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
                 if (link != null)
                 {
                     var curTSeries = SeriesUtils.GetSubseries(SlotMapping, link);
@@ -64,24 +54,22 @@ namespace DataArcs.Stores
                     {
                         curTSeries.CombineInto(new FloatSeries(1, t), CombineFunction, t);
                     }
-                    result = GetMixStore()?.GetValuesAtT(curTSeries.X);
+                    result = _mixStore?.GetValuesAtT(curTSeries.X);
                 }
             }
             else
             {
-                result = GetMixStore()?.GetValuesAtT(t);
+                result = _mixStore?.GetValuesAtT(t);
                 if (result != null)
                 {
-                    IStore linkStore = GetLinkedStore();
-                    if (linkStore != null)
-                    {
-                        Series linkMapped = SeriesUtils.GetSubseries(SlotMapping, linkStore.GetValuesAtT(t));
-                        result.CombineInto(linkMapped, CombineFunction, t);
-                    }
+					// This is two step in order to use slot mapping, probably can sensibly combine this.
+	                Series s = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
+	                Series linkMapped = SeriesUtils.GetSubseries(SlotMapping, s);
+	                result.CombineInto(linkMapped, CombineFunction, t);
                 }
                 else
                 {
-                    result = GetLinkedStore()?.GetValuesAtT(t);
+                    result = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
                 }
             }
             return result;
@@ -90,7 +78,7 @@ namespace DataArcs.Stores
         public override ParametricSeries GetSampledTs(float t)
         {
             ParametricSeries result = _mixStore.GetSampledTs(t);
-            ParametricSeries link = GetLinkedStore()?.GetSampledTs(t);
+            ParametricSeries link = _player[LinkedCompositeId]?.GetSampledT(PropertyId, t);
             if (link != null)
             {
                 Series mappedValues = SeriesUtils.GetSubseries(SlotMapping, link);

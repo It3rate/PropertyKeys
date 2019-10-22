@@ -45,8 +45,7 @@ namespace DataArcs.Samplers
 
 			float ringIndexT = sample.X;
 			float ringT = sample.Y;
-
-            //Debug.WriteLine(ringIndexT + " : " + ringT + " :: " + RingCounts[0]);
+			
             float orientation = 0;
             if (Orientation != null)
             {

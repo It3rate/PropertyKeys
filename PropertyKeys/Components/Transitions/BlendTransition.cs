@@ -14,10 +14,12 @@ using DataArcs.Graphic;
 
 namespace DataArcs.Components.Transitions
 {
-    public class BlendTransition : Animation
+    public class BlendTransition : Container
     {
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
+        public IContinuous Runner { get; }
+        public IStore Easing { get; set; }
         public IContainer Start { get; set; }
         public IContainer End { get; set; }
 
@@ -40,10 +42,14 @@ namespace DataArcs.Components.Transitions
             return (int)(startCount + (endCount - startCount) * t);
         }
 
-        public BlendTransition(IContainer start, IContainer end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null):
-            base(delay, startTime, duration, easing)
+        public BlendTransition(IContainer start, IContainer end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null)
         {
-	        Start = start;
+			// todo: pass in Blend's timer.
+			Runner = new Timer(delay, startTime, duration);
+			Player.GetPlayerById(0).AddActiveElement(Runner);
+
+			Easing = easing;
+            Start = start;
 	        End = end;
             StartStrides = start.ChildCounts; // todo:  include own items
             EndStrides = end.ChildCounts;
@@ -79,7 +85,7 @@ namespace DataArcs.Components.Transitions
             End.Update(currentTime, deltaTime);
             foreach (var item in _blends.Values)
             {
-                item.Update(InterpolationT);
+                item.Update(Runner.InterpolationT);
             }
         }
 
@@ -127,9 +133,9 @@ namespace DataArcs.Components.Transitions
                 var endDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
                 End.QueryPropertiesAtT(endDict, t, false);
 
-                float indexT = t + InterpolationT; // delay per element.
+                float indexT = t + Runner.InterpolationT; // delay per element.
 
-                float easedT = Easing?.GetValuesAtT(InterpolationT * indexT).X ?? InterpolationT;
+                float easedT = Easing?.GetValuesAtT(Runner.InterpolationT * indexT).X ?? Runner.InterpolationT;
                 result.InterpolateInto(endDict[propertyId], easedT);
             }
             else if(result == null)
@@ -144,8 +150,8 @@ namespace DataArcs.Components.Transitions
             IRenderable result = Start.QueryPropertiesAtT(data, t, true);
             result = End.QueryPropertiesAtT(endDict, t, true) ?? result;
 
-            float indexT = t + InterpolationT; // delay per element.
-            float easedT = Easing?.GetValuesAtT(InterpolationT * indexT).X ?? InterpolationT;
+            float indexT = t + Runner.InterpolationT; // delay per element.
+            float easedT = Easing?.GetValuesAtT(Runner.InterpolationT * indexT).X ?? Runner.InterpolationT;
             foreach (var key in endDict.Keys)
             {
                 if (data.TryGetValue(key, out Series value))

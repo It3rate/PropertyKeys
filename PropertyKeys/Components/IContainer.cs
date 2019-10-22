@@ -17,7 +17,7 @@ namespace DataArcs.Components
 	    int NestedItemCount { get; }
 	    int NestedItemCountAtT(float t);
 
-	    IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties);
+        IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties);
 	    Series GetNestedSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
 	    Series GetNestedSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 

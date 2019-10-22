@@ -14,20 +14,16 @@ using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-	public class Container : IContainer, IDrawable
+	public class Container : BaseComposite, IContainer, IDrawable
 	{
-        private static int _idCounter = 1;
-
-        private readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
-        private readonly List<IContainer> _children = new List<IContainer>();
-        public int CompositeId { get; }
+		private readonly List<IContainer> _children = new List<IContainer>();
+		
         public IContainer Parent { get; set; }
         public IRenderable Renderer { get; set; }
 
         private IStore _items;
         public IStore Items => _items ?? GetStore(PropertyId.Items);
         public int Capacity => GetStore(PropertyId.Location)?.Sampler?.Capacity ?? Items.Capacity;
-        public string Name { get; set; }
 
         protected Container(IStore items)
         {
@@ -35,8 +31,6 @@ namespace DataArcs.Components
             {
                 AddProperty(PropertyId.Items, items);
             }
-            CompositeId = _idCounter++;
-            Player.GetPlayerById(0).AddCompositeToLibrary(this);
         }
         public Container(IStore items = null, IContainer parent = null) : this(items)
         {
@@ -44,6 +38,31 @@ namespace DataArcs.Components
         }
 
 #region Elements
+
+		public override void AddProperty(PropertyId id, IStore store)
+		{
+			base.AddProperty(id, store);
+			if (id == PropertyId.Items)
+			{
+				_items = store;
+			}
+		}
+		public override IStore GetStore(PropertyId propertyId)
+		{
+			var result = base.GetStore(propertyId);
+			if (result == null && Parent != null)
+			{
+				result = Parent.GetStore(propertyId);
+			}
+
+			return result;
+		}
+		public override void GetDefinedStores(HashSet<PropertyId> ids)
+		{
+			base.GetDefinedStores(ids);
+			Parent?.GetDefinedStores(ids);
+		}
+
         public virtual int NestedItemCount
         {
             get
@@ -89,57 +108,6 @@ namespace DataArcs.Components
             return NestedItemCount;
         }
 
-        public void AddProperty(PropertyId id, IStore store)
-        {
-            if(id == PropertyId.Items)
-            {
-                _items = store;
-            }
-            _stores[id] = store;
-        }
-        public void AppendProperty(PropertyId id, IStore store)
-        {
-            if (_stores.ContainsKey(id))
-            {
-                IStore curStore = _stores[id];
-                if (curStore is FunctionalStore)
-                {
-                    ((FunctionalStore)curStore).Add(curStore);
-                }
-                else
-                {
-                    _stores[id] = new FunctionalStore(curStore, store);
-                }
-            }
-            else
-            {
-                AddProperty(id, store);
-            }
-        }
-        public void RemoveProperty(PropertyId id, BlendStore store)
-        {
-            _stores.Remove(id);
-        }
-        public virtual IStore GetStore(PropertyId propertyId)
-        {
-            _stores.TryGetValue(propertyId, out var result);
-            if (result == null && Parent != null)
-            {
-                result = Parent.GetStore(propertyId);
-            }
-
-            return result;
-        }
-        public virtual void GetDefinedStores(HashSet<PropertyId> ids)
-        {
-            foreach (var item in _stores.Keys)
-            {
-                ids.Add(item);
-            }
-
-            Parent?.GetDefinedStores(ids);
-        }
-
         public void AddChild(IContainer child)
         {
             child.Parent = this;
@@ -157,20 +125,11 @@ namespace DataArcs.Components
 #endregion
 
 #region Updates
-        public void Update(float currentTime, float deltaTime)
-        {
-            StartUpdate(currentTime, deltaTime);
-            EndUpdate(currentTime, deltaTime);
-        }
 
         public bool shouldShuffle; // temp basis for switching to events
-        public virtual void StartUpdate(float currentTime, float deltaTime)
+        public override void StartUpdate(float currentTime, float deltaTime)
         {
-            foreach (var store in _stores.Values)
-            {
-                store.Update(deltaTime);
-            }
-
+			base.StartUpdate(currentTime, deltaTime);
             float t = deltaTime % 1f;
             if (t <= 0.05f && shouldShuffle)
             {
@@ -183,7 +142,6 @@ namespace DataArcs.Components
                 rs.Seed = rs.Seed + 1;
             }
         }
-        public virtual void EndUpdate(float currentTime, float deltaTime) { }
 #endregion
 
 #region Sampling
@@ -237,7 +195,7 @@ namespace DataArcs.Components
             return result;
         }
 
-        public virtual Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             var store = GetStore(propertyId);
             var result = store?.GetValuesAtT(t);
@@ -255,7 +213,7 @@ namespace DataArcs.Components
             return result;
         }
 
-        public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
+        public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
         {
             var store = GetStore(propertyId);
             var result = store?.GetValuesAtIndex(index);
@@ -271,6 +229,11 @@ namespace DataArcs.Components
                 }
             }
             return result;
+        }
+        public override ParametricSeries GetSampledT(PropertyId propertyId, float t)
+        {
+            var store = GetStore(propertyId);
+            return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
         }
 
         public virtual Series GetNestedSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
@@ -298,12 +261,6 @@ namespace DataArcs.Components
 		        result = child.GetNestedSeriesAtT(propertyId, segmentT, val);
 	        }
 	        return result;
-        }
-
-        public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
-        {
-            var store = GetStore(propertyId);
-            return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
         }
 #endregion
 

@@ -33,8 +33,8 @@ namespace DataArcs.Tests.GraphicTests
 	    private void CompOnEndTransitionEvent(object sender, EventArgs e)
 	    {
 		    BlendTransition bt = (BlendTransition)sender;
-		    bt.Reverse();
-		    bt.Restart();
+		    bt.Runner.Reverse();
+		    bt.Runner.Restart();
 	    }
 
         IComposite GetHexGrid()

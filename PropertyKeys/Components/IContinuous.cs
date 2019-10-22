@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Components.Transitions;
+using DataArcs.SeriesData;
 
 namespace DataArcs.Components
 {
@@ -12,16 +13,16 @@ namespace DataArcs.Components
     public interface IContinuous : IComposite
     {
 	    float InterpolationT { get; set; }
-	    float DeltaTime { get; }
-	    float CurrentTime { get; }
-        float PreviousTime { get; }
+        //float DeltaTime { get; }
+        //float CurrentTime { get; }
+        //float PreviousTime { get; }
 
-        float StartTime { get; }
-        float Duration { get; }
-        float Delay { get; }
+        //float StartTime { get; }
+        Series Duration { get; }
+        Series Delay { get; }
 
-        bool IsReverse { get; }
-        bool IsComplete { get; }
+        //bool IsReverse { get; }
+        //bool IsComplete { get; }
 
         event TransitionEventHandler StartTransitionEvent;
         event TransitionEventHandler StepTransitionEvent;
@@ -29,7 +30,7 @@ namespace DataArcs.Components
 
         void Restart();
         void Reverse();
-        void Pause();
-        void Resume();
+        //void Pause();
+        //void Resume();
     }
 }

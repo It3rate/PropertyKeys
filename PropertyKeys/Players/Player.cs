@@ -36,6 +36,8 @@ namespace DataArcs.Players
         private TimeSpan _currentTime;
         public float CurrentMs => (float)_currentTime.TotalMilliseconds;
 
+        public IComposite this[int index] => _allComposites.ContainsKey(index) ? _allComposites[index] : null;
+
         public Player(Form display)
 		{
             _currentPlayer = this;
@@ -133,7 +135,6 @@ namespace DataArcs.Players
         }
         public void Clear() => _toRemoveActive.AddRange(_activeElements.Keys);
 
-        public IComposite this[int index] => _allComposites.ContainsKey(index) ? _allComposites[index] : null;
         public void AddCompositeToLibrary(IComposite composite)
         {
 			// todo: use ref counting to remove dead elements.
