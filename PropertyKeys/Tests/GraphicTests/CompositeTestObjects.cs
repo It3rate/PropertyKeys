@@ -56,13 +56,13 @@ namespace DataArcs.Tests.GraphicTests
             switch (index)
             {
                 case 0:
-                    comp = GetTest3(0, _player.CurrentMs, 1000f);
+                    comp = GetTest3(0, 1000f);
                     break;
                 case 1:
-                    comp = GetTest0(0, _player.CurrentMs, 1000f);
+                    comp = GetTest0(0, 1000f);
                     break;
                 case 2:
-                    comp = GetTest2(0, _player.CurrentMs, 1000f);
+                    comp = GetTest2(0, 1000f);
                     break;
                 default:
                     comp = GetTest1(0, _player.CurrentMs, 1000f);
@@ -72,6 +72,7 @@ namespace DataArcs.Tests.GraphicTests
             return comp;
         }
 
+        private BlendTransition lastComp;
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
             _count++;
@@ -83,7 +84,6 @@ namespace DataArcs.Tests.GraphicTests
             }
             else if (_count < 4)
             {
-                BlendTransition bt = (BlendTransition)sender;
                 BlendTransition nextComp = GetVersion(NextVersionIndex());
 
                 var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Multiply, CombineTarget.T);
@@ -91,10 +91,11 @@ namespace DataArcs.Tests.GraphicTests
                 //_player.AddActiveElement(newBT);
 
                 nextComp.End = nextComp.Start;
-                nextComp.Start = bt.Start;
+                nextComp.Start = lastComp;
                 nextComp.Easing = easeStore;
                 nextComp.GenerateBlends();
                 _player.AddActiveElement(nextComp);
+                lastComp = nextComp;
             }
             else
             {
@@ -104,7 +105,7 @@ namespace DataArcs.Tests.GraphicTests
         }
 
 
-        public static BlendTransition GetTest0(float delay, float startTime, float duration)
+        public static BlendTransition GetTest0(float delay, float duration)
         {
             var cols = 15;
             var rows = 10;
@@ -130,12 +131,12 @@ namespace DataArcs.Tests.GraphicTests
             endComp.AddProperty(PropertyId.Location, new Store(new FloatSeries(2, end), hexSampler, CombineFunction.Replace));
 
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Replace, CombineTarget.T);
-            return new BlendTransition(composite, endComp, delay, startTime, duration, easeStore);
+            return new BlendTransition(composite, endComp, new Timer(delay, duration), easeStore);
         }
 
         public static BlendTransition GetTest1(float delay, float startTime, float duration)
         {
-	        BlendTransition bt = (BlendTransition)GetTest0(delay, startTime, duration);
+	        BlendTransition bt = (BlendTransition)GetTest0(delay, duration);
 
             IStore endLocStore = bt.End.GetStore(PropertyId.Location);
             Series minMax = new FloatSeries(2, -200f, -100f, 200f, 100f);
@@ -146,7 +147,7 @@ namespace DataArcs.Tests.GraphicTests
             return bt;
         }
 
-        public static BlendTransition GetTest2(float delay, float startTime, float duration)
+        public static BlendTransition GetTest2(float delay, float duration)
         {
             const int count = 150;
             var composite = new Container(Store.CreateItemStore(count));
@@ -168,10 +169,10 @@ namespace DataArcs.Tests.GraphicTests
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
 
             composite.shouldShuffle = true;
-            return new BlendTransition(composite, endComp, delay, startTime, duration, easeStore);
+            return new BlendTransition(composite, endComp, new Timer(delay, duration), easeStore);
 
         }
-        public static BlendTransition GetTest3(float delay, float startTime, float duration)
+        public static BlendTransition GetTest3(float delay, float duration)
         {
             Store items = Store.CreateItemStore(150);
             var startComp = new Container(new BlendStore(items));
@@ -205,7 +206,7 @@ namespace DataArcs.Tests.GraphicTests
             endComp.AddProperty(PropertyId.Location, endStore);
 
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
-            return new BlendTransition(startComp, endComp, delay, startTime, duration, easeStore);
+            return new BlendTransition(startComp, endComp, new Timer(delay, duration), easeStore);
         }
 
         private static void AddGraphic(Container container)

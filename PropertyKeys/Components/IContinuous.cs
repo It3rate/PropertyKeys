@@ -17,7 +17,7 @@ namespace DataArcs.Components
         //float CurrentTime { get; }
         //float PreviousTime { get; }
 
-        //float StartTime { get; }
+        float StartTime { get; set; }
         Series Duration { get; }
         Series Delay { get; }
 

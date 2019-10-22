@@ -23,7 +23,7 @@ namespace DataArcs.Tests.GraphicTests
         public void CreateTimer()
         {
 	        var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack));
-	        _timer = _timer ?? new Timer(0, Player.GetPlayerById(0).CurrentMs, 3500, easeStore);
+	        _timer = _timer ?? new Timer(0, 3500, easeStore);
 	        _timer.EndTransitionEvent += CompOnEndTimerEvent;
 	        _player.AddActiveElement(_timer);
         }
@@ -42,7 +42,7 @@ namespace DataArcs.Tests.GraphicTests
             IContainer comp = GetComposite0();
             IContainer hex = GetHex();
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
-            var blend = new BlendTransition(comp, hex, 0, _player.CurrentMs, 3000, easeStore);
+            var blend = new BlendTransition(comp, hex, new Timer(0, 3000), easeStore);
             //var blend = new BlendTransition(comp, comp, 0, _player.CurrentMs, 4000, easeStore);
             blend.Runner.EndTransitionEvent += CompOnEndTransitionEvent;
 

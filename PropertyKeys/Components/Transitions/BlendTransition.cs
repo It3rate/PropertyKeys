@@ -26,26 +26,9 @@ namespace DataArcs.Components.Transitions
         public int[] StartStrides { get; }
         public int[] EndStrides { get; }
 
-        public override int NestedItemCount
+        public BlendTransition(IContainer start, IContainer end, IContinuous runner, Store easing = null)
         {
-            get
-            {
-                var startCount = Start.NestedItemCount;
-                var endCount = End.NestedItemCount;
-                return (int)Math.Max(startCount, endCount);
-            }
-        }
-        public override int NestedItemCountAtT(float t)
-        {
-            var startCount = Start.NestedItemCount;
-            var endCount = End.NestedItemCount;
-            return (int)(startCount + (endCount - startCount) * t);
-        }
-
-        public BlendTransition(IContainer start, IContainer end, float delay = 0, float startTime = -1, float duration = 0, Store easing = null)
-        {
-			// todo: pass in Blend's timer.
-			Runner = new Timer(delay, startTime, duration);
+			Runner = runner;
 			Player.GetPlayerById(0).AddActiveElement(Runner);
 
 			Easing = easing;
@@ -54,6 +37,22 @@ namespace DataArcs.Components.Transitions
             StartStrides = start.ChildCounts; // todo:  include own items
             EndStrides = end.ChildCounts;
             GenerateBlends(); // eventually immutable after creation, so no new blends
+        }
+
+        public override int NestedItemCount
+        {
+            get
+            {
+                var startCount = Start?.NestedItemCount ?? 1;
+                var endCount = End?.NestedItemCount ?? 1;
+                return (int)Math.Max(startCount, endCount);
+            }
+        }
+        public override int NestedItemCountAtT(float t)
+        {
+            var startCount = Start?.NestedItemCount ?? 1;
+            var endCount = End?.NestedItemCount ?? 1;
+            return (int)(startCount + (endCount - startCount) * t);
         }
         
         public void GenerateBlends()
@@ -65,12 +64,12 @@ namespace DataArcs.Components.Transitions
             _blends.Clear();
             HashSet<PropertyId> commonKeys = new HashSet<PropertyId>();
             HashSet<PropertyId> endKeys = new HashSet<PropertyId>();
-            Start.GetDefinedStores(commonKeys);
-            End.GetDefinedStores(endKeys);
+            Start?.GetDefinedStores(commonKeys);
+            End?.GetDefinedStores(endKeys);
             commonKeys.IntersectWith(endKeys);
             foreach (var key in commonKeys)
             {
-	            if (Start.GetStore(key).StoreId != End.GetStore(key).StoreId)
+	            if (Start?.GetStore(key).StoreId != End?.GetStore(key).StoreId)
 	            {
 					_blends[key] = (BlendStore)GetStore(key);
 	            }
@@ -81,8 +80,8 @@ namespace DataArcs.Components.Transitions
         {
             base.StartUpdate(currentTime, deltaTime);
 
-            Start.Update(currentTime, deltaTime);
-            End.Update(currentTime, deltaTime);
+            Start?.Update(currentTime, deltaTime);
+            End?.Update(currentTime, deltaTime);
             foreach (var item in _blends.Values)
             {
                 item.Update(Runner.InterpolationT);
@@ -98,8 +97,8 @@ namespace DataArcs.Components.Transitions
 	        }
 	        else
 	        {
-		        result = Start.GetStore(propertyId);
-		        IStore end = End.GetStore(propertyId);
+		        result = Start?.GetStore(propertyId);
+		        IStore end = End?.GetStore(propertyId);
 		        if (result == null)
 		        {
 			        result = end;
@@ -114,8 +113,8 @@ namespace DataArcs.Components.Transitions
         public override void GetDefinedStores(HashSet<PropertyId> ids)
         {
 	        base.GetDefinedStores(ids);
-	        Start.GetDefinedStores(ids);
-	        End.GetDefinedStores(ids);
+	        Start?.GetDefinedStores(ids);
+	        End?.GetDefinedStores(ids);
         }
 
         public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
@@ -126,12 +125,12 @@ namespace DataArcs.Components.Transitions
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             var startDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
-            Start.QueryPropertiesAtT(startDict, t, false);
+            Start?.QueryPropertiesAtT(startDict, t, false);
             Series result = startDict[propertyId];
             if (_blends.ContainsKey(propertyId))
             {
                 var endDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
-                End.QueryPropertiesAtT(endDict, t, false);
+                End?.QueryPropertiesAtT(endDict, t, false);
 
                 float indexT = t + Runner.InterpolationT; // delay per element.
 
@@ -140,15 +139,15 @@ namespace DataArcs.Components.Transitions
             }
             else if(result == null)
             {
-                result = End.GetNestedSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.GetZeroFloatSeries(1, 0);
+                result = End?.GetNestedSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.GetZeroFloatSeries(1, 0);
             }
             return result;
         }
         public override IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
         {
             var endDict = new Dictionary<PropertyId, Series>(data);
-            IRenderable result = Start.QueryPropertiesAtT(data, t, true);
-            result = End.QueryPropertiesAtT(endDict, t, true) ?? result;
+            IRenderable result = Start?.QueryPropertiesAtT(data, t, true);
+            result = End?.QueryPropertiesAtT(endDict, t, true) ?? result;
 
             float indexT = t + Runner.InterpolationT; // delay per element.
             float easedT = Easing?.GetValuesAtT(Runner.InterpolationT * indexT).X ?? Runner.InterpolationT;

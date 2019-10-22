@@ -118,7 +118,16 @@ namespace DataArcs.Players
             _canDestroy = true;
         }
 
-        public void AddActiveElement(IComposite composite) => _toAddActive.Add(composite.CompositeId, composite);
+        public void AddActiveElement(IComposite composite)
+        {
+	        if (composite is IContinuous anim)
+	        {
+		        anim.StartTime = (float) (DateTime.Now - Player.StartTime).TotalMilliseconds;
+	        }
+
+	        _toAddActive.Add(composite.CompositeId, composite);
+        }
+
         public void RemoveActiveElement(IComposite composite)
         {
 	        if (_activeElements.ContainsKey(composite.CompositeId))

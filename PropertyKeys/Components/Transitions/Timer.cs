@@ -15,7 +15,7 @@ namespace DataArcs.Components.Transitions
         public float InterpolationT { get; set; }
         public bool IsComplete { get; protected set; } = false;
 
-        protected float StartTime { get; set; }
+        public float StartTime { get; set; }
         public Series Delay { get; }
         public Series Duration { get; }
         protected bool IsReverse { get; set; } = false;
@@ -24,10 +24,9 @@ namespace DataArcs.Components.Transitions
         public event TransitionEventHandler StepTransitionEvent;
         public event TransitionEventHandler EndTransitionEvent;
 
-        public Timer(float delay = 0, float startTime = -1, float duration = 0, Store easing = null) : base()
+        public Timer(float delay = 0, float duration = 0, Store easing = null) : base()
         {
             Delay = new FloatSeries(1, delay);
-            StartTime = startTime < 0 ? (float)(DateTime.Now - Player.StartTime).TotalMilliseconds : startTime;
             Duration = new FloatSeries(1, duration);
         }
 
