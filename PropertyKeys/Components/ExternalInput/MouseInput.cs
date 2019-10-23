@@ -50,7 +50,6 @@ namespace DataArcs.Components.ExternalInput
 	    {
 		    _mouseX = args.X;
 		    _mouseY = args.Y;
-			Debug.WriteLine(_mouseX + " : " + _mouseY);
         }
 
 	    public override ParametricSeries GetSampledT(PropertyId propertyId, float t)

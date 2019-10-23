@@ -2,6 +2,7 @@
 using DataArcs.SeriesData;
 using System.Collections;
 using System.Collections.Generic;
+using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
@@ -9,11 +10,14 @@ namespace DataArcs.Stores
     {
 		private readonly List<IStore> _stores;
 
-		public override int Capacity
+		public override int Capacity => GetStartDataStore().Capacity; // todo: use combine math to get functional store virtual count. Rename to capacity.
+		public override Series GetFullSeries() => GetStartDataStore().GetFullSeries();
+		public override Sampler Sampler
 		{
-			get => GetStartDataStore().Capacity; // todo: use combine math to get functional store virtual count. Rename to capacity.
+			get { return GetStartDataStore().Sampler; }
+			set { GetStartDataStore().Sampler = value; }
 		}
-		
+
 		public FunctionalStore(params IStore[] stores)
 		{
 			_stores = new List<IStore>(stores);
@@ -21,7 +25,6 @@ namespace DataArcs.Stores
 
         public Series this[int index] => GetValuesAtIndex(index);
 
-		public override Series GetFullSeries() => _stores[0].GetFullSeries();
 
         public override Series GetValuesAtIndex(int index)
 		{

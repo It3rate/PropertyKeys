@@ -45,6 +45,7 @@ namespace DataArcs.Components
 		MouseY,
 		MouseLocation, // Mouse X and Y 
 		MouseLocationT, // Mouse X and Y normalized to container size
+		MouseLocationTCombined, // Mouse X and Y normalized to container size
         MouseWheel,
         MouseButtonStates,
         PenPressure,
@@ -69,10 +70,12 @@ namespace DataArcs.Components
             bool result = false;
             switch (propId)
             {
-                case PropertyId.SampleAtT:
+	            case PropertyId.SampleAtT:
                 case PropertyId.SampleAtTCombined:
                 case PropertyId.EasedT:
                 case PropertyId.EasedTCombined:
+	            case PropertyId.MouseLocationT:
+	            case PropertyId.MouseLocationTCombined:
                     result = true;
                     break;
             }
@@ -83,6 +86,7 @@ namespace DataArcs.Components
             bool result = false;
             switch (propId)
             {
+	            case PropertyId.MouseLocationTCombined:
                 case PropertyId.SampleAtTCombined:
                 case PropertyId.EasedTCombined:
                     result = true;

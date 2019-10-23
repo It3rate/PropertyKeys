@@ -34,12 +34,14 @@ namespace DataArcs.Components
 			    IStore curStore = _stores[id];
 			    if (curStore is FunctionalStore)
 			    {
-				    ((FunctionalStore)curStore).Add(curStore);
+				    ((FunctionalStore)curStore).Add(store);
 			    }
 			    else
 			    {
 				    _stores[id] = new FunctionalStore(curStore, store);
-			    }
+				    _stores[id].CombineFunction = curStore.CombineFunction;
+				    //_stores[id].Capacity = curStore.Capacity;
+                }
 		    }
 		    else
 		    {
