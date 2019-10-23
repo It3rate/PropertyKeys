@@ -62,11 +62,15 @@ namespace DataArcs.Players
         private void Tick(object sender, ElapsedEventArgs e)
         {
             if (!_isPaused)
-            {
-
+            { 
                 for (int i = 0; i < _toRemoveActive.Count; i++)
                 {
-                    _activeElements.Remove(_toRemoveActive[i]);
+                    int key = _toRemoveActive[i];
+                    if (_activeElements.ContainsKey(key))
+                    {
+                        _activeElements[key]?.OnDeactivate();
+                    }
+                    _activeElements.Remove(key);
                 }
                 if (_canDestroy)
                 {
@@ -81,6 +85,7 @@ namespace DataArcs.Players
                 foreach (var item in _toAddActive)
                 {
                     _activeElements.Add(item.Key, item.Value);
+                    item.Value.OnActivate();
                 }
                 _toAddActive.Clear();
                 _toRemoveActive.Clear();
@@ -142,7 +147,10 @@ namespace DataArcs.Players
 		        _toRemoveActive.Add(id);
 	        }
         }
-        public void Clear() => _toRemoveActive.AddRange(_activeElements.Keys);
+        public void Clear()
+        {
+            _toRemoveActive.AddRange(_activeElements.Keys);
+        }
 
         public void AddCompositeToLibrary(IComposite composite)
         {

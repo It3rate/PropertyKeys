@@ -35,12 +35,18 @@ namespace DataArcs.Components.ExternalInput
 	    public MouseInput(IComposite container = null)
 	    {
 		    _container = container;
-			var form = Application.OpenForms[0];
-			//_mainFrame = new FloatSeries(4,form.Location.X, form.Location.Y, form.Size.Width, form.Size.Height);
-		    form.MouseMove += OnMouseMove;
 	    }
 
-	    private void OnMouseMove(object sender, MouseEventArgs args)
+        public override void OnActivate()
+        {
+            Application.OpenForms[0].MouseMove += OnMouseMove;
+        }
+        public override void OnDeactivate()
+        {
+            Application.OpenForms[0].MouseMove -= OnMouseMove;
+        }
+
+        private void OnMouseMove(object sender, MouseEventArgs args)
 	    {
 		    _mouseX = args.X;
 		    _mouseY = args.Y;

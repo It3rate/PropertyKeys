@@ -26,7 +26,8 @@ namespace DataArcs.Components
         ParametricSeries GetSampledT(PropertyId propertyId, float t);
         Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
 		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
-		
 
+        void OnActivate();
+        void OnDeactivate();
     }
 }

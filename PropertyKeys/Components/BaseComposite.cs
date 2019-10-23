@@ -116,9 +116,8 @@ namespace DataArcs.Components
 	    {
 		    var store = GetStore(propertyId);
 		    return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
-	    }
-        //public abstract ParametricSeries GetSampledT(PropertyId propertyId, float t);
-        //public abstract Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
-        //public abstract Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
+        }
+        public virtual void OnActivate() { }
+        public virtual void OnDeactivate() { }
     }
 }
