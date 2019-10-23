@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Components;
+using DataArcs.Components.ExternalInput;
 using DataArcs.Components.Transitions;
 using DataArcs.Graphic;
 using DataArcs.Samplers;
@@ -16,16 +17,21 @@ namespace DataArcs.Tests.GraphicTests
     public class UserInputTest : ITestScreen
     {
 	    private readonly Player _player;
+	    private MouseInput _mouseInput;
 
-	    public UserInputTest(Player player)
+        public UserInputTest(Player player)
 	    {
 		    _player = player;
 	    }
 
 	    public void NextVersion()
 	    {
-		    IComposite comp = GetHexGrid();
+		    _mouseInput = new MouseInput();
+			_player.AddActiveElement(_mouseInput);
+
+            IComposite comp = GetHexGrid();
 		    _player.AddActiveElement(comp);
+
 
 		    //comp.EndTimedEvent += CompOnEndTransitionEvent;
 	    }
@@ -44,11 +50,19 @@ namespace DataArcs.Tests.GraphicTests
 	        Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
 	        composite.AddProperty(PropertyId.Location, loc);
 	        composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 1f, 0.1f).Store);
+			
+	        var mouseStore = new Store(new FloatSeries(1, 5f, 32f));
+	        var mouseLink = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, mouseStore);
+            composite.AddProperty(PropertyId.Radius, mouseLink);
+	        var mouseOrientationStore = new Store(new FloatSeries(1, 0f, 1f));
+	        var mouseOrient = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SeriesUtils.Y, mouseOrientationStore);
+            composite.AddProperty(PropertyId.Orientation, mouseOrient);
 
-	        composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 20f).Store);
+
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
 	        composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.5f, 0, 0,  0, 0.5f, 0.5f).Store);
             composite.Renderer = new PolyShape();
+
 
 	        return composite;
         }

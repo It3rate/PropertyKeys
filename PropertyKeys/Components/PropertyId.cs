@@ -41,9 +41,11 @@ namespace DataArcs.Components
 		RandomMotion,
 
 		Mouse, // composite of all mouse states in single series, mask with MousePropertiesEnum
-        MouseX, // mouse events on mouse composite
+		MouseX, // mouse events on mouse composite
 		MouseY,
-		MouseWheel,
+		MouseLocation, // Mouse X and Y 
+		MouseLocationT, // Mouse X and Y normalized to container size
+        MouseWheel,
         MouseButtonStates,
         PenPressure,
         PenAngle,

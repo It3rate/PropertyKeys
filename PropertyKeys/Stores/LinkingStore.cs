@@ -49,12 +49,12 @@ namespace DataArcs.Stores
                 Series link = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
                 if (link != null)
                 {
-                    var curTSeries = SeriesUtils.GetSubseries(SlotMapping, link);
+                    var slotMapped = SeriesUtils.GetSubseries(SlotMapping, link);
                     if(PropertyIdSet.IsTCombining(PropertyId))
                     {
-                        curTSeries.CombineInto(new FloatSeries(1, t), CombineFunction, t);
+                        slotMapped.CombineInto(new FloatSeries(1, t), CombineFunction, t);
                     }
-                    result = _mixStore?.GetValuesAtT(curTSeries.X);
+                    result = _mixStore?.GetValuesAtT(slotMapped.X);
                 }
             }
             else
@@ -63,9 +63,9 @@ namespace DataArcs.Stores
                 if (result != null)
                 {
 					// This is two step in order to use slot mapping, probably can sensibly combine this.
-	                Series s = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
-	                Series linkMapped = SeriesUtils.GetSubseries(SlotMapping, s);
-	                result.CombineInto(linkMapped, CombineFunction, t);
+	                Series link = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
+	                Series slotMapped = SeriesUtils.GetSubseries(SlotMapping, link);
+	                result.CombineInto(slotMapped, CombineFunction, t);
                 }
                 else
                 {
