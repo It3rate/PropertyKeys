@@ -68,7 +68,7 @@ namespace DataArcs.Tests.GraphicTests
                     comp = GetTest1(0, _player.CurrentMs, 1000f);
                     break;
             }
-            comp.Runner.EndTransitionEvent += CompOnEndTransitionEvent;
+            comp.Runner.EndTimedEvent += CompOnEndTransitionEvent;
             return comp;
         }
 
@@ -78,7 +78,7 @@ namespace DataArcs.Tests.GraphicTests
             _count++;
             if (_count < 3)
             {
-                IContinuous anim = (IContinuous)sender;
+                ITimeable anim = (ITimeable)sender;
                 anim.Reverse();
                 anim.Restart();
             }

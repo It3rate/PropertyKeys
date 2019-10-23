@@ -27,12 +27,12 @@ namespace DataArcs.Tests.GraphicTests
             BlendTransition comp = GetComposite1();
 	        _player.AddActiveElement(comp);
 
-            comp.Runner.EndTransitionEvent += CompOnEndTransitionEvent;
+            comp.Runner.EndTimedEvent += CompOnEndTransitionEvent;
         }
 
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
-            IContinuous anim = (IContinuous)sender;
+            ITimeable anim = (ITimeable)sender;
             anim.Reverse();
             anim.Restart();
         }

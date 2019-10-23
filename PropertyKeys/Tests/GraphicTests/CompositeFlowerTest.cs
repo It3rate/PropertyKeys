@@ -24,7 +24,7 @@ namespace DataArcs.Tests.GraphicTests
         {
 	        var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack));
 	        _timer = _timer ?? new Timer(0, 3500, easeStore);
-	        _timer.EndTransitionEvent += CompOnEndTimerEvent;
+	        _timer.EndTimedEvent += CompOnEndTimerEvent;
 	        _player.AddActiveElement(_timer);
         }
         private void CompOnEndTimerEvent(object sender, EventArgs e)
@@ -44,7 +44,7 @@ namespace DataArcs.Tests.GraphicTests
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
             var blend = new BlendTransition(comp, hex, new Timer(0, 3000), easeStore);
             //var blend = new BlendTransition(comp, comp, 0, _player.CurrentMs, 4000, easeStore);
-            blend.Runner.EndTransitionEvent += CompOnEndTransitionEvent;
+            blend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
 
             //IComposite itemToAdd = comp;
             //IComposite itemToAdd = hex;
@@ -56,7 +56,7 @@ namespace DataArcs.Tests.GraphicTests
 
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
-	        if (sender is IContinuous anim)
+	        if (sender is ITimeable anim)
 	        {
 	            anim.Reverse();
 	            anim.Restart();

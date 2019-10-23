@@ -120,7 +120,7 @@ namespace DataArcs.Players
 
         public void AddActiveElement(IComposite composite)
         {
-	        if (composite is IContinuous anim)
+	        if (composite is ITimeable anim)
 	        {
 		        anim.StartTime = (float) (DateTime.Now - Player.StartTime).TotalMilliseconds;
 	        }

@@ -27,7 +27,7 @@ namespace DataArcs.Tests.GraphicTests
 		    IComposite comp = GetHexGrid();
 		    _player.AddActiveElement(comp);
 
-		    //comp.EndTransitionEvent += CompOnEndTransitionEvent;
+		    //comp.EndTimedEvent += CompOnEndTransitionEvent;
 	    }
 
 	    private void CompOnEndTransitionEvent(object sender, EventArgs e)

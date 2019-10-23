@@ -18,7 +18,7 @@ namespace DataArcs.Components.Transitions
     {
         private readonly Dictionary<PropertyId, BlendStore> _blends = new Dictionary<PropertyId, BlendStore>();
 
-        public IContinuous Runner { get; }
+        public ITimeable Runner { get; }
         public IStore Easing { get; set; }
         public IContainer Start { get; set; }
         public IContainer End { get; set; }
@@ -26,7 +26,7 @@ namespace DataArcs.Components.Transitions
         public int[] StartStrides { get; }
         public int[] EndStrides { get; }
 
-        public BlendTransition(IContainer start, IContainer end, IContinuous runner, Store easing = null)
+        public BlendTransition(IContainer start, IContainer end, ITimeable runner, Store easing = null)
         {
 			Runner = runner;
 			Player.GetPlayerById(0).AddActiveElement(Runner);

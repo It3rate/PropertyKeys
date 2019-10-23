@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Components.Transitions
 {
-    public class Timer : BaseComposite, IContinuous
+    public class Timer : BaseComposite, ITimeable
     {
         public float InterpolationT { get; set; }
         public bool IsComplete { get; protected set; } = false;
@@ -20,9 +20,9 @@ namespace DataArcs.Components.Transitions
         public Series Duration { get; }
         protected bool IsReverse { get; set; } = false;
 
-        public event TransitionEventHandler StartTransitionEvent;
-        public event TransitionEventHandler StepTransitionEvent;
-        public event TransitionEventHandler EndTransitionEvent;
+        public event TimedEventHandler StartTimedEvent;
+        public event TimedEventHandler StepTimedEvent;
+        public event TimedEventHandler EndTimedEvent;
 
         public Timer(float delay = 0, float duration = 0, Store easing = null) : base()
         {
@@ -62,7 +62,7 @@ namespace DataArcs.Components.Transitions
         {
             if (IsComplete)
             {
-                EndTransitionEvent?.Invoke(this, EventArgs.Empty);
+                EndTimedEvent?.Invoke(this, EventArgs.Empty);
             }
         }
 

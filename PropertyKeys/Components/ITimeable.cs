@@ -8,9 +8,9 @@ using DataArcs.SeriesData;
 
 namespace DataArcs.Components
 {
-	public delegate void TransitionEventHandler(object sender, EventArgs e);
+	public delegate void TimedEventHandler(object sender, EventArgs e);
 
-    public interface IContinuous : IComposite
+    public interface ITimeable : IComposite
     {
 	    float InterpolationT { get; set; }
         //float DeltaTime { get; }
@@ -24,9 +24,9 @@ namespace DataArcs.Components
         //bool IsReverse { get; }
         //bool IsComplete { get; }
 
-        event TransitionEventHandler StartTransitionEvent;
-        event TransitionEventHandler StepTransitionEvent;
-        event TransitionEventHandler EndTransitionEvent;
+        event TimedEventHandler StartTimedEvent;
+        event TimedEventHandler StepTimedEvent;
+        event TimedEventHandler EndTimedEvent;
 
         void Restart();
         void Reverse();
