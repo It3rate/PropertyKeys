@@ -36,7 +36,7 @@ namespace DataArcs.Samplers
                 result[i] = (i < strideTs.Length) ? series.GetValueAtT(strideTs[i]).FloatDataAt(i) : 0;
             }
 
-            return SeriesUtils.Create(series, result);
+            return SeriesUtils.CreateSeriesOfType(series, result);
         }
 
         private Series GetSeriesAtT(float t)

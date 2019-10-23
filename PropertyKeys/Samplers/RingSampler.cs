@@ -66,7 +66,7 @@ namespace DataArcs.Samplers
             var radiusY = centerY - ringIndexT * ((size[1] / 2.0f) * (1f - minRadius));
             result[1] = (float) (Math.Cos(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusY + frame[1] + centerY);
 
-            return SeriesUtils.Create(series, result);
+            return SeriesUtils.CreateSeriesOfType(series, result);
 		}
 	}
 }

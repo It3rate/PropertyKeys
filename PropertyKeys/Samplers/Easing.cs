@@ -62,9 +62,15 @@ namespace DataArcs.Samplers
 
 		public override Series GetValuesAtT(Series series, float t)
 		{
-			t = GetValueAt(t, EasingType);
-			return series.GetValueAtT(t);
+			float easedT = GetValueAt(t, EasingType);
+			return series.GetValueAtT(easedT);
 		}
+
+		public override ParametricSeries GetSampledTs(float t)
+		{
+			float easedT = GetValueAt(t, EasingType);
+			return new ParametricSeries(1, easedT);
+        }
 
 		public static float GetValueAt(float t, EasingType easingType)
 		{

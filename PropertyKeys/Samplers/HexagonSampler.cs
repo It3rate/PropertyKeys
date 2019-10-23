@@ -15,7 +15,7 @@ namespace DataArcs.Samplers
             {
 	            var data = result.FloatData;
 	            data[0] += series.Size.X / (Strides[0] - 1f) * 0.5f;
-                result = SeriesUtils.Create(series, data);
+                result = SeriesUtils.CreateSeriesOfType(series, data);
             }
 	        return result;
 		}

@@ -90,8 +90,7 @@ namespace DataArcs.SeriesData
             var indexT = index / (capacity - 1f);
             return GetValueAtT(indexT);
         }
-
-        // todo: All float t's should probably be float[] t.
+		
         public virtual Series GetValueAtT(float t)
         {
             Series result;
@@ -130,6 +129,7 @@ namespace DataArcs.SeriesData
         public abstract int IntDataAt(int index);
         public abstract bool BoolDataAt(int index);
 
+		// todo: make an IEnumerable overload for the internal data type.
         public abstract float[] FloatData { get; }
         public abstract int[] IntData { get; }
         public abstract bool[] BoolData { get; }

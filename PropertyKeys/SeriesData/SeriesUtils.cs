@@ -66,7 +66,7 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		public static Series Create(Series series, int[] values)
+		public static Series CreateSeriesOfType(Series series, int[] values)
 		{
 			Series result;
 			if (series.Type == SeriesType.Int)
@@ -81,7 +81,7 @@ namespace DataArcs.SeriesData
 			return result;
 		}
 
-		public static Series Create(Series series, float[] values)
+		public static Series CreateSeriesOfType(Series series, float[] values)
 		{
 			Series result;
 			if (series.Type == SeriesType.Int)

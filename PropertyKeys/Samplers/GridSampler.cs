@@ -59,7 +59,7 @@ namespace DataArcs.Samplers
 				result[i] = (i < Strides.Length) ? series.GetValueAtT(strideTs[i]).FloatDataAt(i) : 0;
 			}
 
-			return SeriesUtils.Create(series, result);
+			return SeriesUtils.CreateSeriesOfType(series, result);
 		}
 	}
 }
