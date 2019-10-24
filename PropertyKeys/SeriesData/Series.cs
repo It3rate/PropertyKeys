@@ -17,7 +17,7 @@ namespace DataArcs.SeriesData
     {
         public int VectorSize { get; set; }
         public abstract int Count { get; }
-        public SeriesType Type { get; }
+        public abstract SeriesType Type { get; }
 
         /// <summary>
         /// The raw size of the stored data array, ignores Capacity and VectorSize.
@@ -61,9 +61,8 @@ namespace DataArcs.SeriesData
         private Series _cachedFrame;
         private Series _cachedSize;
 
-        protected Series(int vectorSize, SeriesType type)
+        protected Series(int vectorSize)
         {
-            Type = type;
             VectorSize = vectorSize;
         }
 

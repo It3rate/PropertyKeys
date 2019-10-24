@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
@@ -9,28 +10,29 @@ using DataArcs.Stores;
 
 namespace DataArcs.Samplers
 {
-	public delegate Series SeriesEquation(Series a, Series b);
+	public delegate ParametricSeries SeriesEquation(ParametricSeries a, ParametricSeries b);
 
 	public enum SeriesEquationType
 	{
 		Distance,
+		SignedDistance,
 	}
 
     public class ComparisonSampler : Sampler
     {
-	    private IStore _storeA;
-	    private IStore _storeB;
+	    private Sampler _sampleA;
+	    private Sampler _sampleB;
 	    private SeriesEquation _seriesEquation;
 
-	    public ComparisonSampler(IStore storeA, IStore storeB, SeriesEquation seriesEquation, int capacity = 1)
+	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, int capacity = 1)
 	    {
-		    _storeA = storeA;
-		    _storeB = storeB;
+		    _sampleA = sampleA;
+		    _sampleB = sampleB;
 		    _seriesEquation = seriesEquation;
 		    Capacity = capacity;
 	    }
-	    public ComparisonSampler(IStore storeA, IStore storeB, SeriesEquationType seriesEquationType, int capacity = 1) : 
-		    this(storeA, storeB, GetSeriesEquationByType(seriesEquationType), capacity){ }
+	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, int capacity = 1) : 
+		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), capacity){ }
 
         public override Series GetValueAtIndex(Series series, int index)
 	    {
@@ -40,22 +42,29 @@ namespace DataArcs.Samplers
 
 	    public override Series GetValuesAtT(Series series, float t)
 	    {
-		    var resultA = _storeA.GetValuesAtT(t);
-		    var resultB = _storeB.GetValuesAtT(t);
-		    Series t2 = _seriesEquation(resultA, resultB);
-		    return series.GetValueAtT(t2.X); // todo: should this adjust to assume the series equation always returns a parametric t?
+		    var resultA = _sampleA.GetSampledTs(t);
+		    var resultB = _sampleB.GetSampledTs(t);
+		    var t2 = _seriesEquation(resultA, resultB);
+		    float[] floats = new float[t2.VectorSize];
+		    for (int i = 0; i < t2.VectorSize; i++)
+		    {
+			    floats[i] = series.GetValueAtT(t2[i]).FloatDataAt(i);
+		    }
+
+		  //  if (t == 0 || t  > .88f)
+		  //  {
+				//Debug.WriteLine(floats[0] + " : " + floats[1] + " +    : " + t);
+		  //  }
+		    return SeriesUtils.CreateSeriesOfType(series, floats);
+           // return series.GetValueAtT(t2.X); // todo: should this adjust to assume the series equation always returns a parametric t?
 	    }
 
 	    public override ParametricSeries GetSampledTs(float t)
 	    {
-		    var resultA = _storeA.GetSampledTs(t);
-		    var resultB = _storeB.GetSampledTs(t);
+		    var resultA = _sampleA.GetSampledTs(t);
+		    var resultB = _sampleB.GetSampledTs(t);
 		    var result = _seriesEquation(resultA, resultB);
-			if(!(result is ParametricSeries))
-			{
-				result = new ParametricSeries(result.VectorSize, result.FloatData);
-			}
-			return (ParametricSeries) result;
+			return result;
 	    }
 
 	    private static SeriesEquation GetSeriesEquationByType(SeriesEquationType seriesEquationType)
@@ -63,10 +72,13 @@ namespace DataArcs.Samplers
 		    SeriesEquation result;
 
             switch (seriesEquationType)
-		    {
-                case SeriesEquationType.Distance:
-	                result = DistanceEquation;
-                    break;
+            {
+	            case SeriesEquationType.Distance:
+		            result = DistanceEquation;
+		            break;
+	            case SeriesEquationType.SignedDistance:
+		            result = SignedDistanceEquation;
+		            break;
                 default:
 	                result = DefaultEquation;
 	                break;
@@ -75,20 +87,31 @@ namespace DataArcs.Samplers
             return result;
 	    }
 
-        private static Series DefaultEquation(Series seriesA, Series seriesB)
+        private static ParametricSeries DefaultEquation(ParametricSeries seriesA, ParametricSeries seriesB)
 	    {
 		    return seriesA;
-	    }
+        }
 
-        private static Series DistanceEquation(Series seriesA, Series seriesB)
+        private static ParametricSeries DistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
         {
-	        return GeneralEquation(seriesA, seriesB, (a, b) => (float) Math.Sqrt(a * a + b * b));
+	        return GeneralEquation(seriesA, seriesB, (a, b) => (float)Math.Sqrt(a * a + b * b));
+        }
+
+        private static ParametricSeries SignedDistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
+        {
+			var floats = new float[seriesA.VectorSize];
+			for (int i = 0; i < seriesA.VectorSize; i++)
+			{
+				float dif = seriesB[i] - seriesA[i];
+				floats[i] = 1f - ((dif*dif*dif + 1f) * 0.5f);
+			}
+			return new ParametricSeries(seriesA.VectorSize, floats);
         }
 
         private delegate float FloatEquation(float a, float b); // todo: should be series's in the params
-        private static Series GeneralEquation(Series seriesA, Series seriesB, FloatEquation floatEquation)
+        private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, FloatEquation floatEquation)
 	    {
-		    Series result;
+		    ParametricSeries result;
 		    var aVals = seriesA.FloatData;
 		    var bVals = seriesB.FloatData;
             if (aVals.Length == bVals.Length)
@@ -99,29 +122,22 @@ namespace DataArcs.Samplers
 			    {
 				    resultArray[i] = floatEquation(bVals[i] - aVals[i], bVals[i + 1] - aVals[i + 1]);
                 }
-                result = SeriesUtils.CreateSeriesOfType(seriesA, resultArray);
+                result = (ParametricSeries)SeriesUtils.CreateSeriesOfType(seriesA, resultArray);
             }
 		    else
 		    {
-				// These are differently shaped, so need to query each one as some values will be virtual.
-			    Series widest = seriesA.VectorSize >= seriesB.VectorSize ? seriesA : seriesB;
-			    Series longest = seriesA.Count >= seriesB.Count ? seriesA : seriesB;
-			    result = widest.GetZeroSeries(longest.Count); 
-			    for (int i = 0; i < result.Count; i++)
+                // These are differently shaped, so need to query each one as some values will be virtual.
+                int widest = seriesA.VectorSize >= seriesB.VectorSize ? seriesA.VectorSize : seriesB.VectorSize;
+			    var resultArray = new float[widest];
+			    for (int j = 0; j < widest; j++)
 			    {
-				    var a = seriesA.GetSeriesAtIndex(i);
-				    var b = seriesB.GetSeriesAtIndex(i);
-				    var resultArray = new float[result.VectorSize];
-				    for (int j = 0; j < result.VectorSize; j++)
-				    {
-					    float af = a.FloatDataAt(j);
-					    float bf = b.FloatDataAt(j);
+				    float af = seriesA[j]; //a.FloatDataAt(j);
+				    float bf = seriesB[j]; //b.FloatDataAt(j);
 
-					    resultArray[j] = floatEquation(af, bf);
-				    }
-
-				    result.SetSeriesAtIndex(i, new FloatSeries(result.VectorSize, resultArray));
+				    resultArray[j] = floatEquation(af, bf);
 			    }
+
+			    result = new ParametricSeries(widest, resultArray);
 		    }
 
 		    return result;

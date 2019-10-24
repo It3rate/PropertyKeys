@@ -9,6 +9,8 @@ namespace DataArcs.SeriesData
 	/// </summary>
 	public class BezierSeries : FloatSeries
 	{
+		public override SeriesType Type => SeriesType.Float; // todo: accommodate bezier here
+
         public static readonly int[] MoveSize = new int[] {2, 2, 4, 6, 0};
 
         public override int Count => (int)(_floatValues.Length / VectorSize);

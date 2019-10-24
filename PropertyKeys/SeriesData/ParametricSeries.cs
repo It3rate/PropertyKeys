@@ -8,6 +8,8 @@ namespace DataArcs.SeriesData
 {
     public class ParametricSeries : FloatSeries
     {
+	    public override SeriesType Type => SeriesType.Parametric;
+
         public ParametricSeries(int vectorSize, params float[] values) : base(vectorSize, values)
         {
 	        if (_floatValues.Length > VectorSize)
@@ -18,6 +20,37 @@ namespace DataArcs.SeriesData
 	        }
         }
 
-        public float this[int index] => _floatValues[index];
+        public float this[int index] => index < _floatValues.Length ? _floatValues[index] : _floatValues[_floatValues.Length - 1];
+
+        public override Series GetZeroSeries()
+        {
+	        return new ParametricSeries(VectorSize, SeriesUtils.GetFloatZeroArray(VectorSize));
+        }
+
+        public override Series GetZeroSeries(int elementCount)
+        {
+	        return SeriesUtils.GetZeroParametricSeries(VectorSize, elementCount);
+        }
+
+        public override Series GetMinSeries()
+        {
+	        return new ParametricSeries(VectorSize, new float[VectorSize]);
+        }
+
+        public override Series GetMaxSeries()
+        {
+	        var ar = new float[VectorSize];
+	        for (int i = 0; i < ar.Length; i++)
+	        {
+		        ar[i] = 1f;
+	        }
+	        return new ParametricSeries(VectorSize, ar);
+        }
+
+        public override Series Copy()
+        {
+	        ParametricSeries result = new ParametricSeries(VectorSize, FloatData);
+	        return result;
+        }
     }
 }

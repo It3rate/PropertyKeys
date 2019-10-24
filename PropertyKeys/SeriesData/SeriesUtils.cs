@@ -6,36 +6,47 @@ namespace DataArcs.SeriesData
     [Flags]
     public enum Slot{X, Y, Z, W, S4, S5, S6, S7, S8, S9,}
 
+    public class SlotUtils
+    {
+	    public static readonly Slot[] X = new Slot[] { Slot.X };
+	    public static readonly Slot[] Y = new Slot[] { Slot.Y };
+	    public static readonly Slot[] Z = new Slot[] { Slot.Z };
+	    public static readonly Slot[] W = new Slot[] { Slot.W };
+	    public static readonly Slot[] XY = new Slot[] { Slot.X, Slot.Y };
+	    public static readonly Slot[] YX = new Slot[] { Slot.Y, Slot.X };
+	    public static readonly Slot[] XZ = new Slot[] { Slot.X, Slot.Z };
+	    public static readonly Slot[] ZX = new Slot[] { Slot.Z, Slot.X };
+	    public static readonly Slot[] YZ = new Slot[] { Slot.Y, Slot.Z };
+	    public static readonly Slot[] ZY = new Slot[] { Slot.Z, Slot.Y };
+	    public static readonly Slot[] XYZ = new Slot[] { Slot.X, Slot.Y, Slot.Z };
+	    public static readonly Slot[] XYZW = new Slot[] { Slot.X, Slot.Y, Slot.Z, Slot.W };
+	    public static readonly Slot[] ZYX = new Slot[] { Slot.Z, Slot.Y, Slot.X };
+	    public static readonly Slot[] WZYX = new Slot[] { Slot.W, Slot.Z, Slot.Y, Slot.Z };
+    }
+
     public class SeriesUtils
     {
-        public static readonly Slot[] X = new Slot[] { Slot.X };
-        public static readonly Slot[] Y = new Slot[] { Slot.Y };
-        public static readonly Slot[] Z = new Slot[] { Slot.Z };
-        public static readonly Slot[] W = new Slot[] { Slot.W };
-        public static readonly Slot[] XY = new Slot[] { Slot.X, Slot.Y };
-        public static readonly Slot[] YX = new Slot[] { Slot.Y, Slot.X };
-        public static readonly Slot[] XZ = new Slot[] { Slot.X, Slot.Z };
-        public static readonly Slot[] ZX = new Slot[] { Slot.Z, Slot.X };
-        public static readonly Slot[] YZ = new Slot[] { Slot.Y, Slot.Z };
-        public static readonly Slot[] ZY = new Slot[] { Slot.Z, Slot.Y };
-
-        public static readonly Slot[] XYZ = new Slot[] { Slot.X, Slot.Y, Slot.Z };
-        public static readonly Slot[] XYZW = new Slot[] { Slot.X, Slot.Y, Slot.Z, Slot.W };
-        public static readonly Slot[] ZYX = new Slot[] { Slot.Z, Slot.Y, Slot.X };
-        public static readonly Slot[] WZYX = new Slot[] { Slot.W, Slot.Z, Slot.Y, Slot.Z };
-
-        public static Series GetSubseries(Slot[] slots, Series series)
-        {
-            //Series result = series.GetZeroSeries(slots.Length);
-            float[] result = new float[slots.Length];
-            Series value = series.GetSeriesAtIndex(0);
-            for (int i = 0; i < slots.Length; i++)
-            {
-                int index = Math.Max(0, Math.Min(value.Count, (int)slots[i]));
-                result[i] = value.FloatDataAt(index);
+	    public static Series GetMappedSeries(Slot[] mapSlots, Series series)
+	    {
+		    Series result;
+	        if (mapSlots != null)
+	        {
+		        float[] floats = new float[mapSlots.Length];
+		        Series value = series.GetSeriesAtIndex(0);
+		        for (int i = 0; i < mapSlots.Length; i++)
+		        {
+			        int index = Math.Max(0, Math.Min(value.Count, (int) mapSlots[i]));
+			        floats[i] = value.FloatDataAt(index);
+		        }
+		        result = CreateSeriesOfType(series, floats);
             }
-            return new FloatSeries(slots.Length, result);
-        }
+	        else
+	        {
+		        result = series;
+	        }
+
+	        return result;
+	    }
 
         public static void InterpolateInto(float[] result, float[] b, float t)
 		{
@@ -73,7 +84,11 @@ namespace DataArcs.SeriesData
 			{
 				result = new IntSeries(series.VectorSize, values);
 			}
-			else
+			else if (series.Type == SeriesType.Parametric)
+			{
+				result = new ParametricSeries(series.VectorSize, values.ToFloat());
+			}
+            else
 			{
 				result = new FloatSeries(series.VectorSize, values.ToFloat());
 			}
@@ -88,7 +103,11 @@ namespace DataArcs.SeriesData
 			{
 				result = new IntSeries(series.VectorSize, values.ToInt());
 			}
-			else
+			else if (series.Type == SeriesType.Parametric)
+			{
+				result = new ParametricSeries(series.VectorSize, values);
+			}
+            else
 			{
 				result = new FloatSeries(series.VectorSize, values);
 			}
@@ -147,8 +166,12 @@ namespace DataArcs.SeriesData
 		{
 			return new FloatSeries(vectorSize, GetFloatZeroArray(vectorSize * elementCount));
 		}
+		public static ParametricSeries GetZeroParametricSeries(int vectorSize, int elementCount)
+		{
+			return new ParametricSeries(vectorSize, GetFloatZeroArray(vectorSize * elementCount));
+		}
 
-		public static IntSeries GetZeroIntSeries(int vectorSize, int elementCount)
+        public static IntSeries GetZeroIntSeries(int vectorSize, int elementCount)
 		{
 			return new IntSeries(vectorSize, GetIntZeroArray(vectorSize * elementCount));
 		}

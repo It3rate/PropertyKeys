@@ -89,7 +89,7 @@ namespace DataArcs.Tests.GraphicTests
 			int groupCount = 7;
 	        var composite = new Container(Store.CreateItemStore(groupCount));
 
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, new FloatSeries(1, 0f, 1f).Store);
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SlotUtils.X, new FloatSeries(1, 0f, 1f).Store);
             Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] { groupCount }, ls));
             composite.AddProperty(PropertyId.Location, loc);
 
@@ -120,7 +120,7 @@ namespace DataArcs.Tests.GraphicTests
             // Link a custom property and multiply to generate an animated scaling transform.
 			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
             var locStore = new Store(new FloatSeries(2, -r + os, -r + os, r + os, r + os, -r2 + os, -r2 + os, r2 + os, r2+os), ringSampler, CombineFunction.Multiply);
-            var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SeriesUtils.XY, locStore);
+            var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SlotUtils.XY, locStore);
             loc.CombineFunction = CombineFunction.Add;
             composite.AddProperty(PropertyId.Location, loc);
 
@@ -129,11 +129,11 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0f, 0f, 0f).Store);
 
             IStore blendColors = GetBlendColor(0);
-            LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedTCombined, SeriesUtils.X, blendColors);
+            LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedTCombined, SlotUtils.X, blendColors);
             composite.AddProperty(PropertyId.FillColor, col);// new FunctionalStore(col, col2));
 
             var growStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply);
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, growStore);
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SlotUtils.X, growStore);
             composite.AddProperty(PropertyId.Orientation, ls);
             composite.AddProperty(PropertyId.Starness, ls);
 

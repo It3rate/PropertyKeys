@@ -5,11 +5,13 @@ namespace DataArcs.SeriesData
 {
 	public class IntSeries : Series
 	{
-		private readonly int[] _intValues;
+		public override SeriesType Type => SeriesType.Int;
+
+        private readonly int[] _intValues;
         public override int Count => (int)(_intValues.Length / VectorSize);
         public override int DataSize => _intValues.Length;
         
-		public IntSeries(int vectorSize, params int[] values) : base(vectorSize, SeriesType.Int)
+		public IntSeries(int vectorSize, params int[] values) : base(vectorSize)
 		{
 			// insure at least vectorSize elements in values array.
 			if (values.Length < vectorSize)

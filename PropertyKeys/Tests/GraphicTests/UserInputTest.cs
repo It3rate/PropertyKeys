@@ -45,33 +45,29 @@ namespace DataArcs.Tests.GraphicTests
 
         IComposite GetHexGrid()
         {
-	        var composite = new Container(Store.CreateItemStore(56));
+	        var composite = new Container(Store.CreateItemStore(22 * 15));
 
-	        Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
+	        Store loc = new Store(new FloatSeries(2, 10f, 10f, 750f, 450f), new HexagonSampler(new int[] { 22, 15 }));
 	        composite.AppendProperty(PropertyId.Location, loc);
 
-            //var locMouseStore = new Store(new FloatSeries(2, -150f, -40f, 40f, 40f), combineFunction: CombineFunction.Add);
-            //composite.AppendProperty(PropertyId.Location, locMouseStore);
-
-            var locMouseStore2 = new Store(new FloatSeries(2, 0f, 0f, 1f, 1f), combineFunction: CombineFunction.Multiply);
-            var locMouseLink = new LinkingStore(_mouseInput.CompositeId, PropertyId.MouseLocationT, SeriesUtils.XY, locMouseStore2);
-            Store hexStore = new Store(new FloatSeries(2, 0f, 0f, 1f, 1f), loc.Sampler);
-			ComparisonSampler cs = new ComparisonSampler(locMouseLink, hexStore, SeriesEquationType.Distance);
-
-			var locMouseStore = new Store(new FloatSeries(2, -40f, -40f, 40f, 40f), cs, CombineFunction.Add);
+	        var mouseLinkLoc = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
+            ComparisonSampler csl = new ComparisonSampler(mouseLinkLoc, loc.Sampler, SeriesEquationType.SignedDistance);
+            var locMouseStore = new Store(new FloatSeries(2, -180f, -180f, 180f, 180f), csl, CombineFunction.Add);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
-            var mouseStore = new Store(new FloatSeries(1, 5f, 32f));
-	        var mouseLink = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SeriesUtils.X, mouseStore);
-            composite.AddProperty(PropertyId.Radius, mouseLink);
+            var mouseLinkRadius = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
+            ComparisonSampler cs = new ComparisonSampler(mouseLinkRadius, loc.Sampler, SeriesEquationType.Distance);
+            var mouseRadius = new Store(new FloatSeries(1, 25f, 10f), cs, CombineFunction.Replace);
+            composite.AppendProperty(PropertyId.Radius, mouseRadius);
 
-	        var mouseOrientationStore = new Store(new FloatSeries(1, 0f, 1f));
-	        var mouseOrient = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SeriesUtils.Y, mouseOrientationStore);
+            var mouseOrientationStore = new Store(new FloatSeries(1, 0f, 1f));
+            var mouseOrient = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SlotUtils.Y, mouseOrientationStore);
             composite.AddProperty(PropertyId.Orientation, mouseOrient);
 
 
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
-	        composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.5f, 0, 0,  0, 0.5f, 0.5f).Store);
+            composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.5f, 0, 0, 0, 0.5f, 0.5f).Store);
+            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.3f, 0.8f, 0.8f, 0.1f, 0.1f, 0.4f).Store);
             composite.Renderer = new PolyShape();
 
 
@@ -85,7 +81,7 @@ namespace DataArcs.Tests.GraphicTests
 	        container.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.5f, 0, 0, 0f, 0, 0.5f).Store);
 
 	        var lineStore = new Store(new FloatSeries(1, .05f, .2f), new LineSampler(), CombineFunction.Multiply);
-	        var lineLink = new LinkingStore(container.CompositeId, PropertyId.Radius, SeriesUtils.X, lineStore);
+	        var lineLink = new LinkingStore(container.CompositeId, PropertyId.Radius, SlotUtils.X, lineStore);
 	        container.AddProperty(PropertyId.PenWidth, lineLink);
 	        container.Renderer = new PolyShape();
         }

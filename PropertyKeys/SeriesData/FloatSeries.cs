@@ -5,11 +5,13 @@ namespace DataArcs.SeriesData
 {
 	public class FloatSeries : Series
 	{
-		protected float[] _floatValues;
+		public override SeriesType Type => SeriesType.Float;
+
+        protected float[] _floatValues;
         public override int Count => (int)(_floatValues.Length / VectorSize);
         public override int DataSize => _floatValues.Length;
         
-		public FloatSeries(int vectorSize, params float[] values) : base(vectorSize, SeriesType.Float)
+		public FloatSeries(int vectorSize, params float[] values) : base(vectorSize)
 		{
 			// insure at least vectorSize elements in values array.
 			if (values.Length < vectorSize)

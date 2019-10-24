@@ -4,7 +4,10 @@ using DataArcs.Stores;
 namespace DataArcs.SeriesData
 {
 	public class RandomSeries : Series
-    {
+	{
+		private SeriesType _type;
+	    public override SeriesType Type => _type;
+
         public override int Count => _count;
         private int _count;
         private CombineFunction _combineFunction;
@@ -23,8 +26,9 @@ namespace DataArcs.SeriesData
         /// RandomSeries always has an actual store in order to be consistent on repeated queries.
         /// </summary>
         public RandomSeries(int vectorSize, SeriesType type, int count, Series minMax, int seed = 0,
-			CombineFunction combineFunction = CombineFunction.Replace) : base(vectorSize, type)
+			CombineFunction combineFunction = CombineFunction.Replace) : base(vectorSize)
 		{
+			_type = type;
             _count = count;
 			seed = seed == 0 ? SeriesUtils.Random.Next() : seed;
 			_seed = seed;
