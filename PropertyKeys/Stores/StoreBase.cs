@@ -33,7 +33,7 @@ namespace DataArcs.Stores
 
         public abstract Series GetValuesAtT(float t);
         
-        public abstract ParametricSeries GetSampledTs(float t);
+        public abstract ParametricSeries GetSampledTs(ParametricSeries seriesT);
 
         public abstract void Update(float deltaTime);
 

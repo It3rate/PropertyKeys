@@ -52,8 +52,9 @@ namespace DataArcs.Components.ExternalInput
 		    _mouseY = args.Y;
         }
 
-	    public override ParametricSeries GetSampledT(PropertyId propertyId, float t)
+	    public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
 	    {
+			//todo: accomodate seriesT, maybe?
 		    ParametricSeries result;
 		    switch (propertyId)
 		    {

@@ -83,10 +83,10 @@ namespace DataArcs.Stores
             return result;
         }
 
-        public override ParametricSeries GetSampledTs(float t)
+        public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-            ParametricSeries result = _mixStore.GetSampledTs(t);
-            ParametricSeries link = _player[LinkedCompositeId]?.GetSampledT(PropertyId, t);
+            ParametricSeries result = _mixStore.GetSampledTs(seriesT);
+            ParametricSeries link = _player[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
             if (link != null)
             {
                 Series mappedValues = SeriesUtils.GetMappedSeries(SlotMapping, link);

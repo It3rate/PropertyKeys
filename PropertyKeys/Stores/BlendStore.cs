@@ -76,15 +76,16 @@ namespace DataArcs.Stores
 	        return GetSeriesAtT(t, CurrentT);
         }
 
-        public override ParametricSeries GetSampledTs(float t)
+        public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-	        SamplerUtils.InterpolatedIndexAndRemainder(_stores.Count, t, out var startIndex, out var vT);
+			// todo: incorporate full input seriesT
+	        SamplerUtils.InterpolatedIndexAndRemainder(_stores.Count, seriesT.X, out var startIndex, out var vT);
 	        vT = _easing?.GetValuesAtT(vT).X ?? vT;
 
-	        ParametricSeries result = _stores[startIndex].GetSampledTs(vT);
+	        ParametricSeries result = _stores[startIndex].GetSampledTs(new ParametricSeries(1, vT));
 	        if (vT > SamplerUtils.TOLERANCE && startIndex < _stores.Count - 1)
 	        {
-		        var endValue = _stores[startIndex + 1].GetSampledTs(t);
+		        var endValue = _stores[startIndex + 1].GetSampledTs(seriesT);
 		        result.InterpolateInto(endValue, vT);
 	        }
 	        return result;

@@ -23,7 +23,7 @@ namespace DataArcs.Components
         IStore GetStore(PropertyId propertyId);
         void GetDefinedStores(HashSet<PropertyId> ids);
 
-        ParametricSeries GetSampledT(PropertyId propertyId, float t);
+        ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT);
         Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
 		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 

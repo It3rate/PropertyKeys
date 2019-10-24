@@ -114,10 +114,10 @@ namespace DataArcs.Components
 		    }
 		    return result;
 	    }
-	    public virtual ParametricSeries GetSampledT(PropertyId propertyId, float t)
+	    public virtual ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
 	    {
 		    var store = GetStore(propertyId);
-		    return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
+		    return store != null ? store.GetSampledTs(seriesT) :seriesT;
         }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }

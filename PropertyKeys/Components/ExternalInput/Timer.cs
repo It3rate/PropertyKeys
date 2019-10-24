@@ -66,7 +66,7 @@ namespace DataArcs.Components.Transitions
             }
         }
 
-        public override ParametricSeries GetSampledT(PropertyId propertyId, float t)
+        public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
         {
 	        ParametricSeries result;
 	        if (propertyId == PropertyId.InterpolationT)
@@ -75,7 +75,7 @@ namespace DataArcs.Components.Transitions
 	        }
 	        else
 	        {
-		        result = base.GetSampledT(propertyId, InterpolationT);
+		        result = base.GetSampledTs(propertyId, new ParametricSeries(1, InterpolationT)); // todo: include seriesT, probably needed when scrubbing.
 	        }
 
 	        return result;
@@ -94,7 +94,7 @@ namespace DataArcs.Components.Transitions
 	        }
 	        else
 	        {
-		        result = base.GetSampledT(propertyId, InterpolationT);
+		        result = base.GetSampledTs(propertyId, new ParametricSeries(1, InterpolationT));
             }
 	        return result;
         }

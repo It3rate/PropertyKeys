@@ -60,7 +60,7 @@ namespace DataArcs.Stores
 			return series;
         }
 
-        public override ParametricSeries GetSampledTs(float t)
+        public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
             ParametricSeries result = null;
 
@@ -68,16 +68,16 @@ namespace DataArcs.Stores
             {
                 if (store.CombineTarget == CombineTarget.T)
                 {
-                    t = store.GetSampledTs(t).X;
+                    seriesT = store.GetSampledTs(seriesT);
                 }
                 else if (result != null)
                 {
-                    var b = store.GetSampledTs(t);
+                    var b = store.GetSampledTs(seriesT);
                     result.CombineInto(b, store.CombineFunction);
                 }
                 else
                 {
-                    result = store.GetSampledTs(t);
+                    result = store.GetSampledTs(seriesT);
                 }
             }
             

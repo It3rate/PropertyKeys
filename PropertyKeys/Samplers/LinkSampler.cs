@@ -43,7 +43,7 @@ namespace DataArcs.Samplers
 
 	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
-		    ParametricSeries link = _player[LinkedCompositeId]?.GetSampledT(PropertyId, seriesT.X); // todo: all sampledTs probably should be on parametric series, including store and composites.
+		    ParametricSeries link = _player[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
 		    return (ParametricSeries)SeriesUtils.GetMappedSeries(SlotMapping, link);
         }
     }

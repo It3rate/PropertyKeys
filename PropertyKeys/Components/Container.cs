@@ -230,10 +230,10 @@ namespace DataArcs.Components
             }
             return result;
         }
-        public override ParametricSeries GetSampledT(PropertyId propertyId, float t)
+        public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
         {
             var store = GetStore(propertyId);
-            return store != null ? store.GetSampledTs(t) : new ParametricSeries(1, t);
+            return store != null ? store.GetSampledTs(seriesT) : seriesT;
         }
 
         public virtual Series GetNestedSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
