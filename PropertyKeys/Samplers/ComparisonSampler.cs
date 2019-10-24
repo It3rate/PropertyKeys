@@ -42,8 +42,8 @@ namespace DataArcs.Samplers
 
 	    public override Series GetValuesAtT(Series series, float t)
 	    {
-		    var resultA = _sampleA.GetSampledTs(t);
-		    var resultB = _sampleB.GetSampledTs(t);
+		    var resultA = _sampleA.GetSampledTs(new ParametricSeries(1, t));
+		    var resultB = _sampleB.GetSampledTs(new ParametricSeries(1, t));
 		    var t2 = _seriesEquation(resultA, resultB);
 		    float[] floats = new float[t2.VectorSize];
 		    for (int i = 0; i < t2.VectorSize; i++)
@@ -59,54 +59,13 @@ namespace DataArcs.Samplers
            // return series.GetValueAtT(t2.X); // todo: should this adjust to assume the series equation always returns a parametric t?
 	    }
 
-	    public override ParametricSeries GetSampledTs(float t)
+	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
-		    var resultA = _sampleA.GetSampledTs(t);
-		    var resultB = _sampleB.GetSampledTs(t);
+		    var resultA = _sampleA.GetSampledTs(seriesT);
+		    var resultB = _sampleB.GetSampledTs(seriesT);
 		    var result = _seriesEquation(resultA, resultB);
 			return result;
 	    }
-
-	    private static SeriesEquation GetSeriesEquationByType(SeriesEquationType seriesEquationType)
-	    {
-		    SeriesEquation result;
-
-            switch (seriesEquationType)
-            {
-	            case SeriesEquationType.Distance:
-		            result = DistanceEquation;
-		            break;
-	            case SeriesEquationType.SignedDistance:
-		            result = SignedDistanceEquation;
-		            break;
-                default:
-	                result = DefaultEquation;
-	                break;
-		    }
-
-            return result;
-	    }
-
-        private static ParametricSeries DefaultEquation(ParametricSeries seriesA, ParametricSeries seriesB)
-	    {
-		    return seriesA;
-        }
-
-        private static ParametricSeries DistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
-        {
-	        return GeneralEquation(seriesA, seriesB, (a, b) => (float)Math.Sqrt(a * a + b * b));
-        }
-
-        private static ParametricSeries SignedDistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
-        {
-			var floats = new float[seriesA.VectorSize];
-			for (int i = 0; i < seriesA.VectorSize; i++)
-			{
-				float dif = seriesB[i] - seriesA[i];
-				floats[i] = 1f - ((dif*dif*dif + 1f) * 0.5f);
-			}
-			return new ParametricSeries(seriesA.VectorSize, floats);
-        }
 
         private delegate float FloatEquation(float a, float b); // todo: should be series's in the params
         private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, FloatEquation floatEquation)
@@ -141,6 +100,48 @@ namespace DataArcs.Samplers
 		    }
 
 		    return result;
-	    }
+        }
+
+        private static SeriesEquation GetSeriesEquationByType(SeriesEquationType seriesEquationType)
+        {
+	        SeriesEquation result;
+
+	        switch (seriesEquationType)
+	        {
+		        case SeriesEquationType.Distance:
+			        result = DistanceEquation;
+			        break;
+		        case SeriesEquationType.SignedDistance:
+			        result = SignedDistanceEquation;
+			        break;
+		        default:
+			        result = DefaultEquation;
+			        break;
+	        }
+
+	        return result;
+        }
+
+        private static ParametricSeries DefaultEquation(ParametricSeries seriesA, ParametricSeries seriesB)
+        {
+	        return seriesA;
+        }
+
+        private static ParametricSeries DistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
+        {
+	        return GeneralEquation(seriesA, seriesB, (a, b) => (float)Math.Sqrt(a * a + b * b));
+        }
+
+        private static ParametricSeries SignedDistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
+        {
+	        var floats = new float[seriesA.VectorSize];
+	        for (int i = 0; i < seriesA.VectorSize; i++)
+	        {
+		        float dif = seriesB[i] - seriesA[i];
+		        floats[i] = 1f - ((dif * dif * dif + 1f) * 0.5f);
+	        }
+	        return new ParametricSeries(seriesA.VectorSize, floats);
+        }
+
     }
 }

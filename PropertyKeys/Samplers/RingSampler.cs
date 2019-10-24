@@ -32,16 +32,26 @@ namespace DataArcs.Samplers
             return GetSeriesSample(series, t);
 		}
 
-        public override ParametricSeries GetSampledTs(float t)
+        public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-	        int max = RingCounts.Sum() - 1;
-	        int index = (int)Math.Max(0, Math.Min(max, Math.Floor(t * max + 0.5f)));
-            return SamplerUtils.GetSummedJaggedT(RingCounts, index, true);
+	        ParametricSeries result;
+	        if (seriesT.VectorSize == 1) // assume if there is more than one vectorSize the params are set
+	        {
+		        int max = RingCounts.Sum() - 1;
+		        int index = (int)Math.Max(0, Math.Min(max, Math.Floor(seriesT.X * max + 0.5f)));
+		        result = SamplerUtils.GetSummedJaggedT(RingCounts, index, true);
+	        }
+	        else
+	        {
+		        result = (ParametricSeries)seriesT.Copy();
+	        }
+
+	        return result;
         }
 
         private Series GetSeriesSample(Series series, float t)
         {
-	        var sample = GetSampledTs(t);
+	        var sample = GetSampledTs(new ParametricSeries(1, t));
 
 			float ringIndexT = sample.X;
 			float ringT = sample.Y;

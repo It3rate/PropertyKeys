@@ -31,7 +31,7 @@ namespace DataArcs.Samplers
 
 	    public override Series GetValuesAtT(Series series, float t)
 	    {
-		    ParametricSeries slotMapped = GetSampledTs(t);
+		    ParametricSeries slotMapped = GetSampledTs(new ParametricSeries(1, t));
 			float[] floats = new float[slotMapped.Count];
 		    for (int i = 0; i < slotMapped.Count; i++)
 		    {
@@ -41,9 +41,9 @@ namespace DataArcs.Samplers
 		    return SeriesUtils.CreateSeriesOfType(series, floats);
 	    }
 
-	    public override ParametricSeries GetSampledTs(float t)
+	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
-		    ParametricSeries link = _player[LinkedCompositeId]?.GetSampledT(PropertyId, t);
+		    ParametricSeries link = _player[LinkedCompositeId]?.GetSampledT(PropertyId, seriesT.X); // todo: all sampledTs probably should be on parametric series, including store and composites.
 		    return (ParametricSeries)SeriesUtils.GetMappedSeries(SlotMapping, link);
         }
     }

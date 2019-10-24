@@ -118,7 +118,7 @@ namespace DataArcs.Stores
             
 	        if (Sampler != null)
             {
-		        var sample = Sampler.GetSampledTs(indexT);
+		        var sample = Sampler.GetSampledTs(new ParametricSeries(1, indexT));
                 storeInterpolation = sample[sample.VectorSize - 1];
 	        }
             

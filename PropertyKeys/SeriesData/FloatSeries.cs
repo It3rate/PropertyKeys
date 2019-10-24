@@ -80,6 +80,7 @@ namespace DataArcs.SeriesData
 			Size = new FloatSeries(VectorSize, max);
 		}
 
+		// todo: should reverse based on slots, e.g. a grid sample may have more than xy in vectorSize
 		public override void Reverse()
 		{
 			for (int i = 0; i < Count; i++)

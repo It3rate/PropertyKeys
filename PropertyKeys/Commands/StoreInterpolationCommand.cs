@@ -20,7 +20,7 @@ namespace DataArcs.Commands
 		public float[] GetValuesAtIndex(int index, float t)
 		{
 			float[] result;
-			t = Easing.GetValueAt(t, EasingType);
+			t = Easing.GetValueAt(new ParametricSeries(1, t), EasingType).X;
 
 			SeriesUtils.GetScaledT(t, Stores.Length, out var vT, out var startIndex, out var endIndex);
 
@@ -39,9 +39,9 @@ namespace DataArcs.Commands
 		public float[] GetValuesAtT(float indexT, float t)
 		{
 			float[] result;
-			t = Easing.GetValueAt(t, EasingType);
+			t = Easing.GetValueAt(new ParametricSeries(1, t), EasingType).X;
 
-			SeriesUtils.GetScaledT(t, Stores.Length, out var vT, out var startIndex, out var endIndex);
+            SeriesUtils.GetScaledT(t, Stores.Length, out var vT, out var startIndex, out var endIndex);
 
 			if (startIndex == endIndex)
 			{
@@ -58,9 +58,9 @@ namespace DataArcs.Commands
 		public int GetElementCountAt(float t)
 		{
 			int result;
-			t = Easing.GetValueAt(t, EasingType);
+			t = Easing.GetValueAt(new ParametricSeries(1, t), EasingType).X;
 
-			SeriesUtils.GetScaledT(t, Stores.Length, out var vT, out var startIndex, out var endIndex);
+            SeriesUtils.GetScaledT(t, Stores.Length, out var vT, out var startIndex, out var endIndex);
 
 			if (startIndex == endIndex)
 			{

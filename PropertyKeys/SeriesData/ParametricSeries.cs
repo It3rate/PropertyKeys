@@ -20,7 +20,11 @@ namespace DataArcs.SeriesData
 	        }
         }
 
-        public float this[int index] => index < _floatValues.Length ? _floatValues[index] : _floatValues[_floatValues.Length - 1];
+        public float this[int index]
+        {
+	        get => index < _floatValues.Length ? _floatValues[index] : _floatValues[_floatValues.Length - 1];
+	        set => _floatValues[index < _floatValues.Length ? index : _floatValues.Length - 1] = value;
+        }
 
         public override Series GetZeroSeries()
         {

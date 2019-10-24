@@ -45,9 +45,9 @@ namespace DataArcs.Tests.GraphicTests
 
         IComposite GetHexGrid()
         {
-	        var composite = new Container(Store.CreateItemStore(22 * 15));
+	        var composite = new Container(Store.CreateItemStore(20 * 11));
 
-	        Store loc = new Store(new FloatSeries(2, 10f, 10f, 750f, 450f), new HexagonSampler(new int[] { 22, 15 }));
+	        Store loc = new Store(new FloatSeries(2, 10f, 10f, 750f, 450f), new HexagonSampler(new int[] { 20, 11 }));
 	        composite.AppendProperty(PropertyId.Location, loc);
 
 	        var mouseLinkLoc = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
@@ -57,19 +57,17 @@ namespace DataArcs.Tests.GraphicTests
 
             var mouseLinkRadius = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
             ComparisonSampler cs = new ComparisonSampler(mouseLinkRadius, loc.Sampler, SeriesEquationType.Distance);
-            var mouseRadius = new Store(new FloatSeries(1, 25f, 10f), cs, CombineFunction.Replace);
+            var mouseRadius = new Store(new FloatSeries(1, 30f, 7f), cs, CombineFunction.Replace);
             composite.AppendProperty(PropertyId.Radius, mouseRadius);
 
             var mouseOrientationStore = new Store(new FloatSeries(1, 0f, 1f));
             var mouseOrient = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SlotUtils.Y, mouseOrientationStore);
             composite.AddProperty(PropertyId.Orientation, mouseOrient);
 
-
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
             composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.5f, 0, 0, 0, 0.5f, 0.5f).Store);
             composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.3f, 0.8f, 0.8f, 0.1f, 0.1f, 0.4f).Store);
             composite.Renderer = new PolyShape();
-
 
 	        return composite;
         }

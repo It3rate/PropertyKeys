@@ -38,15 +38,27 @@ namespace DataArcs.Samplers
 			return GetSeriesSample(series, index);
 		}
 
-        public override ParametricSeries GetSampledTs(float t)
+        public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-            var index = (int)Math.Round(t * (Capacity - 1f));
-            var strideTs = SamplerUtils.GetMultipliedJaggedT(Strides, Capacity, index);
-            if (!IsRowCol)
-            {
-				strideTs.Reverse();
-            }
-            return strideTs;
+	        ParametricSeries result;
+	        if (seriesT.VectorSize == 1)
+	        {
+		        var index = (int) Math.Round(seriesT.X * (Capacity - 1f));
+		        result = SamplerUtils.GetMultipliedJaggedT(Strides, Capacity, index);
+	        }
+	        else
+	        {
+		        // default - if there is more than one dimension in the data we can only assume it is set already.
+				// copy in case it gets reversed
+		        result = (ParametricSeries)seriesT.Copy();
+	        }
+
+	        if (!IsRowCol)
+	        {
+		        result.Reverse();
+	        }
+
+	        return result;
         }
 
         protected virtual Series GetSeriesSample(Series series, int index)

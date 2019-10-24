@@ -46,7 +46,7 @@ namespace DataArcs.Stores
         
         public override ParametricSeries GetSampledTs(float t)
         {
-            return Sampler.GetSampledTs(t);
+	        return Sampler.GetSampledTs(new ParametricSeries(1, t));
         }
 
 

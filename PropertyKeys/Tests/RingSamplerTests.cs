@@ -33,33 +33,33 @@ namespace DataArcs.Tests
 		    int expectedCapacity = 7;
 		    float len = expectedCapacity - 1f;
 
-            sample = sampler.GetSampledTs(-1);
+            sample = sampler.GetSampledTs(new ParametricSeries(1, -1));
 		    expected = new ParametricSeries(2, new[] { 0f, 0f });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(0);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 0));
 		    expected = new ParametricSeries(2, new[] { 0f, 0f });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(2f / len);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 2f / len));
 		    expected = new ParametricSeries(2, new[] { 0f, 2f / expectedCapacity });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(0.5f); // round down
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 0.5f)); // round down
 		    expected = new ParametricSeries(2, new[] { 0f, 3f / expectedCapacity });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(1);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 1));
 		    expected = new ParametricSeries(2, new[] { 0f, 6f / expectedCapacity });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(2);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 2));
 		    expected = new ParametricSeries(2, new[] { 0f, 6f / expectedCapacity });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
 
 		    RingSampler evenSampler = new RingSampler(new int[] { 8 });
-		    sample = evenSampler.GetSampledTs(0.5f);
+		    sample = evenSampler.GetSampledTs(new ParametricSeries(1, 0.5f));
 		    expected = new ParametricSeries(2, new[] { 0f, 4f / 8 });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
@@ -77,43 +77,43 @@ namespace DataArcs.Tests
 		    int expectedCapacity = outer + inner; // 10
 		    float len = expectedCapacity - 1f;
 
-            sample = sampler.GetSampledTs(-1);
+            sample = sampler.GetSampledTs(new ParametricSeries(1, -1));
 		    expected = new ParametricSeries(2, new[] { 0f, 0f });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(0);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 0));
 		    expected = new ParametricSeries(2, new[] { 0f, 0f });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(1f / len);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 1f / len));
 		    expected = new ParametricSeries(2, new[] { 0f, 1f / outer }); // ring zero, 1/6th along
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(2f / len);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 2f / len));
 		    expected = new ParametricSeries(2, new[] { 0f, 2f / outer });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-            sample = sampler.GetSampledTs(0.5f);
+            sample = sampler.GetSampledTs(new ParametricSeries(1, 0.5f));
 		    expected = new ParametricSeries(2, new[] { 0f, 5f / outer });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(6f / len);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 6f / len));
 		    expected = new ParametricSeries(2, new[] { 1 / ringCount, 0f });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(7f / len);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 7f / len));
 		    expected = new ParametricSeries(2, new[] { 1 / ringCount, 1f / inner });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(9f / len);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 9f / len));
 		    expected = new ParametricSeries(2, new[] { 1 / ringCount, 3f / inner });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-            sample = sampler.GetSampledTs(1);
+            sample = sampler.GetSampledTs(new ParametricSeries(1, 1));
 		    expected = new ParametricSeries(2, new[] { 1 / ringCount, 3f / inner });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
-		    sample = sampler.GetSampledTs(2);
+		    sample = sampler.GetSampledTs(new ParametricSeries(1, 2));
 		    expected = new ParametricSeries(2, new[] { 1 / ringCount, 3f / inner });
 		    Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 

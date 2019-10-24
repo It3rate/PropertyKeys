@@ -15,9 +15,9 @@ namespace DataArcs.Samplers
 		    CenterOne = centerOne;
 	    }
 
-	    public override ParametricSeries GetSampledTs(float t)
+	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
-		    var result = base.GetSampledTs(t);
+		    var result = base.GetSampledTs(seriesT);
 		    float z = (float)(Math.Sin(result.X * Math.PI) * Math.Sin(result.Y * Math.PI));
 		    z = CenterOne ? z : 1f - z;
 		    return new ParametricSeries(3, new[] { result.X, result.Y, z });
