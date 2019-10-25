@@ -56,7 +56,7 @@ namespace DataArcs.Tests.GraphicTests
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
             var mouseLinkRadius = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
-            ComparisonSampler cs = new ComparisonSampler(mouseLinkRadius, loc.Sampler, SeriesEquationType.Distance);
+            ComparisonSampler cs = new ComparisonSampler(mouseLinkRadius, loc.Sampler, SeriesEquationType.Polar, SlotUtils.X);
             var mouseRadius = new Store(new FloatSeries(1, 30f, 7f), cs, CombineFunction.Replace);
             composite.AppendProperty(PropertyId.Radius, mouseRadius);
 

@@ -14,8 +14,9 @@ namespace DataArcs.Samplers
 
 	public enum SeriesEquationType
 	{
-		Distance,
-		SignedDistance,
+		Polar, // returns len, normalizedAngle
+		Distance, // returns len
+        SignedDistance, // returns xDist, yDist
 	}
 
     public class ComparisonSampler : Sampler
@@ -23,16 +24,18 @@ namespace DataArcs.Samplers
 	    private Sampler _sampleA;
 	    private Sampler _sampleB;
 	    private SeriesEquation _seriesEquation;
+	    private Slot[] SlotMapping; // uppercase name for conflict, as this will probably become a Sampler property
 
-	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, int capacity = 1)
+        public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] slotMapping = null, int capacity = 1)
 	    {
 		    _sampleA = sampleA;
 		    _sampleB = sampleB;
 		    _seriesEquation = seriesEquation;
+		    SlotMapping = slotMapping;
 		    Capacity = capacity;
 	    }
-	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, int capacity = 1) : 
-		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), capacity){ }
+	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] slotMapping = null, int capacity = 1) : 
+		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), slotMapping, capacity){ }
 
         public override Series GetValueAtIndex(Series series, int index)
 	    {
@@ -42,21 +45,14 @@ namespace DataArcs.Samplers
 
 	    public override Series GetValuesAtT(Series series, float t)
 	    {
-		    var resultA = _sampleA.GetSampledTs(new ParametricSeries(1, t));
-		    var resultB = _sampleB.GetSampledTs(new ParametricSeries(1, t));
-		    var t2 = _seriesEquation(resultA, resultB);
-		    float[] floats = new float[t2.VectorSize];
+		    var t2 = GetSampledTs(new ParametricSeries(1, t));
+
+            float[] floats = new float[t2.VectorSize];
 		    for (int i = 0; i < t2.VectorSize; i++)
 		    {
 			    floats[i] = series.GetValueAtT(t2[i]).FloatDataAt(i);
 		    }
-
-		  //  if (t == 0 || t  > .88f)
-		  //  {
-				//Debug.WriteLine(floats[0] + " : " + floats[1] + " +    : " + t);
-		  //  }
 		    return SeriesUtils.CreateSeriesOfType(series, floats);
-           // return series.GetValueAtT(t2.X); // todo: should this adjust to assume the series equation always returns a parametric t?
 	    }
 
 	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -64,12 +60,13 @@ namespace DataArcs.Samplers
 		    var resultA = _sampleA.GetSampledTs(seriesT);
 		    var resultB = _sampleB.GetSampledTs(seriesT);
 		    var result = _seriesEquation(resultA, resultB);
-			return result;
+		    return (ParametricSeries)SeriesUtils.GetMappedSeries(SlotMapping, result);
 	    }
 
         private delegate float FloatEquation(float a, float b); // todo: should be series's in the params
         private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, FloatEquation floatEquation)
 	    {
+			// note: so far parametricSeries can only have one vector, so this is redundant atm.
 		    ParametricSeries result;
 		    var aVals = seriesA.FloatData;
 		    var bVals = seriesB.FloatData;
@@ -111,7 +108,10 @@ namespace DataArcs.Samplers
 		        case SeriesEquationType.Distance:
 			        result = DistanceEquation;
 			        break;
-		        case SeriesEquationType.SignedDistance:
+		        case SeriesEquationType.Polar:
+			        result = PolarEquation;
+			        break;
+                case SeriesEquationType.SignedDistance:
 			        result = SignedDistanceEquation;
 			        break;
 		        default:
@@ -130,6 +130,14 @@ namespace DataArcs.Samplers
         private static ParametricSeries DistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
         {
 	        return GeneralEquation(seriesA, seriesB, (a, b) => (float)Math.Sqrt(a * a + b * b));
+        }
+
+        private static ParametricSeries PolarEquation(ParametricSeries seriesA, ParametricSeries seriesB)
+        {
+	        float a = seriesB[0] - seriesA[0];
+	        float b = seriesB[1] - seriesA[1];
+	        var array = new float[]{(float)Math.Sqrt(a * a + b * b), (float) (Math.Atan2(b, a) / (2 * Math.PI))};
+	        return new ParametricSeries(2, array);
         }
 
         private static ParametricSeries SignedDistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
