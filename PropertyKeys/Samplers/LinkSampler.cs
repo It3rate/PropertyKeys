@@ -13,20 +13,18 @@ namespace DataArcs.Samplers
     {
 	    public int LinkedCompositeId { get; }
 	    public PropertyId PropertyId { get; }
-	    public Slot[] SlotMapping { get; }
 	    private Player _player;
 
-        public LinkSampler(int compositeId, PropertyId propertyId, Slot[] slotMapping = null)
+        public LinkSampler(int compositeId, PropertyId propertyId, Slot[] swizzle = null, int capacity = 1) : base(swizzle, 1)
         {
 	        LinkedCompositeId = compositeId;
 	        PropertyId = propertyId;
-	        SlotMapping = slotMapping;
 	        _player = Player.GetPlayerById(0);
-            Capacity = 1;
 	    }
 	    public override Series GetValueAtIndex(Series series, int index)
 	    {
-		    return GetValuesAtT(series, index > 0 ? 1f : 0);
+		    var indexT = index / (Capacity - 1f);
+            return GetValuesAtT(series, indexT);
 	    }
 
 	    public override Series GetValuesAtT(Series series, float t)
@@ -44,7 +42,7 @@ namespace DataArcs.Samplers
 	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
 		    ParametricSeries link = _player[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
-		    return (ParametricSeries)SeriesUtils.GetMappedSeries(SlotMapping, link);
+		    return (ParametricSeries)SeriesUtils.GetMappedSeries(Swizzle, link);
         }
     }
 }

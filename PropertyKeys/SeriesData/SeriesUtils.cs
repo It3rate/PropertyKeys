@@ -3,10 +3,29 @@ using System;
 
 namespace DataArcs.SeriesData
 {
-    [Flags]
-    public enum Slot{X, Y, Z, W, S4, S5, S6, S7, S8, S9,}
+	public enum Slot
+	{
+		X = 0,
+		Y = 1,
+		Z = 2,
+		W = 3,
+		R = 0,
+		G = 1,
+		B = 2,
+		A = 3,
+        S0 = 0,
+        S1 = 1,
+        S2 = 2,
+        S3 = 3,
+        S4 = 4,
+        S5 = 5,
+        S6 = 6,
+        S7 = 7,
+        S8 = 8,
+        S9 = 9,
+	}
 
-    public class SlotUtils
+	public class SlotUtils
     {
 	    public static readonly Slot[] X = new Slot[] { Slot.X };
 	    public static readonly Slot[] Y = new Slot[] { Slot.Y };
@@ -22,6 +41,9 @@ namespace DataArcs.SeriesData
 	    public static readonly Slot[] XYZW = new Slot[] { Slot.X, Slot.Y, Slot.Z, Slot.W };
 	    public static readonly Slot[] ZYX = new Slot[] { Slot.Z, Slot.Y, Slot.X };
 	    public static readonly Slot[] WZYX = new Slot[] { Slot.W, Slot.Z, Slot.Y, Slot.Z };
+	    public static readonly Slot[] RGB = new Slot[] { Slot.R, Slot.G, Slot.B };
+	    public static readonly Slot[] RGBA = new Slot[] { Slot.R, Slot.G, Slot.B, Slot.A };
+	    public static readonly Slot[] ARGB = new Slot[] { Slot.A, Slot.R, Slot.G, Slot.B };
     }
 
     public class SeriesUtils

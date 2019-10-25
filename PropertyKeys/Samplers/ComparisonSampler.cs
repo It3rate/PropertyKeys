@@ -21,21 +21,21 @@ namespace DataArcs.Samplers
 
     public class ComparisonSampler : Sampler
     {
+	    private Slot[] Swizzle; 
 	    private Sampler _sampleA;
 	    private Sampler _sampleB;
 	    private SeriesEquation _seriesEquation;
-	    private Slot[] SlotMapping; // uppercase name for conflict, as this will probably become a Sampler property
 
-        public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] slotMapping = null, int capacity = 1)
-	    {
+        public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] swizzle = null, int capacity = 1) : base(swizzle, capacity)
+        {
 		    _sampleA = sampleA;
 		    _sampleB = sampleB;
 		    _seriesEquation = seriesEquation;
-		    SlotMapping = slotMapping;
+		    Swizzle = swizzle;
 		    Capacity = capacity;
 	    }
-	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] slotMapping = null, int capacity = 1) : 
-		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), slotMapping, capacity){ }
+	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzle = null, int capacity = 1) : 
+		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzle, capacity){ }
 
         public override Series GetValueAtIndex(Series series, int index)
 	    {
@@ -60,7 +60,7 @@ namespace DataArcs.Samplers
 		    var resultA = _sampleA.GetSampledTs(seriesT);
 		    var resultB = _sampleB.GetSampledTs(seriesT);
 		    var result = _seriesEquation(resultA, resultB);
-		    return (ParametricSeries)SeriesUtils.GetMappedSeries(SlotMapping, result);
+		    return (ParametricSeries)SeriesUtils.GetMappedSeries(Swizzle, result);
 	    }
 
         private delegate float FloatEquation(float a, float b); // todo: should be series's in the params
