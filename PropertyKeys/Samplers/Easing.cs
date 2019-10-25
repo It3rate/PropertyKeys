@@ -45,15 +45,20 @@ namespace DataArcs.Samplers
 
 	public class Easing : Sampler
 	{
-		public EasingType EasingType;
+		public EasingType[] EasingTypes;
 
 		public Easing(EasingType easingType = EasingType.Linear, int capacity = 1)
 		{
-			EasingType = easingType;
+			EasingTypes = new EasingType[] { easingType };
+			Capacity = capacity;
+		}
+		public Easing(EasingType[] easingTypes, int capacity = 1)
+		{
+			EasingTypes = easingTypes;
 			Capacity = capacity;
 		}
 
-		public override Series GetValueAtIndex(Series series, int index)
+        public override Series GetValueAtIndex(Series series, int index)
 		{
 			// todo: check if this virtualCount assignment should happen in easing at this point or pass through.
 			var indexT = index / (float) Capacity;
@@ -62,13 +67,19 @@ namespace DataArcs.Samplers
 
 		public override Series GetValuesAtT(Series series, float t)
 		{
-			float easedT = GetSingleValueAt(t, EasingType);
-			return series.GetValueAtT(easedT);
+			var sampledTs = GetSampledTs(new ParametricSeries(1, t));
+			// todo: When a sampler is swizzled, the series sample should probably also be swizzled as it is sampled?
+			// This will require passing in a parametric t to a series to get values. Need to consider the implications and orders.
+			return series.GetValueAtT(sampledTs.X);
 		}
 
 		public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 		{
-			var result = GetValueAt(seriesT, EasingType);
+			var result = new ParametricSeries(EasingTypes.Length, new float[EasingTypes.Length]);
+			for (int i = 0; i < EasingTypes.Length; i++)
+			{
+				result[i] = GetValueAt(seriesT, EasingTypes[i])[i];
+			}
 			return Swizzle(result);
         }
 
