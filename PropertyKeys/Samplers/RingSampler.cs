@@ -45,8 +45,8 @@ namespace DataArcs.Samplers
 	        {
 		        result = (ParametricSeries)seriesT.Copy();
 	        }
-
-	        return result;
+			
+	        return (ParametricSeries)SeriesUtils.GetMappedSeries(Swizzle, result);
         }
 
         private Series GetSeriesSample(Series series, float t)

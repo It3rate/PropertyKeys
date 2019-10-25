@@ -17,11 +17,12 @@ namespace DataArcs.Samplers
 
 	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
-		    var result = base.GetSampledTs(seriesT);
-		    float z = (float)(Math.Sin(result.X * Math.PI) * Math.Sin(result.Y * Math.PI));
+		    var sample = base.GetSampledTs(seriesT);
+		    float z = (float)(Math.Sin(sample.X * Math.PI) * Math.Sin(sample.Y * Math.PI));
 		    z = CenterOne ? z : 1f - z;
-		    return new ParametricSeries(3, new[] { result.X, result.Y, z });
-	    }
+		    var result = new ParametricSeries(3, new[] { sample.X, sample.Y, z });
+		    return (ParametricSeries)SeriesUtils.GetMappedSeries(Swizzle, result);
+        }
 
     }
 }
