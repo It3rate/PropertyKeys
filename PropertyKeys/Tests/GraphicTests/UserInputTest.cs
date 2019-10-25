@@ -50,18 +50,20 @@ namespace DataArcs.Tests.GraphicTests
 	        Store loc = new Store(new FloatSeries(2, 10f, 10f, 750f, 450f), new HexagonSampler(new int[] { 20, 11 }));
 	        composite.AppendProperty(PropertyId.Location, loc);
 
-	        var mouseLinkLoc = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
-            ComparisonSampler csl = new ComparisonSampler(mouseLinkLoc, loc.Sampler, SeriesEquationType.SignedDistance);
-            var locMouseStore = new Store(new FloatSeries(2, -180f, -180f, 180f, 180f), csl, CombineFunction.Add);
+	        var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
+            ComparisonSampler csl = new ComparisonSampler(mouseLink, loc.Sampler, SeriesEquationType.SignedDistance);
+            var locMouseStore = new Store(new FloatSeries(2, -80f, -80f, 80f, 80f), csl, CombineFunction.Add);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
-            var mouseLinkRadius = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
-            ComparisonSampler cs = new ComparisonSampler(mouseLinkRadius, loc.Sampler, SeriesEquationType.Polar, SlotUtils.X);
+            //var mouseLinkRadius = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
+            ComparisonSampler cs = new ComparisonSampler(mouseLink, loc.Sampler, SeriesEquationType.Polar, SlotUtils.X);
             var mouseRadius = new Store(new FloatSeries(1, 30f, 7f), cs, CombineFunction.Replace);
             composite.AppendProperty(PropertyId.Radius, mouseRadius);
 
-            var mouseOrientationStore = new Store(new FloatSeries(1, 0f, 1f));
-            var mouseOrient = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SlotUtils.Y, mouseOrientationStore);
+            ComparisonSampler cso = new ComparisonSampler(mouseLink, loc.Sampler, SeriesEquationType.Polar, SlotUtils.Y);
+            var mouseOrient = new Store(new FloatSeries(1, 0f, 1f), cso, CombineFunction.Replace);
+            //var mouseOrientationStore = new Store(new FloatSeries(1, 0f, 1f));
+            //var mouseOrient = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SlotUtils.Y, mouseOrientationStore);
             composite.AddProperty(PropertyId.Orientation, mouseOrient);
 
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);

@@ -136,7 +136,9 @@ namespace DataArcs.Samplers
         {
 	        float a = seriesB[0] - seriesA[0];
 	        float b = seriesB[1] - seriesA[1];
-	        var array = new float[]{(float)Math.Sqrt(a * a + b * b), (float) (Math.Atan2(b, a) / (2 * Math.PI))};
+			//if(seriesB[0] > .5 && seriesB[0] < .6 && seriesB[1] > .65 && seriesB[1] < .75)
+			//	Debug.WriteLine(Math.Atan2(b, a) + " : " +  (Math.Atan2(b, a) / (2.0 * Math.PI)));
+	        var array = new float[]{(float)Math.Sqrt(a * a + b * b), (float) Math.Abs(Math.Atan2(b, a) / (2 * Math.PI))};
 	        return new ParametricSeries(2, array);
         }
 
