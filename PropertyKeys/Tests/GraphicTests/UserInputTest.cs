@@ -51,24 +51,23 @@ namespace DataArcs.Tests.GraphicTests
 	        composite.AppendProperty(PropertyId.Location, loc);
 
 	        var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
-            ComparisonSampler csl = new ComparisonSampler(mouseLink, loc.Sampler, SeriesEquationType.SignedDistance);
+            ComparisonSampler csl = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.SignedDistance);
             var locMouseStore = new Store(new FloatSeries(2, -80f, -80f, 80f, 80f), csl, CombineFunction.Add);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
-            //var mouseLinkRadius = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
-            ComparisonSampler cs = new ComparisonSampler(mouseLink, loc.Sampler, SeriesEquationType.Polar, SlotUtils.X);
-            var mouseRadius = new Store(new FloatSeries(1, 30f, 7f), cs, CombineFunction.Replace);
+            ComparisonSampler cs = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
+            var mouseRadius = new Store(new FloatSeries(2, 20f, 20f, 5f, 5f), cs);
             composite.AppendProperty(PropertyId.Radius, mouseRadius);
 
-            ComparisonSampler cso = new ComparisonSampler(mouseLink, loc.Sampler, SeriesEquationType.Polar, SlotUtils.Y);
-            var mouseOrient = new Store(new FloatSeries(1, 0f, 1f), cso, CombineFunction.Replace);
-            //var mouseOrientationStore = new Store(new FloatSeries(1, 0f, 1f));
-            //var mouseOrient = new LinkingStore(_mouseInput.CompositeId, PropertyId.SampleAtT, SlotUtils.Y, mouseOrientationStore);
+            ComparisonSampler cso = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.Y);
+            var mouseOrient = new Store(new FloatSeries(1, 0f, 1f), cso);
             composite.AddProperty(PropertyId.Orientation, mouseOrient);
 
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
-            composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.5f, 0, 0, 0, 0.5f, 0.5f).Store);
-            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.3f, 0.8f, 0.8f, 0.1f, 0.1f, 0.4f).Store);
+            composite.AddProperty(PropertyId.Starness, new FloatSeries(1, 2.2f).Store);
+            composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.5f, 0.8f, 0.8f, 0.8f, 0.5f, 0.5f).Store);
+            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.3f, 0.5f, 0.5f, 0.1f, 0.1f, 0.4f).Store);
+            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 2f).Store);
             composite.Renderer = new PolyShape();
 
 	        return composite;
