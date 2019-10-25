@@ -15,7 +15,7 @@ namespace DataArcs.Samplers
 	    public PropertyId PropertyId { get; }
 	    private Player _player;
 
-        public LinkSampler(int compositeId, PropertyId propertyId, Slot[] swizzle = null, int capacity = 1) : base(swizzle, 1)
+        public LinkSampler(int compositeId, PropertyId propertyId, Slot[] swizzleMap = null, int capacity = 1) : base(swizzleMap, 1)
         {
 	        LinkedCompositeId = compositeId;
 	        PropertyId = propertyId;
@@ -42,7 +42,7 @@ namespace DataArcs.Samplers
 	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
 		    ParametricSeries link = _player[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
-		    return (ParametricSeries)SeriesUtils.GetMappedSeries(Swizzle, link);
+		    return Swizzle(link);
         }
     }
 }

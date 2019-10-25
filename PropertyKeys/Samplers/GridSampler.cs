@@ -58,7 +58,7 @@ namespace DataArcs.Samplers
 		        result.Reverse();
 	        }
 			
-	        return (ParametricSeries)SeriesUtils.GetMappedSeries(Swizzle, result);
+	        return Swizzle(result);
         }
 
         protected virtual Series GetSeriesSample(Series series, int index)

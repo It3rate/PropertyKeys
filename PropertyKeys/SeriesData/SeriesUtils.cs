@@ -48,16 +48,16 @@ namespace DataArcs.SeriesData
 
     public class SeriesUtils
     {
-	    public static Series GetMappedSeries(Slot[] mapSlots, Series series)
+	    public static Series SwizzleSeries(Slot[] swizzleMap, Series series)
 	    {
 		    Series result;
-	        if (mapSlots != null)
+	        if (swizzleMap != null)
 	        {
-		        float[] floats = new float[mapSlots.Length];
+		        float[] floats = new float[swizzleMap.Length];
 		        Series value = series.GetSeriesAtIndex(0);
-		        for (int i = 0; i < mapSlots.Length; i++)
+		        for (int i = 0; i < swizzleMap.Length; i++)
 		        {
-			        int index = Math.Max(0, Math.Min(value.Count, (int) mapSlots[i]));
+			        int index = Math.Max(0, Math.Min(value.Count, (int) swizzleMap[i]));
 			        floats[i] = value.FloatDataAt(index);
 		        }
 		        result = CreateSeriesOfType(series, floats);

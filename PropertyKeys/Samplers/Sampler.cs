@@ -7,11 +7,11 @@ namespace DataArcs.Samplers
 	public abstract class Sampler
 	{
 		public int Capacity { get; protected set; } = 1;
-		public Slot[] Swizzle { get; set; }
+		public Slot[] SwizzleMap { get; set; }
 
-		public Sampler(Slot[] swizzle = null, int capacity = 1)
+		public Sampler(Slot[] swizzleMap = null, int capacity = 1)
 		{
-			Swizzle = swizzle;
+			SwizzleMap = swizzleMap;
 			Capacity = capacity;
         }
 
@@ -19,7 +19,30 @@ namespace DataArcs.Samplers
 		public abstract Series GetValuesAtT(Series series, float t);
         public virtual ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-            return new ParametricSeries(1, seriesT.X);
+            return Swizzle(seriesT);
         }
+
+        public ParametricSeries Swizzle(ParametricSeries series)
+        {
+	        ParametricSeries result;
+	        if (SwizzleMap != null)
+	        {
+		        int len = SwizzleMap.Length;
+		        result = new ParametricSeries(len, new float[len]);
+		        for (int i = 0; i < len; i++)
+		        {
+			        int index = (int)SwizzleMap[i];
+			        index = Math.Max(0, Math.Min(len - 1, index));
+			        result[i] = series[index];
+		        }
+	        }
+	        else
+	        {
+		        result = series;
+	        }
+
+	        return result;
+        }
+
     }
 }

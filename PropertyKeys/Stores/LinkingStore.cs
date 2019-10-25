@@ -49,7 +49,7 @@ namespace DataArcs.Stores
                 Series link = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
                 if (link != null)
                 {
-                    var slotMapped = SeriesUtils.GetMappedSeries(SlotMapping, link);
+                    var slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
                     if(PropertyIdSet.IsTCombining(PropertyId))
                     {
                         slotMapped.CombineInto(new FloatSeries(1, t), CombineFunction, t);
@@ -72,7 +72,7 @@ namespace DataArcs.Stores
                 {
 					// This is two step in order to use slot mapping, probably can sensibly combine this.
 	                Series link = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
-	                Series slotMapped = SeriesUtils.GetMappedSeries(SlotMapping, link);
+	                Series slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
 	                result.CombineInto(slotMapped, CombineFunction, t);
                 }
                 else
@@ -89,7 +89,7 @@ namespace DataArcs.Stores
             ParametricSeries link = _player[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
             if (link != null)
             {
-                Series mappedValues = SeriesUtils.GetMappedSeries(SlotMapping, link);
+                Series mappedValues = SeriesUtils.SwizzleSeries(SlotMapping, link);
                 result.CombineInto(mappedValues, CombineFunction);
             }
             return result;

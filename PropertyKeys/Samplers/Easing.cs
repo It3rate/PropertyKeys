@@ -69,7 +69,7 @@ namespace DataArcs.Samplers
 		public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 		{
 			var result = GetValueAt(seriesT, EasingType);
-			return (ParametricSeries)SeriesUtils.GetMappedSeries(Swizzle, result);
+			return Swizzle(result);
         }
 
 		public static float GetSingleValueAt(float t, EasingType easingType)
