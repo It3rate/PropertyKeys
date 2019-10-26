@@ -16,14 +16,14 @@ namespace DataArcs.Samplers
         /// Returns normalized indexes into segmented array based on index and size. Passed size can be virtual (larger than implied segments total).
         /// </summary>
         /// <param name="segments">The segments (e.g. row/cols) for the container.</param>
-        /// <param name="virtualCount">Virtual size of element container.</param>
+        /// <param name="capacity">Virtual size of element container.</param>
         /// <param name="index">The index into the segments.</param>
         /// <returns></returns>
-        public static ParametricSeries GetMultipliedJaggedT(int[] segments, int virtualCount, int index)
+        public static ParametricSeries GetMultipliedJaggedT(int[] segments, int capacity, int index)
         {
-            var indexes = GetPositionsForIndex(segments, virtualCount, index);
+            var indexes = GetPositionsForIndex(segments, capacity, index);
             var dSize = 1;
-            var maxLen = virtualCount - 1;
+            var maxLen = capacity - 1;
             var result = new float[indexes.Length];
             for (var i = 0; i < indexes.Length; i++)
             {
@@ -41,10 +41,18 @@ namespace DataArcs.Samplers
 
             return new ParametricSeries(indexes.Length, result);
         }
-        public static int[] GetPositionsForIndex(int[] segments, int virtualCount, int index)
+
+        public static ParametricSeries GetMultipliedJaggedTFromT(int[] segments, int capacity, float t)
+        {
+            var index = (int)Math.Round(t * (capacity - 1f));
+            //var index = (int)(t * (capacity - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
+            return GetMultipliedJaggedT(segments, capacity, index);
+        }
+
+        public static int[] GetPositionsForIndex(int[] segments, int capacity, int index)
         {
             var result = new int[segments.Length];
-            var count = Math.Max(0, Math.Min(virtualCount - 1, index));
+            var count = Math.Max(0, Math.Min(capacity - 1, index));
             for (var i = segments.Length - 1; i >= 0; i--)
             {
                 int dimSize = 1;
@@ -119,12 +127,6 @@ namespace DataArcs.Samplers
 	        startIndex = (int)Math.Max(0, Math.Min(dist, len - 2));
 	        remainder = dist - startIndex;
 	        remainder = (remainder < TOLERANCE) ? 0 : remainder;
-        }
-		
-        public static ParametricSeries GetStrideTsForT(int virtualCount, int[] strides, float t)
-        {
-            var index = (int)(t * (virtualCount - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
-            return GetMultipliedJaggedT(strides, virtualCount, index);
         }
     }
 }

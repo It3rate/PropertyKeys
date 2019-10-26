@@ -78,7 +78,7 @@ namespace DataArcs.Samplers
 			    {
 				    resultArray[i] = floatEquation(bVals[i] - aVals[i], bVals[i + 1] - aVals[i + 1]);
                 }
-                result = (ParametricSeries)SeriesUtils.CreateSeriesOfType(seriesA, resultArray);
+                result = new ParametricSeries(seriesA.VectorSize, resultArray);
             }
 		    else
 		    {

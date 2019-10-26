@@ -6,10 +6,9 @@ namespace DataArcs.Samplers
 	public class GridSampler : Sampler
 	{
 		protected int[] Strides { get; }
-		public bool IsRowCol { get; set; } = true;
 
-        public GridSampler(int[] strides)
-		{
+        public GridSampler(int[] strides, Slot[] swizzleMap = null) : base(swizzleMap, 1)
+        {
 			Strides = strides;
             Capacity = strides[0];
             for (int i = 1; i < strides.Length; i++)
@@ -27,48 +26,29 @@ namespace DataArcs.Samplers
 
 		public override Series GetValueAtIndex(Series series, int index)
         {
-			index = Math.Max(0, Math.Min(Capacity - 1, index));
-			return GetSeriesSample(series, index);
+            // access special case directly to avoid index>t>index>t conversions
+            var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, Capacity, index);
+            return GetSeriesSample(series, seriesT);
 		}
 
 		public override Series GetValuesAtT(Series series, float t)
         {
-			t = Math.Max(0, Math.Min(1f, t));
-			var index = (int) Math.Round(t * (Capacity - 1f));
-			return GetSeriesSample(series, index);
+            var seriesT = GetSampledTs(new ParametricSeries(1, t));
+			return GetSeriesSample(series, seriesT);
 		}
 
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-	        ParametricSeries result;
-	        if (seriesT.VectorSize == 1)
-	        {
-		        var index = (int) Math.Round(seriesT.X * (Capacity - 1f));
-		        result = SamplerUtils.GetMultipliedJaggedT(Strides, Capacity, index);
-	        }
-	        else
-	        {
-		        // default - if there is more than one dimension in the data we can only assume it is set already.
-				// copy in case it gets reversed
-		        result = (ParametricSeries)seriesT.Copy();
-	        }
-
-	        if (!IsRowCol)
-	        {
-		        result.Reverse();
-	        }
-			
-	        return Swizzle(result);
+	        var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, Capacity, seriesT.X) : seriesT;
+            return Swizzle(result);
         }
 
-        protected virtual Series GetSeriesSample(Series series, int index)
+        protected virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
-			var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
-            var strideTs = SamplerUtils.GetMultipliedJaggedT(Strides, Capacity, index);
-            
-			for (var i = 0; i < result.Length; i++)
+            var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
+            for (var i = 0; i < result.Length; i++)
 			{
-				result[i] = (i < Strides.Length) ? series.GetValueAtT(strideTs[i]).FloatDataAt(i) : 0;
+				result[i] = (i < Strides.Length) ? series.GetValueAtT(seriesT[i]).FloatDataAt(i) : 0;
 			}
 
 			return SeriesUtils.CreateSeriesOfType(series, result);

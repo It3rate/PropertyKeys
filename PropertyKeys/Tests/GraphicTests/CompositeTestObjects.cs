@@ -199,8 +199,7 @@ namespace DataArcs.Tests.GraphicTests
             Store items2 = itemData2.CreateLinearStore(200);
             endComp.AddProperty(PropertyId.Items, items2);
 
-            GridSampler gridSampler = new GridSampler(new[] { 15, 16});
-            gridSampler.IsRowCol = false;
+            GridSampler gridSampler = new GridSampler(new[] { 15, 16}, SlotUtils.YX);
             var endRect = startRect; // new float[] { 50, 50, 500, 400 };
             var endStore = new Store(new FloatSeries(2, endRect), gridSampler, CombineFunction.Replace);
             endComp.AddProperty(PropertyId.Location, endStore);
