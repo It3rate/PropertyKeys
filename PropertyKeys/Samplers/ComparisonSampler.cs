@@ -36,25 +36,7 @@ namespace DataArcs.Samplers
 	    }
 	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int capacity = 1) : 
 		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzleMap, capacity){ }
-
-        public override Series GetValueAtIndex(Series series, int index)
-	    {
-		    var indexT = index / (Capacity - 1f);
-		    return GetValuesAtT(series, indexT);
-	    }
-
-	    public override Series GetValuesAtT(Series series, float t)
-	    {
-		    var t2 = GetSampledTs(new ParametricSeries(1, t));
-
-            float[] floats = new float[t2.VectorSize];
-		    for (int i = 0; i < t2.VectorSize; i++)
-		    {
-			    floats[i] = series.GetValueAtT(t2[i]).FloatDataAt(i);
-		    }
-		    return SeriesUtils.CreateSeriesOfType(series, floats);
-	    }
-
+        
 	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
 		    var resultA = _sampleA.GetSampledTs(seriesT);

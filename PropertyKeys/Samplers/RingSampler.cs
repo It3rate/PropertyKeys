@@ -11,7 +11,7 @@ namespace DataArcs.Samplers
         protected int[] RingCounts { get; }
         protected IStore Orientation { get; }
 
-        public RingSampler(int[] ringCounts, IStore orientation = null)
+        public RingSampler(int[] ringCounts, IStore orientation = null, Slot[] swizzleMap = null) : base(swizzleMap)
         {
             RingCounts = ringCounts;
             Orientation = orientation;
@@ -21,16 +21,6 @@ namespace DataArcs.Samplers
                 Capacity += ringCounts[i];
             }
         }
-        public override Series GetValueAtIndex(Series series, int index)
-		{
-			var indexT = index / (Capacity - 1f); // full circle
-			return GetSeriesSample(series, indexT);
-		}
-
-		public override Series GetValuesAtT(Series series, float t)
-        {
-            return GetSeriesSample(series, t);
-		}
 
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
@@ -49,12 +39,10 @@ namespace DataArcs.Samplers
 	        return Swizzle(result);
         }
 
-        private Series GetSeriesSample(Series series, float t)
+        public override Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
-	        var sample = GetSampledTs(new ParametricSeries(1, t));
-
-			float ringIndexT = sample.X;
-			float ringT = sample.Y;
+			float ringIndexT = seriesT.X;
+			float ringT = seriesT.Y;
 			
             float orientation = 0;
             if (Orientation != null)

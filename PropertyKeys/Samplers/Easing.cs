@@ -3,8 +3,7 @@ using System;
 
 namespace DataArcs.Samplers
 {
-
-	public enum EasingType
+    public enum EasingType
 	{
 		None = 0,
 		Linear,
@@ -47,32 +46,15 @@ namespace DataArcs.Samplers
 	{
 		public EasingType[] EasingTypes;
 
-		public Easing(EasingType easingType = EasingType.Linear, int capacity = 1)
-		{
+		public Easing(EasingType easingType = EasingType.Linear, Slot[] swizzleMap = null, int capacity = 1) : base(swizzleMap, capacity)
+        {
 			EasingTypes = new EasingType[] { easingType };
-			Capacity = capacity;
 		}
-		public Easing(EasingType[] easingTypes, int capacity = 1)
-		{
+		public Easing(EasingType[] easingTypes, Slot[] swizzleMap = null, int capacity = 1) : base(swizzleMap, capacity)
+        {
 			EasingTypes = easingTypes;
-			Capacity = capacity;
 		}
-
-        public override Series GetValueAtIndex(Series series, int index)
-		{
-			// todo: check if this virtualCount assignment should happen in easing at this point or pass through.
-			var indexT = index / (float) Capacity;
-			return GetValuesAtT(series, indexT);
-		}
-
-		public override Series GetValuesAtT(Series series, float t)
-		{
-			var sampledTs = GetSampledTs(new ParametricSeries(1, t));
-			// todo: When a sampler is swizzled, the series sample should probably also be swizzled as it is sampled?
-			// This will require passing in a parametric t to a series to get values. Need to consider the implications and orders.
-			return series.GetValueAtT(sampledTs.X);
-		}
-
+        
 		public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 		{
 			var result = new ParametricSeries(EasingTypes.Length, new float[EasingTypes.Length]);

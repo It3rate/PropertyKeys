@@ -15,8 +15,26 @@ namespace DataArcs.Samplers
 			Capacity = capacity;
         }
 
-        public abstract Series GetValueAtIndex(Series series, int index);
-		public abstract Series GetValuesAtT(Series series, float t);
+        public virtual Series GetValueAtIndex(Series series, int index)
+        {
+            var indexT = index / (Capacity - 1f);
+            return GetValuesAtT(series, indexT);
+        }
+
+        public virtual Series GetValuesAtT(Series series, float t)
+        {
+            var seriesT = GetSampledTs(new ParametricSeries(1, t));
+            return GetSeriesSample(series, seriesT);
+        }
+        public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
+        {
+            var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
+            for (var i = 0; i < result.Length; i++)
+            {
+                result[i] = series.GetValueAtT(seriesT[i]).FloatDataAt(i);
+            }
+            return SeriesUtils.CreateSeriesOfType(series, result);
+        }
         public virtual ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
             return Swizzle(seriesT);

@@ -7,7 +7,7 @@ namespace DataArcs.Samplers
 	{
 		protected int[] Strides { get; }
 
-        public GridSampler(int[] strides, Slot[] swizzleMap = null) : base(swizzleMap, 1)
+        public GridSampler(int[] strides, Slot[] swizzleMap = null) : base(swizzleMap)
         {
 			Strides = strides;
             Capacity = strides[0];
@@ -30,20 +30,14 @@ namespace DataArcs.Samplers
             var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, Capacity, index);
             return GetSeriesSample(series, seriesT);
 		}
-
-		public override Series GetValuesAtT(Series series, float t)
-        {
-            var seriesT = GetSampledTs(new ParametricSeries(1, t));
-			return GetSeriesSample(series, seriesT);
-		}
-
+        
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
 	        var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, Capacity, seriesT.X) : seriesT;
             return Swizzle(result);
         }
-
-        protected virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
+        
+        public override Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
             var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)

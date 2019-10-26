@@ -21,23 +21,6 @@ namespace DataArcs.Samplers
 	        PropertyId = propertyId;
 	        _player = Player.GetPlayerById(0);
 	    }
-	    public override Series GetValueAtIndex(Series series, int index)
-	    {
-		    var indexT = index / (Capacity - 1f);
-            return GetValuesAtT(series, indexT);
-	    }
-
-	    public override Series GetValuesAtT(Series series, float t)
-	    {
-		    ParametricSeries slotMapped = GetSampledTs(new ParametricSeries(1, t));
-			float[] floats = new float[slotMapped.Count];
-		    for (int i = 0; i < slotMapped.Count; i++)
-		    {
-			    floats[i] = series.GetValueAtT(slotMapped[i]).FloatDataAt(i);
-		    }
-
-		    return SeriesUtils.CreateSeriesOfType(series, floats);
-	    }
 
 	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
