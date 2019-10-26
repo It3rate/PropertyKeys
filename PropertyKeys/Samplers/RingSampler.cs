@@ -33,10 +33,10 @@ namespace DataArcs.Samplers
 	        }
 	        else
 	        {
-		        result = (ParametricSeries)seriesT.Copy();
+		        result = seriesT;
 	        }
 			
-	        return Swizzle(result);
+	        return Swizzle(result, seriesT);
         }
 
         public override Series GetSeriesSample(Series series, ParametricSeries seriesT)

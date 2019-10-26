@@ -21,7 +21,7 @@ namespace DataArcs.Samplers
 		    float z = (float)(Math.Sin(sample.X * Math.PI) * Math.Sin(sample.Y * Math.PI));
 		    z = CenterOne ? z : 1f - z;
 		    var result = new ParametricSeries(3, new[] { sample.X, sample.Y, z });
-		    return Swizzle(result);
+		    return Swizzle(result, seriesT);
         }
 
     }

@@ -25,7 +25,7 @@ namespace DataArcs.Samplers
                 result = sampler.GetSampledTs(result);
             }
 
-            return Swizzle(result);
+            return Swizzle(result, seriesT);
         }
     }
 }

@@ -37,27 +37,38 @@ namespace DataArcs.Samplers
         }
         public virtual ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-            return Swizzle(seriesT);
+            return Swizzle(seriesT, seriesT);
         }
 
-        public ParametricSeries Swizzle(ParametricSeries series)
+        /// <summary>
+        /// Generate a result with values mapped according the internal SwizzleMap.
+        /// Extra values can be preserved if the extra series is longer than the source, and the swizzle map calls for them.
+        /// </summary>
+        /// <param name="source">The series to be mapped using the SwizzleMap.</param>
+        /// <param name="extra">Extra values that could be used if the SwizzleMap asks for slots out of the source range.</param>
+        /// <returns></returns>
+        public ParametricSeries Swizzle(ParametricSeries source, ParametricSeries extra)
         {
-	        ParametricSeries result;
+	        ParametricSeries result = source;
 	        if (SwizzleMap != null)
-	        {
-		        int len = SwizzleMap.Length;
-		        result = new ParametricSeries(len, new float[len]);
+            {
+                int len = SwizzleMap.Length;
+                result = new ParametricSeries(len, new float[len]);
 		        for (int i = 0; i < len; i++)
 		        {
 			        int index = (int)SwizzleMap[i];
-			        index = Math.Max(0, Math.Min(len - 1, index));
-			        result[i] = series[index];
+			        result[i] = index < len ? source[index] : index < extra.VectorSize ? extra[index] : source[len - 1];
 		        }
 	        }
-	        else
-	        {
-		        result = series;
-	        }
+            else if(source.VectorSize < extra.VectorSize)
+            {
+                // No slots, but don't destroy data in the extra source if it isn't overwritten
+                result = (ParametricSeries)extra.Copy();
+                for (int i = 0; i < source.VectorSize; i++)
+                {
+                    result[i] = source[i];
+                }
+            }
 
 	        return result;
         }

@@ -42,7 +42,7 @@ namespace DataArcs.Samplers
 		    var resultA = _sampleA.GetSampledTs(seriesT);
 		    var resultB = _sampleB.GetSampledTs(seriesT);
 		    var result = _seriesEquation(resultA, resultB);
-		    return Swizzle(result);
+		    return Swizzle(result, seriesT);
 	    }
 
         private delegate float FloatEquation(float a, float b); // todo: should be series's in the params

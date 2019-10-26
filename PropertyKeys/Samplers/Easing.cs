@@ -62,7 +62,7 @@ namespace DataArcs.Samplers
 			{
 				result[i] = GetValueAt(seriesT, EasingTypes[i])[i];
 			}
-			return Swizzle(result);
+			return Swizzle(result, seriesT);
         }
 
 		public static float GetSingleValueAt(float t, EasingType easingType)

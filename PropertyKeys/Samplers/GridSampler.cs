@@ -34,7 +34,7 @@ namespace DataArcs.Samplers
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
 	        var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, Capacity, seriesT.X) : seriesT;
-            return Swizzle(result);
+            return Swizzle(result, seriesT);
         }
         
         public override Series GetSeriesSample(Series series, ParametricSeries seriesT)
