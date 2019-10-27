@@ -57,7 +57,7 @@ namespace DataArcs.Samplers
 		        for (int i = 0; i < len; i++)
 		        {
 			        int index = (int)SwizzleMap[i];
-			        result[i] = index < len ? source[index] : index < extra.VectorSize ? extra[index] : source[len - 1];
+			        result[i] = index < source.VectorSize ? source[index] : index < extra.VectorSize ? extra[index] : source[len - 1];
 		        }
 	        }
             else if(source.VectorSize < extra.VectorSize)

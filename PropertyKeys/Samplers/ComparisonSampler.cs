@@ -119,11 +119,10 @@ namespace DataArcs.Samplers
 	        float a = seriesB[0] - seriesA[0];
 	        float b = seriesB[1] - seriesA[1];
             float normAngle = (float)(Math.Atan2(b, a) / (2 * Math.PI));
-			normAngle = normAngle > 0 ? normAngle : (float)(1 + normAngle);
 			normAngle = 1f - normAngle;
-            //if (seriesA[0] > .5 && seriesA[0] < .6 && seriesA[1] > .45 && seriesA[1] < .55)
-            //    Debug.WriteLine(normAngle +"  : "+a+", " +b);
-
+            normAngle = normAngle > 1 ? normAngle - 1f : normAngle;
+            //if (seriesA[0] == 0 && seriesA[1] == 1)
+            //    Debug.WriteLine(normAngle);
             var array = new float[]{(float)Math.Sqrt(a * a + b * b), normAngle};
 	        return new ParametricSeries(2, array);
         }
