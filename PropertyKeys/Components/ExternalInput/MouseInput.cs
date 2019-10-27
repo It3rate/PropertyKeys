@@ -22,12 +22,12 @@ namespace DataArcs.Components.ExternalInput
 
 	    private float _mouseX;
 	    private float _mouseY;
-	    private FloatSeries _mainFrame
+	    public FloatSeries MainFrameSize
 	    {
 		    get
 		    {
 				var form = Application.OpenForms[0];
-				return new FloatSeries(4, form.Location.X, form.Location.Y, form.Size.Width, form.Size.Height);
+				return new FloatSeries(2, 0, 0, form.ClientSize.Width, form.ClientSize.Height);
 		    }
 	    } 
 	    private IComposite _container;
@@ -50,6 +50,7 @@ namespace DataArcs.Components.ExternalInput
 	    {
 		    _mouseX = args.X;
 		    _mouseY = args.Y;
+			//Debug.WriteLine(args.X + " : " + args.Y);
         }
 
 	    public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
@@ -59,18 +60,18 @@ namespace DataArcs.Components.ExternalInput
 		    switch (propertyId)
 		    {
 			    case PropertyId.MouseX:
-				    result = new ParametricSeries(1, _mouseX / _mainFrame.FloatDataAt(2));
+				    result = new ParametricSeries(1, _mouseX / MainFrameSize.FloatDataAt(2));
 				    break;
 			    case PropertyId.MouseY:
-				    result = new ParametricSeries(1, _mouseY / _mainFrame.FloatDataAt(3));
+				    result = new ParametricSeries(1, _mouseY / MainFrameSize.FloatDataAt(3));
 				    break;
 			    case PropertyId.MouseLocationT:
-				    result = new ParametricSeries(2, _mouseX / _mainFrame.FloatDataAt(2), _mouseY / _mainFrame.FloatDataAt(3));
+				    result = new ParametricSeries(2, _mouseX / MainFrameSize.FloatDataAt(2), _mouseY / MainFrameSize.FloatDataAt(3));
                     break;
                 case PropertyId.Mouse:
 			    case PropertyId.MouseLocation:
                 default:
-				    result = new ParametricSeries(2, _mouseX / _mainFrame.FloatDataAt(2), _mouseY/ _mainFrame.FloatDataAt(3));
+				    result = new ParametricSeries(2, _mouseX / MainFrameSize.FloatDataAt(2), _mouseY/ MainFrameSize.FloatDataAt(3));
 				    break;
             }
 		    return result;
@@ -99,7 +100,7 @@ namespace DataArcs.Components.ExternalInput
 			    case PropertyId.SampleAtT:
                 case PropertyId.SampleAtTCombined:
                 case PropertyId.MouseLocationT:
-                    result = new ParametricSeries(2, _mouseX / _mainFrame.FloatDataAt(2), _mouseY / _mainFrame.FloatDataAt(3));
+                    result = new ParametricSeries(2, _mouseX / MainFrameSize.FloatDataAt(2), _mouseY / MainFrameSize.FloatDataAt(3));
 				    break;
                 case PropertyId.Mouse:
 			    default:

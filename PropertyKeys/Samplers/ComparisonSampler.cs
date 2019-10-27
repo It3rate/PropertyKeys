@@ -14,8 +14,14 @@ namespace DataArcs.Samplers
 
 	public enum SeriesEquationType
 	{
-		Polar, // returns len, normalizedAngle
-		Distance, // returns len
+		/// <summary>
+        /// Returns two values, first if length, the second is a normalized angle - East 0, North 0.25, West 0.5, South 0.75, and East 1.0.
+        /// </summary>
+		Polar, 
+		/// <summary>
+        /// Returns the length between the two Parametric series in the X slot.
+        /// </summary>
+		Distance,
         SignedDistance, // returns xDist, yDist
 	}
 
@@ -111,7 +117,18 @@ namespace DataArcs.Samplers
 
         private static ParametricSeries DistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB)
         {
-	        return GeneralEquation(seriesA, seriesB, (a, b) => (float)Math.Sqrt(a * a + b * b));
+	        float total = 0;
+	        int minLen = Math.Min(seriesA.VectorSize, seriesB.VectorSize);
+	        for (int i = 0; i < minLen; i++)
+	        {
+		        total += (seriesB[i] - seriesA[i]) * (seriesB[i] - seriesA[i]);
+            }
+	        float result = (float)Math.Sqrt(total);
+
+            //if (seriesA[0] == 1 && seriesA[1] == 1)
+            //    Debug.WriteLine(result);
+
+            return new ParametricSeries(minLen, result);
         }
 
         private static ParametricSeries PolarEquation(ParametricSeries seriesA, ParametricSeries seriesB)
@@ -121,8 +138,6 @@ namespace DataArcs.Samplers
             float normAngle = (float)(Math.Atan2(b, a) / (2 * Math.PI));
 			normAngle = 1f - normAngle;
             normAngle = normAngle > 1 ? normAngle - 1f : normAngle;
-            //if (seriesA[0] == 0 && seriesA[1] == 1)
-            //    Debug.WriteLine(normAngle);
             var array = new float[]{(float)Math.Sqrt(a * a + b * b), normAngle};
 	        return new ParametricSeries(2, array);
         }

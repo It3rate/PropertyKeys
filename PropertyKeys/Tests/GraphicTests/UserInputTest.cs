@@ -46,13 +46,13 @@ namespace DataArcs.Tests.GraphicTests
         IComposite GetHexGrid()
         {
 	        var composite = new Container(Store.CreateItemStore(20 * 11));
-
-	        Store loc = new Store(new FloatSeries(2, 10f, 10f, 750f, 450f), new HexagonSampler(new int[] { 20, 11 }));
+			var dim = new FloatSeries(2, 40f, 40f, _mouseInput.MainFrameSize.FloatDataAt(2)+40f, _mouseInput.MainFrameSize.FloatDataAt(3) + 40f);
+	        Store loc = new Store(dim, new HexagonSampler(new int[] { 20, 11 }));
 	        composite.AppendProperty(PropertyId.Location, loc);
 
 	        var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
-            ComparisonSampler csl = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.SignedDistance);
-            var locMouseStore = new Store(new FloatSeries(2, -80f, -80f, 80f, 80f), csl, CombineFunction.Add);
+            ComparisonSampler csl = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Distance);
+            var locMouseStore = new Store(new FloatSeries(2, 0f, 0f, -80f, -80f), csl, CombineFunction.Add);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
             ComparisonSampler cs = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
