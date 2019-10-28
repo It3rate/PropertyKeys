@@ -12,6 +12,10 @@
     <StartupObject />
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
@@ -40,6 +44,10 @@
     <Compile Update="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dynamic\Box2D\" />
   </ItemGroup>
 
 </Project>
