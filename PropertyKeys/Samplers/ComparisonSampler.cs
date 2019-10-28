@@ -22,6 +22,10 @@ namespace DataArcs.Samplers
         /// Returns the length between the two Parametric series in the X slot.
         /// </summary>
         Distance,
+        Difference,
+        Average,
+        RightIsGreater,
+        RightIsLess,
         Bubble,
         SignedDistance, // returns xDist, yDist
 	}
@@ -63,7 +67,19 @@ namespace DataArcs.Samplers
 		        case SeriesEquationType.Polar:
 			        result = PolarEquation;
 			        break;
-		        case SeriesEquationType.Bubble:
+		        case SeriesEquationType.Difference:
+			        result = DifferenceEquation;
+			        break;
+		        case SeriesEquationType.Average:
+			        result = AverageEquation;
+			        break;
+		        case SeriesEquationType.RightIsGreater:
+			        result = RightIsGreaterEquation;
+			        break;
+		        case SeriesEquationType.RightIsLess:
+			        result = RightIsLessEquation;
+			        break;
+                case SeriesEquationType.Bubble:
 			        result = BubbleEquation;
 			        break;
                 case SeriesEquationType.SignedDistance:
@@ -84,17 +100,34 @@ namespace DataArcs.Samplers
 
         private static ParametricSeries DistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
         {
-	        float total = 0;
-	        int minLen = Math.Min(seriesA.VectorSize, seriesB.VectorSize);
-	        for (int i = 0; i < minLen; i++)
-	        {
-		        total += (seriesB[i] - seriesA[i]) * (seriesB[i] - seriesA[i]);
-            }
-	        float result = (float)Math.Sqrt(total);
-
-            return new ParametricSeries(minLen, result);
+	        var totals = GeneralEquation(seriesA, seriesB, (a, b) => (b - a) * (b - a));
+			return new ParametricSeries(1, (float)Math.Sqrt(totals.FloatData.Sum()));
         }
 
+        private static ParametricSeries SignedDistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
+        {
+	        return GeneralEquation(seriesA, seriesB, (a, b) =>
+	        {
+		        float dif = b - a;
+		        return 1f - ((dif * dif * dif + 1f) * 0.5f);
+	        });
+        }
+        private static ParametricSeries DifferenceEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
+        {
+	        return GeneralEquation(seriesA, seriesB, (a, b) => b - a);
+        }
+        private static ParametricSeries AverageEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
+        {
+	        return GeneralEquation(seriesA, seriesB, (a, b) => (a + b) / 2.0f);
+        }
+        private static ParametricSeries RightIsGreaterEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
+        {
+	        return GeneralEquation(seriesA, seriesB, (a, b) => b > a ? 1f : 0);
+        }
+        private static ParametricSeries RightIsLessEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
+        {
+	        return GeneralEquation(seriesA, seriesB, (a, b) => b < a ? 1f : 0);
+        }
         private static ParametricSeries PolarEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
         {
 	        float a = seriesB[0] - seriesA[0];
@@ -103,12 +136,12 @@ namespace DataArcs.Samplers
 	        {
 		        a *= c.X;
 		        b *= c.Y;
-            }
+	        }
 	        float radAngle = (float)Math.Atan2(b, a);
 	        float normAngle = radAngle / (float)(2 * Math.PI);
 	        normAngle = 1f - normAngle;
 	        normAngle = normAngle > 1 ? normAngle - 1f : normAngle;
-            float dist = 1f - (float) Math.Sqrt(a * a + b * b);// * 0.7071f;
+	        float dist = 1f - (float)Math.Sqrt(a * a + b * b);// * 0.7071f;
 	        return new ParametricSeries(2, dist, normAngle);
         }
 
@@ -121,7 +154,7 @@ namespace DataArcs.Samplers
 	        float xDist = dist;
 	        float yDist = dist;
 
-            if (effectRadius != null)
+	        if (effectRadius != null)
 	        {
 		        float clampRatioX = effectRadius.X;
 		        float clampRatioY = effectRadius.Y;
@@ -132,56 +165,23 @@ namespace DataArcs.Samplers
 	        float x = (float)(Math.Cos(radAngle) * xDist) * 0.5f + 0.5f;
 	        float y = (float)(Math.Sin(radAngle) * yDist) * 0.5f + 0.5f;
 
-            return new ParametricSeries(2, x, y);
+	        return new ParametricSeries(2, x, y);
         }
 
-        private static ParametricSeries SignedDistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
+
+
+
+        private delegate float FloatEquation(float a, float b);
+        private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, FloatEquation floatEquation)
         {
-	        var floats = new float[seriesA.VectorSize];
-	        for (int i = 0; i < seriesA.VectorSize; i++)
+	        int max = Math.Max(seriesA.VectorSize, seriesB.VectorSize);
+
+	        var floats = new float[max];
+	        for (int i = 0; i < max; i++)
 	        {
-		        float dif = seriesB[i] - seriesA[i];
-		        floats[i] = 1f - ((dif * dif * dif + 1f) * 0.5f);
+		        floats[i] = i >= seriesA.VectorSize ? seriesB[i] : i >= seriesB.VectorSize ? seriesA[i] : floatEquation(seriesB[i], seriesA[i]);
 	        }
-	        return new ParametricSeries(seriesA.VectorSize, floats);
+	        return new ParametricSeries(max, floats);
         }
-
-
-        //private delegate float FloatEquation(float a, float b); // todo: should be series's in the params
-        //private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, FloatEquation floatEquation)
-        //{
-	       // // note: so far parametricSeries can only have one vector, so this is redundant atm.
-	       // ParametricSeries result;
-	       // var aVals = seriesA.FloatData;
-	       // var bVals = seriesB.FloatData;
-	       // if (aVals.Length == bVals.Length)
-	       // {
-		      //  // Faster probable version.
-		      //  var resultArray = new float[seriesA.Count];
-		      //  for (int i = 0; i < seriesA.Count; i += 2) // todo: generalize to wider vectorSize
-		      //  {
-			     //   resultArray[i] = floatEquation(bVals[i] - aVals[i], bVals[i + 1] - aVals[i + 1]);
-		      //  }
-		      //  result = new ParametricSeries(seriesA.VectorSize, resultArray);
-	       // }
-	       // else
-	       // {
-		      //  // These are differently shaped, so need to query each one as some values will be virtual.
-		      //  int widest = seriesA.VectorSize >= seriesB.VectorSize ? seriesA.VectorSize : seriesB.VectorSize;
-		      //  var resultArray = new float[widest];
-		      //  for (int j = 0; j < widest; j++)
-		      //  {
-			     //   float af = seriesA[j]; //a.FloatDataAt(j);
-			     //   float bf = seriesB[j]; //b.FloatDataAt(j);
-
-			     //   resultArray[j] = floatEquation(af, bf);
-		      //  }
-
-		      //  result = new ParametricSeries(widest, resultArray);
-	       // }
-
-	       // return result;
-        //}
-
     }
 }

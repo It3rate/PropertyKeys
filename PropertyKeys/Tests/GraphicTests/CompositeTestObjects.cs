@@ -34,6 +34,10 @@ namespace DataArcs.Tests.GraphicTests
         {
             _version = NextVersionIndex();
             BlendTransition comp = GetVersion(_version);
+            if (lastComp == null)
+            {
+	            lastComp = comp;
+            }
             _player.AddActiveElement(comp);
         }
 
@@ -76,13 +80,13 @@ namespace DataArcs.Tests.GraphicTests
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
             _count++;
-            if (_count < 3)
+            if (_count < 2)
             {
                 ITimeable anim = (ITimeable)sender;
                 anim.Reverse();
                 anim.Restart();
             }
-            else if (_count < 4)
+            else if (_count < 3)
             {
                 BlendTransition nextComp = GetVersion(NextVersionIndex());
 
