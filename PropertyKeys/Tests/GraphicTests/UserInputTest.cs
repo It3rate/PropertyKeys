@@ -52,13 +52,13 @@ namespace DataArcs.Tests.GraphicTests
 	        Store loc = new Store(_mouseInput.MainFrameSize, new HexagonSampler(new int[] { 20, 11 }));
 	        composite.AppendProperty(PropertyId.Location, loc);
 
-            ComparisonSampler csLoc = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Distance, SlotUtils.XY);
-            var locMouseStore = new Store(new FloatSeries(2, 0f, 0f, -100f, -100f), csLoc, CombineFunction.Add);
+            ComparisonSampler csLoc = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.XY);
+            var locMouseStore = new Store(new FloatSeries(2, 0f, 0f, 30f, 50f), csLoc, CombineFunction.Add);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
 
             ComparisonSampler cs = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
-            var mouseRadius = new Store(new FloatSeries(2, 20f, 20f, 5f, 5f), cs);
+            var mouseRadius = new Store(new FloatSeries(2, 3f, 3f, 12f, 12f), cs);
             composite.AppendProperty(PropertyId.Radius, mouseRadius);
 
             ComparisonSampler cso = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.Y);

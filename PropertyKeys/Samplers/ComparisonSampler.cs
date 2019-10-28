@@ -15,7 +15,7 @@ namespace DataArcs.Samplers
 	public enum SeriesEquationType
 	{
 		/// <summary>
-        /// Returns two values, first if length, the second is a normalized angle - East 0, North 0.25, West 0.5, South 0.75, and East 1.0.
+        /// Returns two values, first is length, the second is a normalized angle - East 0, North 0.25, West 0.5, South 0.75, and East 1.0.
         /// </summary>
 		Polar,
         /// <summary>
@@ -41,7 +41,29 @@ namespace DataArcs.Samplers
 	    }
 	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int capacity = 1) : 
 		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzleMap, capacity){ }
-		
+
+        public override Series GetSeriesSample(Series series, ParametricSeries seriesT)
+        {
+            Series result;
+            if (_seriesEquation == PolarEquation && SwizzleMap == SlotUtils.XY)
+            {
+                float clampRatiox = 0.9f;
+                float clampRatioy = 0.8f;
+                var dist = seriesT[0];
+                var xdist = Math.Max(0, dist - clampRatiox) * (1f / (1f - clampRatiox));
+                var ydist = Math.Max(0, dist - clampRatioy) * (1f / (1f - clampRatioy));
+                float x = (float)(Math.Cos(seriesT[1] * Math.PI * 2.0) * (-series.Frame.Width * xdist));
+                float y = (float)(Math.Sin(seriesT[1] * Math.PI * 2.0) * (series.Frame.Height * ydist));
+                result = new FloatSeries(2, x, y);
+            }
+            else
+            {
+                result = base.GetSeriesSample(series, seriesT);
+            }
+
+            return result;
+        }
+
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
 		    var resultA = _sampleA.GetSampledTs(seriesT);
@@ -102,7 +124,8 @@ namespace DataArcs.Samplers
 	        float normAngle = radAngle / (float)(2 * Math.PI);
 	        normAngle = 1f - normAngle;
 	        normAngle = normAngle > 1 ? normAngle - 1f : normAngle;
-	        return new ParametricSeries(2, (float)Math.Sqrt(a * a + b * b), normAngle);
+            float dist = 1f - (float)Math.Sqrt(a * a + b * b) * 0.7071f;
+	        return new ParametricSeries(2, dist, normAngle);
         }
 
         private static ParametricSeries BellEquation(ParametricSeries seriesA, ParametricSeries seriesB)
@@ -114,13 +137,6 @@ namespace DataArcs.Samplers
 
             floats[0] = (float)(Math.Sin(radAngle) / Math.PI + 0.5f);
 	        floats[1] = (float)(Math.Cos(radAngle) / Math.PI + 0.5f);
-         //   for (int i = 0; i < seriesA.VectorSize; i++)
-	        //{
-		       // float dif = 1f - (seriesB[i] - seriesA[i]);
-		       // float min = Math.Max(0, Math.Min(1, dif));
-		       // float shrink = min * min * min;
-		       // floats[i] = Math.Abs(shrink * 0.5f) + 0.5f;
-	        //}
 	        return new ParametricSeries(seriesA.VectorSize, floats);
         }
 
