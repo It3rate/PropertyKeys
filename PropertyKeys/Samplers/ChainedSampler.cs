@@ -11,12 +11,16 @@ namespace DataArcs.Samplers
     {
         private readonly List<Sampler> _samplers;
 
-        public ChainedSampler(Slot[] swizzleMap = null, int capacity = 1, params Sampler[] samplers) : 
-            base(swizzleMap, 1)
+        public ChainedSampler(Slot[] swizzleMap, params Sampler[] samplers) : 
+            base(swizzleMap)
         {
             _samplers = new List<Sampler>(samplers);
         }
-        
+        public ChainedSampler(params Sampler[] samplers)
+        {
+	        _samplers = new List<Sampler>(samplers);
+        }
+
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
             ParametricSeries result = seriesT;

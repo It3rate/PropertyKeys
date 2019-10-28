@@ -50,7 +50,7 @@ namespace DataArcs.Samplers
         {
 			EasingTypes = new EasingType[] { easingType };
 		}
-		public Easing(EasingType[] easingTypes, Slot[] swizzleMap = null, int capacity = 1) : base(swizzleMap, capacity)
+		public Easing(params EasingType[] easingTypes)
         {
 			EasingTypes = easingTypes;
 		}
