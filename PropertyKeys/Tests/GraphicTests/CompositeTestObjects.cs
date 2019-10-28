@@ -139,7 +139,7 @@ namespace DataArcs.Tests.GraphicTests
 	        BlendTransition bt = (BlendTransition)GetTest0(delay, duration);
 
             IStore endLocStore = bt.End.GetStore(PropertyId.Location);
-            Series minMax = new FloatSeries(2, -200f, -100f, 200f, 100f);
+            RectFSeries minMax = new RectFSeries(-200f, -100f, 200f, 100f);
             var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.Capacity, minMax, 1111, CombineFunction.ContinuousAdd).CreateLinearStore(endLocStore.Capacity);
             randomStore.CombineFunction = CombineFunction.Add;
             var fs = new FunctionalStore(endLocStore, randomStore);
@@ -155,8 +155,8 @@ namespace DataArcs.Tests.GraphicTests
             AddColor(composite);
 
             composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 6f, 6f, 9f, 9f, 6f, 6f).Store);
-            Series maxMinA = new FloatSeries(2, 200f, 100f, 600f, 300f); //0, 0, 800f, 400f);
-            Series maxMinB = new FloatSeries(2, 200f, 100f, 600f, 300f);
+            RectFSeries maxMinA = new RectFSeries(200f, 100f, 600f, 300f); //0, 0, 800f, 400f);
+            RectFSeries maxMinB = new RectFSeries(200f, 100f, 600f, 300f);
             var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).CreateLinearStore(count);
             composite.AddProperty(PropertyId.Location, startStore);
 

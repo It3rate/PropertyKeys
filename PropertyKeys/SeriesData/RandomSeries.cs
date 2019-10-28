@@ -13,7 +13,7 @@ namespace DataArcs.SeriesData
         private CombineFunction _combineFunction;
 		private Random _random;
 		private int _seed;
-		private Series _minMax;
+		private RectFSeries _minMax;
 		private Series _series;
 
         public int Seed
@@ -25,7 +25,7 @@ namespace DataArcs.SeriesData
 		/// <summary>
         /// RandomSeries always has an actual store in order to be consistent on repeated queries.
         /// </summary>
-        public RandomSeries(int vectorSize, SeriesType type, int count, Series minMax, int seed = 0,
+        public RandomSeries(int vectorSize, SeriesType type, int count, RectFSeries minMax, int seed = 0,
 			CombineFunction combineFunction = CombineFunction.Replace) : base(vectorSize)
 		{
 			_type = type;
@@ -116,14 +116,14 @@ namespace DataArcs.SeriesData
             }
         }
 
-		public void setMinMax(Series minMax)
+		public void setMinMax(RectFSeries minMax)
 		{
 			_minMax = minMax;
 		}
 
 		protected override void CalculateFrame()
 		{
-            Frame = _minMax.Copy();
+            Frame = (RectFSeries)_minMax.Copy();
             float[] max = _minMax.GetValueAtT(1f).FloatData;
             SeriesUtils.SubtractFloatArrayFrom(max, _minMax.GetValueAtT(0).FloatData);
             Size = new FloatSeries(VectorSize, max);
@@ -179,7 +179,7 @@ namespace DataArcs.SeriesData
 		}
 		public override Series Copy()
 		{
-			RandomSeries result = new RandomSeries(VectorSize, Type, Count, _minMax.Copy(), _seed);
+			RandomSeries result = new RandomSeries(VectorSize, Type, Count, (RectFSeries)_minMax.Copy(), _seed);
 			result._series = _series.Copy();
 			return result;
 		}

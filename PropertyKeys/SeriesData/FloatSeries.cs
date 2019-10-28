@@ -75,7 +75,7 @@ namespace DataArcs.SeriesData
 				}
 			}
 
-			Frame = new FloatSeries(VectorSize, SeriesUtils.CombineFloatArrays(min, max));
+			Frame = new RectFSeries(SeriesUtils.CombineFloatArrays(min, max));
 			SeriesUtils.SubtractFloatArrayFrom(max, min);
 			Size = new FloatSeries(VectorSize, max);
 		}

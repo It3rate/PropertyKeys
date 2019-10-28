@@ -45,15 +45,17 @@ namespace DataArcs.Tests.GraphicTests
 
         IComposite GetHexGrid()
         {
+	        var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
+
 	        var composite = new Container(Store.CreateItemStore(20 * 11));
-			var dim = new FloatSeries(2, 40f, 40f, _mouseInput.MainFrameSize.FloatDataAt(2)+40f, _mouseInput.MainFrameSize.FloatDataAt(3) + 40f);
-	        Store loc = new Store(dim, new HexagonSampler(new int[] { 20, 11 }));
+			//var dim = new FloatSeries(2, 40f, 40f, _mouseInput.MainFrameSize.FloatDataAt(2)+40f, _mouseInput.MainFrameSize.FloatDataAt(3) + 40f);
+	        Store loc = new Store(_mouseInput.MainFrameSize, new HexagonSampler(new int[] { 20, 11 }));
 	        composite.AppendProperty(PropertyId.Location, loc);
 
-	        var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
-            ComparisonSampler csl = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Distance);
-            var locMouseStore = new Store(new FloatSeries(2, 0f, 0f, -80f, -80f), csl, CombineFunction.Add);
+            ComparisonSampler csLoc = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Distance, SlotUtils.XY);
+            var locMouseStore = new Store(new FloatSeries(2, 0f, 0f, -100f, -100f), csLoc, CombineFunction.Add);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
+
 
             ComparisonSampler cs = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
             var mouseRadius = new Store(new FloatSeries(2, 20f, 20f, 5f, 5f), cs);

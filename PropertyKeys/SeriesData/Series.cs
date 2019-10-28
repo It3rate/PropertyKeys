@@ -10,6 +10,7 @@ namespace DataArcs.SeriesData
 		Int,
 		Float,
 		Parametric,
+		RectF,
 		Bool,
 	}
 
@@ -27,7 +28,7 @@ namespace DataArcs.SeriesData
         /// <summary>
         /// Cached frame in four vectorSize data points, x, y, x + width, y + height.
         /// </summary>
-        public Series Frame
+        public RectFSeries Frame
         {
             get
             {
@@ -58,7 +59,7 @@ namespace DataArcs.SeriesData
             protected set => _cachedSize = value;
         }
 
-        private Series _cachedFrame;
+        private RectFSeries _cachedFrame;
         private Series _cachedSize;
 
         protected Series(int vectorSize)
