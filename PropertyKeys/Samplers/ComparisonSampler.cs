@@ -124,7 +124,7 @@ namespace DataArcs.Samplers
 	        float normAngle = radAngle / (float)(2 * Math.PI);
 	        normAngle = 1f - normAngle;
 	        normAngle = normAngle > 1 ? normAngle - 1f : normAngle;
-            float dist = 1f - (float)Math.Sqrt(a * a + b * b) * 0.7071f;
+            float dist = 1f - (float) Math.Sqrt(a * a + b * b);// * 0.7071f;
 	        return new ParametricSeries(2, dist, normAngle);
         }
 
