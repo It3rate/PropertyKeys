@@ -165,6 +165,22 @@ namespace DataArcs.Players
         }
 
         private bool _isPaused;
+
+        public void Pause()
+        {
+	        if (!_isPaused)
+	        {
+		        OnPause(this, null);
+	        }
+        }
+
+        public void Unpause()
+        {
+	        if (_isPaused)
+	        {
+		        OnPause(this, null);
+	        }
+        }
         public void OnPause(object sender, EventArgs e)
         {
             _isPaused = !_isPaused;

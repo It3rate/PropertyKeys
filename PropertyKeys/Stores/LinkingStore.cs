@@ -23,7 +23,7 @@ namespace DataArcs.Stores
         public override CombineFunction CombineFunction { get => MaskedStore.CombineFunction; set => MaskedStore.CombineFunction = value; }
         public override CombineTarget CombineTarget { get => MaskedStore.CombineTarget; set => MaskedStore.CombineTarget = value; }
         public override Sampler Sampler { get => MaskedStore.Sampler; set => MaskedStore.Sampler = value; }
-        public override int Capacity => MaskedStore.Capacity;
+        public override int Capacity => MaskedStore?.Capacity ?? _player[LinkedCompositeId]?.Capacity ?? 1;
         
         public LinkingStore(int linkedCompositeId, PropertyId propertyId, Slot[] slotMapping, IStore store)
         {

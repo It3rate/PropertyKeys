@@ -21,6 +21,7 @@ namespace DataArcs.Components.ExternalInput
 
 	    public PhysicsComposite()
 	    {
+			//todo: set a pixels per meter ratio, have auto converters to FloatSeries (also account for inverted Y).
 		    RectFSeries appBounds = MouseInput.MainFrameSize;
 		    _simBounds = appBounds.Outset(-20f);
             // box2d aabb is LeftBottom (lowerBound) and RightTop(upperBound)
@@ -41,7 +42,7 @@ namespace DataArcs.Components.ExternalInput
 		    //float timeStep = 1.0f / 60.0f;
 		    int velocityIterations = 8;
 		    int positionIterations = 1;
-		    _world.Step(deltaTime, velocityIterations, positionIterations);
+		    _world.Step(deltaTime/1000f, velocityIterations, positionIterations);
 	    }
 		
 	    public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
@@ -54,7 +55,7 @@ namespace DataArcs.Components.ExternalInput
 	            {
 		            case PropertyId.Location:
 			            Vec2 pos = body.GetPosition();
-			            result = new FloatSeries(2, pos.X, _simBounds.Y - pos.Y);
+			            result = new FloatSeries(2, pos.X, _simBounds.Height - pos.Y);
 			            break;
 		            case PropertyId.Orientation:
 			            float normAngle = body.GetAngle() / (float)(Math.PI * 2.0f);
@@ -128,7 +129,7 @@ namespace DataArcs.Components.ExternalInput
         private void CreateGround()
 		{
 			BodyDef groundBodyDef = new BodyDef();
-			groundBodyDef.Position.Set(0.0f, -10.0f);
+			groundBodyDef.Position.Set(50.0f, 10.0f);
 
 			// Call the body factory which creates the ground box shape.
 			// The body is also added to the world.

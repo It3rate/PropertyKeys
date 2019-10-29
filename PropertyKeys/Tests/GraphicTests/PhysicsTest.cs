@@ -17,10 +17,12 @@ namespace DataArcs.Tests.GraphicTests
 	{
 		private readonly Player _player;
 		private MouseInput _mouseInput;
+		private PhysicsComposite _physicsComposite;
 
-		public PhysicsTest(Player player)
+        public PhysicsTest(Player player)
 		{
 			_player = player;
+			_player.Pause();
 		}
 
 		public void NextVersion()
@@ -28,11 +30,32 @@ namespace DataArcs.Tests.GraphicTests
 			_mouseInput = new MouseInput();
 			_player.AddActiveElement(_mouseInput);
 
-			IComposite comp = GetHexGrid();
-			_player.AddActiveElement(comp);
+            IComposite comp = GetHexGrid();
+            _player.AddActiveElement(comp);
 
+            _physicsComposite = new PhysicsComposite();
+			_player.AddActiveElement(_physicsComposite);
 
-			//comp.EndTimedEvent += CompOnEndTransitionEvent;
+			var body = AddCompositeBody();
+			_player.AddActiveElement(body);
+
+            //comp.EndTimedEvent += CompOnEndTransitionEvent;
+            _player.Unpause();
+        }
+
+		IComposite AddCompositeBody()
+		{
+			var body = new Container(new IntSeries(1, 0).Store);
+			LinkingStore ls = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Location, SlotUtils.XY, null);
+			body.AddProperty(PropertyId.Location, ls);
+
+			body.AddProperty(PropertyId.Radius, new FloatSeries(1, 30f).Store);
+			body.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
+			body.AddProperty(PropertyId.FillColor, new FloatSeries(3,  0.4f, 0.3f, 0.4f).Store);
+			body.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
+			body.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
+			body.Renderer = new PolyShape();
+            return body;
 		}
 
 		IComposite GetHexGrid()
