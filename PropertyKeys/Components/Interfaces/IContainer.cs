@@ -12,7 +12,6 @@ namespace DataArcs.Components
     public interface IContainer : IComposite
     {
 	    IStore Items { get; }
-	    int Capacity { get; }
 	    int[] ChildCounts { get; }
 	    int NestedItemCount { get; }
 	    int NestedItemCountAtT(float t);

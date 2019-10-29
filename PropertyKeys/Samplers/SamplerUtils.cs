@@ -12,6 +12,15 @@ namespace DataArcs.Samplers
     {
 	    public const float TOLERANCE = 0.00001f;
 
+	    public static int IndexFromT(int capacity, float t)
+	    {
+		    return Math.Max(0, Math.Min(capacity - 1, (int)Math.Round(t * (capacity - 1f))));
+	    }
+	    public static float TFromIndex(int capacity, int index)
+	    {
+		    return index / (capacity - 1f);
+	    }
+
         /// <summary>
         /// Returns normalized indexes into segmented array based on index and size. Passed size can be virtual (larger than implied segments total).
         /// </summary>
@@ -44,7 +53,7 @@ namespace DataArcs.Samplers
 
         public static ParametricSeries GetMultipliedJaggedTFromT(int[] segments, int capacity, float t)
         {
-            var index = (int)Math.Round(t * (capacity - 1f));
+	        var index = IndexFromT(capacity, t); // (int)Math.Round(t * (capacity - 1f));
             //var index = (int)(t * (capacity - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
             return GetMultipliedJaggedT(segments, capacity, index);
         }

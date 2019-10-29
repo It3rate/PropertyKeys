@@ -14,6 +14,7 @@ namespace DataArcs.Components
 	    private static int _idCounter = 1;
 	    public string Name { get; set; }
 	    public int CompositeId { get; }
+		public virtual int Capacity { get; set; }
 
         protected readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
 
@@ -96,7 +97,6 @@ namespace DataArcs.Components
 		    }
 		    return result;
 	    }
-
 	    public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
 	    {
 		    var store = GetStore(propertyId);
@@ -119,6 +119,7 @@ namespace DataArcs.Components
 		    var store = GetStore(propertyId);
 		    return store != null ? store.GetSampledTs(seriesT) :seriesT;
         }
+
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
     }

@@ -38,7 +38,7 @@ namespace DataArcs.Stores
         { 
             // TODO: can't just pass this in because capacity may mean row capacity.
             // t needs to be a series always, and can get multi dim t from sampler.
-            return GetValuesAtT(index / (Capacity - 1f));
+            return GetValuesAtT(SamplerUtils.TFromIndex(Capacity, index)); //   index / (Capacity - 1f));
         }
 
         public override Series GetValuesAtT(float t)

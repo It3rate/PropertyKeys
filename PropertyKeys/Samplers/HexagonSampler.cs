@@ -10,7 +10,7 @@ namespace DataArcs.Samplers
         public override Series GetSeriesSample(Series series, ParametricSeries seriesT)
 		{
 			var result = base.GetSeriesSample(series, seriesT);
-			var curRow = (int)Math.Round(seriesT.Y * (Strides[1] - 1));
+			var curRow = SamplerUtils.IndexFromT(Strides[1], seriesT.Y);// (int)Math.Round(seriesT.Y * (Strides[1] - 1));
             if ((curRow & 1) == 1)
             {
 	            var data = result.FloatData;

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Box2DX.Collision;
 using Box2DX.Common;
 using Box2DX.Dynamics;
+using DataArcs.Samplers;
 using DataArcs.SeriesData;
+using Math = System.Math;
 
 namespace DataArcs.Components.ExternalInput
 {
@@ -15,8 +17,9 @@ namespace DataArcs.Components.ExternalInput
 	    private World _world;
 	    private RectFSeries _simBounds;
 
+	    public override int Capacity { get => _world.GetBodyCount(); set{} }
 
-        public PhysicsComposite()
+	    public PhysicsComposite()
 	    {
 		    RectFSeries appBounds = MouseInput.MainFrameSize;
 		    _simBounds = appBounds.Outset(-20f);
@@ -31,7 +34,98 @@ namespace DataArcs.Components.ExternalInput
 
 	    }
 
-		private void CreateGround()
+	    public override void StartUpdate(float currentTime, float deltaTime)
+	    {
+            base.StartUpdate(currentTime, deltaTime);
+
+		    //float timeStep = 1.0f / 60.0f;
+		    int velocityIterations = 8;
+		    int positionIterations = 1;
+		    _world.Step(deltaTime, velocityIterations, positionIterations);
+	    }
+		
+	    public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
+	    {
+		    Series result = null;
+            Body body = GetBodyAtIndex(index);
+            if (body != null)
+            {
+	            switch (propertyId)
+	            {
+		            case PropertyId.Location:
+			            Vec2 pos = body.GetPosition();
+			            result = new FloatSeries(2, pos.X, _simBounds.Y - pos.Y);
+			            break;
+		            case PropertyId.Orientation:
+			            float normAngle = body.GetAngle() / (float)(Math.PI * 2.0f);
+			            result = new FloatSeries(1, normAngle);
+			            break;
+                }
+            }
+
+            if (parentSeries != null)
+		    {
+			    if (result != null)
+			    {
+				    //result.CombineInto(parentSeries, store.CombineFunction, t);
+			    }
+			    else
+			    {
+				    result = parentSeries;
+			    }
+		    }
+
+		    return result;
+	    }
+	    public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        {
+			int index = SamplerUtils.IndexFromT(Capacity, t);
+			return GetSeriesAtIndex(propertyId, index, parentSeries);
+	    }
+        public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
+	    {
+            ParametricSeries result = seriesT;
+            switch (propertyId)
+            {
+	            case PropertyId.Location:
+		            Series loc = GetSeriesAtT(PropertyId.Location, seriesT[0], null);
+		            result = new ParametricSeries(2, loc.X / _simBounds.Width, (_simBounds.Y - loc.Y) / _simBounds.Height);
+		            break;
+	            case PropertyId.Orientation:
+		            Series angle = GetSeriesAtT(PropertyId.Orientation, seriesT[0], null);
+		            result = new ParametricSeries(1, angle.X);
+		            break;
+	            default:
+		            var store = GetStore(propertyId);
+		            if (store != null)
+		            {
+			            result = store.GetSampledTs(seriesT);
+		            }
+		            break;
+            }
+
+            return result;
+	    }
+	    public override void GetDefinedStores(HashSet<PropertyId> ids)
+	    {
+			base.GetDefinedStores(ids);
+			ids.Add(PropertyId.Location);
+			ids.Add(PropertyId.Orientation);
+        }
+
+	    private Body GetBodyAtIndex(int index)
+	    {
+		    int counter = 0;
+		    Body result = _world.GetBodyList();
+		    while (counter < index && result.GetNext() != null)
+		    {
+			    result = result.GetNext();
+			    counter++;
+		    }
+
+		    return result;
+	    }
+        private void CreateGround()
 		{
 			BodyDef groundBodyDef = new BodyDef();
 			groundBodyDef.Position.Set(0.0f, -10.0f);
@@ -44,8 +138,7 @@ namespace DataArcs.Components.ExternalInput
 			groundShapeDef.SetAsBox(_simBounds.Width / 2.0f, 10.0f);
 			groundBody.CreateShape(groundShapeDef);
 		}
-
-		private void CreateBody(float x, float y)
+        private void CreateBody(float x, float y)
 		{
 			BodyDef bodyDef = new BodyDef();
 			bodyDef.Position.Set(x, y);

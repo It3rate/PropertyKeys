@@ -163,7 +163,7 @@ namespace DataArcs.Components
 				AddLocalPropertiesAtT(data, t);
 	        }
 
-            var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, (int)Math.Floor(t * (NestedItemCount - 1f) + 0.5f));
+	        var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, SamplerUtils.IndexFromT(NestedItemCount, t));// (int)Math.Floor(t * (NestedItemCount - 1f) + 0.5f));
 	        float indexT = sample.X;
 	        float segmentT = sample.Y;
             if (_children.Count > 0)
@@ -238,7 +238,7 @@ namespace DataArcs.Components
 
         public virtual Series GetNestedSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
-	        return GetNestedSeriesAtIndex(propertyId, (int)(t * (NestedItemCount - 1f)), parentSeries);
+	        return GetNestedSeriesAtIndex(propertyId, SamplerUtils.IndexFromT(NestedItemCount, t), parentSeries); // int)(t * (NestedItemCount - 1f)), parentSeries);
         }
         public virtual Series GetNestedSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
         {
@@ -253,7 +253,7 @@ namespace DataArcs.Components
 	        }
 	        else
 	        {
-		        int childIndex = Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
+		        int childIndex = SamplerUtils.IndexFromT(_children.Count, indexT); // Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
 		        IContainer child = _children[childIndex];
 				
 		        float indexTNorm = indexT * (child.Capacity / (child.Capacity - 1f)); // normalize

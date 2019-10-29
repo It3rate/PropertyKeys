@@ -84,17 +84,17 @@ namespace DataArcs.Components.ExternalInput
 	    }
 	    public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
 	    {
-		    ParametricSeries result; // return current mouse atm, eventually will be able to scrub history if saved.
+		    FloatSeries result; // return current mouse atm, eventually will be able to scrub history if saved.
 		    switch (propertyId)
 		    {
 			    case PropertyId.MouseX:
-				    result = new ParametricSeries(1, _mouseX);
+				    result = new FloatSeries(1, _mouseX);
 				    break;
 			    case PropertyId.MouseY:
-				    result = new ParametricSeries(1, _mouseY);
+				    result = new FloatSeries(1, _mouseY);
 				    break;
 			    case PropertyId.MouseLocation:
-				    result = new ParametricSeries(2, _mouseX, _mouseY);
+				    result = new FloatSeries(2, _mouseX, _mouseY);
 				    break;
 			    case PropertyId.EasedT:
 			    case PropertyId.EasedTCombined:

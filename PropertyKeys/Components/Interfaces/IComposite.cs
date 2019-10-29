@@ -13,7 +13,9 @@ namespace DataArcs.Components
 	public interface IComposite
     {
         string Name { get; set; }
+
         int CompositeId { get; }
+        int Capacity { get; }
 
         void Update(float currentTime, float deltaTime);
 

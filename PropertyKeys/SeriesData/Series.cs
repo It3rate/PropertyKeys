@@ -87,7 +87,7 @@ namespace DataArcs.SeriesData
         /// </summary>
         public virtual Series GetValueAtVirtualIndex(int index, int capacity)
         {
-            var indexT = index / (capacity - 1f);
+	        var indexT = SamplerUtils.TFromIndex(capacity, index);// index / (capacity - 1f);
             return GetValueAtT(indexT);
         }
 		

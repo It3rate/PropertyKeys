@@ -15,8 +15,8 @@ namespace DataArcs.Samplers
 		}
 
 		public override Series GetValueAtIndex(Series series, int index)
-        {
-            float t = Capacity != 1 ? index / (Capacity - 1f) : 0;
+		{
+			float t = Capacity != 1 ? SamplerUtils.TFromIndex(Capacity, index) : 0; // index / (Capacity - 1f) : 0;
             return GetValuesAtT(series, t);
         }
 
