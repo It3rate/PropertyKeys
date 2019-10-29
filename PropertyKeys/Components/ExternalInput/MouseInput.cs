@@ -22,12 +22,12 @@ namespace DataArcs.Components.ExternalInput
 
 	    private float _mouseX;
 	    private float _mouseY;
-	    public FloatSeries MainFrameSize
+	    public RectFSeries MainFrameSize
 	    {
 		    get
 		    {
 				var form = Application.OpenForms[0];
-				return new FloatSeries(2, 0, 0, form.ClientSize.Width, form.ClientSize.Height);
+				return new RectFSeries(0, 0, form.ClientSize.Width, form.ClientSize.Height);
 		    }
 	    } 
 	    private IComposite _container;

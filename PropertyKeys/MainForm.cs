@@ -65,7 +65,7 @@ namespace DataArcs
         }
 
         private int testIndex = -1;
-        private int testCount = 4;
+        private int testCount = 5;
         private void NextTest()
         {
 	        testIndex++;
@@ -77,15 +77,18 @@ namespace DataArcs
 	        switch (testIndex)
 	        {
 		        case 0:
+			        _testScreen = new PhysicsTest(_player);
+			        break;
+		        case 1:
 			        _testScreen = new UserInputTest(_player);
 			        break;
-                case 1:
+                case 2:
 			        _testScreen = new CompositeFlowerTest(_player);
 			        break;
-		        case 2:
+		        case 3:
 			        _testScreen = new CompositeTest2(_player);
 			        break;
-		        case 3:
+		        case 4:
 			        _testScreen = new CompositeTestObjects(_player);
 			        break;
             }
