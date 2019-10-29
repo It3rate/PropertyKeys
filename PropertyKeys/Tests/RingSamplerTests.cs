@@ -14,7 +14,6 @@ namespace DataArcs.Tests
     {
 	    private RingSampler sampler1;
 	    private RingSampler sampler2;
-        private float delta = SamplerUtils.TOLERANCE;
 
         [TestInitialize]
 	    public void TestInitializer()

@@ -609,7 +609,6 @@ namespace Box2DX.Dynamics
 		/// <returns>The number of shapes found</returns>
 		public int Raycast(Segment segment, Shape[] shapes, int maxCount, bool solidShapes, object userData)
 		{
-#warning "PTR"
 			_raycastSegment = segment;
 			_raycastUserData = userData;
 			_raycastSolidShape = solidShapes;

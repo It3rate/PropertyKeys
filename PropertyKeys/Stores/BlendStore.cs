@@ -12,7 +12,7 @@ namespace DataArcs.Stores
     {
 		private readonly List<IStore> _stores;
         public float CurrentT { get; set; }
-        private readonly IStore _easing;
+        private readonly IStore _easing = null;
 		
         public override int Capacity
         {

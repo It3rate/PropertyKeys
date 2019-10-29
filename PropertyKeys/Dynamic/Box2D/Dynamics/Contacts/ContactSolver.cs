@@ -31,7 +31,6 @@ using Box2DX.Common;
 
 namespace Box2DX.Dynamics
 {
-#warning "CAS"
 	public class ContactConstraintPoint
 	{
 		public Vec2 LocalAnchor1;
@@ -47,7 +46,6 @@ namespace Box2DX.Dynamics
 		public float VelocityBias;
 	}
 
-#warning "CAS"
 	public class ContactConstraint
 	{
 		public ContactConstraintPoint[] Points = new ContactConstraintPoint[Settings.MaxManifoldPoints];
@@ -373,7 +371,7 @@ namespace Box2DX.Dynamics
 					b.Y = vn2 - cp2.VelocityBias;
 					b -= Common.Math.Mul(c.K, a);
 
-					const float k_errorTol = 1e-3f;
+					//const float k_errorTol = 1e-3f;
 					for (; ; )
 					{
 						//

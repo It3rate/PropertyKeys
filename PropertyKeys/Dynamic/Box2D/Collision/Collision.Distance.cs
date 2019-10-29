@@ -308,7 +308,6 @@ namespace Box2DX.Collision
 			return 0.0f;
 		}
 
-#warning "CAS"
 		// This is used for polygon-vs-circle distance.
 		public class Point : Collision.IGenericShape
 		{

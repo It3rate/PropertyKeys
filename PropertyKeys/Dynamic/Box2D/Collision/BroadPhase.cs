@@ -47,14 +47,12 @@ using Box2DX.Common;
 namespace Box2DX.Collision
 {
     public delegate float SortKeyFunc(object shape);
-
-#warning "CAS"
+	
 	public class BoundValues
 	{
 		public ushort[/*2*/] LowerValues = new ushort[2];
 		public ushort[/*2*/] UpperValues = new ushort[2];
 	}
-#warning "CAS"
 	public class Bound
 	{
 		public bool IsLower { get { return (Value & (ushort)1) == (ushort)0; } }
@@ -73,7 +71,6 @@ namespace Box2DX.Collision
 			return newBound;
 		}
 	}
-#warning "CAS"
 	public class Proxy
 	{
 		public ushort[/*2*/] LowerBounds = new ushort[2], UpperBounds = new ushort[2];
@@ -193,8 +190,7 @@ namespace Box2DX.Collision
 				Bound[] bounds = _bounds[axis];
 				int lowerIndex, upperIndex;
 				Query(out lowerIndex, out upperIndex, lowerValues[axis], upperValues[axis], bounds, boundCount, axis);
-
-#warning "Check this"
+				
 				//memmove(bounds + upperIndex + 2, bounds + upperIndex, (boundCount - upperIndex) * sizeof(b2Bound));				
 				Bound[] tmp = new Bound[boundCount - upperIndex];
 				for (int i = 0; i < (boundCount - upperIndex); i++)
@@ -293,8 +289,7 @@ namespace Box2DX.Collision
 				int upperIndex = proxy.UpperBounds[axis];
 				ushort lowerValue = bounds[lowerIndex].Value;
 				ushort upperValue = bounds[upperIndex].Value;
-
-#warning "Check this"
+				
 				//memmove(bounds + lowerIndex, bounds + lowerIndex + 1, (upperIndex - lowerIndex - 1) * sizeof(b2Bound));
 				Bound[] tmp = new Bound[upperIndex - lowerIndex - 1];
 				for (int i = 0; i < (upperIndex - lowerIndex - 1); i++)

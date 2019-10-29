@@ -38,7 +38,6 @@ namespace Box2DX.Dynamics
 		public bool Primary;
 	}
 
-#warning "CAS"
 	/// <summary>
 	/// A contact edge is used to connect bodies and contacts together
 	/// in a contact graph where each body is a node and each contact
@@ -66,7 +65,6 @@ namespace Box2DX.Dynamics
 		public ContactEdge Next;
 	}
 
-#warning "CAS"
 	/// <summary>
 	/// This structure is used to report contact points.
 	/// </summary>
@@ -110,7 +108,6 @@ namespace Box2DX.Dynamics
 		public ContactID ID;
 	}
 
-#warning "CAS"
 	/// <summary>
 	/// This structure is used to report contact point results.
 	/// </summary>

@@ -44,7 +44,7 @@ namespace Box2DX.Collision
 		/// The fraction between [0,1] in which the shapes first touch.
 		/// fraction=0 means the shapes begin touching/overlapped, and fraction=1 means the shapes don't touch.
 		/// </returns>
-#warning: "check params"
+
 		public static float TimeOfImpact(Shape shape1, Sweep sweep1, Shape shape2, Sweep sweep2)
 		{
 			float r1 = shape1.GetSweepRadius();

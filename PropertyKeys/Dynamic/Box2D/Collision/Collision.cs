@@ -92,7 +92,6 @@ namespace Box2DX.Collision
 		public uint Key;
 	}
 
-#warning "CAS"
 	/// <summary>
 	/// A manifold point is a contact point belonging to a contact
 	/// manifold. It holds details related to the geometry and dynamics
@@ -145,7 +144,6 @@ namespace Box2DX.Collision
 		}
 	}
 
-#warning "CAS"
 	/// <summary>
 	/// A manifold for two touching convex shapes.
 	/// </summary>

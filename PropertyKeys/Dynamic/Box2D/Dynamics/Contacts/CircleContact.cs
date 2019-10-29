@@ -51,7 +51,6 @@ namespace Box2DX.Dynamics
 		{
 			Body b1 = _shape1.GetBody();
 			Body b2 = _shape2.GetBody();
-#warning "needfix"
 			//memcpy(&m0, &m_manifold, sizeof(b2Manifold));
 			Manifold m0 = _manifold.Clone();
 

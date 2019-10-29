@@ -40,7 +40,7 @@ namespace DataArcs.Tests.GraphicTests
 			var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
 
 			var composite = new Container(Store.CreateItemStore(20 * 11));
-			Store loc = new Store(_mouseInput.MainFrameSize.Outset(-50f), new HexagonSampler(new int[] {16, 10}));
+			Store loc = new Store(MouseInput.MainFrameSize.Outset(-50f), new HexagonSampler(new int[] {16, 10}));
 			composite.AppendProperty(PropertyId.Location, loc);
 
 			composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);

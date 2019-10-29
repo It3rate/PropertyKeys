@@ -10,7 +10,6 @@ namespace DataArcs.Tests
 	public class HexagonSamplerTests
 	{
 		private FloatSeries series_1;
-		private float delta = SamplerUtils.TOLERANCE;
 
 		[TestInitialize]
 		public void TestInitializer()

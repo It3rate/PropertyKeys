@@ -48,7 +48,7 @@ namespace DataArcs.Tests.GraphicTests
 	        var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
 
 	        var composite = new Container(Store.CreateItemStore(20 * 11));
-	        Store loc = new Store(_mouseInput.MainFrameSize, new HexagonSampler(new int[] { 20, 11 }));
+	        Store loc = new Store(MouseInput.MainFrameSize, new HexagonSampler(new int[] { 20, 11 }));
 	        composite.AppendProperty(PropertyId.Location, loc);
 
             var csLoc = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Bubble, SlotUtils.XY);

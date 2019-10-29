@@ -94,7 +94,6 @@ namespace Box2DX.Collision
 		HitCollide = 1
 	}
 
-#warning "CAS"
 	/// <summary>
 	/// A shape definition is used to construct a shape. This class defines an
 	/// abstract shape definition. You can reuse shape definitions safely.

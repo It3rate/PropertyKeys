@@ -34,7 +34,6 @@ using Box2DX.Common;
 
 namespace Box2DX.Collision
 {
-#warning "CAS"
 	public class Pair
 	{
 		[Flags]

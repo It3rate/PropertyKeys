@@ -71,7 +71,6 @@ namespace Box2DX.Dynamics
 		}
 	}
 
-#warning "CAS"
 	/// <summary>
 	/// A joint edge is used to connect bodies and joints together
 	/// in a joint graph where each body is a node and each joint
@@ -102,7 +101,6 @@ namespace Box2DX.Dynamics
 		public JointEdge Next;
 	}
 
-#warning "CAS"
 	/// <summary>
 	/// Joint definitions are used to construct joints.
 	/// </summary>
