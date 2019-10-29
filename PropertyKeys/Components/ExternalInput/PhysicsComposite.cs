@@ -17,6 +17,8 @@ namespace DataArcs.Components.ExternalInput
 	    private World _world;
 	    private RectFSeries _simBounds;
 
+	    public const float PixelsPerMeter = 100f;
+
 	    public override int Capacity { get => _world.GetBodyCount(); set{} }
 
 	    public PhysicsComposite()
@@ -35,7 +37,10 @@ namespace DataArcs.Components.ExternalInput
 
 	    }
 
-	    public override void StartUpdate(float currentTime, float deltaTime)
+	    private Vec2 seriesToVec2(float x, float y) => new Vec2(x / PixelsPerMeter, (_simBounds.Height - y) / PixelsPerMeter);
+	    private FloatSeries vec2ToSeries(Vec2 value) => new FloatSeries(2,value.X * PixelsPerMeter, _simBounds.Height - (value.Y / PixelsPerMeter));
+
+        public override void StartUpdate(float currentTime, float deltaTime)
 	    {
             base.StartUpdate(currentTime, deltaTime);
 
