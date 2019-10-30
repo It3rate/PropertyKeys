@@ -51,14 +51,14 @@ namespace DataArcs.SeriesData
         public Series SizeF => new FloatSeries(2, Width, Height);
         public Series CenterF => new FloatSeries(2, CX, CY);
 
-        public Series TopLeft => new FloatSeries(2, Top, Left);
-	    public Series TopRight => new FloatSeries(2, Top, Right);
-	    public Series BottomLeft => new FloatSeries(2, Bottom, Left);
-	    public Series BottomRight => new FloatSeries(2, Bottom, Right);
+        public Series LeftTop => new FloatSeries(2, Left, Top);
+	    public Series RightTop => new FloatSeries(2, Right, Top);
+	    public Series LeftBottom => new FloatSeries(2, Left, Bottom);
+	    public Series RightBottom => new FloatSeries(2, Right, Bottom);
 
 	    public RectFSeries Outset(float outset)
 	    {
-		    return new RectFSeries(X - outset, Y - outset, Width + outset, Height + outset);
+		    return new RectFSeries(X - outset, Y - outset, Width + outset * 2f, Height + outset * 2f);
 	    }
 
         public override Series GetZeroSeries()

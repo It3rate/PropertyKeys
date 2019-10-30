@@ -16,8 +16,10 @@ namespace DataArcs.Components.ExternalInput
     {
 	    private World _world;
 	    private RectFSeries _simBounds;
+        private float _simX;
+        private float _simY;
 
-	    public const float PixelsPerMeter = 100f;
+        public const float PixelsPerMeter = 100f;
 
 	    public override int Capacity { get => _world.GetBodyCount(); set{} }
 
@@ -25,20 +27,26 @@ namespace DataArcs.Components.ExternalInput
 	    {
 			//todo: set a pixels per meter ratio, have auto converters to FloatSeries (also account for inverted Y).
 		    RectFSeries appBounds = MouseInput.MainFrameSize;
-		    _simBounds = appBounds.Outset(-20f);
+            _simBounds = appBounds.Outset(-50f);// new RectFSeries(20f, 0, appBounds.Width - 40f, appBounds.Height + 20);
+            _simX = _simBounds.X - appBounds.X;
+            _simY = _simBounds.Y - appBounds.Y;
             // box2d aabb is LeftBottom (lowerBound) and RightTop(upperBound)
             AABB bounds = new AABB();
-			bounds.LowerBound = new Vec2(appBounds.Left, appBounds.Bottom - _simBounds.Bottom);
-			bounds.UpperBound = new Vec2(appBounds.Right, _simBounds.Bottom);
-            _world = new World(bounds, new Vec2(0,-10), true);
+			bounds.LowerBound = GlobalPixelToMeters(_simBounds.Left, _simBounds.Bottom);
+			bounds.UpperBound = GlobalPixelToMeters(_simBounds.Right, _simBounds.Top);
+            _world = new World(bounds, new Vec2(0,-10f), true);
 
 			CreateGround();
-			CreateBody(_simBounds.CX, _simBounds.CY);
+            //CreateBody(200f, 100f, true);
+            CreateBody(_simBounds.CX, _simBounds.Top);
+        }
 
-	    }
-
-	    private Vec2 seriesToVec2(float x, float y) => new Vec2(x / PixelsPerMeter, (_simBounds.Height - y) / PixelsPerMeter);
-	    private FloatSeries vec2ToSeries(Vec2 value) => new FloatSeries(2,value.X * PixelsPerMeter, _simBounds.Height - (value.Y / PixelsPerMeter));
+        private Vec2 GlobalPixelToMeters(float px, float py) => new Vec2((px - _simX) / PixelsPerMeter, (_simBounds.Height - (py - _simY)) / PixelsPerMeter);
+        private FloatSeries MetersToGlobalPixels(float mx, float my) => new FloatSeries(2,  mx * PixelsPerMeter + _simY,  _simBounds.Height - my * PixelsPerMeter + _simY);
+        private Vec2 SizeToMeters(float w, float h) => new Vec2(w / PixelsPerMeter, h / PixelsPerMeter);
+        private FloatSeries SizeToPixels(float w, float h) => new FloatSeries(2, w * PixelsPerMeter, h * PixelsPerMeter);
+        private float MeterToPixel(float value) => value * PixelsPerMeter;
+        private float PixelToMeter(float value) => value / PixelsPerMeter;
 
         public override void StartUpdate(float currentTime, float deltaTime)
 	    {
@@ -60,7 +68,7 @@ namespace DataArcs.Components.ExternalInput
 	            {
 		            case PropertyId.Location:
 			            Vec2 pos = body.GetPosition();
-			            result = new FloatSeries(2, pos.X, _simBounds.Height - pos.Y);
+			            result = MetersToGlobalPixels(pos.X, pos.Y);
 			            break;
 		            case PropertyId.Orientation:
 			            float normAngle = body.GetAngle() / (float)(Math.PI * 2.0f);
@@ -133,27 +141,33 @@ namespace DataArcs.Components.ExternalInput
 	    }
         private void CreateGround()
 		{
+            var pos = GlobalPixelToMeters(_simBounds.CX + _simX, _simBounds.Height+_simY);
+            var box = SizeToMeters(_simBounds.CX, 4f);
+
 			BodyDef groundBodyDef = new BodyDef();
-			groundBodyDef.Position.Set(50.0f, 10.0f);
+			groundBodyDef.Position.Set(pos.X, pos.Y);
 
 			// Call the body factory which creates the ground box shape.
 			// The body is also added to the world.
 			Body groundBody = _world.CreateBody(groundBodyDef);
 
 			PolygonDef groundShapeDef = new PolygonDef();
-			groundShapeDef.SetAsBox(_simBounds.Width / 2.0f, 10.0f);
+			groundShapeDef.SetAsBox(box.X, box.Y);
 			groundBody.CreateShape(groundShapeDef);
 		}
-        private void CreateBody(float x, float y)
-		{
-			BodyDef bodyDef = new BodyDef();
-			bodyDef.Position.Set(x, y);
+        private void CreateBody(float x, float y, bool isStatic = false)
+        {
+            var pos = GlobalPixelToMeters(x, y);
+
+            BodyDef bodyDef = new BodyDef();
+			bodyDef.Position.Set(pos.X, pos.Y);
 			Body body = _world.CreateBody(bodyDef);
 
 			PolygonDef shapeDef = new PolygonDef();
-			shapeDef.SetAsBox(1.0f, 1.0f);
+            var box = SizeToMeters(10f, 10f);
+            shapeDef.SetAsBox(box.X, box.Y);
 			
-			shapeDef.Density = 1.0f;
+			shapeDef.Density = isStatic ? 0.0f : 1.0f;
 			shapeDef.Friction = 0.3f;
 			body.CreateShape(shapeDef);
 			body.SetMassFromShapes();

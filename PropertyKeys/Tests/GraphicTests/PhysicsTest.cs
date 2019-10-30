@@ -36,20 +36,35 @@ namespace DataArcs.Tests.GraphicTests
             _physicsComposite = new PhysicsComposite();
 			_player.AddActiveElement(_physicsComposite);
 
-			var body = AddCompositeBody();
+            var target = AddTargetBody();
+            _player.AddActiveElement(target);
+
+            var body = AddCompositeBody();
 			_player.AddActiveElement(body);
 
             //comp.EndTimedEvent += CompOnEndTransitionEvent;
             _player.Unpause();
         }
 
-		IComposite AddCompositeBody()
+        IComposite AddTargetBody()
+        {
+            var body = new Container(new IntSeries(1, 0).Store);
+            body.AddProperty(PropertyId.Location, new FloatSeries(2, 200f, 100f).Store);
+            body.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
+            body.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
+            body.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.1f, 0.1f).Store);
+            body.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
+            body.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
+            body.Renderer = new PolyShape();
+            return body;
+        }
+        IComposite AddCompositeBody()
 		{
 			var body = new Container(new IntSeries(1, 0).Store);
 			LinkingStore ls = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Location, SlotUtils.XY, null);
 			body.AddProperty(PropertyId.Location, ls);
 
-			body.AddProperty(PropertyId.Radius, new FloatSeries(1, 30f).Store);
+			body.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
 			body.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
 			body.AddProperty(PropertyId.FillColor, new FloatSeries(3,  0.4f, 0.3f, 0.4f).Store);
 			body.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
