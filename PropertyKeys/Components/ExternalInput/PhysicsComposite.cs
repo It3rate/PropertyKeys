@@ -35,7 +35,12 @@ namespace DataArcs.Components.ExternalInput
             bounds.UpperBound = GlobalPixelToMeters(_simBounds.Right, _simBounds.Top);
             _world = new World(bounds, new Vec2(0, -10f), true);
 
-            CreateGround();
+            //var pos = GlobalPixelToMeters(_simBounds.CX + _simX, _simBounds.Height + _simY);
+            //var box = SizeToMeters(_simBounds.CX, 4f);
+            CreateGround(_simBounds.CX, _simBounds.Height, _simBounds.Width, 8f);
+            CreateGround(0, _simBounds.CY, 8, _simBounds.Height);
+            CreateGround(_simBounds.Width, _simBounds.CY, 8, _simBounds.Height);
+
             //CreateBody(200f, 100f, true);
             CreateBody(_simBounds.CX, _simBounds.Top);
         }
@@ -138,23 +143,7 @@ namespace DataArcs.Components.ExternalInput
 
 		    return result;
 	    }
-        private void CreateGround()
-		{
-            var pos = GlobalPixelToMeters(_simBounds.CX + _simX, _simBounds.Height+_simY);
-            var box = SizeToMeters(_simBounds.CX, 4f);
-
-			BodyDef groundBodyDef = new BodyDef();
-			groundBodyDef.Position.Set(pos.X, pos.Y);
-
-			// Call the body factory which creates the ground box shape.
-			// The body is also added to the world.
-			Body groundBody = _world.CreateBody(groundBodyDef);
-
-			PolygonDef groundShapeDef = new PolygonDef();
-			groundShapeDef.SetAsBox(box.X, box.Y);
-			groundBody.CreateShape(groundShapeDef);
-		}
-        private void CreateBody(float x, float y, bool isStatic = false)
+        public void CreateBody(float x, float y, bool isStatic = false)
         {
             var pos = GlobalPixelToMeters(x, y);
 
@@ -162,9 +151,12 @@ namespace DataArcs.Components.ExternalInput
 			bodyDef.Position.Set(pos.X, pos.Y);
 			Body body = _world.CreateBody(bodyDef);
 
-			PolygonDef shapeDef = new PolygonDef();
-            var box = SizeToMeters(10f, 10f);
-            shapeDef.SetAsBox(box.X, box.Y);
+            CircleDef shapeDef = new CircleDef();
+            shapeDef.Radius = PixelToMeter(18f);
+
+            //PolygonDef shapeDef = new PolygonDef();
+            //var box = SizeToMeters(10f, 10f);
+            //shapeDef.SetAsBox(box.X, box.Y);
 			
 			shapeDef.Density = isStatic ? 0.0f : 1.0f;
 			shapeDef.Friction = 0.3f;
@@ -172,6 +164,26 @@ namespace DataArcs.Components.ExternalInput
 			body.SetMassFromShapes();
         }
 
+        private void CreateGround(float x, float y, float w, float h)
+        {
+            var pos = GlobalPixelToMeters(x + _simX, y + _simY);
+            var box = SizeToMeters(w / 2.0f, h / 2.0f);
+            BodyDef groundBodyDef = new BodyDef();
+            groundBodyDef.Position.Set(pos.X, pos.Y);
+            Body groundBody = _world.CreateBody(groundBodyDef);
+            PolygonDef groundShapeDef = new PolygonDef();
+            groundShapeDef.SetAsBox(box.X, box.Y);
+            groundBody.CreateShape(groundShapeDef);
+
+            //var pos = GlobalPixelToMeters(_simBounds.CX + _simX, _simBounds.Height + _simY);
+            //var box = SizeToMeters(_simBounds.CX, 4f);
+            //BodyDef groundBodyDef = new BodyDef();
+            //groundBodyDef.Position.Set(pos.X, pos.Y);
+            //Body groundBody = _world.CreateBody(groundBodyDef);
+            //PolygonDef groundShapeDef = new PolygonDef();
+            //groundShapeDef.SetAsBox(box.X, box.Y);
+            //groundBody.CreateShape(groundShapeDef);
+        }
         public void Dispose()
         {
             Dispose(true);
