@@ -26,15 +26,17 @@ namespace DataArcs.Tests.GraphicTests
 		}
 
 		public void NextVersion()
-		{
-			_mouseInput = new MouseInput();
-			_player.AddActiveElement(_mouseInput);
+        {
+            _player.Pause();
+
+            _mouseInput = new MouseInput();
+            _player.AddActiveElement(_mouseInput);
+
+            _physicsComposite = new PhysicsComposite();
+            _player.AddActiveElement(_physicsComposite);
 
             IComposite comp = GetHexGrid();
             _player.AddActiveElement(comp);
-
-            _physicsComposite = new PhysicsComposite();
-			_player.AddActiveElement(_physicsComposite);
 
             var target = AddTargetBody();
             _player.AddActiveElement(target);

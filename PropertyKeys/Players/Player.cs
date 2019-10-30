@@ -19,7 +19,7 @@ namespace DataArcs.Players
         private readonly Form _display;
 
 	    private readonly Dictionary<int, IComposite> _allComposites = new Dictionary<int, IComposite>();
-	    private readonly Dictionary<int, IComposite> _activeElements = new Dictionary<int, IComposite>();
+        private readonly List<int> _activeElementIds = new List<int>();
         private readonly Dictionary<int, IComposite> _toAddActive = new Dictionary<int, IComposite>();
         private readonly List<int> _toRemoveActive = new List<int>();
         private readonly List<int> _toDestroy = new List<int>();
@@ -65,26 +65,28 @@ namespace DataArcs.Players
             { 
                 for (int i = 0; i < _toRemoveActive.Count; i++)
                 {
-                    int key = _toRemoveActive[i];
-                    if (_activeElements.ContainsKey(key))
+                    int id = _toRemoveActive[i];
+                    if (_allComposites.ContainsKey(id))
                     {
-                        _activeElements[key]?.OnDeactivate();
+                        _allComposites[id].OnDeactivate();
                     }
-                    _activeElements.Remove(key);
+                    _activeElementIds.Remove(id);
                 }
                 if (_canDestroy)
                 {
                     for (int i = 0; i < _toDestroy.Count; i++)
                     {
-                        _activeElements.Remove(_toDestroy[i]);
-                        _allComposites.Remove(_toDestroy[i]);
+                        int id = _toDestroy[i];
+                        _activeElementIds.Remove(id);
+                        _allComposites.Remove(id);
                     }
                     _needsDestroy = false;
                 }
 
                 foreach (var item in _toAddActive)
                 {
-                    _activeElements.Add(item.Key, item.Value);
+                    // todo: activeElements should allow multiple copies, currently unable to distinguish them with deletion
+                    _activeElementIds.Add(item.Key);
                     item.Value.OnActivate();
                 }
                 _toAddActive.Clear();
@@ -93,9 +95,12 @@ namespace DataArcs.Players
 
                 _currentTime = e.SignalTime - (StartTime + _delayTime);
                 float dt = (float)(_currentTime - _lastTime).TotalMilliseconds;
-                foreach (var element in _activeElements.Values)
+                foreach (var id in _activeElementIds)
                 {
-                    element.Update(CurrentMs, dt);
+                    if (_allComposites.ContainsKey(id))
+                    {
+                        _allComposites[id].Update(CurrentMs, dt);
+                    }
                 }
                 _display.Invalidate();
 
@@ -110,13 +115,17 @@ namespace DataArcs.Players
                 _canDestroy = false;
                 {
                     e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                    var elements = new List<IComposite>(_activeElements.Values);
-                    foreach (var element in elements)
+                    var elementIds = new List<int>(_activeElementIds);
+                    foreach (var id in elementIds)
                     {
-	                    if (element is IDrawable drawable)
-	                    {
-		                    drawable.Draw(e.Graphics, new Dictionary<PropertyId, SeriesData.Series>());
-	                    }
+                        if (_allComposites.ContainsKey(id))
+                        {
+                            var element = _allComposites[id];
+                            if (element is IDrawable drawable)
+                            {
+                                drawable.Draw(e.Graphics, new Dictionary<PropertyId, SeriesData.Series>());
+                            }
+                        }
                     }
                 }
             }
@@ -135,21 +144,15 @@ namespace DataArcs.Players
 
         public void RemoveActiveElement(IComposite composite)
         {
-	        if (_activeElements.ContainsKey(composite.CompositeId))
-	        {
-		        _toRemoveActive.Add(composite.CompositeId);
-	        }
+	        _toRemoveActive.Add(composite.CompositeId);
         }
         public void RemoveActiveElementById(int id)
         {
-	        if (_activeElements.ContainsKey(id))
-	        {
-		        _toRemoveActive.Add(id);
-	        }
+	        _toRemoveActive.Add(id);
         }
         public void Clear()
         {
-            _toRemoveActive.AddRange(_activeElements.Keys);
+            _toRemoveActive.AddRange(_activeElementIds);
         }
 
         public void AddCompositeToLibrary(IComposite composite)

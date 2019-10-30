@@ -12,7 +12,7 @@ using Math = System.Math;
 
 namespace DataArcs.Components.ExternalInput
 {
-    public class PhysicsComposite : BaseComposite
+    public class PhysicsComposite : BaseComposite, IDisposable
     {
 	    private World _world;
 	    private RectFSeries _simBounds;
@@ -24,23 +24,22 @@ namespace DataArcs.Components.ExternalInput
 	    public override int Capacity { get => _world.GetBodyCount(); set{} }
 
 	    public PhysicsComposite()
-	    {
-			//todo: set a pixels per meter ratio, have auto converters to FloatSeries (also account for inverted Y).
-		    RectFSeries appBounds = MouseInput.MainFrameSize;
+        {
+            RectFSeries appBounds = MouseInput.MainFrameSize;
             _simBounds = appBounds.Outset(-50f);// new RectFSeries(20f, 0, appBounds.Width - 40f, appBounds.Height + 20);
             _simX = _simBounds.X - appBounds.X;
             _simY = _simBounds.Y - appBounds.Y;
             // box2d aabb is LeftBottom (lowerBound) and RightTop(upperBound)
             AABB bounds = new AABB();
-			bounds.LowerBound = GlobalPixelToMeters(_simBounds.Left, _simBounds.Bottom);
-			bounds.UpperBound = GlobalPixelToMeters(_simBounds.Right, _simBounds.Top);
-            _world = new World(bounds, new Vec2(0,-10f), true);
+            bounds.LowerBound = GlobalPixelToMeters(_simBounds.Left, _simBounds.Bottom);
+            bounds.UpperBound = GlobalPixelToMeters(_simBounds.Right, _simBounds.Top);
+            _world = new World(bounds, new Vec2(0, -10f), true);
 
-			CreateGround();
+            CreateGround();
             //CreateBody(200f, 100f, true);
             CreateBody(_simBounds.CX, _simBounds.Top);
         }
-
+        
         private Vec2 GlobalPixelToMeters(float px, float py) => new Vec2((px - _simX) / PixelsPerMeter, (_simBounds.Height - (py - _simY)) / PixelsPerMeter);
         private FloatSeries MetersToGlobalPixels(float mx, float my) => new FloatSeries(2,  mx * PixelsPerMeter + _simY,  _simBounds.Height - my * PixelsPerMeter + _simY);
         private Vec2 SizeToMeters(float w, float h) => new Vec2(w / PixelsPerMeter, h / PixelsPerMeter);
@@ -171,6 +170,21 @@ namespace DataArcs.Components.ExternalInput
 			shapeDef.Friction = 0.3f;
 			body.CreateShape(shapeDef);
 			body.SetMassFromShapes();
-		}
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool state)
+        {
+            if (state)
+            {
+                // By deleting the world, we delete the bomb, mouse joint, etc.
+                _world.Dispose();
+                _world = null;
+            }
+        }
     }
 }
