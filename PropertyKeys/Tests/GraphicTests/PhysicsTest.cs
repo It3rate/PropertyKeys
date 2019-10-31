@@ -76,26 +76,34 @@ namespace DataArcs.Tests.GraphicTests
             return body;
 		}
 
+        private bool is2D = true;
 		IComposite GetHexGrid()
 		{
 			var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
-            var rows = 15; // 20
-            var cols = 8; // 11;
+			var cols = 10;
+            var rows =  5;
 			var composite = new Container(Store.CreateItemStore(rows  * cols));
-			Store loc = new Store(MouseInput.MainFrameSize.Outset(-50f), new HexagonSampler(new int[] {rows,cols}));
-            for (int i = 0; i < rows * cols; i++)
-            {
-                var pos = loc.GetValuesAtIndex(i);
-                _physicsComposite.CreateBody(pos.X, pos.Y);
-            }
-            //composite.AppendProperty(PropertyId.Location, loc);
-            LinkingStore ls = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Location, SlotUtils.XY, null);
-            composite.AddProperty(PropertyId.Location, ls);
-            LinkingStore lso = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Orientation, SlotUtils.X, null);
-            composite.AddProperty(PropertyId.Orientation, lso);
+			Store loc = new Store(MouseInput.MainFrameSize.Outset(-100f), new HexagonSampler(new int[] {cols, rows}));
+			if (is2D)
+			{
+				for (int i = 0; i < rows * cols; i++)
+				{
+					var pos = loc.GetValuesAtIndex(i);
+					_physicsComposite.CreateBody(pos.X, pos.Y);
+				}
+
+				LinkingStore ls = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Location, SlotUtils.XY, null);
+				composite.AddProperty(PropertyId.Location, ls);
+				LinkingStore lso = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Orientation, SlotUtils.X, null);
+				composite.AddProperty(PropertyId.Orientation, lso);
+			}
+            else
+			{
+				composite.AppendProperty(PropertyId.Location, loc);
+			}
 
 
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
+			composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
 			composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
 			composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.3f, 0.4f, 0.3f, 0.4f, 1f).Store);
 			composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);

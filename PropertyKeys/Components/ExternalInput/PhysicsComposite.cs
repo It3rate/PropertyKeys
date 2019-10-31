@@ -20,26 +20,24 @@ namespace DataArcs.Components.ExternalInput
         private float _simY;
 
         public const float PixelsPerMeter = 100f;
+        float thickness = 10;
 
-	    public override int Capacity { get => _world.GetBodyCount(); set{} }
+        public override int Capacity { get => _world.GetBodyCount(); set{} }
 
 	    public PhysicsComposite()
-        {
+	    {
             RectFSeries appBounds = MouseInput.MainFrameSize;
-            _simBounds = appBounds.Outset(-50f);// new RectFSeries(20f, 0, appBounds.Width - 40f, appBounds.Height + 20);
+            _simBounds = appBounds.Outset(thickness);// new RectFSeries(20f, 0, appBounds.Width - 40f, appBounds.Height + 20);
             _simX = _simBounds.X - appBounds.X;
             _simY = _simBounds.Y - appBounds.Y;
+
             // box2d aabb is LeftBottom (lowerBound) and RightTop(upperBound)
             AABB bounds = new AABB();
             bounds.LowerBound = GlobalPixelToMeters(_simBounds.Left, _simBounds.Bottom);
             bounds.UpperBound = GlobalPixelToMeters(_simBounds.Right, _simBounds.Top);
             _world = new World(bounds, new Vec2(0, -10f), true);
 
-            //var pos = GlobalPixelToMeters(_simBounds.CX + _simX, _simBounds.Height + _simY);
-            //var box = SizeToMeters(_simBounds.CX, 4f);
-            CreateGround(_simBounds.CX, _simBounds.Height, _simBounds.Width, 8f);
-            CreateGround(0, _simBounds.CY, 8, _simBounds.Height);
-            CreateGround(_simBounds.Width, _simBounds.CY, 8, _simBounds.Height);
+			SealWorldEdges();
 
             //CreateBody(200f, 100f, true);
             CreateBody(_simBounds.CX, _simBounds.Top);
@@ -164,6 +162,13 @@ namespace DataArcs.Components.ExternalInput
 			body.SetMassFromShapes();
         }
 
+        private void SealWorldEdges()
+        {
+	        CreateGround(_simBounds.CX, thickness / 2.0f, _simBounds.Width * 2f, thickness);
+	        CreateGround(_simBounds.CX, _simBounds.Height - thickness / 2.0f, _simBounds.Width * 2f, thickness);
+            CreateGround(thickness / 2.0f, _simBounds.CY, thickness, _simBounds.Height * 2f);
+	        CreateGround(_simBounds.Width - thickness / 2.0f, _simBounds.CY, thickness, _simBounds.Height * 2f);
+        }
         private void CreateGround(float x, float y, float w, float h)
         {
             var pos = GlobalPixelToMeters(x + _simX, y + _simY);
