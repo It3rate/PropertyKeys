@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Box2DX.Collision;
 using Box2DX.Common;
 using Box2DX.Dynamics;
+using DataArcs.Graphic;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using Math = System.Math;
@@ -19,7 +20,7 @@ namespace DataArcs.Components.ExternalInput
         private float _simX;
         private float _simY;
 
-        public const float PixelsPerMeter = 100f;
+        public const float PixelsPerMeter = 50f;
         float thickness = 10;
 
         public override int Capacity { get => _world.GetBodyCount(); set{} }
@@ -74,7 +75,7 @@ namespace DataArcs.Components.ExternalInput
 			            break;
 		            case PropertyId.Orientation:
 			            float normAngle = body.GetAngle() / (float)(Math.PI * 2.0f);
-			            result = new FloatSeries(1, normAngle);
+			            result = new FloatSeries(1, 1f - normAngle);
 			            break;
                 }
             }
@@ -160,6 +161,46 @@ namespace DataArcs.Components.ExternalInput
 			shapeDef.Friction = 0.3f;
 			body.CreateShape(shapeDef);
 			body.SetMassFromShapes();
+        }
+
+        public void CreateBezierBody(float x, float y, BezierSeries bezier, bool isStatic = false)
+        {
+	        var pos = GlobalPixelToMeters(x, y);
+
+	        BodyDef bodyDef = new BodyDef();
+	        bodyDef.Position.Set(pos.X, pos.Y);
+	        Body body = _world.CreateBody(bodyDef);
+
+	        ShapeDef shapeDef;
+	        int count = (int)(bezier.Count - 1);
+	        if (count <= 10)
+	        {
+		        var polyDef = new PolygonDef();
+
+                polyDef.VertexCount = count;
+		        polyDef.Vertices = new Vec2[count];
+		        for (int i = count - 1; i >= 0; i--)
+		        {
+			        float xp = bezier.FloatDataAt(i * 2); // skip the midpoints
+			        float yp = bezier.FloatDataAt(i * 2 + 1);
+			        polyDef.Vertices[i] = new Vec2(PixelToMeter(xp), -PixelToMeter(yp));
+		        }
+		        shapeDef = polyDef;
+	        }
+	        else
+	        {
+				var circDef = new CircleDef();
+				int midX = (int)(count / 2f);
+				float difX = bezier.FloatDataAt(midX * 2) - bezier.FloatDataAt(0);
+				float difY = bezier.FloatDataAt(midX * 2 + 1) - bezier.FloatDataAt(1);
+				circDef.Radius = PixelToMeter((float)Math.Sqrt(difX * difX + difY * difY) / 2.0f);
+				shapeDef = circDef;
+	        }
+
+	        shapeDef.Density = isStatic ? 0.0f : 1.0f;
+	        shapeDef.Friction = 0.1f;
+	        body.CreateShape(shapeDef);
+	        body.SetMassFromShapes();
         }
 
         private void SealWorldEdges()

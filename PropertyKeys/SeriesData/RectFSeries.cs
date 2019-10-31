@@ -60,6 +60,10 @@ namespace DataArcs.SeriesData
 	    {
 		    return new RectFSeries(X - outset, Y - outset, Width + outset * 2f, Height + outset * 2f);
 	    }
+	    public RectFSeries Outset(float outsetX, float outsetY)
+	    {
+		    return new RectFSeries(X - outsetX, Y - outsetY, Width + outsetX * 2f, Height + outsetY * 2f);
+	    }
 
         public override Series GetZeroSeries()
 	    {

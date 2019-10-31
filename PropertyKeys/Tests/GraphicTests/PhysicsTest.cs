@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,14 +83,30 @@ namespace DataArcs.Tests.GraphicTests
 			var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
 			var cols = 10;
             var rows =  5;
-			var composite = new Container(Store.CreateItemStore(rows  * cols));
-			Store loc = new Store(MouseInput.MainFrameSize.Outset(-100f), new HexagonSampler(new int[] {cols, rows}));
+            var capacity = cols * rows;
+			var composite = new Container(Store.CreateItemStore(capacity));
+			composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
+            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5, 8, 3, 6).Store);
+			composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.3f, 0.4f, 0.3f, 0.4f, 1f).Store);
+			composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
+			composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
+            composite.Renderer = new PolyShape();
+
+            //var sampler = new HexagonSampler(new int[] { cols, rows });
+            var sampler = new RingSampler(new int[] { 25,15,10 });
+            Store loc = new Store(MouseInput.MainFrameSize.Outset(-150f, -50f), sampler);
 			if (is2D)
 			{
 				for (int i = 0; i < rows * cols; i++)
 				{
-					var pos = loc.GetValuesAtIndex(i);
-					_physicsComposite.CreateBody(pos.X, pos.Y);
+                    float tIndex = i / (capacity - 1f);
+                    var pos = loc.GetValuesAtIndex(i);
+                    var pointCount = composite.GetSeriesAtT(PropertyId.PointCount, tIndex, null);
+                    Debug.WriteLine(pointCount.X);
+                    var radius = composite.GetSeriesAtT(PropertyId.Radius, tIndex, null);
+
+                    var bezier = PolyShape.GeneratePolyShape(0f, (int)pointCount.X, 0, radius.X, radius.Y, 0);
+                    _physicsComposite.CreateBezierBody(pos.X, pos.Y, bezier, false);
 				}
 
 				LinkingStore ls = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Location, SlotUtils.XY, null);
@@ -103,12 +120,6 @@ namespace DataArcs.Tests.GraphicTests
 			}
 
 
-			composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
-			composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
-			composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.3f, 0.4f, 0.3f, 0.4f, 1f).Store);
-			composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
-			composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
-            composite.Renderer = new PolyShape();
 
 			return composite;
 		}

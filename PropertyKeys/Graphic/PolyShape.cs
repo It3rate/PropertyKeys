@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.Remoting.Messaging;
 using DataArcs.Adapters.Color;
 using DataArcs.Components;
 using DataArcs.Samplers;
@@ -18,7 +19,7 @@ namespace DataArcs.Graphic
 		private float _defaultRoundness = 0f;
 		private float _defaultRadius = 10f;
 		
-		public static BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
+        public static BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
 		{
 			var hasStarness = Math.Abs(starness) > 0.001f;
 			var count = hasStarness ? pointCount * 2 : pointCount;
@@ -26,6 +27,7 @@ namespace DataArcs.Graphic
 			var movesPerStep = pointsPerStep / 2;
 			var values = new float[count * 2 + 2];
 			var moves = new BezierMove[count + 1];
+			orientation += 0.5f;
 
 			var step = Utils.M_PIx2 / pointCount;
 			for (var i = 0; i < pointCount; i++)
@@ -51,7 +53,7 @@ namespace DataArcs.Graphic
 
 			return new BezierSeries(values, moves);
 		}
-
+		
         public override BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict)
         {
             var orientation = dict.ContainsKey(PropertyId.Orientation) ? dict[PropertyId.Orientation].X : _defaultOrientation;
