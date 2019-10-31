@@ -12,6 +12,7 @@ namespace DataArcs.Samplers
     {
 	    public const float TOLERANCE = 0.00001f;
 
+		// todo: reconcile indexFromT with TFromIndex -- one returns 0-1 inclusive, the second exclusive.
 	    public static int IndexFromT(int capacity, float t)
 	    {
 		    return Math.Max(0, Math.Min(capacity - 1, (int)Math.Round(t * (capacity - 1f))));
