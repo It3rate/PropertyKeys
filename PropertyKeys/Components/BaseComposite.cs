@@ -49,7 +49,7 @@ namespace DataArcs.Components
 			    AddProperty(id, store);
 		    }
 	    }
-	    public void RemoveProperty(PropertyId id, BlendStore store)
+	    public void RemoveProperty(PropertyId id)
 	    {
 		    _stores.Remove(id);
 	    }

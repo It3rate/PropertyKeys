@@ -49,12 +49,32 @@ namespace DataArcs.Tests.GraphicTests
 
             switch (_versionIndex)
             {
-                case 0:
-					// only happens once
-	                _currentBlend = new BlendTransition(GetContainer(Hex, false), GetContainer(Ring, false), new Timer(0, 1000), _easeStore);
-	                _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
-		            _player.AddActiveElement(_currentBlend);
+	            case -3:
+		            // only happens once
+		            _player.AddActiveElement(GetContainer(Ring, false));
+		            _timer = new Timer(0, 2500, null);
+		            _timer.EndTimedEvent += CompOnEndTransitionEvent;
+		            _player.AddActiveElement(_timer);
                     break;
+	            case -2:
+		            // only happens once
+		            _currentBlend = new BlendTransition( GetContainer(Ring, false),GetContainer(Hex, false), new Timer(0, 1000), _easeStore);
+		            _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
+		            _player.AddActiveElement(_currentBlend);
+		            break;
+	            case -1:
+                    // only happens once
+                    _player.AddActiveElement(GetContainer(Hex, false));
+                    _timer = new Timer(0, 2500, null);
+                    _timer.EndTimedEvent += CompOnEndTransitionEvent;
+                    _player.AddActiveElement(_timer);
+                    break;
+	            case 0:
+		            // only happens once
+		            _currentBlend = new BlendTransition(GetContainer(Hex, false), GetContainer(Ring, false), new Timer(0, 1000), _easeStore);
+		            _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
+		            _player.AddActiveElement(_currentBlend);
+		            break;
                 case 1:
 	                _currentPhysics = _currentBlend.End;
                     AddPhysics(_currentPhysics);
@@ -139,7 +159,7 @@ namespace DataArcs.Tests.GraphicTests
 			return composite;
 		}
 
-        private void AddPhysics(IComposite composite)
+        private void AddPhysics(IContainer composite)
         {
 	        var locStore = composite.GetStore(PropertyId.Location);
 	        var sampler = locStore.Sampler;
@@ -147,16 +167,23 @@ namespace DataArcs.Tests.GraphicTests
             _physicsComposite = new PhysicsComposite();
             _player.AddActiveElement(_physicsComposite);
 
-            for (int i = 0; i < composite.Capacity; i++)
+			// box2d added bodies in reverse order with a linked list, so count backwards.
+            for (int i = composite.Capacity - 1; i >= 0; i--)
             {
                 float tIndex = i / (composite.Capacity - 1f);
-                var pos = locStore.GetValuesAtIndex(i);
+                var pos = locStore.GetValuesAtT(tIndex);
                 var pointCount = composite.GetSeriesAtT(PropertyId.PointCount, tIndex, null);
                 var radius = composite.GetSeriesAtT(PropertyId.Radius, tIndex, null);
 
                 var bezier = PolyShape.GeneratePolyShape(0f, (int)pointCount.X, 0, radius.X, radius.Y, 0);
                 _physicsComposite.CreateBezierBody(pos.X, pos.Y, bezier, false);
             }
+
+			// Causes recursive location lookup error when getting capacity.
+            //         composite.AppendProperty(PropertyId.PenPressure, locStore);
+            //composite.RemoveProperty(PropertyId.Location);
+            //         LinkingStore ls = new LinkingStore(composite.CompositeId, PropertyId.PenPressure, SlotUtils.XY, null);
+            //         composite.AddProperty(PropertyId.Location, ls);
 
             LinkingStore ls = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Location, SlotUtils.XY, null);
             composite.AddProperty(PropertyId.Location, ls);

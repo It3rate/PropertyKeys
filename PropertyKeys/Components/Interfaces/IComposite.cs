@@ -21,7 +21,7 @@ namespace DataArcs.Components
 
         void AddProperty(PropertyId id, IStore store);
         void AppendProperty(PropertyId id, IStore store);
-        void RemoveProperty(PropertyId id, BlendStore store);
+        void RemoveProperty(PropertyId id);
         IStore GetStore(PropertyId propertyId);
         void GetDefinedStores(HashSet<PropertyId> ids);
 

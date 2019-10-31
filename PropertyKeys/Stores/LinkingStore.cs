@@ -22,7 +22,13 @@ namespace DataArcs.Stores
 		// todo: consider implications of having own samplers and combines here. Or copy masked store into this.
         public override CombineFunction CombineFunction { get => MaskedStore.CombineFunction; set => MaskedStore.CombineFunction = value; }
         public override CombineTarget CombineTarget { get => MaskedStore.CombineTarget; set => MaskedStore.CombineTarget = value; }
-        public override Sampler Sampler { get => MaskedStore.Sampler; set => MaskedStore.Sampler = value; }
+        public override Sampler Sampler
+        {
+	        get => MaskedStore?.Sampler ?? _player[LinkedCompositeId]?.GetStore(PropertyId)?.Sampler;
+	        set{ if (MaskedStore != null) MaskedStore.Sampler = value; }
+
+        }
+        // todo: this can cause a cycle if this is a link for a locationProperty (capacity will use location recursively)
         public override int Capacity => MaskedStore?.Capacity ?? _player[LinkedCompositeId]?.Capacity ?? 1;
         
         public LinkingStore(int linkedCompositeId, PropertyId propertyId, Slot[] slotMapping, IStore store)

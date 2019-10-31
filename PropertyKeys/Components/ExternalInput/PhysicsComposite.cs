@@ -129,9 +129,10 @@ namespace DataArcs.Components.ExternalInput
 			ids.Add(PropertyId.Location);
 			ids.Add(PropertyId.Orientation);
         }
-
+		
 	    private Body GetBodyAtIndex(int index)
 	    {
+			// Todo: there will be other bodies, like side walls, in the world. Need to move to a cached lookup system (will be faster anyway).
 		    int counter = 0;
 		    Body result = _world.GetBodyList();
 		    while (counter < index && result.GetNext() != null)
@@ -150,14 +151,11 @@ namespace DataArcs.Components.ExternalInput
 			bodyDef.Position.Set(pos.X, pos.Y);
 			Body body = _world.CreateBody(bodyDef);
 
-            CircleDef shapeDef = new CircleDef();
-            shapeDef.Radius = PixelToMeter(18f);
+            PolygonDef shapeDef = new PolygonDef();
+            var box = SizeToMeters(10f, 10f);
+            shapeDef.SetAsBox(box.X, box.Y);
 
-            //PolygonDef shapeDef = new PolygonDef();
-            //var box = SizeToMeters(10f, 10f);
-            //shapeDef.SetAsBox(box.X, box.Y);
-			
-			shapeDef.Density = isStatic ? 0.0f : 1.0f;
+            shapeDef.Density = isStatic ? 0.0f : 1.0f;
 			shapeDef.Friction = 0.3f;
 			body.CreateShape(shapeDef);
 			body.SetMassFromShapes();
@@ -220,15 +218,6 @@ namespace DataArcs.Components.ExternalInput
             PolygonDef groundShapeDef = new PolygonDef();
             groundShapeDef.SetAsBox(box.X, box.Y);
             groundBody.CreateShape(groundShapeDef);
-
-            //var pos = GlobalPixelToMeters(_simBounds.CX + _simX, _simBounds.Height + _simY);
-            //var box = SizeToMeters(_simBounds.CX, 4f);
-            //BodyDef groundBodyDef = new BodyDef();
-            //groundBodyDef.Position.Set(pos.X, pos.Y);
-            //Body groundBody = _world.CreateBody(groundBodyDef);
-            //PolygonDef groundShapeDef = new PolygonDef();
-            //groundShapeDef.SetAsBox(box.X, box.Y);
-            //groundBody.CreateShape(groundShapeDef);
         }
         public void Dispose()
         {
@@ -239,7 +228,6 @@ namespace DataArcs.Components.ExternalInput
         {
             if (state)
             {
-                // By deleting the world, we delete the bomb, mouse joint, etc.
                 _world.Dispose();
                 _world = null;
             }
