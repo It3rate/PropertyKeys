@@ -34,7 +34,7 @@ namespace DataArcs.SeriesData
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
-			if (startIndex * VectorSize + (VectorSize - 1) < DataSize)
+			if (startIndex * VectorSize + VectorSize <= DataSize)
 			{
 				Array.Copy(_intValues, startIndex * VectorSize, result, 0, VectorSize);
 			}
@@ -47,10 +47,11 @@ namespace DataArcs.SeriesData
 		}
 
 		public override void SetSeriesAtIndex(int index, Series series)
-		{
-			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
-			Array.Copy(series.IntData, 0, _intValues, startIndex * VectorSize, VectorSize);
-		}
+        {
+            var len = DataSize / VectorSize;
+            var startIndex = Math.Min(len - 1, Math.Max(0, index));
+            Array.Copy(series.IntData, 0, _intValues, startIndex * VectorSize, VectorSize);
+        }
 
 		public override void Reverse()
 		{
@@ -67,8 +68,8 @@ namespace DataArcs.SeriesData
 			for (var i = 0; i < DataSize; i++)
 			{
 				if (i < b.DataSize)
-				{
-					_intValues[i] = (int) Math.Round(_intValues[i] + (b.IntDataAt(i) - _intValues[i]) * t);
+                {
+                    _intValues[i] += (int)Math.Round((b.IntDataAt(i) - _intValues[i]) * t);
 				}
 				else
 				{

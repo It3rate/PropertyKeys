@@ -22,8 +22,9 @@ namespace DataArcs.Components.ExternalInput
 
         public const float PixelsPerMeter = 50f;
         float thickness = 10;
+        private int supportBodies = 0;
 
-        public override int Capacity { get => _world.GetBodyCount(); set{} }
+        public override int Capacity { get => _world.GetBodyCount() - supportBodies; set{} }
 
 	    public PhysicsComposite()
 	    {
@@ -39,9 +40,9 @@ namespace DataArcs.Components.ExternalInput
             _world = new World(bounds, new Vec2(0, -10f), true);
 
 			SealWorldEdges();
-
             //CreateBody(200f, 100f, true);
             CreateBody(_simBounds.CX, _simBounds.Top);
+            supportBodies = _world.GetBodyCount();
         }
         
         private Vec2 GlobalPixelToMeters(float px, float py) => new Vec2((px - _simX) / PixelsPerMeter, (_simBounds.Height - (py - _simY)) / PixelsPerMeter);

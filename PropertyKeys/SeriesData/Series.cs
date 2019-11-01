@@ -144,6 +144,17 @@ namespace DataArcs.SeriesData
 
         public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
         public Store Store => new Store(this, new LineSampler(this.Count));
+        public Store BakedStore
+        {
+            get
+            {
+                var result = new Store(this, new LineSampler(this.Count));
+                result.BakeData();
+                return result;
+            }
+        }
+
+        public Store ToStore(Sampler sampler) => new Store(this, sampler);
 
         public abstract Series Copy();
 

@@ -32,10 +32,8 @@ namespace DataArcs.Tests.GraphicTests
 		{
 			_player = player;
 			_player.Pause();
-
-
-            _easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Multiply, CombineTarget.T);
-
+            _easeStore = new Store(new FloatSeries(1, 0f, 1f), 
+                new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
         }
 
         HexagonSampler Hex => new HexagonSampler(new int[] { 10, 9 });
@@ -106,52 +104,27 @@ namespace DataArcs.Tests.GraphicTests
             _player.Unpause();
         }
 
-
-    private void CompOnEndTransitionEvent(object sender, EventArgs e)
-    {
-		NextVersion();
-    }
-
-    IComposite AddTargetBody()
+        private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
-            var body = new Container(new IntSeries(1, 0).Store);
-            body.AddProperty(PropertyId.Location, new FloatSeries(2, 200f, 100f).Store);
-            body.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
-            body.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
-            body.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.1f, 0.1f).Store);
-            body.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
-            body.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
-            body.Renderer = new PolyShape();
-            return body;
+		    NextVersion();
         }
-        IComposite AddCompositeBody()
-		{
-			var body = new Container(new IntSeries(1, 0).Store);
-			LinkingStore ls = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Location, SlotUtils.XY, null);
-			body.AddProperty(PropertyId.Location, ls);
-
-			body.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
-			body.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
-			body.AddProperty(PropertyId.FillColor, new FloatSeries(3,  0.4f, 0.3f, 0.4f).Store);
-			body.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
-			body.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
-			body.Renderer = new PolyShape();
-            return body;
-		}
-
+        
 		IContainer GetContainer(Sampler sampler, bool is2D)
-		{
-			var composite = new Container(Store.CreateItemStore(sampler.Capacity));
+        {
+            Store itemStore = Store.CreateItemStore(sampler.Capacity);
+            itemStore.BakeData();
+
+            var composite = new Container(Store.CreateItemStore(sampler.Capacity));
             composite.AddProperty(PropertyId.Orientation, new FloatSeries(1, 0f).Store);
             composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
-            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 8, 3).Store);//, 3, 6).Store);
+            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6, 3).Store);//, 3, 6).Store);
 			composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.3f, 0.4f, 0.3f, 0.4f, 1f).Store);
 			composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
 			composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
             composite.Renderer = new PolyShape();
 
-            float xOutset = sampler is RingSampler ? -150f : -50f;
-            Store loc = new Store(MouseInput.MainFrameSize.Outset(xOutset, -50f), sampler);
+            float xOutset = sampler is RingSampler ? -100f : -30f;
+            Store loc = new Store(MouseInput.MainFrameSize.Outset(xOutset, -30f), sampler);
 			composite.AppendProperty(PropertyId.Location, loc);
 			if (is2D)
 			{
@@ -167,14 +140,19 @@ namespace DataArcs.Tests.GraphicTests
 
             _physicsComposite = new PhysicsComposite();
             _player.AddActiveElement(_physicsComposite);
-
 			// box2d added bodies in reverse order with a linked list, so count backwards.
             for (int i = composite.Capacity - 1; i >= 0; i--)
             {
                 float tIndex = i / (composite.Capacity - 1f);
+                var dict = new Dictionary<PropertyId, Series>
+                {
+                    { PropertyId.PointCount, null },
+                    { PropertyId.Radius, null }
+                };
+                composite.QueryPropertiesAtT(dict, tIndex, false);
+                var pointCount = dict[PropertyId.PointCount];// composite.GetSeriesAtT(PropertyId.PointCount, tIndex, null);
+                var radius = dict[PropertyId.Radius];//composite.GetSeriesAtT(PropertyId.Radius, tIndex, null);
                 var pos = locStore.GetValuesAtT(tIndex);
-                var pointCount = composite.GetSeriesAtT(PropertyId.PointCount, tIndex, null);
-                var radius = composite.GetSeriesAtT(PropertyId.Radius, tIndex, null);
 
                 var bezier = PolyShape.GeneratePolyShape(0f, (int)pointCount.X, 0, radius.X, radius.Y, 0);
                 _physicsComposite.CreateBezierBody(pos.X, pos.Y, bezier, false);

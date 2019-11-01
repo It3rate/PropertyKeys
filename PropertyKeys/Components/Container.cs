@@ -276,6 +276,7 @@ namespace DataArcs.Components
                     float indexT = i / (capacity - 1f);
                     dict.Clear();
                     IRenderable renderer = QueryPropertiesAtT(dict, indexT, true);
+                    //Debug.WriteLine(dict[PropertyId.PointCount].X + " : " + indexT);
                     renderer?.DrawWithProperties(dict, g);
                 }
             }
