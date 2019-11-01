@@ -39,7 +39,7 @@ namespace DataArcs.Tests.GraphicTests
         }
 
         HexagonSampler Hex => new HexagonSampler(new int[] { 10, 9 });
-        RingSampler Ring => new RingSampler(new int[] { 40, 25, 15, 10 });
+        RingSampler Ring => new RingSampler(new int[] { 30, 25, 20, 15 });
         public void NextVersion()
         {
             _player.Pause();
@@ -84,7 +84,7 @@ namespace DataArcs.Tests.GraphicTests
 		            _player.AddActiveElement(_timer);
                     break;
                 case 2:
-	                _currentBlend = new BlendTransition(_currentPhysics, GetContainer(Hex, false), new Timer(0, 1000), _easeStore);
+	                _currentBlend = new BlendTransition(_currentPhysics, GetContainer(Hex, false), new Timer(0, 2000), _easeStore);
 	                _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
 	                _player.AddActiveElement(_currentBlend);
                     break;
@@ -97,7 +97,7 @@ namespace DataArcs.Tests.GraphicTests
 	                _player.AddActiveElement(_timer);
                     break;
                 case 4:
-	                _currentBlend = new BlendTransition(_currentPhysics, GetContainer(Ring, false), new Timer(0, 1000), _easeStore);
+	                _currentBlend = new BlendTransition(_currentPhysics, GetContainer(Ring, false), new Timer(0, 2000), _easeStore);
 	                _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
 	                _player.AddActiveElement(_currentBlend);
 	                break;
@@ -142,8 +142,9 @@ namespace DataArcs.Tests.GraphicTests
 		IContainer GetContainer(Sampler sampler, bool is2D)
 		{
 			var composite = new Container(Store.CreateItemStore(sampler.Capacity));
-			composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
-            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5, 8, 3, 6).Store);
+            composite.AddProperty(PropertyId.Orientation, new FloatSeries(1, 0f).Store);
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
+            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 8, 3).Store);//, 3, 6).Store);
 			composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.3f, 0.4f, 0.3f, 0.4f, 1f).Store);
 			composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
 			composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
