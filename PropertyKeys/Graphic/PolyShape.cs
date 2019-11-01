@@ -19,7 +19,7 @@ namespace DataArcs.Graphic
 		private float _defaultRoundness = 0f;
 		private float _defaultRadius = 10f;
 		
-        public static BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
+        public BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
 		{
 			var hasStarness = Math.Abs(starness) > 0.001f;
 			var count = hasStarness ? pointCount * 2 : pointCount;

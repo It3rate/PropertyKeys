@@ -43,7 +43,7 @@ namespace Box2DX.Dynamics
 			MassData.Center.SetZero();
 			MassData.Mass = 0.0f;
 			MassData.I = 0.0f;
-			UserData = null;
+			UserData = -1;
 			Position = new Vec2();
 			Position.Set(0.0f, 0.0f);
 			Angle = 0.0f;
@@ -65,7 +65,7 @@ namespace Box2DX.Dynamics
 		/// <summary>
 		/// Use this to store application specific body data.
 		/// </summary>
-		public object UserData;
+		public int UserData;
 
 		/// <summary>
 		/// The world position of the body. Avoid creating bodies at the origin
@@ -176,7 +176,7 @@ namespace Box2DX.Dynamics
 
 		internal float _sleepTime;
 
-		private object _userData;
+		private int _userData;
 
 		internal Body(BodyDef bd, World world)
 		{
@@ -891,7 +891,7 @@ namespace Box2DX.Dynamics
 		/// Get the user data pointer that was provided in the body definition.
 		/// </summary>
 		/// <returns></returns>
-		public object GetUserData()
+		public int GetUserData()
 		{
 			return _userData;
 		}
@@ -900,7 +900,7 @@ namespace Box2DX.Dynamics
 		/// Set the user data. Use this to store your application specific data.
 		/// </summary>
 		/// <param name="data"></param>
-		public void SetUserData(object data) { _userData = data; }
+		public void SetUserData(int data) { _userData = data; }
 
 		/// <summary>
 		/// Get the parent world of this body.

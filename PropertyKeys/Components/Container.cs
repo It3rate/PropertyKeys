@@ -14,7 +14,7 @@ using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-	public class Container : BaseComposite, IContainer, IDrawable
+	public class Container : BaseComposite, IContainer
 	{
 		private readonly List<IContainer> _children = new List<IContainer>();
 		

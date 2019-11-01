@@ -9,7 +9,7 @@ using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-    public interface IContainer : IComposite
+    public interface IContainer : IComposite, IDrawable
     {
 	    IStore Items { get; }
 	    int[] ChildCounts { get; }

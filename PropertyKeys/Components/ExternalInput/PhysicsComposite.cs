@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,15 +17,16 @@ namespace DataArcs.Components.ExternalInput
     public class PhysicsComposite : BaseComposite, IDisposable
     {
 	    private World _world;
-	    private RectFSeries _simBounds;
-        private float _simX;
-        private float _simY;
+		private readonly Dictionary<int, int> _bodyMap = new Dictionary<int, int>(256);
+		private int _bodyCounter = 0;
+	    private readonly RectFSeries _simBounds;
+        private readonly float _simX;
+        private readonly float _simY;
 
         public const float PixelsPerMeter = 50f;
         float thickness = 10;
-        private int supportBodies = 0;
 
-        public override int Capacity { get => _world.GetBodyCount() - supportBodies; set{} }
+        public override int Capacity { get => _bodyMap.Count; set{} }
 
 	    public PhysicsComposite()
 	    {
@@ -34,15 +36,13 @@ namespace DataArcs.Components.ExternalInput
             _simY = _simBounds.Y - appBounds.Y;
 
             // box2d aabb is LeftBottom (lowerBound) and RightTop(upperBound)
-            AABB bounds = new AABB();
-            bounds.LowerBound = GlobalPixelToMeters(_simBounds.Left, _simBounds.Bottom);
-            bounds.UpperBound = GlobalPixelToMeters(_simBounds.Right, _simBounds.Top);
+            AABB bounds = new AABB {
+	            LowerBound = GlobalPixelToMeters(_simBounds.Left, _simBounds.Bottom),
+	            UpperBound = GlobalPixelToMeters(_simBounds.Right, _simBounds.Top)
+            };
             _world = new World(bounds, new Vec2(0, -10f), true);
 
 			SealWorldEdges();
-            //CreateBody(200f, 100f, true);
-            CreateBody(_simBounds.CX, _simBounds.Top);
-            supportBodies = _world.GetBodyCount();
         }
         
         private Vec2 GlobalPixelToMeters(float px, float py) => new Vec2((px - _simX) / PixelsPerMeter, (_simBounds.Height - (py - _simY)) / PixelsPerMeter);
@@ -133,18 +133,14 @@ namespace DataArcs.Components.ExternalInput
 		
 	    private Body GetBodyAtIndex(int index)
 	    {
-			// Todo: there will be other bodies, like side walls, in the world. Need to move to a cached lookup system (will be faster anyway).
-		    int counter = 0;
 		    Body result = _world.GetBodyList();
-		    while (counter < index && result.GetNext() != null)
+		    while (result != null && result.GetUserData() != index)
 		    {
 			    result = result.GetNext();
-			    counter++;
 		    }
-
 		    return result;
 	    }
-        public void CreateBody(float x, float y, bool isStatic = false)
+        public void CreateBox(float x, float y, bool isStatic = false)
         {
             var pos = GlobalPixelToMeters(x, y);
 
@@ -162,13 +158,27 @@ namespace DataArcs.Components.ExternalInput
 			body.SetMassFromShapes();
         }
 
-        public void CreateBezierBody(float x, float y, BezierSeries bezier, bool isStatic = false)
+
+        public void CreateBezierBody(int index, IContainer composite, bool isStatic = false)
         {
-	        var pos = GlobalPixelToMeters(x, y);
+	        float tIndex = index / (composite.Capacity - 1f);
+	        var dict = new Dictionary<PropertyId, Series>
+	        {
+		        { PropertyId.PointCount, null },
+		        { PropertyId.Radius, null },
+		        { PropertyId.Location, null }
+            };
+	        composite.QueryPropertiesAtT(dict, tIndex, false);
+	        var bezier = composite.Renderer.GetDrawable(dict);
+
+            var pos = GlobalPixelToMeters(dict[PropertyId.Location].X, dict[PropertyId.Location].Y);
 
 	        BodyDef bodyDef = new BodyDef();
 	        bodyDef.Position.Set(pos.X, pos.Y);
 	        Body body = _world.CreateBody(bodyDef);
+
+			body.SetUserData(_bodyCounter++);
+			_bodyMap[index] = body.GetUserData();
 
 	        ShapeDef shapeDef;
 	        int count = (int)(bezier.Count - 1);

@@ -140,22 +140,9 @@ namespace DataArcs.Tests.GraphicTests
 
             _physicsComposite = new PhysicsComposite();
             _player.AddActiveElement(_physicsComposite);
-			// box2d added bodies in reverse order with a linked list, so count backwards.
-            for (int i = composite.Capacity - 1; i >= 0; i--)
+            for (int i = 0; i < composite.Capacity; i++)
             {
-                float tIndex = i / (composite.Capacity - 1f);
-                var dict = new Dictionary<PropertyId, Series>
-                {
-                    { PropertyId.PointCount, null },
-                    { PropertyId.Radius, null }
-                };
-                composite.QueryPropertiesAtT(dict, tIndex, false);
-                var pointCount = dict[PropertyId.PointCount];// composite.GetSeriesAtT(PropertyId.PointCount, tIndex, null);
-                var radius = dict[PropertyId.Radius];//composite.GetSeriesAtT(PropertyId.Radius, tIndex, null);
-                var pos = locStore.GetValuesAtT(tIndex);
-
-                var bezier = PolyShape.GeneratePolyShape(0f, (int)pointCount.X, 0, radius.X, radius.Y, 0);
-                _physicsComposite.CreateBezierBody(pos.X, pos.Y, bezier, false);
+	            _physicsComposite.CreateBezierBody(i, composite);
             }
 
 			// Causes recursive location lookup error when getting capacity.
