@@ -1,4 +1,5 @@
 ﻿using System;
+using DataArcs.Samplers;
 using DataArcs.Stores;
 
 namespace DataArcs.SeriesData
@@ -19,32 +20,34 @@ namespace DataArcs.SeriesData
         public int Seed
         {
             get => _seed;
-            set { _seed = value; GenerateData(); }
+            set { _seed = value; GenerateDataSeries(); }
         }
 
 		/// <summary>
         /// RandomSeries always has an actual store in order to be consistent on repeated queries.
         /// </summary>
-        public RandomSeries(int vectorSize, SeriesType type, int count, RectFSeries minMax, int seed = 0,
+        public RandomSeries(int vectorSize, SeriesType type, int count, RectFSeries minMax = null, int seed = 0,
 			CombineFunction combineFunction = CombineFunction.Replace) : base(vectorSize)
 		{
 			_type = type;
             _count = count;
 			seed = seed == 0 ? SeriesUtils.Random.Next() : seed;
 			_seed = seed;
-            _minMax = minMax;
+            _minMax = minMax ?? new RectFSeries(0,0,1f,1f);
 			_combineFunction = combineFunction;
-			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.GetZeroFloatSeries(vectorSize, _count) : GenerateData();
+			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.GetZeroFloatSeries(vectorSize, _count) : GenerateDataSeries();
 		}
 		
 		public float[] this[int index] => _series.GetSeriesAtIndex(index).FloatData;
+
+		public override Store BakedStore => GenerateDataSeries().Store;
 
         public override void Reverse()
 		{
 			_series.Reverse();
 		}
 
-		private Series GenerateData()
+		public Series GenerateDataSeries()
 		{
 			Series result;
             _random = new Random(_seed);
@@ -100,7 +103,7 @@ namespace DataArcs.SeriesData
 		public override void ResetData()
 		{
 			_random = new Random(_seed);
-			GenerateData();
+			GenerateDataSeries();
 		}
 
 		public override void Update(float time)
@@ -108,7 +111,7 @@ namespace DataArcs.SeriesData
             if(_combineFunction == CombineFunction.ContinuousAdd)
             {
 	            _seed = SeriesUtils.Random.Next();
-                var b = GenerateData();
+                var b = GenerateDataSeries();
                 float tSec = time / 1000f;
                 var scaled = new FloatSeries(VectorSize, SeriesUtils.GetSizedFloatArray(VectorSize, tSec));
 				b.CombineInto(scaled, CombineFunction.Multiply);

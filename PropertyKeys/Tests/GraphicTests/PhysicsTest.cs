@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Components;
 using DataArcs.Components.ExternalInput;
+using DataArcs.Components.Simulators;
 using DataArcs.Components.Transitions;
 using DataArcs.Graphic;
 using DataArcs.Players;
@@ -112,9 +113,8 @@ namespace DataArcs.Tests.GraphicTests
 		IContainer GetContainer(Sampler sampler, bool is2D)
         {
             Store itemStore = Store.CreateItemStore(sampler.Capacity);
-            itemStore.BakeData();
+            var composite = new Container(itemStore);
 
-            var composite = new Container(Store.CreateItemStore(sampler.Capacity));
             composite.AddProperty(PropertyId.Orientation, new FloatSeries(1, 0f).Store);
             composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6, 3).Store);//, 3, 6).Store);

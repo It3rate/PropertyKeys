@@ -64,31 +64,34 @@ namespace DataArcs
             NextTest();
         }
 
-        private int testIndex = -1;
-        private int testCount = 5;
+        private static int _testCount = 6;
+        private int _testIndex = _testCount;
         private void NextTest()
         {
-	        testIndex++;
-	        if (testIndex >= testCount)
+	        _testIndex--;
+	        if (_testIndex < 0)
 	        {
-		        testIndex = 0;
+		        _testIndex = _testCount - 1;
 	        }
 	        _player.Reset();
-	        switch (testIndex)
+	        switch (_testIndex)
 	        {
-		        case 0:
+		        case 5:
+			        _testScreen = new AutomataTest(_player);
+			        break;
+		        case 4:
 			        _testScreen = new PhysicsTest(_player);
 			        break;
-		        case 1:
+                case 3:
 			        _testScreen = new UserInputTest(_player);
 			        break;
                 case 2:
 			        _testScreen = new CompositeFlowerTest(_player);
 			        break;
-		        case 3:
+		        case 1:
 			        _testScreen = new CompositeTest2(_player);
 			        break;
-		        case 4:
+		        case 0:
 			        _testScreen = new CompositeTestObjects(_player);
 			        break;
             }

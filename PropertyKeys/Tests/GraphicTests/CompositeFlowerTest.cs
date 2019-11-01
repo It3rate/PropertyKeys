@@ -118,9 +118,9 @@ namespace DataArcs.Tests.GraphicTests
             var ringSampler = new RingSampler(new int[] { 6, 4 });// 7,6,5,4});
             
             // Link a custom property and multiply to generate an animated scaling transform.
-			_timer.AddProperty(PropertyId.Custom1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
+			_timer.AddProperty(PropertyId.User1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
             var locStore = new Store(new FloatSeries(2, -r + os, -r + os, r + os, r + os, -r2 + os, -r2 + os, r2 + os, r2+os), ringSampler, CombineFunction.Multiply);
-            var loc = new LinkingStore(_timer.CompositeId, PropertyId.Custom1, SlotUtils.XY, locStore);
+            var loc = new LinkingStore(_timer.CompositeId, PropertyId.User1, SlotUtils.XY, locStore);
             loc.CombineFunction = CombineFunction.Add;
             composite.AddProperty(PropertyId.Location, loc);
 

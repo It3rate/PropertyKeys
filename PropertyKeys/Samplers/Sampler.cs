@@ -23,8 +23,16 @@ namespace DataArcs.Samplers
 
         public virtual Series GetValuesAtT(Series series, float t)
         {
-            var seriesT = GetSampledTs(new ParametricSeries(1, t));
-            return GetSeriesSample(series, seriesT);
+			// todo: multiplies samplers treat each index as a column, need to sort this out in a controlable way.
+	        if (series.Count == Capacity)
+	        {
+		        return series.GetValueAtT(t);
+	        }
+	        else
+	        {
+		        var seriesT = GetSampledTs(new ParametricSeries(1, t));
+		        return GetSeriesSample(series, seriesT);
+	        }
         }
         public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
@@ -38,6 +46,17 @@ namespace DataArcs.Samplers
         public virtual ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
             return Swizzle(seriesT, seriesT);
+        }
+
+        protected virtual int NeighborCount => 2;
+		private int WrappedIndex(int index, int capacity) => index >= capacity ? 0 : index < 0 ? capacity - 1 : index;
+        public virtual Series GetNeighbors(Series series, int index, bool wrapEdges = true)
+        {
+	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
+            var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
+	        result.SetSeriesAtIndex(0, series.GetValueAtVirtualIndex(WrappedIndex(index - 1, Capacity), Capacity));
+	        result.SetSeriesAtIndex(1, series.GetValueAtVirtualIndex(WrappedIndex(index + 1, Capacity), Capacity));
+            return result;
         }
 
         /// <summary>

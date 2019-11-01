@@ -144,7 +144,7 @@ namespace DataArcs.SeriesData
 
         public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
         public Store Store => new Store(this, new LineSampler(this.Count));
-        public Store BakedStore
+        public virtual Store BakedStore
         {
             get
             {
@@ -162,6 +162,32 @@ namespace DataArcs.SeriesData
         public float Y => FloatDataAt(Math.Min(1, DataSize - 1));
         public float Z => FloatDataAt(Math.Min(2, DataSize - 1));
         public float W => FloatDataAt(Math.Min(3, DataSize - 1));
+
+        public Series Sum()
+        {
+	        var result = new float[VectorSize];
+            for (int i = 0; i < Count; i++)
+	        {
+		        var svals = GetSeriesAtIndex(i).FloatData;
+		        for (int j = 0; j < svals.Length; j++)
+		        {
+			        result[j] += svals[j];
+		        }
+            }
+            return SeriesUtils.CreateSeriesOfType(this, result);
+
+
+        }
+        public Series Average()
+        {
+	        var result = Sum().FloatData;
+	        float len = Count;
+	        for (int j = 0; j < result.Length; j++)
+	        {
+		        result[j] /= len;
+            }
+	        return SeriesUtils.CreateSeriesOfType(this, result);
+        }
 
         #region Enumeration
         public IEnumerator GetEnumerator()

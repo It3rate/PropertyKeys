@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Box2DX.Collision;
 using Box2DX.Common;
 using Box2DX.Dynamics;
-using DataArcs.Graphic;
+using DataArcs.Components.ExternalInput;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using Math = System.Math;
 
-namespace DataArcs.Components.ExternalInput
+namespace DataArcs.Components.Simulators
 {
     public class PhysicsComposite : BaseComposite, IDisposable
     {

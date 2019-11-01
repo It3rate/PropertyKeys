@@ -34,6 +34,11 @@ namespace DataArcs.Stores
         public abstract Series GetValuesAtT(float t);
         
         public abstract ParametricSeries GetSampledTs(ParametricSeries seriesT);
+        public virtual Series GetNeighbors(int index, bool wrapEdges = true)
+        {
+	        return Sampler.GetNeighbors(GetFullSeries(), index, wrapEdges);
+        }
+		
 
         public abstract void Update(float deltaTime);
 
