@@ -135,9 +135,6 @@ namespace DataArcs.Tests.GraphicTests
 
         private void AddPhysics(IContainer composite)
         {
-	        var locStore = composite.GetStore(PropertyId.Location);
-	        var sampler = locStore.Sampler;
-
             _physicsComposite = new PhysicsComposite();
             _player.AddActiveElement(_physicsComposite);
             for (int i = 0; i < composite.Capacity; i++)
@@ -145,9 +142,8 @@ namespace DataArcs.Tests.GraphicTests
 	            _physicsComposite.CreateBezierBody(i, composite);
             }
 
-			// Causes recursive location lookup error when getting capacity.
+            // todo: LinkingStore location causes recursive location lookup error when getting capacity.
             //         composite.AppendProperty(PropertyId.PenPressure, locStore);
-            //composite.RemoveProperty(PropertyId.Location);
             //         LinkingStore ls = new LinkingStore(composite.CompositeId, PropertyId.PenPressure, SlotUtils.XY, null);
             //         composite.AddProperty(PropertyId.Location, ls);
 

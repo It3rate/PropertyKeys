@@ -24,7 +24,7 @@ namespace DataArcs.Components
         private IStore _items;
         public IStore Items => _items ?? GetStore(PropertyId.Items);
 		// todo: move away from location being so important.
-        public int Capacity => GetStore(PropertyId.Location)?.Capacity ?? Items.Capacity;
+        public override int Capacity => GetStore(PropertyId.Location)?.Capacity ?? Items.Capacity;
 
         protected Container(IStore items)
         {

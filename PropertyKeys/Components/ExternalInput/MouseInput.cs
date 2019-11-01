@@ -14,9 +14,9 @@ namespace DataArcs.Components.ExternalInput
     {
 	    public float InterpolationT { get; set; }
 	    public float StartTime { get; set; }
-	    public Series Duration { get; }
-	    public Series Delay { get; }
-	    public event TimedEventHandler StartTimedEvent;
+	    public Series Duration { get; } = new FloatSeries(1,0);
+	    public Series Delay { get; } = new FloatSeries(1, 0);
+        public event TimedEventHandler StartTimedEvent;
 	    public event TimedEventHandler StepTimedEvent;
 	    public event TimedEventHandler EndTimedEvent;
 
@@ -28,8 +28,17 @@ namespace DataArcs.Components.ExternalInput
 	    {
 		    get
 		    {
-			    var form = Application.OpenForms[0];
-			    return new RectFSeries(0, 0, form.ClientSize.Width, form.ClientSize.Height);
+			    RectFSeries result;
+			    if (Application.OpenForms.Count > 0)
+			    {
+				    var form = Application.OpenForms[0];
+				    result = new RectFSeries(0, 0, form.ClientSize.Width, form.ClientSize.Height);
+			    }
+			    else
+			    {
+				    result = new RectFSeries(0, 0, 800, 600);
+                }
+			    return result;
 		    }
 	    }
 

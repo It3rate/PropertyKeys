@@ -85,6 +85,7 @@ namespace DataArcs.Components.ExternalInput
 		    {
 			    if (result != null)
 			    {
+					// todo: atm physics has no 'store' object, so can't combine functionally. Maybe needs this, or maybe external input is a source only, not an interm step?
 				    //result.CombineInto(parentSeries, store.CombineFunction, t);
 			    }
 			    else
@@ -140,24 +141,6 @@ namespace DataArcs.Components.ExternalInput
 		    }
 		    return result;
 	    }
-        public void CreateBox(float x, float y, bool isStatic = false)
-        {
-            var pos = GlobalPixelToMeters(x, y);
-
-            BodyDef bodyDef = new BodyDef();
-			bodyDef.Position.Set(pos.X, pos.Y);
-			Body body = _world.CreateBody(bodyDef);
-
-            PolygonDef shapeDef = new PolygonDef();
-            var box = SizeToMeters(10f, 10f);
-            shapeDef.SetAsBox(box.X, box.Y);
-
-            shapeDef.Density = isStatic ? 0.0f : 1.0f;
-			shapeDef.Friction = 0.3f;
-			body.CreateShape(shapeDef);
-			body.SetMassFromShapes();
-        }
-
 
         public void CreateBezierBody(int index, IContainer composite, bool isStatic = false)
         {
