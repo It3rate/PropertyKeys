@@ -75,6 +75,11 @@ namespace DataArcs.Stores
             }
 			Sampler = new LineSampler(Sampler.Capacity);
 		}
+
+		public override IStore Clone()
+		{
+			return new Store(_series.Copy(), Sampler, CombineFunction, CombineTarget);
+		}
 		
 		public static Store CreateItemStore(int count)
 		{

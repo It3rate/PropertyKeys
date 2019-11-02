@@ -116,5 +116,10 @@ namespace DataArcs.Stores
         {
             _mixStore?.BakeData();
         }
+
+        public override IStore Clone()
+        {
+	        return new LinkingStore(LinkedCompositeId, PropertyId, SlotMapping, _mixStore?.Clone());
+		}
     }
 }

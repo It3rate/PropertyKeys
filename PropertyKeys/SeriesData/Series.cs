@@ -185,7 +185,33 @@ namespace DataArcs.SeriesData
 	        for (int j = 0; j < result.Length; j++)
 	        {
 		        result[j] /= len;
-            }
+	        }
+	        return SeriesUtils.CreateSeriesOfType(this, result);
+        }
+        public Series Max()
+        {
+	        var result = new float[VectorSize];
+	        for (int i = 0; i < Count; i++)
+	        {
+		        var svals = GetSeriesAtIndex(i).FloatData;
+		        for (int j = 0; j < svals.Length; j++)
+		        {
+			        result[j] = svals[j] > result[j] ? svals[j] : result[j];
+		        }
+	        }
+	        return SeriesUtils.CreateSeriesOfType(this, result);
+        }
+        public Series Min()
+        {
+	        var result = new float[VectorSize];
+	        for (int i = 0; i < Count; i++)
+	        {
+		        var svals = GetSeriesAtIndex(i).FloatData;
+		        for (int j = 0; j < svals.Length; j++)
+		        {
+			        result[j] = svals[j] < result[j] ? svals[j] : result[j];
+                }
+	        }
 	        return SeriesUtils.CreateSeriesOfType(this, result);
         }
 

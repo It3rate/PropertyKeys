@@ -61,22 +61,27 @@ namespace DataArcs.Tests.GraphicTests
         {
         }
 
-        HexagonSampler Hex => new HexagonSampler(new int[] { 50, 30 });
+        HexagonSampler Hex => new HexagonSampler(new int[] { 75, 50 });
 	    //RingSampler Ring => new RingSampler(new int[] { 30, 25, 20, 15 });
 
         private IContainer GetGrid(Sampler sampler)
 	    {
 		    Store itemStore = Store.CreateItemStore(sampler.Capacity);
-		    //var composite = new Container(itemStore);
-			
-            var automataStore = new RandomSeries(3, SeriesType.Float, sampler.Capacity).BakedStore;
-            automataStore.Sampler = sampler;
+            //var composite = new Container(itemStore);
+
+            //var automataStore = new RandomSeries(3, SeriesType.Float, sampler.Capacity).BakedStore;
+            //automataStore.Sampler = sampler;
+
+            var automataStore = new Store(new FloatSeries(3, 0f,0f,0f), sampler);
+			automataStore.BakeData();
+			automataStore.Sampler = sampler;
+            automataStore.GetFullSeries().SetSeriesAtIndex(575, new FloatSeries(3, 0f,0f,.7f));
 			var composite = new AutomataComposite(itemStore, automataStore);
 
 			var ls = new LinkingStore(composite.CompositeId, PropertyId.Automata, SlotUtils.XYZ, null);
 		    composite.AddProperty(PropertyId.FillColor, ls);
 
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 8f).Store);
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 6.8f).Store);
 		    composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
 
 
@@ -85,7 +90,7 @@ namespace DataArcs.Tests.GraphicTests
 		    //composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
 		    composite.Renderer = new PolyShape();
 			
-		    Store loc = new Store(MouseInput.MainFrameSize.Outset(-30f), sampler);
+		    Store loc = new Store(MouseInput.MainFrameSize.Outset(-4f), sampler);
 		    composite.AppendProperty(PropertyId.Location, loc);
 		    return composite;
         }

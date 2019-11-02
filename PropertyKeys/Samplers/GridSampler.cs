@@ -49,7 +49,7 @@ namespace DataArcs.Samplers
         }
 
         protected override int NeighborCount => 4;
-        private int WrappedIndexes(int x, int y) => (x >= Strides[0] ? 0 : x < 0 ? Strides[0] - 1 : x) +  Strides[1] * (y >= Strides[1] ? 0 : y < 0 ? Strides[1] - 1 : y);
+        private int WrappedIndexes(int x, int y) => (x >= Strides[0] ? 0 : x < 0 ? Strides[0] - 1 : x) +  Strides[0] * (y >= Strides[1] ? 0 : y < 0 ? Strides[1] - 1 : y);
         public override Series GetNeighbors(Series series, int index, bool wrapEdges = true)
         {
 	        var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, Capacity, index);

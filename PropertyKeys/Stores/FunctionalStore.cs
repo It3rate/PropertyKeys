@@ -143,5 +143,9 @@ namespace DataArcs.Stores
 			return result;
 		}
 
+		public override IStore Clone()
+		{
+			return new FunctionalStore(_stores.ToArray());
+		}
     }
 }

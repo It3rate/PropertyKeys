@@ -46,6 +46,8 @@ namespace DataArcs.Stores
 
         public abstract void BakeData();
 
+        public abstract IStore Clone();
+
         public IEnumerator GetEnumerator()
         {
 	        return new IStoreEnumerator(this);

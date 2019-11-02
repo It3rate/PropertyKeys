@@ -181,5 +181,9 @@ namespace DataArcs.Stores
 	        return result;
         }
 
+        public override IStore Clone()
+        {
+	        return new BlendStore(_stores.ToArray(), Sampler);
+        }
     }
 }
