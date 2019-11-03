@@ -8,7 +8,8 @@ namespace DataArcs.Samplers
 		{
 			Capacity = capacity;
 		}
-		public override Series GetValueAtIndex(Series series, int index)
+
+        public override Series GetValueAtIndex(Series series, int index)
 		{
 			return series.GetValueAtVirtualIndex(index, Capacity);
 		}

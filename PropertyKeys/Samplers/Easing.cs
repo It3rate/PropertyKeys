@@ -45,11 +45,13 @@ namespace DataArcs.Samplers
 	public class Easing : Sampler
 	{
 		public EasingType[] EasingTypes;
+		private bool _clamp;
 
-		public Easing(EasingType easingType = EasingType.Linear, Slot[] swizzleMap = null, int capacity = 1) : base(swizzleMap, capacity)
+		public Easing(EasingType easingType = EasingType.Linear, Slot[] swizzleMap = null, int capacity = 1, bool clamp = false) : base(swizzleMap, capacity)
         {
 			EasingTypes = new EasingType[] { easingType };
-		}
+			_clamp = clamp;
+        }
 		public Easing(params EasingType[] easingTypes)
         {
 			EasingTypes = easingTypes;
@@ -60,7 +62,7 @@ namespace DataArcs.Samplers
 			var result = new ParametricSeries(EasingTypes.Length, new float[EasingTypes.Length]);
 			for (int i = 0; i < EasingTypes.Length; i++)
 			{
-				result[i] = GetValueAt(seriesT, EasingTypes[i])[i];
+				result[i] = GetValueAt(seriesT, EasingTypes[i], _clamp)[i];
 			}
 			return Swizzle(result, seriesT);
         }
@@ -70,13 +72,13 @@ namespace DataArcs.Samplers
 			return GetValueAt(new ParametricSeries(1, t), easingType).X;
 		}
 
-		public static ParametricSeries GetValueAt(ParametricSeries seriesT, EasingType easingType)
+		public static ParametricSeries GetValueAt(ParametricSeries seriesT, EasingType easingType, bool clamp = false)
 		{
 			// influence https://stackoverflow.com/questions/4900069/how-to-make-inline-functions-in-c-sharp
 			ParametricSeries result2 = (ParametricSeries)seriesT.Copy();
 			for (int i = 0; i < seriesT.VectorSize; i++)
 			{
-				float t = seriesT[i];
+				float t = clamp ? Math.Max(0, Math.Min(1, seriesT[i])) : seriesT[i];
 				var result = t;
 				float it = 1f - t;
 				switch (easingType)
@@ -196,7 +198,7 @@ namespace DataArcs.Samplers
 						break;
 				}
 
-				result2[i] = result;
+				result2[i] = clamp ?  Math.Max(0, Math.Min(1, result)) : result;
 			}
 
 			return result2;

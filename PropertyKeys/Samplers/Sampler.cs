@@ -23,17 +23,10 @@ namespace DataArcs.Samplers
 
         public virtual Series GetValuesAtT(Series series, float t)
         {
-			// todo: multiplies samplers treat each index as a column, need to sort this out in a controlable way.
-	        if (series.Count == Capacity)
-	        {
-		        return series.GetValueAtT(t);
-	        }
-	        else
-	        {
-		        var seriesT = GetSampledTs(new ParametricSeries(1, t));
-		        return GetSeriesSample(series, seriesT);
-	        }
+	        var seriesT = GetSampledTs(new ParametricSeries(1, t));
+	        return GetSeriesSample(series, seriesT);
         }
+
         public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
             var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);

@@ -26,7 +26,7 @@ namespace DataArcs.Components.Simulators
 
 	    public PhysicsComposite()
 	    {
-            RectFSeries appBounds = MouseInput.MainFrameSize;
+            RectFSeries appBounds = MouseInput.MainFrameRect;
             _simBounds = appBounds.Outset(thickness);// new RectFSeries(20f, 0, appBounds.Width - 40f, appBounds.Height + 20);
             _simX = _simBounds.X - appBounds.X;
             _simY = _simBounds.Y - appBounds.Y;

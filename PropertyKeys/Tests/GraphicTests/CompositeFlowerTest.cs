@@ -67,7 +67,7 @@ namespace DataArcs.Tests.GraphicTests
         {
 	        var composite = new Container(Store.CreateItemStore(70));
 
-	        Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] {10, 7}));
+	        Store loc = new Store(new RectFSeries(200f, 100f, 600f, 400f), new HexagonSampler(new int[] {10, 7}));
             composite.AddProperty(PropertyId.Location, loc);
 	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
 
@@ -90,7 +90,7 @@ namespace DataArcs.Tests.GraphicTests
 	        var composite = new Container(Store.CreateItemStore(groupCount));
 
             LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SlotUtils.X, new FloatSeries(1, 0f, 1f).Store);
-            Store loc = new Store(new FloatSeries(2, 200f, 75f, 500f, 375f), new RingSampler(new int[] { groupCount }, ls));
+            Store loc = new Store(new RectFSeries(200f, 75f, 500f, 375f), new RingSampler(new int[] { groupCount }, ls));
             composite.AddProperty(PropertyId.Location, loc);
 
             //composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, .5f, 0.1f).Store);
@@ -119,7 +119,7 @@ namespace DataArcs.Tests.GraphicTests
             
             // Link a custom property and multiply to generate an animated scaling transform.
 			_timer.AddProperty(PropertyId.User1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack) ));
-            var locStore = new Store(new FloatSeries(2, -r + os, -r + os, r + os, r + os, -r2 + os, -r2 + os, r2 + os, r2+os), ringSampler, CombineFunction.Multiply);
+			var locStore = new Store(new FloatSeries(2, -r + os, -r + os, r + os, r + os, -r2 + os, -r2 + os, r2 + os, r2 + os), ringSampler, CombineFunction.Multiply);
             var loc = new LinkingStore(_timer.CompositeId, PropertyId.User1, SlotUtils.XY, locStore);
             loc.CombineFunction = CombineFunction.Add;
             composite.AddProperty(PropertyId.Location, loc);
@@ -133,7 +133,7 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.FillColor, col);// new FunctionalStore(col, col2));
 
             var growStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply);
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SlotUtils.X, growStore);
+           LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SlotUtils.X, growStore);
             composite.AddProperty(PropertyId.Orientation, ls);
             composite.AddProperty(PropertyId.Starness, ls);
 

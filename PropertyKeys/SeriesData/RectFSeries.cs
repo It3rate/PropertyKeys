@@ -11,6 +11,10 @@ namespace DataArcs.SeriesData
 	    public override SeriesType Type => SeriesType.RectF;
 	    private const int RectSize = 4;
 
+		/// <summary>
+        /// Create a rectF with x,y,w,h.
+        /// </summary>
+        /// <param name="values"></param>
 	    public RectFSeries(params float[] values) : base(2, values)
 	    {
 		    if (_floatValues.Length > RectSize)
@@ -36,12 +40,12 @@ namespace DataArcs.SeriesData
 	    }
 	    public new float X => _floatValues[0];
         public new float Y => _floatValues[1];
-	    public float Width => _floatValues[2];
-        public float Height => _floatValues[3];
+	    public float Right =>  _floatValues[2];
+	    public float Bottom => _floatValues[3];
+	    public float Width => _floatValues[2] - _floatValues[0];
+        public float Height =>_floatValues[3] - _floatValues[1];
 	    public float Top => _floatValues[1];
 	    public float Left => _floatValues[0];
-	    public float Bottom => _floatValues[1] + _floatValues[3];
-	    public float Right => _floatValues[0] + _floatValues[2];
 	    public float Area => Width * Height;
 
 	    public float CX => X + Width / 2f;
@@ -58,11 +62,11 @@ namespace DataArcs.SeriesData
 
 	    public RectFSeries Outset(float outset)
 	    {
-		    return new RectFSeries(X - outset, Y - outset, Width + outset * 2f, Height + outset * 2f);
+		    return new RectFSeries(X - outset, Y - outset, Right + outset * 2f, Bottom + outset * 2f);
 	    }
 	    public RectFSeries Outset(float outsetX, float outsetY)
 	    {
-		    return new RectFSeries(X - outsetX, Y - outsetY, Width + outsetX * 2f, Height + outsetY * 2f);
+		    return new RectFSeries(X - outsetX, Y - outsetY, Right + outsetX * 2f, Bottom + outsetY * 2f);
 	    }
 
         public override Series GetZeroSeries()

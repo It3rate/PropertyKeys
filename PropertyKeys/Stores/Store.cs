@@ -6,7 +6,8 @@ namespace DataArcs.Stores
 {
 	public class Store : StoreBase
     {
-		protected Series _series;
+	    public bool IsBaked { get; set; } = false;
+        protected Series _series;
 
         protected Store() { }
 
@@ -36,12 +37,13 @@ namespace DataArcs.Stores
 
 		public override Series GetValuesAtIndex(int index)
 		{
-			return Sampler.GetValueAtIndex(_series, index);
+			return IsBaked ? _series.GetValueAtVirtualIndex(index, Capacity) : Sampler.GetValueAtIndex(_series, index);
 		}
 
 		public override Series GetValuesAtT(float t)
 		{
-			return Sampler.GetValuesAtT(_series, t);
+			// GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
+            return IsBaked ? _series.GetValueAtT(t) : Sampler.GetValuesAtT(_series, t);
 		}
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -72,8 +74,8 @@ namespace DataArcs.Stores
                     result.SetSeriesAtIndex(i, GetValuesAtT(t));
                 }
                 _series = result;
+                IsBaked = true;
             }
-			Sampler = new LineSampler(Sampler.Capacity);
 		}
 
 		public override IStore Clone()

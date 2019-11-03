@@ -124,7 +124,7 @@ namespace DataArcs.Tests.GraphicTests
             composite.Renderer = new PolyShape();
 
             float xOutset = sampler is RingSampler ? -100f : -30f;
-            Store loc = new Store(MouseInput.MainFrameSize.Outset(xOutset, -30f), sampler);
+            Store loc = new Store(MouseInput.MainFrameRect.Outset(xOutset, -30f), sampler);
 			composite.AppendProperty(PropertyId.Location, loc);
 			if (is2D)
 			{

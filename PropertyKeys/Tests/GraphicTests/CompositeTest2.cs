@@ -41,7 +41,7 @@ namespace DataArcs.Tests.GraphicTests
         {
             var composite = new Container(Store.CreateItemStore(56));
             
-            Store loc = new Store(new FloatSeries(2, 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
+            Store loc = new Store(new RectFSeries( 200f, 100f, 600f, 400f), new HexagonSampler(new int[] { 7, 9 }));
             composite.AddProperty(PropertyId.Location, loc);
             composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 1f, 0.1f).Store);
             AddGraphic(composite);
@@ -52,10 +52,10 @@ namespace DataArcs.Tests.GraphicTests
             var compositeStart = GetComposite0();
             var compositeEnd = (Container)compositeStart.CreateChild();
             
-            Store loc = new Store(new FloatSeries(2, 100f, 100f, 500f, 400f), new HexagonSampler(new int[] { 7, 9 }));
+            Store loc = new Store(new RectFSeries(100f, 100f, 500f, 400f), new HexagonSampler(new int[] { 7, 9 }));
             compositeEnd.AddProperty(PropertyId.Location, loc);
             compositeEnd.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.7f, 0.2f, 0.9f).Store);
-            
+
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
             var result = new BlendTransition(compositeStart, compositeEnd, new Timer(0, 3000), easeStore);
 
