@@ -41,10 +41,10 @@ namespace DataArcs.Components.Simulators
 			    _delayCount++;
 			    if (true)//(_delayCount % 10 == 8)
 			    {
-				    if (SeriesUtils.Random.NextDouble() < 0.008)
+				    if (SeriesUtils.Random.NextDouble() < 0.006 && count > 100)
 				    {
-					    block1 = !block1;
-					    blockIndex = 0;
+                        block1 = !block1;
+                        blockIndex = 0;
                         count = 0;
 					    currentFn1 = Average1;
 						currentFn2 = Random2;
@@ -61,27 +61,27 @@ namespace DataArcs.Components.Simulators
                         var neighbors = automataCopy.GetNeighbors(i);
                         if (block1 && blockIndex > i)
                         {
-                            if (SeriesUtils.Random.NextDouble() < 0.0006)
+	                        if (count < 20)
+	                        {
+		                        DarkenSmall(currentValue, neighbors);
+	                        }
+                            else if (SeriesUtils.Random.NextDouble() < 0.001)
                             {
                                 currentValue = Random1(currentValue, neighbors);
                             }
                             else if (rnd0 < 0.01)
                             {
-	                            currentValue = Darken(currentValue, neighbors);
+	                            currentValue = DarkenSmall(currentValue, neighbors);
                             }
-                            else if (Math.Abs(currentValue.X - currentValue.Y) < 0.001f)
+                            else if (Math.Abs(currentValue.X - currentValue.Y) < 0.005f)
                             {
 	                            currentValue = RandomDark(currentValue, neighbors);
                             }
-                            else if (currentValue.Y < 0.4)
+                            else if (currentValue.Y < 0.3)
                             {
                                 currentValue = MaxNeighborPart(currentValue, neighbors);
                             }
-                            else if (SeriesUtils.Random.NextDouble() < 0.006)
-                            {
-	                            //currentValue = Lighten(currentValue, neighbors);
-                            }
-                            else if (currentValue.Z > 0.3)
+                            else if (currentValue.Z > 0.2)
                             {
                                 currentValue = MinNeighborPart(currentValue, neighbors);
                             }
@@ -92,10 +92,10 @@ namespace DataArcs.Components.Simulators
 	                        {
 		                        DarkenSmall(currentValue, neighbors);
                             }
-	                        else if (count < 42 && SeriesUtils.Random.NextDouble() < 0.0001)
+	                        else if (count < 42 && SeriesUtils.Random.NextDouble() < 0.0003)
 	                        {
-		                        currentValue = Random1(currentValue, neighbors);
-	                        }
+		                        currentValue.SetSeriesAtIndex(0, new FloatSeries(currentValue.VectorSize, 0, 0, 0.7f));
+                            }
                             else if (SeriesUtils.Random.NextDouble() < 0.00001)
 	                        {
 		                        currentValue = Random1(currentValue, neighbors);
@@ -199,13 +199,13 @@ namespace DataArcs.Components.Simulators
 
         private static Series MaxNeighborPart(Series currentValue, Series neighbors)
         {
-			currentValue.InterpolateInto(neighbors.Max(), .7f);
+			currentValue.InterpolateInto(neighbors.Max(), .2f);
 			return currentValue;
         }
 
         private static Series MinNeighborPart(Series currentValue, Series neighbors)
         {
-	        currentValue.InterpolateInto(neighbors.Min(), .9f);
+	        currentValue.InterpolateInto(neighbors.Min(), .99f);
 	        return currentValue;
         }
 

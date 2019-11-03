@@ -90,7 +90,7 @@ namespace DataArcs.Tests.GraphicTests
 		    //composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
 		    composite.Renderer = new PolyShape();
 			
-		    Store loc = new Store(MouseInput.MainFrameSize.Outset(-4f), sampler);
+		    Store loc = new Store(MouseInput.MainFrameSize.Outset(-0f), sampler);
 		    composite.AppendProperty(PropertyId.Location, loc);
 		    return composite;
         }
