@@ -60,8 +60,8 @@ namespace DataArcs.Samplers
 
             result.SetSeriesAtIndex(0, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 1, indexY), Capacity));
             result.SetSeriesAtIndex(1, series.GetValueAtVirtualIndex(WrappedIndexes(indexX, indexY - 1), Capacity));
-            result.SetSeriesAtIndex(3, series.GetValueAtVirtualIndex(WrappedIndexes(indexX - 1, indexY), Capacity));;
-            result.SetSeriesAtIndex(5, series.GetValueAtVirtualIndex(WrappedIndexes(indexX, indexY + 1), Capacity));
+            result.SetSeriesAtIndex(2, series.GetValueAtVirtualIndex(WrappedIndexes(indexX - 1, indexY), Capacity));;
+            result.SetSeriesAtIndex(3, series.GetValueAtVirtualIndex(WrappedIndexes(indexX, indexY + 1), Capacity));
 
             return result;
         }

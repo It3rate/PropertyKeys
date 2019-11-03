@@ -40,9 +40,10 @@ namespace DataArcs.Tests.GraphicTests
 		    switch (_versionIndex)
 		    {
 			    case 0:
-				    _current = GetGrid(Hex);
-				    //_currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
-				    _player.AddActiveElement(_current);
+                    _current = GetGrid(Hex);
+                    //_current = GetGrid(Grid);
+                    //_currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
+                    _player.AddActiveElement(_current);
 				    break;
 			    case 1:
 				    break;
@@ -61,8 +62,9 @@ namespace DataArcs.Tests.GraphicTests
         {
         }
 
+        GridSampler Grid => new GridSampler(new int[] { 75, 50 });
         HexagonSampler Hex => new HexagonSampler(new int[] { 75, 50 });
-	    //RingSampler Ring => new RingSampler(new int[] { 30, 25, 20, 15 });
+        //RingSampler Ring => new RingSampler(new int[] { 30, 25, 20, 15 });
 
         private IContainer GetGrid(Sampler sampler)
 	    {
