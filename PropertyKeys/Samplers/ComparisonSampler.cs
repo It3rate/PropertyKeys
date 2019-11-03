@@ -101,7 +101,7 @@ namespace DataArcs.Samplers
         private static ParametricSeries DistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)
         {
 	        var totals = GeneralEquation(seriesA, seriesB, (a, b) => (b - a) * (b - a));
-			return new ParametricSeries(1, (float)Math.Sqrt(totals.FloatData.Sum()));
+			return new ParametricSeries(1, (float)Math.Sqrt(totals.FloatDataRef.Sum()));
         }
 
         private static ParametricSeries SignedDistanceEquation(ParametricSeries seriesA, ParametricSeries seriesB, ParametricSeries c = null)

@@ -53,8 +53,8 @@ namespace DataArcs.Samplers
             }
 
             var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
-			var frame = series.Frame.FloatData; // x0,y0...n0, x1,y1..n1
-			var size = series.Size.FloatData; // s0,s1...sn
+			var frame = series.Frame.FloatDataRef; // x0,y0...n0, x1,y1..n1
+			var size = series.Size.FloatDataRef; // s0,s1...sn
             float minRadius = 0.3f; // todo: make class property
 
             var centerX = size[0] / 2.0f;

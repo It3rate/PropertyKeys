@@ -1,4 +1,5 @@
-﻿using DataArcs.Samplers;
+﻿using System;
+using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using System.Collections;
 
@@ -30,12 +31,16 @@ namespace DataArcs.Stores
 
 		public Series this[int index] => GetValuesAtIndex(index);
 
-        public override Series GetFullSeries()
-        {
-            return _series;
+		public override Series GetFullSeries()
+		{
+			return _series;
         }
+		public override void SetFullSeries(Series value)
+		{
+			_series = value;
+		}
 
-		public override Series GetValuesAtIndex(int index)
+        public override Series GetValuesAtIndex(int index)
 		{
 			return IsBaked ? _series.GetValueAtVirtualIndex(index, Capacity) : Sampler.GetValueAtIndex(_series, index);
 		}
@@ -82,8 +87,28 @@ namespace DataArcs.Stores
 		{
 			return new Store(_series.Copy(), Sampler, CombineFunction, CombineTarget);
 		}
-		
-		public static Store CreateItemStore(int count)
+		public override void CopySeriesDataInto(IStore target)
+		{
+			Series targetSeries = target.GetFullSeries();
+			
+            if (_series.Type == targetSeries.Type && _series.DataSize == targetSeries.DataSize)
+			{
+				if (_series.Type == SeriesType.Float)
+				{
+					Array.Copy(_series.FloatDataRef, target.GetFullSeries().FloatDataRef, _series.DataSize);
+				}
+				else if (_series.Type == SeriesType.Int)
+				{
+					Array.Copy(_series.IntDataRef, target.GetFullSeries().IntDataRef, _series.DataSize);
+                }
+			}
+            else
+            {
+				target.SetFullSeries(_series.Copy());
+            }
+		}
+
+        public static Store CreateItemStore(int count)
 		{
 			IntSeries result = new IntSeries(1, 0, count - 1);
 			return result.CreateLinearStore(count);

@@ -53,7 +53,7 @@ namespace DataArcs.SeriesData
 
         public override Series Copy()
         {
-	        ParametricSeries result = new ParametricSeries(VectorSize, FloatData);
+	        ParametricSeries result = new ParametricSeries(VectorSize, (float[])FloatDataRef.Clone());
 	        return result;
         }
     }

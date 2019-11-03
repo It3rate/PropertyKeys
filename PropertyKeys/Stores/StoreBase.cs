@@ -28,6 +28,7 @@ namespace DataArcs.Stores
         //}
 
         public abstract Series GetFullSeries();
+        public abstract void SetFullSeries(Series value);
 
         public abstract Series GetValuesAtIndex(int index);
 
@@ -47,6 +48,7 @@ namespace DataArcs.Stores
         public abstract void BakeData();
 
         public abstract IStore Clone();
+        public abstract void CopySeriesDataInto(IStore target);
 
         public IEnumerator GetEnumerator()
         {

@@ -74,19 +74,19 @@ namespace DataArcs.SeriesData
                     int diff = newSize - size;
                     float[] newFloats = new float[_floatValues.Length + diff];
                     Array.Copy(_floatValues, 0, newFloats, 0, start);
-                    Array.Copy(series.FloatData, 0, newFloats, start, newSize);
+                    Array.Copy(series.FloatDataRef, 0, newFloats, start, newSize);
                     Array.Copy(_floatValues, start + 1, newFloats, start + newSize, _floatValues.Length - start);
                     _floatValues = newFloats; // todo: make immutable, return a series (or this if no change) to store.
                 }
                 else
                 {
-                    Array.Copy(series.FloatData, 0, _floatValues, start, newSize);
+                    Array.Copy(series.FloatDataRef, 0, _floatValues, start, newSize);
                 }
                 Moves[index] = newMove;
 			}
             else
             {
-                Array.Copy(series.FloatData, 0, _floatValues, start, size);
+                Array.Copy(series.FloatDataRef, 0, _floatValues, start, size);
             }
 		}
 
@@ -151,7 +151,7 @@ namespace DataArcs.SeriesData
 		}
 		public override Series Copy()
 		{
-			BezierSeries result = new BezierSeries(FloatData, (BezierMove[])Moves.Clone());
+			BezierSeries result = new BezierSeries((float[])FloatDataRef.Clone(), (BezierMove[])Moves.Clone());
 			return result;
 		}
     }

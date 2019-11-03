@@ -29,7 +29,7 @@ namespace DataArcs.SeriesData
 			
 		}
 
-		//public float[] this[int index] => GetSeriesAtIndex(index).FloatData;
+		//public float[] this[int index] => GetSeriesAtIndex(index).FloatDataRef;
 
         public override Series GetSeriesAtIndex(int index)
 		{
@@ -51,7 +51,7 @@ namespace DataArcs.SeriesData
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
-			Array.Copy(series.FloatData, 0, _floatValues, startIndex * VectorSize, VectorSize);
+			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, VectorSize);
 		}
 
 		protected override void CalculateFrame()
@@ -85,16 +85,15 @@ namespace DataArcs.SeriesData
 		{
 			for (int i = 0; i < Count; i++)
 			{
-				var org = GetSeriesAtIndex(i).FloatData;
+				var org = GetSeriesAtIndex(i).FloatDataRef;
 				Array.Reverse(org);
-				SetSeriesAtIndex(i, new FloatSeries(VectorSize, org));
 			}
         }
 
 		public void Normalize()
         {
-            float[] frameMin = Frame.GetValueAtT(0).FloatData;
-            float[] frameMax = Frame.GetValueAtT(1).FloatData;
+            float[] frameMin = Frame.GetValueAtT(0).FloatDataRef;
+            float[] frameMax = Frame.GetValueAtT(1).FloatDataRef;
             float maxDif = int.MinValue;
             for (int i = 0; i < frameMax.Length; i++)
             {
@@ -117,8 +116,8 @@ namespace DataArcs.SeriesData
             Normalize();
 
             Series frame = bounds.Frame;
-            float[] boundsMin = frame.GetValueAtT(0).FloatData;
-			float[] boundsDif = frame.GetValueAtT(1).FloatData;
+            float[] boundsMin = frame.GetValueAtT(0).FloatDataRef;
+			float[] boundsDif = (float[])frame.GetValueAtT(1).FloatDataRef.Clone();
 			for (int i = 0; i < boundsDif.Length; i++)
 			{
 				boundsDif[i] -= boundsMin[i];
@@ -264,9 +263,9 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-        public override float[] FloatData => (float[]) _floatValues.Clone();
-		public override int[] IntData => _floatValues.ToInt();
-		public override bool[] BoolData => throw new NotImplementedException();
+        public override float[] FloatDataRef => _floatValues;
+		public override int[] IntDataRef => throw new NotImplementedException(); //_floatValues.ToInt();
+		public override bool[] BoolDataRef => throw new NotImplementedException();
 
 		//public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
 		public override float FloatDataAt(int index)
@@ -308,7 +307,7 @@ namespace DataArcs.SeriesData
 
 		public override Series Copy()
 		{
-			FloatSeries result = new FloatSeries(VectorSize, FloatData);
+			FloatSeries result = new FloatSeries(VectorSize, (float[])FloatDataRef.Clone());
 			return result;
 		}
 	}

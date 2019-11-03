@@ -38,7 +38,7 @@ namespace DataArcs.SeriesData
 			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.GetZeroFloatSeries(vectorSize, _count) : GenerateDataSeries();
 		}
 		
-		public float[] this[int index] => _series.GetSeriesAtIndex(index).FloatData;
+		public float[] this[int index] => _series.GetSeriesAtIndex(index).FloatDataRef;
 
 		public override Store BakedStore => GenerateDataSeries().Store;
 
@@ -127,8 +127,8 @@ namespace DataArcs.SeriesData
 		protected override void CalculateFrame()
 		{
             Frame = (RectFSeries)_minMax.Copy();
-            float[] max = _minMax.GetValueAtT(1f).FloatData;
-            SeriesUtils.SubtractFloatArrayFrom(max, _minMax.GetValueAtT(0).FloatData);
+            float[] max = _minMax.GetValueAtT(1f).FloatDataRef;
+            SeriesUtils.SubtractFloatArrayFrom(max, _minMax.GetValueAtT(0).FloatDataRef);
             Size = new FloatSeries(VectorSize, max);
         }
 
@@ -152,9 +152,9 @@ namespace DataArcs.SeriesData
 			return _series.BoolDataAt(index);
 		}
 
-		public override float[] FloatData => _series.FloatData;
-		public override int[] IntData => _series.IntData;
-		public override bool[] BoolData => _series.BoolData;
+		public override float[] FloatDataRef => _series.FloatDataRef;
+		public override int[] IntDataRef => _series.IntDataRef;
+		public override bool[] BoolDataRef => _series.BoolDataRef;
 
 		public override void InterpolateInto(Series b, float t)
 		{

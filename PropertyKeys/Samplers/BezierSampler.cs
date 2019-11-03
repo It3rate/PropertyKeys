@@ -29,7 +29,7 @@ namespace DataArcs.Samplers
         private Series GetSeriesSample(Series series, float t)
         {
             var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
-            var strideTs = GetSeriesAtT(t).FloatData;
+            var strideTs = GetSeriesAtT(t).FloatDataRef;
 
             for (var i = 0; i < result.Length; i++)
             {
@@ -43,8 +43,8 @@ namespace DataArcs.Samplers
         {
             SeriesUtils.GetScaledT(t, Capacity, out var vT, out var startIndex, out var endIndex);
             var aSeries = BezierSeries.GetSeriesAtIndex(startIndex);
-            var a = aSeries.GetValueAtVirtualIndex(startIndex == endIndex ? 0 : aSeries.Count - 1, aSeries.Count).FloatData;
-            var b = BezierSeries.GetSeriesAtIndex(endIndex).FloatData; // GetFloatArrayAtIndex(endIndex);
+            var a = aSeries.GetValueAtVirtualIndex(startIndex == endIndex ? 0 : aSeries.Count - 1, aSeries.Count).FloatDataRef;
+            var b = BezierSeries.GetSeriesAtIndex(endIndex).FloatDataRef; // GetFloatArrayAtIndex(endIndex);
             var moveType = startIndex < BezierSeries.Moves.Length ? BezierSeries.Moves[startIndex] : BezierMove.LineTo;
 
             var p2Index = b.Length - 2;

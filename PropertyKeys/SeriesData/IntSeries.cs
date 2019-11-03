@@ -28,7 +28,7 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		//public int[] this[int index] => GetSeriesAtIndex(index).IntData;
+		//public int[] this[int index] => GetSeriesAtIndex(index).IntDataRef;
 
         public override Series GetSeriesAtIndex(int index)
 		{
@@ -50,14 +50,14 @@ namespace DataArcs.SeriesData
         {
             var len = DataSize / VectorSize;
             var startIndex = Math.Min(len - 1, Math.Max(0, index));
-            Array.Copy(series.IntData, 0, _intValues, startIndex * VectorSize, VectorSize);
+            Array.Copy(series.IntDataRef, 0, _intValues, startIndex * VectorSize, VectorSize);
         }
 
 		public override void Reverse()
 		{
 			for (int i = 0; i < Count; i++)
 			{
-				var org = GetSeriesAtIndex(i).IntData;
+				var org = GetSeriesAtIndex(i).IntDataRef;
 				Array.Reverse(org);
 				SetSeriesAtIndex(i, new IntSeries(VectorSize, org));
 			}
@@ -154,9 +154,9 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		public override float[] FloatData => _intValues.ToFloat();
-		public override int[] IntData => (int[]) _intValues.Clone();
-		public override bool[] BoolData => throw new NotImplementedException();
+		public override float[] FloatDataRef => throw new NotImplementedException(); //_intValues.ToFloat();
+		public override int[] IntDataRef => (int[]) _intValues.Clone();
+		public override bool[] BoolDataRef => throw new NotImplementedException();
 
 		public override float FloatDataAt(int index)
         {
@@ -197,7 +197,7 @@ namespace DataArcs.SeriesData
 
 		public override Series Copy()
 		{
-			IntSeries result = new IntSeries(VectorSize, IntData);
+			IntSeries result = new IntSeries(VectorSize, IntDataRef);
 			return result;
 		}
 

@@ -14,8 +14,9 @@ namespace DataArcs.Stores
 		Sampler Sampler { get; set; }
 
         Series GetFullSeries();
+        void SetFullSeries(Series value);
 
-		Series GetValuesAtIndex(int index);
+        Series GetValuesAtIndex(int index);
 		Series GetValuesAtT(float t);
         ParametricSeries GetSampledTs(ParametricSeries seriesT);
         Series GetNeighbors(int index, bool wrapEdges = true);
@@ -24,6 +25,7 @@ namespace DataArcs.Stores
 		void ResetData();
 		void BakeData();
 		IStore Clone();
+		void CopySeriesDataInto(IStore target);
 
     }
 

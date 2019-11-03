@@ -55,25 +55,25 @@ namespace DataArcs.Tests
             int[] strides = {10, 10};
 			var cl = strides[0] - 1f;
 			float[] sample;
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, -3).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, -3).FloatDataRef;
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 0).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 0).FloatDataRef;
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 1).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 1).FloatDataRef;
 			ArraysEqual(new float[] {1f / cl, 0}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 9).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 9).FloatDataRef;
 			ArraysEqual(new float[] {1f, 0}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 10).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 10).FloatDataRef;
 			ArraysEqual(new float[] {0, 1f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 11).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 11).FloatDataRef;
 			ArraysEqual(new float[] {1f / cl, 1f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 53).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 53).FloatDataRef;
 			ArraysEqual(new float[] {3f / cl, 5f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 99).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 99).FloatDataRef;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 100).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 100).FloatDataRef;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 101).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedT(strides, virtualCount, 101).FloatDataRef;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
 		}
 
@@ -85,25 +85,25 @@ namespace DataArcs.Tests
             int[] strides = {10, 10};
 			var cl = strides[0] - 1f;
 			var len = virtualCount - 1f;
-			var sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, -3f).FloatData;
+			var sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, -3f).FloatDataRef;
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 0).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 0).FloatDataRef;
 			ArraysEqual(new float[] {0, 0}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 1f / len).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 1f / len).FloatDataRef;
 			ArraysEqual(new float[] {1f / cl, 0}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 9f / len).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 9f / len).FloatDataRef;
 			ArraysEqual(new float[] {1f, 0}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 10f / len).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 10f / len).FloatDataRef;
 			ArraysEqual(new float[] {0, 1f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 11f / len).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 11f / len).FloatDataRef;
 			ArraysEqual(new float[] {1f / cl, 1f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 53f / len).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 53f / len).FloatDataRef;
 			ArraysEqual(new float[] {3f / cl, 5f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 1f).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 1f).FloatDataRef;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 100f / len).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 100f / len).FloatDataRef;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
-			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 101 / len).FloatData;
+			sample = SamplerUtils.GetMultipliedJaggedTFromT(strides, virtualCount, 101 / len).FloatDataRef;
 			ArraysEqual(new float[] {9f / cl, 9f / cl}, sample, delta);
 		}
 
@@ -204,23 +204,23 @@ namespace DataArcs.Tests
 		{
 			//series_2 = new FloatSeries(2, 10f, 20f, 110f, 220f, 310f, 420f);
 			float[] sample;
-			sample = series_2.GetValueAtT(-10f).FloatData;
+			sample = series_2.GetValueAtT(-10f).FloatDataRef;
 			ArraysEqual(new float[] {10f, 20f}, sample, delta);
-			sample = series_2.GetValueAtT(0f).FloatData;
+			sample = series_2.GetValueAtT(0f).FloatDataRef;
 			ArraysEqual(new float[] {10f, 20f}, sample, delta);
 
-			sample = series_2.GetValueAtT(0.25f).FloatData;
+			sample = series_2.GetValueAtT(0.25f).FloatDataRef;
 			ArraysEqual(new float[] {60f, 120f}, sample, delta);
-			sample = series_2.GetValueAtT(0.5f).FloatData;
+			sample = series_2.GetValueAtT(0.5f).FloatDataRef;
 			ArraysEqual(new float[] {110f, 220f}, sample, 0.6f);// due to rounding of .5 on indexes of different accelerations this is out a bit. //delta);
-			sample = series_2.GetValueAtT(0.75f).FloatData;
+			sample = series_2.GetValueAtT(0.75f).FloatDataRef;
 			ArraysEqual(new float[] {210f, 320f}, sample, delta);
 
-			sample = series_2.GetValueAtT(1f).FloatData;
+			sample = series_2.GetValueAtT(1f).FloatDataRef;
 			ArraysEqual(new float[] {310f, 420f}, sample, delta);
-			sample = series_2.GetValueAtT(1.1f).FloatData;
+			sample = series_2.GetValueAtT(1.1f).FloatDataRef;
 			ArraysEqual(new float[] {310f, 420f}, sample, delta);
-			sample = series_2.GetValueAtT(10f).FloatData;
+			sample = series_2.GetValueAtT(10f).FloatDataRef;
 			ArraysEqual(new float[] {310f, 420f}, sample, delta);
 
 			//float testSample = series_2.GetSeriesAtT(1f / 3f).X;

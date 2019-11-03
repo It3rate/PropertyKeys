@@ -12,11 +12,13 @@ namespace DataArcs.Components.Simulators
     public class AutomataComposite : Container
     {
 	    private IStore _automata;
-	    public override int Capacity { get => _automata.Capacity; set { } }
+	    private IStore _previousAutomata;
+        public override int Capacity { get => _automata.Capacity; set { } }
 
 	    public AutomataComposite(IStore itemStore, IStore automataStore) : base(itemStore)
 	    {
 		    _automata = automataStore;
+		    _previousAutomata = _automata.Clone();
 			if (_automata != null)
 			{
 				AddProperty(PropertyId.Automata, _automata);
@@ -53,12 +55,12 @@ namespace DataArcs.Components.Simulators
 				    blockIndex += 100;
 
                     int capacity = Capacity;
-				    var automataCopy = _automata.Clone();
+                    _automata.CopySeriesDataInto(_previousAutomata);
 				    float rnd0 = (float)SeriesUtils.Random.NextDouble();
                     for (int i = 0; i < capacity; i++)
 				    {
-					    var currentValue = automataCopy.GetFullSeries().GetValueAtVirtualIndex(i, capacity);
-                        var neighbors = automataCopy.GetNeighbors(i);
+					    var currentValue = _previousAutomata.GetFullSeries().GetValueAtVirtualIndex(i, capacity);
+                        var neighbors = _previousAutomata.GetNeighbors(i);
                         if (block1 && blockIndex > i)
                         {
 	                        if (count < 20)
@@ -125,7 +127,7 @@ namespace DataArcs.Components.Simulators
 		                        var temp = currentFn1;
 		                        currentFn1 = currentFn2;
 		                        currentFn2 = temp;
-		                        currentValue.FloatData[2] = 0.3f;
+		                        //currentValue.FloatDataRef[2] = 0.3f;
 	                        }
 	                        else if (neighbors.Average().Y < 0.001f)
 	                        {

@@ -130,9 +130,9 @@ namespace DataArcs.SeriesData
         public abstract bool BoolDataAt(int index);
 
 		// todo: make an IEnumerable overload for the internal data type.
-        public abstract float[] FloatData { get; }
-        public abstract int[] IntData { get; }
-        public abstract bool[] BoolData { get; }
+        public abstract float[] FloatDataRef { get; }
+        public abstract int[] IntDataRef { get; }
+        public abstract bool[] BoolDataRef { get; }
 
         public abstract void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
         public abstract void InterpolateInto(Series b, float t);
@@ -168,7 +168,7 @@ namespace DataArcs.SeriesData
 	        var result = new float[VectorSize];
             for (int i = 0; i < Count; i++)
 	        {
-		        var svals = GetSeriesAtIndex(i).FloatData;
+		        var svals = GetSeriesAtIndex(i).FloatDataRef;
 		        for (int j = 0; j < svals.Length; j++)
 		        {
 			        result[j] += svals[j];
@@ -180,7 +180,7 @@ namespace DataArcs.SeriesData
         }
         public Series Average()
         {
-	        var result = Sum().FloatData;
+	        var result = Sum().FloatDataRef; // already a copy
 	        float len = Count;
 	        for (int j = 0; j < result.Length; j++)
 	        {
@@ -193,7 +193,7 @@ namespace DataArcs.SeriesData
 	        var result = new float[VectorSize];
 	        for (int i = 0; i < Count; i++)
 	        {
-		        var svals = GetSeriesAtIndex(i).FloatData;
+		        var svals = GetSeriesAtIndex(i).FloatDataRef;
 		        for (int j = 0; j < svals.Length; j++)
 		        {
 			        result[j] = svals[j] > result[j] ? svals[j] : result[j];
@@ -206,7 +206,7 @@ namespace DataArcs.SeriesData
 	        var result = new float[VectorSize];
 	        for (int i = 0; i < Count; i++)
 	        {
-		        var svals = GetSeriesAtIndex(i).FloatData;
+		        var svals = GetSeriesAtIndex(i).FloatDataRef;
 		        for (int j = 0; j < svals.Length; j++)
 		        {
 			        result[j] = svals[j] < result[j] ? svals[j] : result[j];

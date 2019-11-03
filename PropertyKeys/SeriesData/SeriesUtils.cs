@@ -148,8 +148,8 @@ namespace DataArcs.SeriesData
                     for (var i = 0; i < a.DataSize; i++)
                     {
                         var delta = 0.0001f;
-                        var ar = a.GetSeriesAtIndex(i).FloatData;
-                        var br = b.GetSeriesAtIndex(i).FloatData;
+                        var ar = a.GetSeriesAtIndex(i).FloatDataRef;
+                        var br = b.GetSeriesAtIndex(i).FloatDataRef;
                         for (var j = 0; j < ar.Length; j++)
                         {
                             if (Math.Abs(ar[j] - br[j]) > delta)
@@ -164,8 +164,8 @@ namespace DataArcs.SeriesData
                 {
                     for (var i = 0; i < a.DataSize; i++)
                     {
-                        var ar = a.GetSeriesAtIndex(i).IntData;
-                        var br = b.GetSeriesAtIndex(i).IntData;
+                        var ar = a.GetSeriesAtIndex(i).IntDataRef;
+                        var br = b.GetSeriesAtIndex(i).IntDataRef;
                         for (var j = 0; j < ar.Length; j++)
                         {
                             if (ar[j] != br[j])
