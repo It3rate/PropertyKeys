@@ -82,7 +82,7 @@ namespace DataArcs.Commands
 			if (end != null)
 			{
 				var endAr = end.GetValuesAtIndex(index).FloatDataRef;
-				SeriesUtils.InterpolateInto(result, endAr, t);
+				ArrayExtension.InterpolateInto(result, endAr, t);
 			}
 
 			return result;
@@ -94,7 +94,7 @@ namespace DataArcs.Commands
 			if (end != null)
 			{
 				var endAr = end.GetValuesAtT(indexT).FloatDataRef;
-				SeriesUtils.InterpolateInto(result, endAr, t);
+				ArrayExtension.InterpolateInto(result, endAr, t);
 			}
 
 			return result;

@@ -113,7 +113,7 @@ namespace DataArcs.SeriesData
 	            _seed = SeriesUtils.Random.Next();
                 var b = GenerateDataSeries();
                 float tSec = time / 1000f;
-                var scaled = new FloatSeries(VectorSize, SeriesUtils.GetSizedFloatArray(VectorSize, tSec));
+                var scaled = new FloatSeries(VectorSize, ArrayExtension.GetSizedFloatArray(VectorSize, tSec));
 				b.CombineInto(scaled, CombineFunction.Multiply);
                 _series.CombineInto(b, CombineFunction.Add);
             }
@@ -128,7 +128,7 @@ namespace DataArcs.SeriesData
 		{
             Frame = (RectFSeries)_minMax.Copy();
             float[] max = _minMax.GetValueAtT(1f).FloatDataRef;
-            SeriesUtils.SubtractFloatArrayFrom(max, _minMax.GetValueAtT(0).FloatDataRef);
+            ArrayExtension.SubtractFloatArrayFrom(max, _minMax.GetValueAtT(0).FloatDataRef);
             Size = new FloatSeries(VectorSize, max);
         }
 

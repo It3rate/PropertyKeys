@@ -39,7 +39,7 @@ namespace DataArcs.Samplers
         
         public override Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
-            var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
+            var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)
 			{
 				result[i] = (i < Strides.Length) ? series.GetValueAtT(seriesT[i]).FloatDataAt(i) : 0;

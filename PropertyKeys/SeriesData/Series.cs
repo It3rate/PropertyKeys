@@ -165,54 +165,19 @@ namespace DataArcs.SeriesData
 
         public Series Sum()
         {
-	        var result = new float[VectorSize];
-            for (int i = 0; i < Count; i++)
-	        {
-		        var svals = GetSeriesAtIndex(i).FloatDataRef;
-		        for (int j = 0; j < svals.Length; j++)
-		        {
-			        result[j] += svals[j];
-		        }
-            }
-            return SeriesUtils.CreateSeriesOfType(this, result);
-
-
+	        return SeriesUtils.Sum(this);
         }
         public Series Average()
         {
-	        var result = Sum().FloatDataRef; // already a copy
-	        float len = Count;
-	        for (int j = 0; j < result.Length; j++)
-	        {
-		        result[j] /= len;
-	        }
-	        return SeriesUtils.CreateSeriesOfType(this, result);
+	        return SeriesUtils.Average(this);
         }
         public Series Max()
         {
-	        var result = new float[VectorSize];
-	        for (int i = 0; i < Count; i++)
-	        {
-		        var svals = GetSeriesAtIndex(i).FloatDataRef;
-		        for (int j = 0; j < svals.Length; j++)
-		        {
-			        result[j] = svals[j] > result[j] ? svals[j] : result[j];
-		        }
-	        }
-	        return SeriesUtils.CreateSeriesOfType(this, result);
+	        return SeriesUtils.Max(this);
         }
         public Series Min()
         {
-	        var result = new float[VectorSize];
-	        for (int i = 0; i < Count; i++)
-	        {
-		        var svals = GetSeriesAtIndex(i).FloatDataRef;
-		        for (int j = 0; j < svals.Length; j++)
-		        {
-			        result[j] = svals[j] < result[j] ? svals[j] : result[j];
-                }
-	        }
-	        return SeriesUtils.CreateSeriesOfType(this, result);
+	        return SeriesUtils.Min(this);
         }
 
         #region Enumeration

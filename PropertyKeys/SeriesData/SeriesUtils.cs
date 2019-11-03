@@ -70,36 +70,6 @@ namespace DataArcs.SeriesData
 
 	        return result;
 	    }
-
-        public static void InterpolateInto(float[] result, float[] b, float t)
-		{
-			for (var i = 0; i < result.Length; i++)
-			{
-				if (i < b.Length)
-				{
-					result[i] += (b[i] - result[i]) * t;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-
-		public static void Shuffle(Series series)
-		{
-			var len = series.DataSize;
-			for (var i = 0; i < series.DataSize; i++)
-			{
-				var a = Random.Next(len);
-				var b = Random.Next(len);
-				var sa = series.GetSeriesAtIndex(a);
-				var sb = series.GetSeriesAtIndex(b);
-				series.SetSeriesAtIndex(a, sb);
-				series.SetSeriesAtIndex(b, sa);
-			}
-		}
-
 		public static Series CreateSeriesOfType(Series series, int[] values)
 		{
 			Series result;
@@ -187,20 +157,19 @@ namespace DataArcs.SeriesData
 
 		public static FloatSeries GetZeroFloatSeries(int vectorSize, int elementCount)
 		{
-			return new FloatSeries(vectorSize, GetFloatZeroArray(vectorSize * elementCount));
+			return new FloatSeries(vectorSize, ArrayExtension.GetFloatZeroArray(vectorSize * elementCount));
 		}
 		public static ParametricSeries GetZeroParametricSeries(int vectorSize, int elementCount)
 		{
-			return new ParametricSeries(vectorSize, GetFloatZeroArray(vectorSize * elementCount));
+			return new ParametricSeries(vectorSize, ArrayExtension.GetFloatZeroArray(vectorSize * elementCount));
 		}
 
         public static IntSeries GetZeroIntSeries(int vectorSize, int elementCount)
 		{
-			return new IntSeries(vectorSize, GetIntZeroArray(vectorSize * elementCount));
+			return new IntSeries(vectorSize, ArrayExtension.GetIntZeroArray(vectorSize * elementCount));
 		}
 
-
-		public static readonly Random Random = new Random();
+        public static readonly Random Random = new Random();
         
         public static void GetScaledT(float t, int len, out float virtualT, out int startIndex, out int endIndex)
 		{
@@ -225,127 +194,100 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		public static float[] CombineFloatArrays(params float[][] arrays)
+
+        public static Series InterpolateInto(Series source, Series target, float t)
+        {
+			source.InterpolateInto(target, t);
+	        return source;
+        }
+
+        public static void Shuffle(Series series)
 		{
-			var len = 0;
-			for (var i = 0; i < arrays.Length; i++)
+			var len = series.DataSize;
+			for (var i = 0; i < series.DataSize; i++)
 			{
-				len += arrays[i].Length;
-			}
-
-			var result = new float[len];
-			var index = 0;
-			for (var i = 0; i < arrays.Length; i++)
-			{
-				Array.Copy(arrays[i], 0, result, index, arrays[i].Length);
-				index += arrays[i].Length;
-			}
-
-			return result;
-		}
-		public static int[] CombineIntArrays(params int[][] arrays)
-		{
-			var len = 0;
-			for (var i = 0; i < arrays.Length; i++)
-			{
-				len += arrays[i].Length;
-			}
-
-			var result = new int[len];
-			var index = 0;
-			for (var i = 0; i < arrays.Length; i++)
-			{
-				Array.Copy(arrays[i], 0, result, index, arrays[i].Length);
-				index += arrays[i].Length;
-			}
-
-			return result;
-		}
-
-		public static void MultiplyFloatArrayBy(float[] result, float b)
-		{
-			for (var i = 0; i < result.Length; i++)
-			{
-				result[i] *= b;
+				var a = Random.Next(len);
+				var b = Random.Next(len);
+				var sa = series.GetSeriesAtIndex(a);
+				var sb = series.GetSeriesAtIndex(b);
+				series.SetSeriesAtIndex(a, sb);
+				series.SetSeriesAtIndex(b, sa);
 			}
 		}
-		public static void SubtractFloatArrayFrom(float[] result, float[] b)
-		{
-			for (var i = 0; i < result.Length; i++)
-			{
-				if (i < b.Length)
-				{
-					result[i] -= b[i];
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-        public static void SubtractIntArrayFrom(int[] result, int[] b)
-		{
-			for (var i = 0; i < result.Length; i++)
-			{
-				if (i < b.Length)
-				{
-					result[i] -= b[i];
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-
-        public static float[] GetSizedFloatArray(int size, float value)
+        public static Series Sum(Series source)
         {
-            var result = new float[size];
-            for (var i = 0; i < size; i++)
-            {
-                result[i] = value;
-            }
-
-            return result;
+	        var result = new float[source.VectorSize];
+	        for (int i = 0; i < source.Count; i++)
+	        {
+		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        for (int j = 0; j < svals.Length; j++)
+		        {
+			        result[j] += svals[j];
+		        }
+	        }
+	        return CreateSeriesOfType(source, result);
         }
-        public static int[] GetSizedIntArray(int size, int value)
+        public static Series Scale(Series source)
         {
-            var result = new int[size];
-            for (var i = 0; i < size; i++)
-            {
-                result[i] = value;
-            }
-
-            return result;
+	        var result = new float[source.VectorSize];
+	        for (int i = 0; i < source.Count; i++)
+	        {
+		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        for (int j = 0; j < svals.Length; j++)
+		        {
+			        result[j] *= svals[j];
+		        }
+	        }
+	        return CreateSeriesOfType(source, result);
         }
-
-        public static float[] GetFloatZeroArray(int size)
+        public static Series Average(Series source)
         {
-            return new float[size];
+	        var result = Sum(source).FloatDataRef; // already a copy
+	        float len = source.Count;
+	        for (int j = 0; j < result.Length; j++)
+	        {
+		        result[j] /= len;
+	        }
+	        return CreateSeriesOfType(source, result);
         }
-        public static float[] GetFloatMinArray(int size)
+        public static Series Max(Series source)
         {
-            return GetSizedFloatArray(size, float.MinValue);
-            //return Enumerable.Repeat<float>(float.MinValue, size).ToArray();
+	        var result = new float[source.VectorSize];
+	        for (int i = 0; i < source.Count; i++)
+	        {
+		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        for (int j = 0; j < svals.Length; j++)
+		        {
+			        result[j] = svals[j] > result[j] ? svals[j] : result[j];
+		        }
+	        }
+	        return CreateSeriesOfType(source, result);
         }
-        public static float[] GetFloatMaxArray(int size)
+        public static Series Min(Series source)
         {
-            return GetSizedFloatArray(size, float.MaxValue);
-            //return Enumerable.Repeat<float>(float.MaxValue, size).ToArray();
+	        var result = new float[source.VectorSize];
+	        for (int i = 0; i < source.Count; i++)
+	        {
+		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        for (int j = 0; j < svals.Length; j++)
+		        {
+			        result[j] = svals[j] < result[j] ? svals[j] : result[j];
+		        }
+	        }
+	        return CreateSeriesOfType(source, result);
         }
-        public static int[] GetIntZeroArray(int size)
+        public static Series ClampTo01(Series source)
         {
-            return new int[size];
-        }
-        public static int[] GetIntMinArray(int size)
-        {
-            return GetSizedIntArray(size, int.MinValue);
-            //return Enumerable.Repeat<int>(int.MinValue, size).ToArray();
-        }
-        public static int[] GetIntMaxArray(int size)
-        {
-            return GetSizedIntArray(size, int.MaxValue);
-            //return Enumerable.Repeat<int>(int.MaxValue, size).ToArray();
+	        var result = new float[source.VectorSize];
+	        for (int i = 0; i < source.Count; i++)
+	        {
+		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        for (int j = 0; j < svals.Length; j++)
+		        {
+			        result[j] = Math.Max(0, Math.Min(1, svals[j]));
+		        }
+	        }
+	        return CreateSeriesOfType(source, result);
         }
     }
 
@@ -377,5 +319,152 @@ namespace DataArcs.SeriesData
         {
             return new Store(values.ToSeries());
         }
-    }
+
+        public static float[] CombineFloatArrays(params float[][] arrays)
+        {
+	        var len = 0;
+	        for (var i = 0; i < arrays.Length; i++)
+	        {
+		        len += arrays[i].Length;
+	        }
+
+	        var result = new float[len];
+	        var index = 0;
+	        for (var i = 0; i < arrays.Length; i++)
+	        {
+		        Array.Copy(arrays[i], 0, result, index, arrays[i].Length);
+		        index += arrays[i].Length;
+	        }
+
+	        return result;
+        }
+
+        public static int[] CombineIntArrays(params int[][] arrays)
+        {
+	        var len = 0;
+	        for (var i = 0; i < arrays.Length; i++)
+	        {
+		        len += arrays[i].Length;
+	        }
+
+	        var result = new int[len];
+	        var index = 0;
+	        for (var i = 0; i < arrays.Length; i++)
+	        {
+		        Array.Copy(arrays[i], 0, result, index, arrays[i].Length);
+		        index += arrays[i].Length;
+	        }
+
+	        return result;
+        }
+
+        public static void MultiplyFloatArrayBy(float[] result, float b)
+        {
+	        for (var i = 0; i < result.Length; i++)
+	        {
+		        result[i] *= b;
+	        }
+        }
+
+        public static void SubtractFloatArrayFrom(float[] result, float[] b)
+        {
+	        for (var i = 0; i < result.Length; i++)
+	        {
+		        if (i < b.Length)
+		        {
+			        result[i] -= b[i];
+		        }
+		        else
+		        {
+			        break;
+		        }
+	        }
+        }
+
+        public static void SubtractIntArrayFrom(int[] result, int[] b)
+        {
+	        for (var i = 0; i < result.Length; i++)
+	        {
+		        if (i < b.Length)
+		        {
+			        result[i] -= b[i];
+		        }
+		        else
+		        {
+			        break;
+		        }
+	        }
+        }
+
+        public static float[] GetSizedFloatArray(int size, float value)
+        {
+	        var result = new float[size];
+	        for (var i = 0; i < size; i++)
+	        {
+		        result[i] = value;
+	        }
+
+	        return result;
+        }
+
+        public static int[] GetSizedIntArray(int size, int value)
+        {
+	        var result = new int[size];
+	        for (var i = 0; i < size; i++)
+	        {
+		        result[i] = value;
+	        }
+
+	        return result;
+        }
+
+        public static float[] GetFloatZeroArray(int size)
+        {
+	        return new float[size];
+        }
+
+        public static float[] GetFloatMinArray(int size)
+        {
+	        return GetSizedFloatArray(size, Single.MinValue);
+	        //return Enumerable.Repeat<float>(float.MinValue, size).ToArray();
+        }
+
+        public static float[] GetFloatMaxArray(int size)
+        {
+	        return GetSizedFloatArray(size, Single.MaxValue);
+	        //return Enumerable.Repeat<float>(float.MaxValue, size).ToArray();
+        }
+
+        public static int[] GetIntZeroArray(int size)
+        {
+	        return new int[size];
+        }
+
+        public static int[] GetIntMinArray(int size)
+        {
+	        return GetSizedIntArray(size, Int32.MinValue);
+	        //return Enumerable.Repeat<int>(int.MinValue, size).ToArray();
+        }
+
+        public static int[] GetIntMaxArray(int size)
+        {
+	        return GetSizedIntArray(size, Int32.MaxValue);
+	        //return Enumerable.Repeat<int>(int.MaxValue, size).ToArray();
+        }
+
+        public static void InterpolateInto(float[] result, float[] b, float t)
+        {
+	        for (var i = 0; i < result.Length; i++)
+	        {
+		        if (i < b.Length)
+		        {
+			        result[i] += (b[i] - result[i]) * t;
+		        }
+		        else
+		        {
+			        break;
+		        }
+	        }
+        }
+	}
 }

@@ -28,7 +28,7 @@ namespace DataArcs.Samplers
       
         private Series GetSeriesSample(Series series, float t)
         {
-            var result = SeriesUtils.GetFloatZeroArray(series.VectorSize);
+            var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             var strideTs = GetSeriesAtT(t).FloatDataRef;
 
             for (var i = 0; i < result.Length; i++)

@@ -56,8 +56,8 @@ namespace DataArcs.SeriesData
 
 		protected override void CalculateFrame()
 		{
-			var min = SeriesUtils.GetFloatMaxArray(VectorSize);
-			var max = SeriesUtils.GetFloatMinArray(VectorSize);
+			var min = ArrayExtension.GetFloatMaxArray(VectorSize);
+			var max = ArrayExtension.GetFloatMinArray(VectorSize);
 
 			for (var i = 0; i < DataSize; i += VectorSize)
 			{
@@ -75,8 +75,8 @@ namespace DataArcs.SeriesData
 				}
 			}
 
-			Frame = new RectFSeries(SeriesUtils.CombineFloatArrays(min, max));
-			SeriesUtils.SubtractFloatArrayFrom(max, min);
+			Frame = new RectFSeries(ArrayExtension.CombineFloatArrays(min, max));
+			ArrayExtension.SubtractFloatArrayFrom(max, min);
 			Size = new FloatSeries(VectorSize, max);
 		}
 
@@ -287,7 +287,7 @@ namespace DataArcs.SeriesData
 
 		public override Series GetZeroSeries()
 		{
-			return new FloatSeries(VectorSize, SeriesUtils.GetFloatZeroArray(VectorSize));
+			return new FloatSeries(VectorSize, ArrayExtension.GetFloatZeroArray(VectorSize));
 		}
 
 		public override Series GetZeroSeries(int elementCount)
@@ -297,12 +297,12 @@ namespace DataArcs.SeriesData
 
 		public override Series GetMinSeries()
 		{
-			return new FloatSeries(VectorSize, SeriesUtils.GetFloatMinArray(VectorSize));
+			return new FloatSeries(VectorSize, ArrayExtension.GetFloatMinArray(VectorSize));
 		}
 
 		public override Series GetMaxSeries()
 		{
-			return new FloatSeries(VectorSize, SeriesUtils.GetFloatMaxArray(VectorSize));
+			return new FloatSeries(VectorSize, ArrayExtension.GetFloatMaxArray(VectorSize));
 		}
 
 		public override Series Copy()

@@ -28,7 +28,7 @@ namespace DataArcs.SeriesData
 
         public override Series GetZeroSeries()
         {
-	        return new ParametricSeries(VectorSize, SeriesUtils.GetFloatZeroArray(VectorSize));
+	        return new ParametricSeries(VectorSize, ArrayExtension.GetFloatZeroArray(VectorSize));
         }
 
         public override Series GetZeroSeries(int elementCount)

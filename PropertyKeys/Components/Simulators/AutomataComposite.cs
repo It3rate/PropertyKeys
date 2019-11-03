@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.PropertyGridInternal;
+using DataArcs.Adapters.Color;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
 
@@ -27,7 +28,7 @@ namespace DataArcs.Components.Simulators
 
 	    private int _delayCount = 0;
 	    private ParamterizedFunction currentFn1 = Average1;
-	    private ParamterizedFunction currentFn2 = Random2;
+	    private ParamterizedFunction currentFn2 = RandomMid;
 	    private bool isBusy = false;
 
 	    bool block1 = false;
@@ -49,7 +50,7 @@ namespace DataArcs.Components.Simulators
                         blockIndex = 0;
                         count = 0;
 					    currentFn1 = Average1;
-						currentFn2 = Random2;
+						currentFn2 = RandomMid;
 					}
 				    count++;
 				    blockIndex += 100;
@@ -69,7 +70,7 @@ namespace DataArcs.Components.Simulators
 	                        }
                             else if (SeriesUtils.Random.NextDouble() < 0.001)
                             {
-                                currentValue = Random1(currentValue, neighbors);
+                                currentValue = RandomAny(currentValue, neighbors);
                             }
                             else if (rnd0 < 0.01)
                             {
@@ -100,7 +101,7 @@ namespace DataArcs.Components.Simulators
                             }
                             else if (SeriesUtils.Random.NextDouble() < 0.00001)
 	                        {
-		                        currentValue = Random1(currentValue, neighbors);
+		                        currentValue = RandomAny(currentValue, neighbors);
 	                        }
 	                        else if (neighbors.Max().Z > 0.99)
 	                        {
@@ -108,11 +109,11 @@ namespace DataArcs.Components.Simulators
 	                        }
 	                        else if (neighbors.Max().Y > 0.99 && neighbors.Min().Y < 0.01)
 	                        {
-		                        currentValue = Random1(currentValue, neighbors);
+		                        currentValue = RandomAny(currentValue, neighbors);
 	                        }
 	                        else if (currentValue.Z < 0.1f) // && org.X < 1f)
 	                        {
-		                        currentValue = AverageHigh(currentValue, neighbors);
+		                        currentValue = AverageMaxHigh(currentValue, neighbors);
 	                        }
 	                        else if (currentValue.X > 0.90f) // && org.X < 1f)
 	                        {
@@ -149,50 +150,17 @@ namespace DataArcs.Components.Simulators
 		
         public delegate Series ParamterizedFunction(Series currentValue, Series neighbors);
 
-        private static FloatSeries black = new FloatSeries(3, 0, 0, 0);
-        private static FloatSeries white = new FloatSeries(3, 1f, 1f, 1f);
-        private static FloatSeries red = new FloatSeries(3, 1f, 0f, 0f);
 
-        private static Series Darken(Series currentValue, Series neighbors)
-        {
-	        return AverageInterpolation(currentValue, black, 0.3f);
-        }
-        private static Series DarkenSmall(Series currentValue, Series neighbors)
-        {
-	        return AverageInterpolation(currentValue, black, 0.08f);
-        }
-        private static Series Lighten(Series currentValue, Series neighbors)
-        {
-	        return AverageInterpolation(currentValue, white, 0.1f);
-        }
-        private static Series Reden(Series currentValue, Series neighbors)
-        {
-	        return AverageInterpolation(currentValue, red, 0.1f);
-        }
-
-        private static Series Average1(Series currentValue, Series neighbors)
-        {
-	        return AverageInterpolation(currentValue, neighbors, 0.1f);
-        }
-
-        private static Series AverageHigh(Series currentValue, Series neighbors)
-        {
-	        return AverageInterpolation(currentValue, neighbors.Max(), 0.95f);
-        }
-
-        private static Series Random1(Series currentValue, Series neighbors)
-        {
-	        return RandomMinMax(currentValue, neighbors, 0, 1);
-        }
-
-        private static Series Random2(Series currentValue, Series neighbors)
-        {
-	        return RandomMinMax(currentValue, neighbors, 0.3f, 0.7f);
-        }
-        private static Series RandomDark(Series currentValue, Series neighbors)
-        {
-	        return RandomMinMax(currentValue, neighbors, 0.0f, 0.3f);
-        }
+        private static readonly ParamterizedFunction Darken = InterpolateWithConstantFn(Colors.Black, 0.3f);
+        private static readonly ParamterizedFunction DarkenSmall = InterpolateWithConstantFn(Colors.Black, 0.08f);
+        private static readonly ParamterizedFunction Lighten = InterpolateWithConstantFn(Colors.White, 0.1f);
+        private static readonly ParamterizedFunction Reden = InterpolateWithConstantFn(Colors.Red, 0.1f);
+        private static readonly ParamterizedFunction Average1 = ModifyNeighborsFn(InterpolateFn(0.1f), SeriesUtils.Average);
+        private static readonly ParamterizedFunction AverageMaxHigh = ModifyNeighborsFn(InterpolateFn(0.95f), SeriesUtils.Max);
+        private static readonly ParamterizedFunction RandomAny = RandomColor(0, 1f);
+        private static readonly ParamterizedFunction RandomMid = RandomColor(0.3f, 0.7f);
+        private static readonly ParamterizedFunction RandomDark = RandomColor(0.0f, 0.3f);
+		
 
         private static Series Mix1(Series currentValue, Series neighbors)
         {
@@ -226,20 +194,48 @@ namespace DataArcs.Components.Simulators
 	        return result;
         }
 
-        private static Series AverageInterpolation(Series currentValue, Series neighbors, float interpolationAmount)
-	    {
-		    var average = neighbors.Average();
-		    currentValue.InterpolateInto(average, interpolationAmount);
-		    return currentValue;
-	    }
-	    private static Series RandomMinMax(Series currentValue, Series neighbors, float min, float max)
-	    {
-		    return new FloatSeries(currentValue.VectorSize,
-			    (float)SeriesUtils.Random.NextDouble() * max + min,
-			    (float)SeriesUtils.Random.NextDouble() * max + min,
-			    (float)SeriesUtils.Random.NextDouble() * max + min);
-	    }
 
+
+
+
+
+        private static ParamterizedFunction InterpolateFn(float interpolationAmount)
+        {
+	        return (currentValue, target) => SeriesUtils.InterpolateInto(currentValue, target, interpolationAmount);
+        }
+        private static ParamterizedFunction InterpolateWithConstantFn(Series constant, float amount)
+        {
+	        return (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue, constant, amount);// ignore neighbors
+        }
+        private static ParamterizedFunction ModifyNeighborsFn(ParamterizedFunction targetFn, params Func<Series, Series>[] neighborModifiers)
+        {
+	        return (currentValue, neighbors) =>
+	        {
+		        for (int i = 0; i < neighborModifiers.Length; i++)
+		        {
+			        neighbors = neighborModifiers[i](neighbors);
+		        }
+		        return targetFn(currentValue, neighbors);
+	        };
+        }
+        private static ParamterizedFunction ModifyResultsFn(ParamterizedFunction targetFn, params Func<Series, Series>[] resultsModifiers)
+        {
+	        return (currentValue, neighbors) =>
+	        {
+		        var result = targetFn(currentValue, neighbors);
+		        for (int i = 0; i < resultsModifiers.Length; i++)
+		        {
+			        result = resultsModifiers[i](result);
+		        }
+		        return result;
+	        };
+        }
+        private static ParamterizedFunction RandomColor(float min, float max)
+        {
+	        return (currentValue, neighbors) => ColorAdapter.RandomColor(min, max, min, max, min, max);
+        }
+
+		
 	    private static Series AverageMix(Series currentValue, Series neighbors, float mixR, float mixG, float mixB)
 	    {
 		    var average = neighbors.Average();

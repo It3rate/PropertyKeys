@@ -71,7 +71,7 @@ namespace DataArcs.SeriesData
 
         public override Series GetZeroSeries()
 	    {
-		    return new RectFSeries(SeriesUtils.GetFloatZeroArray(4));
+		    return new RectFSeries(ArrayExtension.GetFloatZeroArray(4));
 	    }
 
 	    public override Series GetZeroSeries(int elementCount)
