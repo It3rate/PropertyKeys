@@ -161,6 +161,11 @@ namespace DataArcs.SeriesData
 			_series.InterpolateInto(b, t);
 		}
 
+		public override void InterpolateInto(Series b, ParametricSeries seriesT)
+		{
+			_series.InterpolateInto(b, seriesT);
+        }
+
 		public override Series GetZeroSeries()
 		{
 			return _series.GetZeroSeries();

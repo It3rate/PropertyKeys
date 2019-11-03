@@ -76,9 +76,24 @@ namespace DataArcs.SeriesData
 					break;
 				}
 			}
-		}
+        }
+        public override void InterpolateInto(Series b, ParametricSeries seriesT)
+        {
+	        for (var i = 0; i < DataSize; i++)
+	        {
+		        if (i < b.DataSize)
+		        {
+			        var t = i < seriesT.DataSize ? seriesT[i] : seriesT[seriesT.DataSize - 1];
+			        _intValues[i] += (int)Math.Round((b.IntDataAt(i) - _intValues[i]) * t);
+                }
+		        else
+		        {
+			        break;
+		        }
+	        }
+        }
 
-		protected override void CalculateFrame()
+        protected override void CalculateFrame()
 		{
 			var min = ArrayExtension.GetIntMinArray(VectorSize);
 			var max = ArrayExtension.GetIntMaxArray(VectorSize);

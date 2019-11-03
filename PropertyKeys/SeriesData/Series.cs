@@ -136,6 +136,7 @@ namespace DataArcs.SeriesData
 
         public abstract void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
         public abstract void InterpolateInto(Series b, float t);
+        public abstract void InterpolateInto(Series b, ParametricSeries seriesT);
 
         public abstract Series GetZeroSeries();
         public abstract Series GetZeroSeries(int elements);

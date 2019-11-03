@@ -197,7 +197,12 @@ namespace DataArcs.SeriesData
 
         public static Series InterpolateInto(Series source, Series target, float t)
         {
-			source.InterpolateInto(target, t);
+	        source.InterpolateInto(target, t);
+	        return source;
+        }
+        public static Series InterpolateInto(Series source, Series target, ParametricSeries seriesT)
+        {
+	        source.InterpolateInto(target, seriesT);
 	        return source;
         }
 

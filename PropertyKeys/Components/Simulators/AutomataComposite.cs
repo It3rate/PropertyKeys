@@ -27,8 +27,8 @@ namespace DataArcs.Components.Simulators
         }
 
 	    private int _delayCount = 0;
-	    private ParamterizedFunction currentFn1 = Average1;
-	    private ParamterizedFunction currentFn2 = RandomMid;
+	    private ParameterizedFunction currentFn1 = Average1;
+	    private ParameterizedFunction currentFn2 = RandomMid;
 	    private bool isBusy = false;
 
 	    bool block1 = false;
@@ -148,66 +148,37 @@ namespace DataArcs.Components.Simulators
 		    }
 	    }
 		
-        public delegate Series ParamterizedFunction(Series currentValue, Series neighbors);
+        public delegate Series ParameterizedFunction(Series currentValue, Series neighbors);
 
 
-        private static readonly ParamterizedFunction Darken = InterpolateWithConstantFn(Colors.Black, 0.3f);
-        private static readonly ParamterizedFunction DarkenSmall = InterpolateWithConstantFn(Colors.Black, 0.08f);
-        private static readonly ParamterizedFunction Lighten = InterpolateWithConstantFn(Colors.White, 0.1f);
-        private static readonly ParamterizedFunction Reden = InterpolateWithConstantFn(Colors.Red, 0.1f);
-        private static readonly ParamterizedFunction Average1 = ModifyNeighborsFn(InterpolateFn(0.1f), SeriesUtils.Average);
-        private static readonly ParamterizedFunction AverageMaxHigh = ModifyNeighborsFn(InterpolateFn(0.95f), SeriesUtils.Max);
-        private static readonly ParamterizedFunction RandomAny = RandomColor(0, 1f);
-        private static readonly ParamterizedFunction RandomMid = RandomColor(0.3f, 0.7f);
-        private static readonly ParamterizedFunction RandomDark = RandomColor(0.0f, 0.3f);
+		// experimental functions
+        private static readonly ParameterizedFunction Darken = InterpolateWithConstantFn(Colors.Black, 0.3f);
+        private static readonly ParameterizedFunction DarkenSmall = InterpolateWithConstantFn(Colors.Black, 0.08f);
+        private static readonly ParameterizedFunction Lighten = InterpolateWithConstantFn(Colors.White, 0.1f);
+        private static readonly ParameterizedFunction Average1 = ModifyNeighborsFn(InterpolateFn(0.1f), SeriesUtils.Average);
+        private static readonly ParameterizedFunction AverageMaxHigh = ModifyNeighborsFn(InterpolateFn(0.95f), SeriesUtils.Max);
+        private static readonly ParameterizedFunction MaxNeighborPart = ModifyNeighborsFn(InterpolateFn(0.2f), SeriesUtils.Max);
+        private static readonly ParameterizedFunction MinNeighborPart = ModifyNeighborsFn(InterpolateFn(0.99f), SeriesUtils.Min);
+        private static readonly ParameterizedFunction Mix1 = ModifyResultsFn(
+            ModifyNeighborsFn( MixFn(new ParametricSeries(3, 0.1f, 0.2f, 0.3f)), SeriesUtils.Average),SeriesUtils.ClampTo01);
+        private static readonly ParameterizedFunction RandomAny = RandomColorFn(0, 1f);
+        private static readonly ParameterizedFunction RandomMid = RandomColorFn(0.3f, 0.7f);
+        private static readonly ParameterizedFunction RandomDark = RandomColorFn(0.0f, 0.3f);
 		
-
-        private static Series Mix1(Series currentValue, Series neighbors)
+		
+        private static ParameterizedFunction MixFn(ParametricSeries mix)
         {
-	        return AverageMix(currentValue, neighbors, 0.1f, 0.2f, 0.3f);
+	        return (currentValue, target) => Mix(currentValue, target, mix);
         }
-
-        private static Series MaxNeighborPart(Series currentValue, Series neighbors)
-        {
-			currentValue.InterpolateInto(neighbors.Max(), .2f);
-			return currentValue;
-        }
-
-        private static Series MinNeighborPart(Series currentValue, Series neighbors)
-        {
-	        currentValue.InterpolateInto(neighbors.Min(), .99f);
-	        return currentValue;
-        }
-
-        private static Series MaxNeighbor(Series currentValue, Series neighbors)
-        {
-	        var scale = 0.97f;
-	        var result = neighbors.Max();
-	        result.SetSeriesAtIndex(0, new FloatSeries(result.VectorSize, result.X * scale, result.Y * scale, result.Z * scale));
-	        return result;
-        }
-        private static Series MinNeighbor(Series currentValue, Series neighbors)
-        {
-	        var scale = 0.97f;
-	        var result = neighbors.Min();
-	        result.SetSeriesAtIndex(0, new FloatSeries(result.VectorSize, result.X * scale, result.Y * scale, result.Z * scale));
-	        return result;
-        }
-
-
-
-
-
-
-        private static ParamterizedFunction InterpolateFn(float interpolationAmount)
+        private static ParameterizedFunction InterpolateFn(float interpolationAmount)
         {
 	        return (currentValue, target) => SeriesUtils.InterpolateInto(currentValue, target, interpolationAmount);
         }
-        private static ParamterizedFunction InterpolateWithConstantFn(Series constant, float amount)
+        private static ParameterizedFunction InterpolateWithConstantFn(Series constant, float amount)
         {
 	        return (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue, constant, amount);// ignore neighbors
         }
-        private static ParamterizedFunction ModifyNeighborsFn(ParamterizedFunction targetFn, params Func<Series, Series>[] neighborModifiers)
+        private static ParameterizedFunction ModifyNeighborsFn(ParameterizedFunction targetFn, params Func<Series, Series>[] neighborModifiers)
         {
 	        return (currentValue, neighbors) =>
 	        {
@@ -218,7 +189,7 @@ namespace DataArcs.Components.Simulators
 		        return targetFn(currentValue, neighbors);
 	        };
         }
-        private static ParamterizedFunction ModifyResultsFn(ParamterizedFunction targetFn, params Func<Series, Series>[] resultsModifiers)
+        private static ParameterizedFunction ModifyResultsFn(ParameterizedFunction targetFn, params Func<Series, Series>[] resultsModifiers)
         {
 	        return (currentValue, neighbors) =>
 	        {
@@ -230,20 +201,18 @@ namespace DataArcs.Components.Simulators
 		        return result;
 	        };
         }
-        private static ParamterizedFunction RandomColor(float min, float max)
+        private static ParameterizedFunction RandomColorFn(float min, float max)
         {
 	        return (currentValue, neighbors) => ColorAdapter.RandomColor(min, max, min, max, min, max);
         }
 
-		
-	    private static Series AverageMix(Series currentValue, Series neighbors, float mixR, float mixG, float mixB)
-	    {
-		    var average = neighbors.Average();
-		    return new FloatSeries(currentValue.VectorSize,
-			    Math.Max(0, Math.Min(1, currentValue.X + (average.X - 0.5f) * mixR)),
-			    Math.Max(0, Math.Min(1, currentValue.Y + (average.Y - 0.5f) * mixG)),
-			    Math.Max(0, Math.Min(1, currentValue.Z + (average.Z - 0.5f) * mixB)));
-	    }
+        private static Series Mix(Series source, Series target, ParametricSeries mix)
+        {
+	        return new FloatSeries(source.VectorSize,
+		        source.X + (target.X - 0.5f) * mix.X,
+		        source.Y + (target.Y - 0.5f) * mix.Y,
+		        source.Z + (target.Z - 0.5f) * mix.Z);
 
+        }
     }
 }

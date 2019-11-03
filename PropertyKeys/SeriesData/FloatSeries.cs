@@ -134,22 +134,37 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		public override void InterpolateInto(Series b, float t)
-		{
-			for (var i = 0; i < DataSize; i++)
-			{
-				if (i < b.DataSize)
-				{
-					_floatValues[i] += (b.FloatDataAt(i) - _floatValues[i]) * t;
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
+        public override void InterpolateInto(Series b, float t)
+        {
+	        for (var i = 0; i < DataSize; i++)
+	        {
+		        if (i < b.DataSize)
+		        {
+			        _floatValues[i] += (b.FloatDataAt(i) - _floatValues[i]) * t;
+		        }
+		        else
+		        {
+			        break;
+		        }
+	        }
+        }
+        public override void InterpolateInto(Series b, ParametricSeries seriesT)
+        {
+	        for (var i = 0; i < DataSize; i++)
+	        {
+		        if (i < b.DataSize)
+		        {
+			        var t = i < seriesT.DataSize ? seriesT[i] : seriesT[seriesT.DataSize - 1];
+			        _floatValues[i] += (b.FloatDataAt(i) - _floatValues[i]) * t;
+		        }
+		        else
+		        {
+			        break;
+		        }
+	        }
+        }
 
-		public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
+        public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
 		{
 			switch (combineFunction)
 			{
