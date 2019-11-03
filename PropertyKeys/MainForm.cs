@@ -95,7 +95,9 @@ namespace DataArcs
 			        _testScreen = new CompositeTestObjects(_player);
 			        break;
             }
+            _player.Pause();
 	        _testScreen.NextVersion();
+            _player.Unpause();
         }
 
         private void B0_Click(object sender, EventArgs e)
