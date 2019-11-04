@@ -26,7 +26,8 @@ namespace DataArcs.Components.Simulators
     public class RuleSet
     {
         public List<Rule> Rules { get; } = new List<Rule>();
-
+        public void AddRule(Condition condition, ParameterizedFunction fn) => Rules.Add(new Rule(condition, fn));
+        public Action BeginPass { get; set; }
         public Series InvokeRules(Series currentValue, Series neighbors)
         {
             Series result = currentValue;
@@ -40,9 +41,10 @@ namespace DataArcs.Components.Simulators
             }
             return result;
         }
+        public Action Reset { get; set; }
     }
 
-    public class BaseRunner
+    public class Runner
     {
         private readonly IStore _automata;
         private readonly IStore _previousAutomata;
@@ -51,12 +53,13 @@ namespace DataArcs.Components.Simulators
         public int ActiveRuleSetIndex { get; private set; }
         public int PassCount { get; private set; }
 
-        public BaseRunner(IStore automata, params RuleSet[] ruleSets)
+        public Runner(IStore automata, params RuleSet[] ruleSets)
         {
             _automata = automata;
             _previousAutomata = _automata;
             RuleSets = new List<RuleSet>(ruleSets);
         }
+        public void AddRuleSet(RuleSet ruleSet) => RuleSets.Add(ruleSet);
 
         protected virtual RuleSet GetRuleSet(int automataIndex)
         {
@@ -67,11 +70,14 @@ namespace DataArcs.Components.Simulators
         {
             int capacity = _automata.Capacity;
             _automata.CopySeriesDataInto(_previousAutomata);
+            var ruleSet = GetRuleSet(0);
+            ruleSet.BeginPass?.Invoke();
             for (int i = 0; i < capacity; i++)
             {
                 var currentValue = _previousAutomata.GetFullSeries().GetValueAtVirtualIndex(i, capacity);
                 var neighbors = _previousAutomata.GetNeighbors(i);
-                var result = GetRuleSet(i).InvokeRules(currentValue, neighbors);
+                ruleSet = GetRuleSet(0);
+                var result = ruleSet.InvokeRules(currentValue, neighbors);
                 _automata.GetFullSeries().SetSeriesAtIndex(i, result);
             }
         }
@@ -80,6 +86,10 @@ namespace DataArcs.Components.Simulators
         {
             PassCount = 0;
             ActiveRuleSetIndex = 0;
+            foreach (var ruleSet in RuleSets)
+            {
+                ruleSet.Reset?.Invoke();
+            }
         }
     }
 

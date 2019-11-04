@@ -143,8 +143,41 @@ namespace DataArcs.Components.Simulators
 
 			    isBusy = false;
 		    }
+
 	    }
 
+        private void CreateBlock1(Runner runner)
+        {
+            RuleSet rules = new RuleSet();
+            Condition cond;
+            float perPassRnd = 0;
+
+            rules.BeginPass = () =>
+            {
+                perPassRnd = (float)SeriesUtils.Random.NextDouble();
+            };
+            rules.Reset = () => perPassRnd = 0;
+
+            cond = (currentValue, target) => runner.PassCount < 20;
+            rules.AddRule(cond, Darken);
+
+            cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.001;
+            rules.AddRule(cond, RandomAny);
+
+            cond = (currentValue, target) => perPassRnd < 0.01;
+            rules.AddRule(cond, DarkenSmall);
+
+            cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) < 0.005f;
+            rules.AddRule(cond, RandomDark);
+
+            cond = (currentValue, target) => currentValue.Y < 0.3;
+            rules.AddRule(cond, MaxNeighborPart);
+
+            cond = (currentValue, target) => currentValue.Z > 0.2;
+            rules.AddRule(cond, MinNeighborPart);
+
+           runner.AddRuleSet(rules);
+        }
 
 
 		// experimental functions
