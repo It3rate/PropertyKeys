@@ -17,8 +17,9 @@ namespace DataArcs.Components.Simulators
 	    private IStore _previousAutomata;
         public override int Capacity { get => _automata.Capacity; set { } }
 
-        private Runner _runner;
+        private Runner _runner1;
         private RuleSet _ruleSet1;
+        private RuleSet _ruleSet2;
 
         public AutomataComposite(IStore itemStore, IStore automataStore) : base(itemStore)
 	    {
@@ -26,8 +27,9 @@ namespace DataArcs.Components.Simulators
 		    _previousAutomata = _automata.Clone();
 			AddProperty(PropertyId.Automata, _automata);
 
-            _runner = new Runner(_automata);
-            _ruleSet1 = CreateBlock1(_runner);
+            _runner1 = new Runner(_automata);
+            _ruleSet1 = CreateBlock1(_runner1);
+            _ruleSet2 = CreateBlock2(_runner1);
         }
 
 	    private int _delayCount = 0;
@@ -51,7 +53,7 @@ namespace DataArcs.Components.Simulators
 			    {
 				    if (SeriesUtils.Random.NextDouble() < 0.006 && count > 100)
                     {
-                        _runner.Reset();
+                        _runner1.Reset();
                         block1 = !block1;
                         blockIndex = 0;
                         count = 0;
@@ -59,9 +61,9 @@ namespace DataArcs.Components.Simulators
 						currentFn2 = RandomMid;
 					}
 
-                    _runner.PassCount++;
-                    _runner.GetRuleSet(0).BeginPass();
-				    count++;
+				    _runner1.PassCount++;
+				    _runner1.GetRuleSet(0).BeginPass();
+                    count++;
 				    blockIndex += 100;
 
                     int capacity = Capacity;
@@ -71,85 +73,10 @@ namespace DataArcs.Components.Simulators
 				    {
 					    var currentValue = _previousAutomata.GetFullSeries().GetValueAtVirtualIndex(i, capacity);
                         var neighbors = _previousAutomata.GetNeighbors(i);
-                        if (block1 && blockIndex > i)
-                        {
-                            currentValue = _runner.InvokeRuleSet(currentValue,neighbors, i);
-                         //   if (count < 20)
-	                        //{
-		                       // DarkenSmall(currentValue, neighbors);
-	                        //}
-                         //   else if (SeriesUtils.Random.NextDouble() < 0.001)
-                         //   {
-                         //       currentValue = RandomAny(currentValue, neighbors);
-                         //   }
-                         //   else if (rnd0 < 0.01)
-                         //   {
-	                        //    currentValue = DarkenSmall(currentValue, neighbors);
-                         //   }
-                         //   else if (Math.Abs(currentValue.X - currentValue.Y) < 0.005f)
-                         //   {
-	                        //    currentValue = RandomDark(currentValue, neighbors);
-                         //   }
-                         //   else if (currentValue.Y < 0.3)
-                         //   {
-                         //       currentValue = MaxNeighborPart(currentValue, neighbors);
-                         //   }
-                         //   else if (currentValue.Z > 0.2)
-                         //   {
-                         //       currentValue = MinNeighborPart(currentValue, neighbors);
-                         //   }
-                        }
-                        else
-                        {
-	                        if (count < 40)
-	                        {
-		                        DarkenSmall(currentValue, neighbors);
-                            }
-	                        else if (count < 42 && SeriesUtils.Random.NextDouble() < 0.0003)
-	                        {
-		                        currentValue.SetSeriesAtIndex(0, new FloatSeries(currentValue.VectorSize, 0, 0, 0.7f));
-                            }
-                            else if (SeriesUtils.Random.NextDouble() < 0.00001)
-	                        {
-		                        currentValue = RandomAny(currentValue, neighbors);
-	                        }
-	                        else if (neighbors.Max().Z > 0.99)
-	                        {
-		                        currentValue.SetSeriesAtIndex(0, new FloatSeries(currentValue.VectorSize, 0, 0, 0));
-	                        }
-	                        else if (neighbors.Max().Y > 0.99 && neighbors.Min().Y < 0.01)
-	                        {
-		                        currentValue = RandomAny(currentValue, neighbors);
-	                        }
-	                        else if (currentValue.Z < 0.1f) // && org.X < 1f)
-	                        {
-		                        currentValue = AverageMaxHigh(currentValue, neighbors);
-	                        }
-	                        else if (currentValue.X > 0.90f) // && org.X < 1f)
-	                        {
-		                        currentValue = currentFn1(currentValue, neighbors);
-	                        }
-	                        else if (Math.Abs(currentValue.X - currentValue.Y) > 0.9f)
-	                        {
-		                        currentValue = currentFn2(currentValue, neighbors);
-	                        }
-	                        else if (currentValue.Z < 0.1f || currentValue.Z > 0.94f)
-	                        {
-		                        var temp = currentFn1;
-		                        currentFn1 = currentFn2;
-		                        currentFn2 = temp;
-		                        //currentValue.FloatDataRef[2] = 0.3f;
-	                        }
-	                        else if (neighbors.Average().Y < 0.001f)
-	                        {
-		                        currentValue = Mix1(currentValue, neighbors);
-	                        }
-	                        else
-	                        {
-		                        currentValue = Mix1(currentValue, neighbors);
-	                        }
-                        }
 
+                        _runner1.ActiveRuleSetIndex = (block1 && blockIndex > i) ? 0 : 1;
+
+                        currentValue = _runner1.InvokeRuleSet(currentValue, neighbors, i);
                         _automata.GetFullSeries().SetSeriesAtIndex(i, currentValue);
                     }
 			    }
@@ -158,44 +85,101 @@ namespace DataArcs.Components.Simulators
 		    }
 
 	    }
-        
+
+        private RuleSet CreateBlock2(Runner runner)
+        {
+	        RuleSet rules = new RuleSet();
+	        Condition cond;
+
+			ParameterizedFunction swapFn1 = Average1;
+			ParameterizedFunction swapFn2 = RandomMid;
+
+			rules.BeginPass = () =>
+	        {
+		        //perPassRnd = (float)SeriesUtils.Random.NextDouble();
+	        };
+
+	        //rules.Reset = () => perPassRnd = 0;
+
+	        cond = (currentValue, target) => runner.PassCount < 40;
+	        rules.AddRule(cond, DarkenSmall);
+
+	        cond = (currentValue, target) => count < 42 && SeriesUtils.Random.NextDouble() < 0.0003;
+	        rules.AddRule(cond, RuleUtils.SetValueFn(0, new FloatSeries(3, 0, 0, 0.7f)) );
+
+	        cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.00001;
+	        rules.AddRule(cond, RandomAny);
+
+	        cond = (currentValue, target) => target.Max().Z > 0.99;
+	        rules.AddRule(cond, RuleUtils.SetValueFn(0, Colors.Black));
+
+	        cond = (currentValue, target) => target.Max().Y > 0.99 && target.Min().Y < 0.01;
+	        rules.AddRule(cond, RandomAny);
+
+	        cond = (currentValue, target) => currentValue.Z < 0.1f;
+	        rules.AddRule(cond, AverageMaxHigh);
+
+	        cond = (currentValue, target) => currentValue.X > 0.90f;
+	        rules.AddRule(cond, swapFn1);
+
+	        cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) > 0.9f;
+	        rules.AddRule(cond, swapFn2);
+
+	        cond = (currentValue, target) => currentValue.Z < 0.1f || currentValue.Z > 0.94f;
+	        rules.AddRule(cond, (currentValue, target) => {
+		        var temp = swapFn1;
+		        swapFn1 = swapFn2;
+		        swapFn2 = temp;
+		        return currentValue;
+	        });
+
+	        cond = (currentValue, target) => target.Average().Y < 0.001f;
+	        rules.AddRule(cond, Mix1);
+
+	        cond = (currentValue, target) => true;
+	        rules.AddRule(cond, Mix1);
+			
+            runner.AddRuleSet(rules);
+
+	        return rules;
+        }
         private RuleSet CreateBlock1(Runner runner)
         {
-            RuleSet rules = new RuleSet();
-            Condition cond;
-            float perPassRnd = 0;
+	        RuleSet rules = new RuleSet();
+	        Condition cond;
+	        float perPassRnd = 0;
 
-            rules.BeginPass = () =>
-            {
-                perPassRnd = (float)SeriesUtils.Random.NextDouble();
-            };
-            rules.Reset = () => perPassRnd = 0;
+	        rules.BeginPass = () =>
+	        {
+		        perPassRnd = (float)SeriesUtils.Random.NextDouble();
+	        };
+	        rules.Reset = () => perPassRnd = 0;
 
-            cond = (currentValue, target) => runner.PassCount < 20;
-            rules.AddRule(cond, Darken);
+	        cond = (currentValue, target) => runner.PassCount < 20;
+	        rules.AddRule(cond, Darken);
 
-            cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.001;
-            rules.AddRule(cond, RandomAny);
+	        cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.001;
+	        rules.AddRule(cond, RandomAny);
 
-            cond = (currentValue, target) => perPassRnd < 0.01;
-            rules.AddRule(cond, DarkenSmall);
+	        cond = (currentValue, target) => perPassRnd < 0.01;
+	        rules.AddRule(cond, DarkenSmall);
 
-            cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) < 0.005f;
-            rules.AddRule(cond, RandomDark);
+	        cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) < 0.005f;
+	        rules.AddRule(cond, RandomDark);
 
-            cond = (currentValue, target) => currentValue.Y < 0.3;
-            rules.AddRule(cond, MaxNeighborPart);
+	        cond = (currentValue, target) => currentValue.Y < 0.3;
+	        rules.AddRule(cond, MaxNeighborPart);
 
-            cond = (currentValue, target) => currentValue.Z > 0.2;
-            rules.AddRule(cond, MinNeighborPart);
+	        cond = (currentValue, target) => currentValue.Z > 0.2;
+	        rules.AddRule(cond, MinNeighborPart);
 
-           runner.AddRuleSet(rules);
+	        runner.AddRuleSet(rules);
 
-           return rules;
+	        return rules;
         }
 
 
-		// experimental functions
+        // experimental functions
         private static readonly ParameterizedFunction Darken = RuleUtils.InterpolateWithConstantFn(Colors.Black, 0.3f);
         private static readonly ParameterizedFunction DarkenSmall = RuleUtils.InterpolateWithConstantFn(Colors.Black, 0.08f);
         private static readonly ParameterizedFunction Lighten = RuleUtils.InterpolateWithConstantFn(Colors.White, 0.1f);

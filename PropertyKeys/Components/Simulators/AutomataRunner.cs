@@ -50,7 +50,7 @@ namespace DataArcs.Components.Simulators
         private readonly IStore _previousAutomata;
 
         protected List<RuleSet> RuleSets { get; }
-        public int ActiveRuleSetIndex { get; private set; }
+        public int ActiveRuleSetIndex { get; set; }
         public int PassCount { get; set; }
 
         public Runner(IStore automata, params RuleSet[] ruleSets)
@@ -113,6 +113,10 @@ namespace DataArcs.Components.Simulators
         public static ParameterizedFunction InterpolateFn(float interpolationAmount)
         {
             return (currentValue, target) => SeriesUtils.InterpolateInto(currentValue, target, interpolationAmount);
+        }
+        public static ParameterizedFunction SetValueFn(int index, Series value)
+        {
+	        return (currentValue, target) => SeriesUtils.SetSeriesAtIndex(currentValue, index, value);
         }
         public static ParameterizedFunction InterpolateWithConstantFn(Series constant, float amount)
         {

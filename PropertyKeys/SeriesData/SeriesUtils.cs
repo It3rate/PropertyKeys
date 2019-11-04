@@ -205,7 +205,11 @@ namespace DataArcs.SeriesData
 	        source.InterpolateInto(target, seriesT);
 	        return source;
         }
-
+        public static Series SetSeriesAtIndex(Series destination, int index, Series value)
+        {
+	        destination.SetSeriesAtIndex(index, value);
+	        return destination;
+        }
         public static void Shuffle(Series series)
 		{
 			var len = series.DataSize;
