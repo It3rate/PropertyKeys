@@ -41,21 +41,25 @@ namespace DataArcs
 			InitializeComponent();
 			DoubleBuffered = true;
 
+			BackColor = Color.Black;
+
             _b0 = new Button();
             _b0.Text = "Next";
             _b0.Click += B0_Click;
-            _b0.Location = new Point(700, 10);
+            _b0.Location = new Point(720, 5);
+            _b0.BackColor = Color.DarkGray;
             Controls.Add(_b0);
 
             _bPause = new Button();
             _bPause.Text = "Pause";
-            _bPause.Location = new Point(700, 60);
+            _bPause.BackColor = Color.DarkGray;
+            _bPause.Location = new Point(720, 30);
             Controls.Add(_bPause);
 
             _ = Execute(null, 50);
         }
-
-        public async Task Execute(Action action, int timeoutInMilliseconds)
+		
+		public async Task Execute(Action action, int timeoutInMilliseconds)
         {
             await Task.Delay(timeoutInMilliseconds);
             _b0.Invalidate();
@@ -89,7 +93,7 @@ namespace DataArcs
 			        _testScreen = new CompositeFlowerTest(_player);
 			        break;
 		        case 1:
-			        _testScreen = new CompositeTest2(_player);
+			        _testScreen = new CompositeChildSlideTest(_player);
 			        break;
 		        case 0:
 			        _testScreen = new CompositeTestObjects(_player);

@@ -71,12 +71,13 @@ namespace DataArcs.Components.Simulators
             return RuleSets[ActiveRuleSetIndex];
         }
 
-        public Series InvokeRuleSet(Series currentValue, Series neighbors, int automataIndex)
+        public virtual Series InvokeRuleSet(Series currentValue, Series neighbors, int elementIndex)
         {
-            var ruleSet = GetRuleSet(automataIndex);
+            var ruleSet = GetRuleSet(elementIndex);
             return ruleSet.InvokeRules(currentValue, neighbors);
         }
-        public void InvokePass()
+
+        public virtual void StartUpdate(float currentTime, float deltaTime)
         {
             int capacity = Automata.Capacity;
             Automata.CopySeriesDataInto(_previousAutomata);
@@ -86,13 +87,14 @@ namespace DataArcs.Components.Simulators
             {
                 var currentValue = _previousAutomata.GetFullSeries().GetValueAtVirtualIndex(i, capacity);
                 var neighbors = _previousAutomata.GetNeighbors(i);
-                ruleSet = GetRuleSet(0);
-                var result = ruleSet.InvokeRules(currentValue, neighbors);
+                var result = InvokeRuleSet(currentValue, neighbors, i);
                 Automata.GetFullSeries().SetSeriesAtIndex(i, result);
             }
 
             PassCount++;
         }
+
+        public virtual void EndUpdate(float currentTime, float deltaTime){ }
 
         public void Reset()
         {

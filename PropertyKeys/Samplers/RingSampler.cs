@@ -10,6 +10,7 @@ namespace DataArcs.Samplers
 	{
         protected int[] RingCounts { get; }
         protected IStore Orientation { get; }
+        public float MinRadius { get; set; }
 
         public RingSampler(int[] ringCounts, IStore orientation = null, Slot[] swizzleMap = null) : base(swizzleMap)
         {
@@ -20,6 +21,8 @@ namespace DataArcs.Samplers
             {
                 Capacity += ringCounts[i];
             }
+
+            MinRadius = 0.3f;
         }
 
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -55,13 +58,12 @@ namespace DataArcs.Samplers
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
 			var frame = series.Frame.FloatDataRef; // x0,y0...n0, x1,y1..n1
 			var size = series.Size.FloatDataRef; // s0,s1...sn
-            float minRadius = 0.3f; // todo: make class property
 
             var centerX = size[0] / 2.0f;
-            var radiusX = centerX - ringIndexT * ((size[0] / 2.0f) * (1f - minRadius));
+            var radiusX = centerX - ringIndexT * ((size[0] / 2.0f) * (1f - MinRadius));
 			result[0] = (float) (Math.Sin(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusX + frame[0] + centerX);
             var centerY = size[1] / 2.0f;
-            var radiusY = centerY - ringIndexT * ((size[1] / 2.0f) * (1f - minRadius));
+            var radiusY = centerY - ringIndexT * ((size[1] / 2.0f) * (1f - MinRadius));
             result[1] = (float) (Math.Cos(ringT * 2.0f * Math.PI + Math.PI + orientation) * radiusY + frame[1] + centerY);
 
             return SeriesUtils.CreateSeriesOfType(series, result);

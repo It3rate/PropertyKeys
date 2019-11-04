@@ -89,7 +89,9 @@ namespace DataArcs.Graphic
                     var penWidth = dict.ContainsKey(PropertyId.PenWidth) ? dict[PropertyId.PenWidth].X : 1f;
                     Pen p = new Pen(dict[PropertyId.PenColor].RGB(), penWidth)
                     {
-                        LineJoin = LineJoin.Round
+                        LineJoin = LineJoin.Round,
+						StartCap = LineCap.Round,
+						EndCap = LineCap.Round
                     };
                     g.DrawPath(p, gp);
                 }

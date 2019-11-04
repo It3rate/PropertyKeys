@@ -119,8 +119,8 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 20f).Store);
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6, 3).Store);//, 3, 6).Store);
 			composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.3f, 0.4f, 0.3f, 0.4f, 1f).Store);
-			composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
-			composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
+			composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 1f,1f,1f,  0.05f, 0.05f, 0.2f,  1f, 1f, 1f).Store);
+			composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.8f).Store);
             composite.Renderer = new PolyShape();
 
             float xOutset = sampler is RingSampler ? -100f : -30f;

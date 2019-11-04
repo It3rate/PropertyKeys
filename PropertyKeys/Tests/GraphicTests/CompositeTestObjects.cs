@@ -60,7 +60,7 @@ namespace DataArcs.Tests.GraphicTests
             switch (index)
             {
                 case 0:
-                    comp = GetTest3(0, 1000f);
+                    comp = GetTest3(0, 3000f);
                     break;
                 case 1:
                     comp = GetTest0(0, 1000f);
@@ -119,13 +119,13 @@ namespace DataArcs.Tests.GraphicTests
             AddColor(composite);
 
 
-            var totalWidth = 500f;
+            var totalWidth = 700f;
             float growth = 60;
             var armLen = totalWidth / (float)(cols - 1) / 3f;
             var height = armLen * (float)Math.Sqrt(3) / 2f * (rows - 1f);
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(2, armLen, armLen, armLen, armLen * 1.5f).Store);
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(2, armLen, armLen, armLen, armLen * 1.0f).Store);
 
-            float[] start = { 150, 150, 150 + totalWidth, 150 + height };
+            float[] start = { 35, 150, 35 + totalWidth, 150 + height };
             Sampler hexSampler = new HexagonSampler(new[] { cols, rows });
             var startStore = new Store(new FloatSeries(2, start), hexSampler);
             composite.AddProperty(PropertyId.Location, startStore);
@@ -158,9 +158,9 @@ namespace DataArcs.Tests.GraphicTests
             AddGraphic(composite);
             AddColor(composite);
 
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 6f, 6f, 9f, 9f, 6f, 6f).Store);
-            RectFSeries maxMinA = new RectFSeries(200f, 100f, 600f, 300f); //0, 0, 800f, 400f);
-            RectFSeries maxMinB = new RectFSeries(200f, 100f, 600f, 300f);
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(2, 8f, 8f, 12f, 9f, 8f, 8f).Store);
+            RectFSeries maxMinA = new RectFSeries(100f, 50f, 700f, 400f); //0, 0, 800f, 400f);
+            RectFSeries maxMinB = new RectFSeries(100f, 50f, 700f, 400f);
             var startStore = new RandomSeries(2, SeriesType.Float, count, maxMinA).CreateLinearStore(count);
             composite.AddProperty(PropertyId.Location, startStore);
 
@@ -199,14 +199,15 @@ namespace DataArcs.Tests.GraphicTests
 
             Container endComp = (Container)startComp.CreateChild();
 
-            IntSeries itemData2 = new IntSeries(1, new int[] { 0, 199 });
-            Store items2 = itemData2.CreateLinearStore(200);
+            IntSeries itemData2 = new IntSeries(1, new int[] { 0, 159 });
+            Store items2 = itemData2.CreateLinearStore(160);
             endComp.AddProperty(PropertyId.Items, items2);
 
-            GridSampler gridSampler = new GridSampler(new[] { 15, 16}, SlotUtils.YX);
-            var endRect = startRect; // new float[] { 50, 50, 500, 400 };
+            GridSampler gridSampler = new GridSampler(new[] { 10, 16}, SlotUtils.YX);
+            var endRect = new float[] { 50, 50, 700, 400 };
             var endStore = new Store(new FloatSeries(2, endRect), gridSampler, CombineFunction.Replace);
             endComp.AddProperty(PropertyId.Location, endStore);
+            endComp.AddProperty(PropertyId.Radius, new FloatSeries(2, 12f, 12f, 21f, 21f, 12f, 12f).Store);
 
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
             return new BlendTransition(startComp, endComp, new Timer(delay, duration), easeStore);
@@ -214,7 +215,7 @@ namespace DataArcs.Tests.GraphicTests
 
         private static void AddGraphic(Container container)
         {
-	        container.AddProperty(PropertyId.Radius, new Store(new FloatSeries(1, 10f, 20f, 10f) ));
+	        //container.AddProperty(PropertyId.Radius, new Store(new FloatSeries(1, 10f, 20f, 10f) ));
 	        container.AddProperty(PropertyId.PointCount, new FloatSeries(1, new float[] { 6f, 9f, 6f }).CreateLinearStore(3));
 	        container.AddProperty(PropertyId.Starness, new Store(new FloatSeries(1,  0, -0.3f, 0) ));
 	        container.AddProperty(PropertyId.Orientation, new Store(new FloatSeries(1, 0.3f, 1f / 12f, 0.3f) ));
@@ -224,13 +225,13 @@ namespace DataArcs.Tests.GraphicTests
         private static void AddColor(Container container)
         {
 	        Sampler colorSampler = new LineSampler(); //new GridSampler(new []{10, 10});
-	        var start = new float[] { 0.3f, 0.1f, 0.2f, 1f, 1f, 0, 0, 0.15f, 1f, 0, 0.5f, 0.1f };
-	        var end = new float[] { 0, 0.2f, 0.7f, 0.8f, 0, 0.3f, 0.7f, 1f, 0.1f, 0.4f, 0, 1f };
+	        var start = new float[] { 0.3f, 0.1f, 0.2f,   1f, 1f, 0,       0, 0.15f, 1f,      0, 0.5f, 0.1f };
+	        var end = new float[] { 0, 0.2f, 0.7f,        0.8f, 0, 0.3f,   0.7f, 1f, 0.1f,    0.4f, 0, 1f };
 	        var colorStartStore = new Store(new FloatSeries(3, start), colorSampler);
 	        var colorEndStore = new Store(new FloatSeries(3, end), colorSampler);
 	        container.AddProperty(PropertyId.FillColor, new BlendStore(colorStartStore, colorEndStore));
 
-            container.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0, 0, 0, .4f, 0, 0).Store);
+            container.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0f, 0f, 0f, .3f, 0.1f, 0.1f).Store);
             container.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 0f, 2f, 0f).Store);
         }
     }
