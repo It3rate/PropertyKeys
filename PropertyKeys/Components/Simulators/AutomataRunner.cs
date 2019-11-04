@@ -50,6 +50,7 @@ namespace DataArcs.Components.Simulators
         public IStore Automata { get; }
         private readonly IStore _previousAutomata;
 
+        public int RuleSetCount => RuleSets.Count;
         protected List<RuleSet> RuleSets { get; }
         public int ActiveRuleSetIndex { get; set; }
         public int PassCount { get; set; }
