@@ -62,47 +62,55 @@ namespace DataArcs.Players
         private void Tick(object sender, ElapsedEventArgs e)
         {
             if (!_isPaused)
-            { 
-                for (int i = 0; i < _toRemoveActive.Count; i++)
-                {
-                    int id = _toRemoveActive[i];
-                    if (_allComposites.ContainsKey(id))
-                    {
-                        _allComposites[id].OnDeactivate();
-                    }
-                    _activeElementIds.Remove(id);
-                }
-                if (_canDestroy)
-                {
-                    for (int i = 0; i < _toDestroy.Count; i++)
-                    {
-                        int id = _toDestroy[i];
-                        _activeElementIds.Remove(id);
-                        _allComposites.Remove(id);
-                    }
-                    _needsDestroy = false;
-                }
+            {
+	            lock (_activeElementIds)
+	            {
+		            for (int i = 0; i < _toRemoveActive.Count; i++)
+		            {
+			            int id = _toRemoveActive[i];
+			            if (_allComposites.ContainsKey(id))
+			            {
+				            _allComposites[id].OnDeactivate();
+			            }
 
-                foreach (var item in _toAddActive)
-                {
-                    // todo: activeElements should allow multiple copies, currently unable to distinguish them with deletion
-                    _activeElementIds.Add(item.Key);
-                    item.Value.OnActivate();
-                }
-                _toAddActive.Clear();
-                _toRemoveActive.Clear();
-                _toDestroy.Clear();
+			            _activeElementIds.Remove(id);
+		            }
 
-                _currentTime = e.SignalTime - (StartTime + _delayTime);
-                float dt = (float)(_currentTime - _lastTime).TotalMilliseconds;
-                foreach (var id in _activeElementIds)
-                {
-                    if (_allComposites.ContainsKey(id))
-                    {
-                        _allComposites[id].Update(CurrentMs, dt);
-                    }
-                }
-                _display.Invalidate();
+		            if (_canDestroy)
+		            {
+			            for (int i = 0; i < _toDestroy.Count; i++)
+			            {
+				            int id = _toDestroy[i];
+				            _activeElementIds.Remove(id);
+				            _allComposites.Remove(id);
+			            }
+
+			            _needsDestroy = false;
+		            }
+
+		            foreach (var item in _toAddActive)
+		            {
+			            // todo: activeElements should allow multiple copies, currently unable to distinguish them with deletion
+			            _activeElementIds.Add(item.Key);
+			            item.Value.OnActivate();
+		            }
+
+		            _toAddActive.Clear();
+		            _toRemoveActive.Clear();
+		            _toDestroy.Clear();
+
+		            _currentTime = e.SignalTime - (StartTime + _delayTime);
+		            float dt = (float) (_currentTime - _lastTime).TotalMilliseconds;
+		            foreach (var id in _activeElementIds)
+		            {
+			            if (_allComposites.ContainsKey(id))
+			            {
+				            _allComposites[id].Update(CurrentMs, dt);
+			            }
+		            }
+	            }
+
+	            _display.Invalidate();
 
                 _lastTime = _currentTime;
             }
