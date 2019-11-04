@@ -51,21 +51,30 @@ namespace DataArcs.Components.Simulators
 
         protected List<RuleSet> RuleSets { get; }
         public int ActiveRuleSetIndex { get; private set; }
-        public int PassCount { get; private set; }
+        public int PassCount { get; set; }
 
         public Runner(IStore automata, params RuleSet[] ruleSets)
         {
             _automata = automata;
             _previousAutomata = _automata;
-            RuleSets = new List<RuleSet>(ruleSets);
+            RuleSets = new List<RuleSet>();
+            for (int i = 0; i < ruleSets.Length; i++)
+            {
+                AddRuleSet(ruleSets[i]);
+            }
         }
         public void AddRuleSet(RuleSet ruleSet) => RuleSets.Add(ruleSet);
 
-        protected virtual RuleSet GetRuleSet(int automataIndex)
+        public virtual RuleSet GetRuleSet(int automataIndex)
         {
             return RuleSets[ActiveRuleSetIndex];
         }
 
+        public Series InvokeRuleSet(Series currentValue, Series neighbors, int automataIndex)
+        {
+            var ruleSet = GetRuleSet(automataIndex);
+            return ruleSet.InvokeRules(currentValue, neighbors);
+        }
         public void InvokePass()
         {
             int capacity = _automata.Capacity;
@@ -80,6 +89,8 @@ namespace DataArcs.Components.Simulators
                 var result = ruleSet.InvokeRules(currentValue, neighbors);
                 _automata.GetFullSeries().SetSeriesAtIndex(i, result);
             }
+
+            PassCount++;
         }
 
         public void Reset()

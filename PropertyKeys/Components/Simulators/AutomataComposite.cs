@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +17,17 @@ namespace DataArcs.Components.Simulators
 	    private IStore _previousAutomata;
         public override int Capacity { get => _automata.Capacity; set { } }
 
-	    public AutomataComposite(IStore itemStore, IStore automataStore) : base(itemStore)
+        private Runner _runner;
+        private RuleSet _ruleSet1;
+
+        public AutomataComposite(IStore itemStore, IStore automataStore) : base(itemStore)
 	    {
 		    _automata = automataStore;
 		    _previousAutomata = _automata.Clone();
 			AddProperty(PropertyId.Automata, _automata);
+
+            _runner = new Runner(_automata);
+            _ruleSet1 = CreateBlock1(_runner);
         }
 
 	    private int _delayCount = 0;
@@ -32,6 +39,7 @@ namespace DataArcs.Components.Simulators
 	    private int blockIndex = 0;
 	    private int count = 50;
 
+
         public override void StartUpdate(float currentTime, float deltaTime)
 	    {
 		    if (!isBusy)
@@ -42,13 +50,17 @@ namespace DataArcs.Components.Simulators
 			    if (true)//(_delayCount % 10 == 8)
 			    {
 				    if (SeriesUtils.Random.NextDouble() < 0.006 && count > 100)
-				    {
+                    {
+                        _runner.Reset();
                         block1 = !block1;
                         blockIndex = 0;
                         count = 0;
 					    currentFn1 = Average1;
 						currentFn2 = RandomMid;
 					}
+
+                    _runner.PassCount++;
+                    _runner.GetRuleSet(0).BeginPass();
 				    count++;
 				    blockIndex += 100;
 
@@ -61,30 +73,31 @@ namespace DataArcs.Components.Simulators
                         var neighbors = _previousAutomata.GetNeighbors(i);
                         if (block1 && blockIndex > i)
                         {
-	                        if (count < 20)
-	                        {
-		                        DarkenSmall(currentValue, neighbors);
-	                        }
-                            else if (SeriesUtils.Random.NextDouble() < 0.001)
-                            {
-                                currentValue = RandomAny(currentValue, neighbors);
-                            }
-                            else if (rnd0 < 0.01)
-                            {
-	                            currentValue = DarkenSmall(currentValue, neighbors);
-                            }
-                            else if (Math.Abs(currentValue.X - currentValue.Y) < 0.005f)
-                            {
-	                            currentValue = RandomDark(currentValue, neighbors);
-                            }
-                            else if (currentValue.Y < 0.3)
-                            {
-                                currentValue = MaxNeighborPart(currentValue, neighbors);
-                            }
-                            else if (currentValue.Z > 0.2)
-                            {
-                                currentValue = MinNeighborPart(currentValue, neighbors);
-                            }
+                            currentValue = _runner.InvokeRuleSet(currentValue,neighbors, i);
+                         //   if (count < 20)
+	                        //{
+		                       // DarkenSmall(currentValue, neighbors);
+	                        //}
+                         //   else if (SeriesUtils.Random.NextDouble() < 0.001)
+                         //   {
+                         //       currentValue = RandomAny(currentValue, neighbors);
+                         //   }
+                         //   else if (rnd0 < 0.01)
+                         //   {
+	                        //    currentValue = DarkenSmall(currentValue, neighbors);
+                         //   }
+                         //   else if (Math.Abs(currentValue.X - currentValue.Y) < 0.005f)
+                         //   {
+	                        //    currentValue = RandomDark(currentValue, neighbors);
+                         //   }
+                         //   else if (currentValue.Y < 0.3)
+                         //   {
+                         //       currentValue = MaxNeighborPart(currentValue, neighbors);
+                         //   }
+                         //   else if (currentValue.Z > 0.2)
+                         //   {
+                         //       currentValue = MinNeighborPart(currentValue, neighbors);
+                         //   }
                         }
                         else
                         {
@@ -138,15 +151,15 @@ namespace DataArcs.Components.Simulators
                         }
 
                         _automata.GetFullSeries().SetSeriesAtIndex(i, currentValue);
-				    }
+                    }
 			    }
 
 			    isBusy = false;
 		    }
 
 	    }
-
-        private void CreateBlock1(Runner runner)
+        
+        private RuleSet CreateBlock1(Runner runner)
         {
             RuleSet rules = new RuleSet();
             Condition cond;
@@ -177,6 +190,8 @@ namespace DataArcs.Components.Simulators
             rules.AddRule(cond, MinNeighborPart);
 
            runner.AddRuleSet(rules);
+
+           return rules;
         }
 
 
