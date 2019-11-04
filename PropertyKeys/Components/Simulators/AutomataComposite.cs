@@ -33,8 +33,8 @@ namespace DataArcs.Components.Simulators
         }
 
 	    private int _delayCount = 0;
-	    private ParameterizedFunction currentFn1 = Average1;
-	    private ParameterizedFunction currentFn2 = RandomMid;
+	    private ParameterizedFunction currentFn1 = Average01;
+	    private ParameterizedFunction currentFn2 = RandomMid30_70;
 	    private bool isBusy = false;
 
 	    bool block1 = false;
@@ -57,8 +57,8 @@ namespace DataArcs.Components.Simulators
                         block1 = !block1;
                         blockIndex = 0;
                         count = 0;
-					    currentFn1 = Average1;
-						currentFn2 = RandomMid;
+					    currentFn1 = Average01;
+						currentFn2 = RandomMid30_70;
 					}
 
 				    _runner1.PassCount++;
@@ -91,15 +91,19 @@ namespace DataArcs.Components.Simulators
 	        RuleSet rules = new RuleSet();
 	        Condition cond;
 
-			ParameterizedFunction swapFn1 = Average1;
-			ParameterizedFunction swapFn2 = RandomMid;
+			ParameterizedFunction swapFn1 = Average01;
+			ParameterizedFunction swapFn2 = RandomMid30_70;
 
 			rules.BeginPass = () =>
 	        {
 		        //perPassRnd = (float)SeriesUtils.Random.NextDouble();
 	        };
 
-            //rules.Reset = () => perPassRnd = 0;
+            rules.Reset = () =>
+            {
+                int index = (int)(runner.Automata.Capacity / 2.13f);
+                runner.Automata.GetFullSeries().SetSeriesAtIndex(index, new FloatSeries(3, 0f, 0f, .7f));
+            };
 
             cond = (currentValue, target) => runner.PassCount < 2 && SeriesUtils.Random.NextDouble() < 0.003;
             rules.AddRule(cond, RuleUtils.SetValueFn(0, new FloatSeries(3, 0, 0, 0.7f)));
@@ -120,7 +124,7 @@ namespace DataArcs.Components.Simulators
 	        rules.AddRule(cond, RandomAny);
 
 	        cond = (currentValue, target) => currentValue.Z < 0.1f;
-	        rules.AddRule(cond, AverageMaxHigh);
+	        rules.AddRule(cond, AverageMax95);
 
 	        cond = (currentValue, target) => currentValue.X > 0.90f;
 	        rules.AddRule(cond, swapFn1);
@@ -168,13 +172,13 @@ namespace DataArcs.Components.Simulators
 	        rules.AddRule(cond, DarkenSmall);
 
 	        cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) < 0.005f;
-	        rules.AddRule(cond, RandomDark);
+	        rules.AddRule(cond, RandomDark00_30);
 
 	        cond = (currentValue, target) => currentValue.Y < 0.3;
-	        rules.AddRule(cond, MaxNeighborPart);
+	        rules.AddRule(cond, MaxNeighbor02);
 
 	        cond = (currentValue, target) => currentValue.Z > 0.2;
-	        rules.AddRule(cond, MinNeighborPart);
+	        rules.AddRule(cond, MinNeighbor99);
 
 	        runner.AddRuleSet(rules);
 
@@ -186,14 +190,14 @@ namespace DataArcs.Components.Simulators
         private static readonly ParameterizedFunction Darken = RuleUtils.InterpolateWithConstantFn(Colors.Black, 0.3f);
         private static readonly ParameterizedFunction DarkenSmall = RuleUtils.InterpolateWithConstantFn(Colors.Black, 0.08f);
         private static readonly ParameterizedFunction Lighten = RuleUtils.InterpolateWithConstantFn(Colors.White, 0.1f);
-        private static readonly ParameterizedFunction Average1 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.1f), SeriesUtils.Average);
-        private static readonly ParameterizedFunction AverageMaxHigh = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.95f), SeriesUtils.Max);
-        private static readonly ParameterizedFunction MaxNeighborPart = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.2f), SeriesUtils.Max);
-        private static readonly ParameterizedFunction MinNeighborPart = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.99f), SeriesUtils.Min);
+        private static readonly ParameterizedFunction Average01 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.1f), SeriesUtils.Average);
+        private static readonly ParameterizedFunction AverageMax95 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.95f), SeriesUtils.Max);
+        private static readonly ParameterizedFunction MaxNeighbor02 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.2f), SeriesUtils.Max);
+        private static readonly ParameterizedFunction MinNeighbor99 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.99f), SeriesUtils.Min);
         private static readonly ParameterizedFunction Mix1 = RuleUtils.ModifyResultsFn(
             RuleUtils.ModifyNeighborsFn(RuleUtils.MixFn(new ParametricSeries(3, 0.1f, 0.2f, 0.3f)), SeriesUtils.Average),SeriesUtils.ClampTo01);
         private static readonly ParameterizedFunction RandomAny = RuleUtils.RandomColorFn(0, 1f);
-        private static readonly ParameterizedFunction RandomMid = RuleUtils.RandomColorFn(0.3f, 0.7f);
-        private static readonly ParameterizedFunction RandomDark = RuleUtils.RandomColorFn(0.0f, 0.3f);
+        private static readonly ParameterizedFunction RandomMid30_70 = RuleUtils.RandomColorFn(0.3f, 0.7f);
+        private static readonly ParameterizedFunction RandomDark00_30 = RuleUtils.RandomColorFn(0.0f, 0.3f);
     }
 }

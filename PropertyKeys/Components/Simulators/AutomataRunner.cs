@@ -41,12 +41,13 @@ namespace DataArcs.Components.Simulators
             }
             return result;
         }
-        public Action Reset { get; set; }
+        private Action _reset;
+        public Action Reset { get => _reset; set { _reset = value; _reset.Invoke(); } }
     }
 
     public class Runner
     {
-        private readonly IStore _automata;
+        public IStore Automata { get; }
         private readonly IStore _previousAutomata;
 
         protected List<RuleSet> RuleSets { get; }
@@ -55,8 +56,8 @@ namespace DataArcs.Components.Simulators
 
         public Runner(IStore automata, params RuleSet[] ruleSets)
         {
-            _automata = automata;
-            _previousAutomata = _automata;
+            Automata = automata;
+            _previousAutomata = Automata;
             RuleSets = new List<RuleSet>();
             for (int i = 0; i < ruleSets.Length; i++)
             {
@@ -77,8 +78,8 @@ namespace DataArcs.Components.Simulators
         }
         public void InvokePass()
         {
-            int capacity = _automata.Capacity;
-            _automata.CopySeriesDataInto(_previousAutomata);
+            int capacity = Automata.Capacity;
+            Automata.CopySeriesDataInto(_previousAutomata);
             var ruleSet = GetRuleSet(0);
             ruleSet.BeginPass?.Invoke();
             for (int i = 0; i < capacity; i++)
@@ -87,7 +88,7 @@ namespace DataArcs.Components.Simulators
                 var neighbors = _previousAutomata.GetNeighbors(i);
                 ruleSet = GetRuleSet(0);
                 var result = ruleSet.InvokeRules(currentValue, neighbors);
-                _automata.GetFullSeries().SetSeriesAtIndex(i, result);
+                Automata.GetFullSeries().SetSeriesAtIndex(i, result);
             }
 
             PassCount++;
@@ -156,7 +157,6 @@ namespace DataArcs.Components.Simulators
                 source.X + (target.X - 0.5f) * mix.X,
                 source.Y + (target.Y - 0.5f) * mix.Y,
                 source.Z + (target.Z - 0.5f) * mix.Z);
-
         }
     }
 }
