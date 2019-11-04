@@ -51,7 +51,7 @@ namespace DataArcs.Components.Simulators
 			    _delayCount++;
 			    if (true)//(_delayCount % 10 == 8)
 			    {
-				    if (SeriesUtils.Random.NextDouble() < 0.006 && count > 100)
+				    if (SeriesUtils.Random.NextDouble() < 0.01 && count > 250)
                     {
                         _runner1.Reset();
                         block1 = !block1;
@@ -99,12 +99,15 @@ namespace DataArcs.Components.Simulators
 		        //perPassRnd = (float)SeriesUtils.Random.NextDouble();
 	        };
 
-	        //rules.Reset = () => perPassRnd = 0;
+            //rules.Reset = () => perPassRnd = 0;
 
-	        cond = (currentValue, target) => runner.PassCount < 40;
+            cond = (currentValue, target) => runner.PassCount < 2 && SeriesUtils.Random.NextDouble() < 0.003;
+            rules.AddRule(cond, RuleUtils.SetValueFn(0, new FloatSeries(3, 0, 0, 0.7f)));
+
+            cond = (currentValue, target) => runner.PassCount < 40;
 	        rules.AddRule(cond, DarkenSmall);
 
-	        cond = (currentValue, target) => count < 42 && SeriesUtils.Random.NextDouble() < 0.0003;
+	        cond = (currentValue, target) => runner.PassCount < 42 && SeriesUtils.Random.NextDouble() < 0.0003;
 	        rules.AddRule(cond, RuleUtils.SetValueFn(0, new FloatSeries(3, 0, 0, 0.7f)) );
 
 	        cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.00001;

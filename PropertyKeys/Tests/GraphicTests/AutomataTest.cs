@@ -62,7 +62,7 @@ namespace DataArcs.Tests.GraphicTests
         {
         }
 
-        GridSampler Grid => new GridSampler(new int[] { 75, 50 });
+        GridSampler Grid => new GridSampler(new int[] { 85, 60 });
         HexagonSampler Hex => new HexagonSampler(new int[] { 75, 50 });
         //RingSampler Ring => new RingSampler(new int[] { 30, 25, 20, 15 });
 
