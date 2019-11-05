@@ -7,6 +7,7 @@ using DataArcs.Adapters.Color;
 using DataArcs.Components;
 using DataArcs.Components.ExternalInput;
 using DataArcs.Components.Simulators;
+using DataArcs.Components.Simulators.Automata;
 using DataArcs.Components.Transitions;
 using DataArcs.Graphic;
 using DataArcs.Players;
@@ -24,6 +25,10 @@ namespace DataArcs.Tests.GraphicTests
 	    private Timer _timer;
 		
 	    IContainer _current;
+
+	    GridSampler Grid => new GridSampler(new int[] { 85, 60 });
+	    HexagonSampler Hex => new HexagonSampler(new int[] { 75, 50 });
+	    //RingSampler Ring => new RingSampler(new int[] { 30, 25, 20, 15 });
 
         public AutomataTest(Player player)
 	    {
@@ -62,10 +67,6 @@ namespace DataArcs.Tests.GraphicTests
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
         }
-		
-        GridSampler Grid => new GridSampler(new int[] { 85, 60 });
-        HexagonSampler Hex => new HexagonSampler(new int[] { 75, 50 });
-        //RingSampler Ring => new RingSampler(new int[] { 30, 25, 20, 15 });
 
         private IContainer GetAutomata(Sampler sampler)
 	    {
@@ -79,6 +80,7 @@ namespace DataArcs.Tests.GraphicTests
 		    var runner = new Runner(automataStore);
 		    CreateBlock1(runner);
 		    CreateBlock2(runner);
+		    runner.ActiveIndex = 1;
 
 			var composite = new AutomataComposite(itemStore, automataStore, runner);
 
@@ -97,6 +99,42 @@ namespace DataArcs.Tests.GraphicTests
 		    Store loc = new Store(MouseInput.MainFrameRect.Outset(-0f), sampler);
 		    composite.AppendProperty(PropertyId.Location, loc);
 		    return composite;
+        }
+
+        private RuleSet CreateBlock1(Runner runner)
+        {
+            RuleSet rules = new RuleSet();
+            rules.TransitionSpeed = 0.05f;
+            Condition cond;
+            float perPassRnd = 0;
+
+            rules.BeginPass = () =>
+            {
+                perPassRnd = (float)SeriesUtils.Random.NextDouble();
+            };
+            rules.Reset = () => perPassRnd = 0;
+
+            cond = (currentValue, target) => runner.PassCount < 30;
+            rules.AddRule(cond, Darken);
+
+            cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.001;
+            rules.AddRule(cond, RandomAny);
+
+            cond = (currentValue, target) => perPassRnd < 0.01;
+            rules.AddRule(cond, DarkenSmall);
+
+            cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) < 0.005f;
+            rules.AddRule(cond, RandomDark00_30);
+
+            cond = (currentValue, target) => currentValue.Y < 0.3;
+            rules.AddRule(cond, MaxNeighbor02);
+
+            cond = (currentValue, target) => currentValue.Z > 0.2;
+            rules.AddRule(cond, MinNeighbor99);
+
+            runner.AddRuleSet(rules);
+
+            return rules;
         }
 
         private RuleSet CreateBlock2(Runner runner)
@@ -121,10 +159,10 @@ namespace DataArcs.Tests.GraphicTests
             cond = (currentValue, target) => runner.PassCount < 2 && SeriesUtils.Random.NextDouble() < 0.003;
             rules.AddRule(cond, RuleUtils.SetValueFn(0, new FloatSeries(3, 0, 0, 0.7f)));
 
-            cond = (currentValue, target) => runner.PassCount < 40;
+            cond = (currentValue, target) => runner.PassCount < 50;
             rules.AddRule(cond, DarkenSmall);
 
-            cond = (currentValue, target) => runner.PassCount < 42 && SeriesUtils.Random.NextDouble() < 0.0003;
+            cond = (currentValue, target) => runner.PassCount < 52 && SeriesUtils.Random.NextDouble() < 0.0003;
             rules.AddRule(cond, RuleUtils.SetValueFn(0, new FloatSeries(3, 0, 0, 0.7f)));
 
             cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.00001;
@@ -163,41 +201,6 @@ namespace DataArcs.Tests.GraphicTests
 
             return rules;
         }
-        private RuleSet CreateBlock1(Runner runner)
-        {
-            RuleSet rules = new RuleSet();
-            Condition cond;
-            float perPassRnd = 0;
-
-            rules.BeginPass = () =>
-            {
-                perPassRnd = (float)SeriesUtils.Random.NextDouble();
-            };
-            rules.Reset = () => perPassRnd = 0;
-
-            cond = (currentValue, target) => runner.PassCount < 20;
-            rules.AddRule(cond, Darken);
-
-            cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.001;
-            rules.AddRule(cond, RandomAny);
-
-            cond = (currentValue, target) => perPassRnd < 0.01;
-            rules.AddRule(cond, DarkenSmall);
-
-            cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) < 0.005f;
-            rules.AddRule(cond, RandomDark00_30);
-
-            cond = (currentValue, target) => currentValue.Y < 0.3;
-            rules.AddRule(cond, MaxNeighbor02);
-
-            cond = (currentValue, target) => currentValue.Z > 0.2;
-            rules.AddRule(cond, MinNeighbor99);
-
-            runner.AddRuleSet(rules);
-
-            return rules;
-        }
-
 
         // experimental functions
         private static readonly ParameterizedFunction Darken = RuleUtils.InterpolateWithConstantFn(Colors.Black, 0.3f);
