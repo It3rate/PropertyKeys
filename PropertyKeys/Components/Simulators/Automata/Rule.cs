@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.SeriesData;
+using DataArcs.Stores;
 
 namespace DataArcs.Components.Simulators.Automata
 {
@@ -14,11 +15,26 @@ namespace DataArcs.Components.Simulators.Automata
 		public Condition Condition { get; }
 		public ParameterizedFunction ParameterizedFunction { get; }
 
-		public Rule(Condition condition, ParameterizedFunction parameterizedFunction)
+		public Slot[] SwizzleMap { get; set; }
+		private CombineFunction CombineFunction { get; set; } = CombineFunction.Replace;
+
+        public Rule(Condition condition, ParameterizedFunction parameterizedFunction)
 		{
 			Condition = condition;
 			ParameterizedFunction = parameterizedFunction;
 		}
+
+        public bool Invoke(Series currentValue, Series neighbors)
+        {
+	        bool result = false;
+	        if (Condition(currentValue, neighbors))
+	        {
+		        result = true;
+		        var vals = ParameterizedFunction(currentValue, neighbors);
+				currentValue.CombineInto(vals, CombineFunction);
+	        }
+	        return result;
+        }
 	}
 
 }

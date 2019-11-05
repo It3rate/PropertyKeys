@@ -14,18 +14,15 @@ namespace DataArcs.Components.Simulators.Automata
 		public Action BeginPass { get; set; }
 		public float TransitionSpeed { get; set; } = 1f;
 
-        public Series InvokeRules(Series currentValue, Series neighbors)
+        public void InvokeRules(Series currentValue, Series neighbors)
 		{
-			Series result = currentValue;
 			for (int i = 0; i < Rules.Count; i++)
 			{
-				if (Rules[i].Condition(currentValue, neighbors))
+				if (Rules[i].Invoke(currentValue, neighbors))
 				{
-					result = Rules[i].ParameterizedFunction(currentValue, neighbors);
 					break;
 				}
 			}
-			return result;
 		}
 		private Action _reset;
 		public Action Reset { get => _reset; set { _reset = value; _reset.Invoke(); } }

@@ -48,10 +48,10 @@ namespace DataArcs.Components.Simulators.Automata
             return RuleSets[currentIndex];
         }
 
-        public virtual Series InvokeRuleSet(Series currentValue, Series neighbors, int elementIndex)
+        public virtual void InvokeRuleSet(Series currentValue, Series neighbors, int elementIndex)
         {
             var ruleSet = GetRuleSet(elementIndex);
-            return ruleSet.InvokeRules(currentValue, neighbors);
+            ruleSet.InvokeRules(currentValue, neighbors);
         }
 
         private void BeginPass()
@@ -77,8 +77,8 @@ namespace DataArcs.Components.Simulators.Automata
 		        {
 			        var currentValue = _previousAutomata.GetFullSeries().GetValueAtVirtualIndex(i, capacity);
 			        var neighbors = _previousAutomata.GetNeighbors(i);
-			        var result = InvokeRuleSet(currentValue, neighbors, i);
-			        Automata.GetFullSeries().SetSeriesAtIndex(i, result);
+			        InvokeRuleSet(currentValue, neighbors, i);
+			        Automata.GetFullSeries().SetSeriesAtIndex(i, currentValue);
 		        }
 
 		        PassCount++;
