@@ -64,6 +64,7 @@ namespace DataArcs.Stores
         Average,
 		Interpolate,
         ContinuousAdd,
+        Final,
 
         MultiplyT,
 	}

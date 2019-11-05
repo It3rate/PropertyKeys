@@ -160,7 +160,8 @@ namespace DataArcs.SeriesData
 
 					break;
 				case CombineFunction.Replace:
-					for (var i = 0; i < DataSize; i++)
+				case CombineFunction.Final:
+                    for (var i = 0; i < DataSize; i++)
 					{
 						_intValues[i] = b.IntDataAt(i);
 					}

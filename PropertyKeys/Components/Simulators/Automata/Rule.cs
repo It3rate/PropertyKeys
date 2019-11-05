@@ -15,8 +15,7 @@ namespace DataArcs.Components.Simulators.Automata
 		public Condition Condition { get; }
 		public ParameterizedFunction ParameterizedFunction { get; }
 
-		public Slot[] SwizzleMap { get; set; }
-		private CombineFunction CombineFunction { get; set; } = CombineFunction.Replace;
+		private CombineFunction CombineFunction { get; set; } = CombineFunction.Final;
 
         public Rule(Condition condition, ParameterizedFunction parameterizedFunction)
 		{
@@ -29,7 +28,7 @@ namespace DataArcs.Components.Simulators.Automata
 	        bool result = false;
 	        if (Condition(currentValue, neighbors))
 	        {
-		        result = true;
+		        result = CombineFunction == CombineFunction.Final;
 		        var vals = ParameterizedFunction(currentValue, neighbors);
 				currentValue.CombineInto(vals, CombineFunction);
 	        }
