@@ -55,7 +55,7 @@ namespace DataArcs.Components.Simulators.Automata
         {
             return (currentValue, target) => SeriesUtils.InterpolateInto(currentValue, target, interpolationAmount);
         }
-        public static ParameterizedFunction InterpolateWithConstantFn(Series constant, float amount)
+        public static ParameterizedFunction ConstInterpFn(Series constant, float amount)
         {
             return (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue, constant, amount);// ignore neighbors
         }
@@ -88,10 +88,44 @@ namespace DataArcs.Components.Simulators.Automata
         }
         public static ParameterizedFunction RandomColorFn(float min, float max)
         {
-            return (currentValue, neighbors) => ColorAdapter.RandomColor(min, max, min, max, min, max);
+	        return (currentValue, neighbors) => ColorAdapter.RandomColor(min, max, min, max, min, max);
+        }
+        public static ParameterizedFunction RandomColorFn(float minR, float maxR, float minG, float maxG, float minB, float maxB)
+        {
+	        return (currentValue, neighbors) => ColorAdapter.RandomColor(minR, maxR, minG, maxG, minB, maxB);
+        }
+        public static ParameterizedFunction ShuffleValuesFn()
+        {
+	        return (currentValue, neighbors) =>
+	        {
+		        var floats = currentValue.FloatDataRef;
+		        for (int i = 0; i < floats.Length; i++)
+		        {
+			        int indexA = SeriesUtils.Random.Next(floats.Length);
+			        int indexB = SeriesUtils.Random.Next(floats.Length);
+			        float temp = floats[indexA];
+			        floats[indexA] = floats[indexB];
+			        floats[indexB] = temp;
+		        }
+		        return currentValue;
+	        };
         }
 
-        public static ParameterizedFunction EvalAndInterpolateFn(SeriesModifier evaluator, float interpolationAmount) => EvaluateNeighborsFn(InterpolateFn(interpolationAmount), evaluator);
+        public static ParameterizedFunction EvalInterpFn(SeriesModifier evaluator, float interpolationAmount) => EvaluateNeighborsFn(InterpolateFn(interpolationAmount), evaluator);
+        public static ParameterizedFunction NopFn() => (currentValue, neighbors) => currentValue;
+
+        public static ParameterizedFunction CombineFn(params ParameterizedFunction[] functions)
+        {
+	        return (currentValue, neighbors) =>
+	        {
+		        var result = currentValue;
+		        for (int i = 0; i < functions.Length; i++)
+		        {
+			        result = functions[i](result, neighbors);
+		        }
+		        return result;
+	        };
+        }
 
 
         // Conditions
@@ -153,6 +187,20 @@ namespace DataArcs.Components.Simulators.Automata
 	        for (int i = 0; i < conditions.Length; i++)
 	        {
 		        if (!conditions[i].Invoke(currentValue, neighbors, runner))
+		        {
+			        result = false;
+			        break;
+		        }
+	        }
+
+	        return result;
+        };
+        public static Condition AllConditionsFalse(params Condition[] conditions) => (currentValue, neighbors, runner) =>
+        {
+	        bool result = true;
+	        for (int i = 0; i < conditions.Length; i++)
+	        {
+		        if (conditions[i].Invoke(currentValue, neighbors, runner))
 		        {
 			        result = false;
 			        break;

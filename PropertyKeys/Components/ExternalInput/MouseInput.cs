@@ -22,7 +22,8 @@ namespace DataArcs.Components.ExternalInput
 
 	    private float _mouseX;
 	    private float _mouseY;
-	    private IComposite _container;
+	    public Action MouseClick { get; set; }
+        private IComposite _container;
 
 	    public static RectFSeries MainFrameRect
 	    {
@@ -49,21 +50,27 @@ namespace DataArcs.Components.ExternalInput
 
         public override void OnActivate()
         {
-            Application.OpenForms[0].MouseMove += OnMouseMove;
+	        Application.OpenForms[0].MouseMove += OnMouseMove;
+	        Application.OpenForms[0].MouseClick += OnMouseClick;
         }
         public override void OnDeactivate()
         {
             Application.OpenForms[0].MouseMove -= OnMouseMove;
+            Application.OpenForms[0].MouseClick -= OnMouseClick;
         }
 
         private void OnMouseMove(object sender, MouseEventArgs args)
-	    {
-		    _mouseX = args.X;
-		    _mouseY = args.Y;
-			//Debug.WriteLine(args.X + " : " + args.Y);
+        {
+	        _mouseX = args.X;
+	        _mouseY = args.Y;
+            //Debug.WriteLine(args.X + " : " + args.Y);
+        }
+        private void OnMouseClick(object sender, MouseEventArgs args)
+        {
+	        MouseClick?.Invoke();
         }
 
-	    public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
+        public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
 	    {
 			//todo: accomodate seriesT, maybe?
 		    ParametricSeries result;

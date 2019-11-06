@@ -23,8 +23,9 @@ namespace DataArcs.Tests.GraphicTests
 	    int _versionIndex = -1;
 	    int _versionCount = 4;
 	    private Timer _timer;
-		
-	    IContainer _current;
+	    private MouseInput _mouseInput;
+
+        AutomataComposite _current;
 
 	    GridSampler Grid => new GridSampler(new int[] { 85, 60 });
 	    HexagonSampler Hex => new HexagonSampler(new int[] { 75, 50 });
@@ -34,8 +35,16 @@ namespace DataArcs.Tests.GraphicTests
 	    {
 		    _player = player;
 		    _player.Pause();
-	    }
 
+		    _mouseInput = new MouseInput();
+			_mouseInput.MouseClick = NextBlock;
+		    _player.AddActiveElement(_mouseInput);
+        }
+
+        public void NextBlock()
+        {
+			_current.Runner.NextBlock();
+        }
 	    public void NextVersion()
 	    {
 		    _player.Pause();
@@ -68,7 +77,7 @@ namespace DataArcs.Tests.GraphicTests
         {
         }
 
-        private IContainer GetAutomata(Sampler sampler)
+        private AutomataComposite GetAutomata(Sampler sampler)
 	    {
 		    Store itemStore = Store.CreateItemStore(sampler.Capacity);
 
@@ -80,7 +89,8 @@ namespace DataArcs.Tests.GraphicTests
 		    var runner = new Runner(automataStore);
 		    CreateBlock1(runner);
 		    CreateBlock2(runner);
-		    runner.ActiveIndex = 1;
+		    CreateBlock3(runner);
+            runner.ActiveIndex = 0;
 
 			var composite = new AutomataComposite(itemStore, automataStore, runner);
 
@@ -94,7 +104,6 @@ namespace DataArcs.Tests.GraphicTests
 
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
 
-
             //composite.AddProperty(PropertyId.Orientation, new FloatSeries(1, 0f).Store);
             composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
             composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
@@ -104,8 +113,38 @@ namespace DataArcs.Tests.GraphicTests
 		    composite.AppendProperty(PropertyId.Location, loc);
 		    return composite;
         }
+		
+
 
         private RuleSet CreateBlock1(Runner runnerParam)
+        {
+	        RuleSet rules = new RuleSet();
+
+	        float perPassRnd = 0;
+	        rules.BeginPass = () => { perPassRnd = (float) SeriesUtils.Random.NextDouble(); };
+
+	        rules.AddRule(Rule.PassCountIsUnder(30), Darken);
+	        rules.AddRule(Rule.RandomChance(0.00002f), Rule.RandomColorFn(0.1f, .9f, .4f,.7f, .4f, .7f) );
+            var isBrightTest = Rule.CurrentValueIsOver(Slot.Max, 0.9f);
+	        var dimStars = Rule.AllConditionsTrue(
+	            Rule.RandomChance(0.005f),
+		        isBrightTest
+            );
+            rules.AddRule(dimStars, Rule.ConstInterpFn(Colors.Black, 0.05f));
+            rules.AddRule(isBrightTest, Rule.NopFn());
+            rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.Max, Slot.Y, Slot.Z, 0.09f), Rule.CombineFn(Rule.ShuffleValuesFn(), Rule.ConstInterpFn(Colors.Black, 0.005f)));
+            rules.AddRule(Rule.CurrentValueIsUnder(Slot.Min, 0.35f), Rule.EvalInterpFn(SeriesUtils.Max, 0.07f));
+            rules.AddRule(Rule.RandomChance(0.004f), Rule.ConstInterpFn(Colors.Cyan, 0.1f));
+            rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.Max, Slot.X, Slot.Y, 0.06f), Rule.ConstInterpFn(Colors.Red, 0.07f));
+            rules.AddRule(Rule.CurrentValueIsOver(Slot.Average, 0.2f), Rule.EvalInterpFn(SeriesUtils.Min, 0.5f));
+
+	        runnerParam.AddRuleSet(rules);
+	        rules.Reset(runnerParam);
+
+	        return rules;
+        }
+
+        private RuleSet CreateBlock2(Runner runnerParam)
         {
             RuleSet rules = new RuleSet();
             rules.TransitionSpeed = 0.05f;
@@ -116,7 +155,6 @@ namespace DataArcs.Tests.GraphicTests
                 perPassRnd = (float)SeriesUtils.Random.NextDouble();
             };
             rules.ResetFn = (Runner runner) => perPassRnd = 0;
-
             rules.AddRule(Rule.PassCountIsUnder(30), Darken);
             rules.AddRule(Rule.RandomChance(0.001f), RandomAny);
             rules.AddRule((currentValue, target, runner) => perPassRnd < 0.01, DarkenSmall);
@@ -130,7 +168,7 @@ namespace DataArcs.Tests.GraphicTests
             return rules;
         }
 
-        private RuleSet CreateBlock2(Runner runnerParam)
+        private RuleSet CreateBlock3(Runner runnerParam)
         {
             RuleSet rules = new RuleSet();
             Condition cond;
@@ -148,7 +186,6 @@ namespace DataArcs.Tests.GraphicTests
                 int index = (int)(runner.Automata.Capacity / 2.13f);
                 runner.Automata.GetFullSeries().SetSeriesAtIndex(index, new FloatSeries(3, 0f, 0f, .7f));
             };
-			
             rules.AddRule(Rule.AllConditionsTrue(Rule.PassCountIsUnder(2), Rule.RandomChance(0.003f)), 
 	            Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
             rules.AddRule(Rule.PassCountIsUnder(50), DarkenSmall);
@@ -184,14 +221,14 @@ namespace DataArcs.Tests.GraphicTests
         }
 
         // experimental functions
-        private static readonly ParameterizedFunction Darken = Rule.InterpolateWithConstantFn(Colors.Black, 0.3f);
-        private static readonly ParameterizedFunction DarkenSmall = Rule.InterpolateWithConstantFn(Colors.Black, 0.08f);
-        private static readonly ParameterizedFunction Lighten = Rule.InterpolateWithConstantFn(Colors.White, 0.1f);
+        private static readonly ParameterizedFunction Darken = Rule.ConstInterpFn(Colors.Black, 0.3f);
+        private static readonly ParameterizedFunction DarkenSmall = Rule.ConstInterpFn(Colors.Black, 0.08f);
+        private static readonly ParameterizedFunction Lighten = Rule.ConstInterpFn(Colors.White, 0.1f);
 
-        private static readonly ParameterizedFunction Average01 = Rule.EvalAndInterpolateFn(SeriesUtils.Average, 0.1f);
-        private static readonly ParameterizedFunction AverageMax95 = Rule.EvalAndInterpolateFn(SeriesUtils.Max, 0.95f);
-        private static readonly ParameterizedFunction MaxNeighbor02 = Rule.EvalAndInterpolateFn(SeriesUtils.Max, 0.2f);
-        private static readonly ParameterizedFunction MinNeighbor99 = Rule.EvalAndInterpolateFn(SeriesUtils.Min, 0.99f);
+        private static readonly ParameterizedFunction Average01 = Rule.EvalInterpFn(SeriesUtils.Average, 0.1f);
+        private static readonly ParameterizedFunction AverageMax95 = Rule.EvalInterpFn(SeriesUtils.Max, 0.95f);
+        private static readonly ParameterizedFunction MaxNeighbor02 = Rule.EvalInterpFn(SeriesUtils.Max, 0.2f);
+        private static readonly ParameterizedFunction MinNeighbor99 = Rule.EvalInterpFn(SeriesUtils.Min, 0.99f);
 
         private static readonly ParameterizedFunction Mix1 = Rule.ModifyResultsFn(
 	        Rule.EvaluateNeighborsFn(Rule.MixFn(new ParametricSeries(3, 0.1f, 0.2f, 0.3f)), SeriesUtils.Average), SeriesUtils.ClampTo01);

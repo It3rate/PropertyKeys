@@ -14,7 +14,8 @@ namespace DataArcs.Components.Simulators.Automata
         public int RuleSetCount => RuleSets.Count;
         protected List<RuleSet> RuleSets { get; }
 
-        public int ActiveIndex { get; set; }
+        private int _activeIndex;
+        public int ActiveIndex { get => _activeIndex; set => _activeIndex = Math.Max(0, Math.Min(RuleSets.Count - 1, value)); }
         public int AlternateIndex { get; set; }
         public int PassCount { get; set; }
 
