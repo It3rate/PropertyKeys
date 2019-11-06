@@ -101,43 +101,32 @@ namespace DataArcs.Tests.GraphicTests
 		    return composite;
         }
 
-        private RuleSet CreateBlock1(Runner runner)
+        private RuleSet CreateBlock1(Runner runnerParam)
         {
             RuleSet rules = new RuleSet();
             rules.TransitionSpeed = 0.05f;
-            Condition cond;
             float perPassRnd = 0;
 
             rules.BeginPass = () =>
             {
                 perPassRnd = (float)SeriesUtils.Random.NextDouble();
             };
-            rules.Reset = () => perPassRnd = 0;
+            rules.ResetFn = (Runner runner) => perPassRnd = 0;
 
-            cond = (currentValue, target) => runner.PassCount < 30;
-            rules.AddRule(cond, Darken);
+            rules.AddRule(Rule.PassCountIsUnder(30), Darken);
+            rules.AddRule(Rule.RandomChance(0.001f), RandomAny);
+            rules.AddRule((currentValue, target, runner) => perPassRnd < 0.01, DarkenSmall);
+            rules.AddRule(Rule.CurrentValueIsNear(Slot.X, Slot.Y, 0.005f), RandomDark00_30);
+            rules.AddRule(Rule.CurrentValueIsUnder(Slot.Y, 0.3f), MaxNeighbor02);
+            rules.AddRule(Rule.CurrentValueIsOver(Slot.Z, 0.2f), MinNeighbor99);
 
-            cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.001;
-            rules.AddRule(cond, RandomAny);
-
-            cond = (currentValue, target) => perPassRnd < 0.01;
-            rules.AddRule(cond, DarkenSmall);
-
-            cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) < 0.005f;
-            rules.AddRule(cond, RandomDark00_30);
-
-            cond = (currentValue, target) => currentValue.Y < 0.3;
-            rules.AddRule(cond, MaxNeighbor02);
-
-            cond = (currentValue, target) => currentValue.Z > 0.2;
-            rules.AddRule(cond, MinNeighbor99);
-
-            runner.AddRuleSet(rules);
+            runnerParam.AddRuleSet(rules);
+			rules.Reset(runnerParam);
 
             return rules;
         }
 
-        private RuleSet CreateBlock2(Runner runner)
+        private RuleSet CreateBlock2(Runner runnerParam)
         {
             RuleSet rules = new RuleSet();
             Condition cond;
@@ -150,40 +139,40 @@ namespace DataArcs.Tests.GraphicTests
                 //perPassRnd = (float)SeriesUtils.Random.NextDouble();
             };
 
-            rules.Reset = () =>
+            rules.ResetFn = (Runner runner) =>
             {
                 int index = (int)(runner.Automata.Capacity / 2.13f);
                 runner.Automata.GetFullSeries().SetSeriesAtIndex(index, new FloatSeries(3, 0f, 0f, .7f));
             };
 
-            cond = (currentValue, target) => runner.PassCount < 2 && SeriesUtils.Random.NextDouble() < 0.003;
+            cond = (currentValue, target, runner) => runner.PassCount < 2 && SeriesUtils.Random.NextDouble() < 0.003;
             rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
 
-            cond = (currentValue, target) => runner.PassCount < 50;
+            cond = (currentValue, target, runner) => runner.PassCount < 50;
             rules.AddRule(cond, DarkenSmall);
 
-            cond = (currentValue, target) => runner.PassCount < 52 && SeriesUtils.Random.NextDouble() < 0.0003;
+            cond = (currentValue, target, runner) => runner.PassCount < 52 && SeriesUtils.Random.NextDouble() < 0.0003;
             rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
 
-            cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.00001;
+            cond = (currentValue, target, runner) => SeriesUtils.Random.NextDouble() < 0.00001;
             rules.AddRule(cond, RandomAny);
 
-            cond = (currentValue, target) => target.Max().Z > 0.99;
+            cond = (currentValue, target, runner) => target.Max().Z > 0.99;
             rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, Colors.Black));
 
-            cond = (currentValue, target) => target.Max().Y > 0.99 && target.Min().Y < 0.01;
+            cond = (currentValue, target, runner) => target.Max().Y > 0.99 && target.Min().Y < 0.01;
             rules.AddRule(cond, RandomAny);
 
-            cond = (currentValue, target) => currentValue.Z < 0.1f;
+            cond = (currentValue, target, runner) => currentValue.Z < 0.1f;
             rules.AddRule(cond, AverageMax95);
 
-            cond = (currentValue, target) => currentValue.X > 0.90f;
+            cond = (currentValue, target, runner) => currentValue.X > 0.90f;
             rules.AddRule(cond, swapFn1);
 
-            cond = (currentValue, target) => Math.Abs(currentValue.X - currentValue.Y) > 0.9f;
+            cond = (currentValue, target, runner) => Math.Abs(currentValue.X - currentValue.Y) > 0.9f;
             rules.AddRule(cond, swapFn2);
 
-            cond = (currentValue, target) => currentValue.Z < 0.1f || currentValue.Z > 0.94f;
+            cond = (currentValue, target, runner) => currentValue.Z < 0.1f || currentValue.Z > 0.94f;
             rules.AddRule(cond, (currentValue, target) => {
                 var temp = swapFn1;
                 swapFn1 = swapFn2;
@@ -191,13 +180,14 @@ namespace DataArcs.Tests.GraphicTests
                 return currentValue;
             });
 
-            cond = (currentValue, target) => target.Average().Y < 0.001f;
+            cond = (currentValue, target, runner) => target.Average().Y < 0.001f;
             rules.AddRule(cond, Mix1);
 
-            cond = (currentValue, target) => true;
+            cond = (currentValue, target, runner) => true;
             rules.AddRule(cond, Mix1);
 
-            runner.AddRuleSet(rules);
+            runnerParam.AddRuleSet(rules);
+            rules.Reset(runnerParam);
 
             return rules;
         }

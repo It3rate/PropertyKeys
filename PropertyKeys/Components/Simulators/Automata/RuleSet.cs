@@ -17,19 +17,29 @@ namespace DataArcs.Components.Simulators.Automata
         public void AddRule(Condition condition, ParameterizedFunction fn) => Rules.Add(new Rule(condition, fn));
 		public Action BeginPass { get; set; }
 
-        public Series InvokeRules(Series currentValue, Series neighbors)
+        public Series InvokeRules(Series currentValue, Series neighbors, Runner runner)
 		{
 			for (int i = 0; i < Rules.Count; i++)
 			{
-				if (!Rules[i].Invoke(currentValue, neighbors))
+				if (!Rules[i].Invoke(currentValue, neighbors, runner))
 				{
 					break;
 				}
 			}
 			return SeriesUtils.SwizzleSeries(SwizzleMap, currentValue);
         }
-		private Action _reset;
-		public Action Reset { get => _reset; set { _reset = value; _reset.Invoke(); } }
+		private Action<Runner> _reset;
+		public Action<Runner> ResetFn
+		{
+			get => _reset;
+			set => _reset = value;
+		}
+
+		public void Reset(Runner runner)
+		{
+			_reset?.Invoke(runner);
+		}
+
 	}
 
 }

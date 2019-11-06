@@ -45,6 +45,9 @@ namespace DataArcs.SeriesData
 	    public static readonly Slot[] RGB = new Slot[] { Slot.R, Slot.G, Slot.B };
 	    public static readonly Slot[] RGBA = new Slot[] { Slot.R, Slot.G, Slot.B, Slot.A };
 	    public static readonly Slot[] ARGB = new Slot[] { Slot.A, Slot.R, Slot.G, Slot.B };
+
+	    public static float GetFloatAt(Series series, Slot slot) => series.FloatDataAt((int)slot);
+	    public static int GetIntAt(Series series, Slot slot) => series.IntDataAt((int)slot);
     }
 
     public class SeriesUtils

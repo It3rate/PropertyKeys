@@ -51,7 +51,7 @@ namespace DataArcs.Components.Simulators.Automata
         public virtual Series InvokeRuleSet(Series currentValue, Series neighbors, int elementIndex)
         {
             var ruleSet = GetRuleSet(elementIndex);
-            return ruleSet.InvokeRules(currentValue, neighbors);
+            return ruleSet.InvokeRules(currentValue, neighbors, this);
         }
 
         private void BeginPass()
@@ -96,7 +96,7 @@ namespace DataArcs.Components.Simulators.Automata
             ActiveIndex = 0;
             foreach (var ruleSet in RuleSets)
             {
-                ruleSet.Reset?.Invoke();
+                ruleSet?.Reset(this);
             }
         }
     }

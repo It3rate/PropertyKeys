@@ -9,7 +9,7 @@ using DataArcs.Stores;
 
 namespace DataArcs.Components.Simulators.Automata
 {
-	public delegate bool Condition(Series currentValue, Series neighbors);
+	public delegate bool Condition(Series currentValue, Series neighbors, Runner runner);
 	public delegate Series ParameterizedFunction(Series currentValue, Series neighbors);
 	public delegate Series SeriesModifier(Series elements);
 
@@ -34,10 +34,10 @@ namespace DataArcs.Components.Simulators.Automata
         /// <param name="currentValue">Value to adjust.</param>
         /// <param name="neighbors">Parameters used in the potiential adjustment.</param>
         /// <returns>Returns true if not a final value.</returns>
-        public bool Invoke(Series currentValue, Series neighbors)
+        public bool Invoke(Series currentValue, Series neighbors, Runner runner)
         {
 	        bool canContinue = true;
-	        if (Condition(currentValue, neighbors))
+	        if (Condition(currentValue, neighbors, runner))
 	        {
 		        canContinue = CombineFunction != CombineFunction.Final;
 		        var values = ParameterizedFunction(currentValue, neighbors);
@@ -46,6 +46,7 @@ namespace DataArcs.Components.Simulators.Automata
 	        return canContinue;
         }
 
+		// Evaluators
 
         public static ParameterizedFunction MixFn(ParametricSeries mix)
         {
@@ -92,6 +93,17 @@ namespace DataArcs.Components.Simulators.Automata
         }
 
         public static ParameterizedFunction EvalAndInterpolateFn(SeriesModifier evaluator, float interpolationAmount) => EvaluateNeighborsFn(InterpolateFn(interpolationAmount), evaluator);
+
+
+        // Conditions
+        public static Condition RandomChance(float chance) => (currentValue, neighbors, runner) => SeriesUtils.Random.NextDouble() < chance;
+        public static Condition PassCountIsUnder(int minCount) => (currentValue, neighbors, runner) => runner.PassCount < minCount;
+        public static Condition PassCountIsOver(int maxCount) => (currentValue, neighbors, runner) => runner.PassCount > maxCount;
+
+        public static Condition CurrentValueIsUnder(Slot slot, float value) => (currentValue, neighbors, runner) => SlotUtils.GetFloatAt(currentValue, slot) < value;
+        public static Condition CurrentValueIsOver(Slot slot, float value) => (currentValue, neighbors, runner) => SlotUtils.GetFloatAt(currentValue, slot) > value;
+        public static Condition CurrentValueIsNear(Slot slotA, Slot slotB, float maxDelta) => (currentValue, neighbors, runner) => Math.Abs(SlotUtils.GetFloatAt(currentValue, slotA) - SlotUtils.GetFloatAt(currentValue, slotB)) < maxDelta;
+		
     }
 
 }
