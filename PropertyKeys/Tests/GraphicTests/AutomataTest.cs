@@ -144,47 +144,34 @@ namespace DataArcs.Tests.GraphicTests
                 int index = (int)(runner.Automata.Capacity / 2.13f);
                 runner.Automata.GetFullSeries().SetSeriesAtIndex(index, new FloatSeries(3, 0f, 0f, .7f));
             };
-
-            cond = (currentValue, target, runner) => runner.PassCount < 2 && SeriesUtils.Random.NextDouble() < 0.003;
-            rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
-
-            cond = (currentValue, target, runner) => runner.PassCount < 50;
-            rules.AddRule(cond, DarkenSmall);
-
-            cond = (currentValue, target, runner) => runner.PassCount < 52 && SeriesUtils.Random.NextDouble() < 0.0003;
-            rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
-
-            cond = (currentValue, target, runner) => SeriesUtils.Random.NextDouble() < 0.00001;
-            rules.AddRule(cond, RandomAny);
-
-            cond = (currentValue, target, runner) => target.Max().Z > 0.99;
-            rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, Colors.Black));
-
-            cond = (currentValue, target, runner) => target.Max().Y > 0.99 && target.Min().Y < 0.01;
-            rules.AddRule(cond, RandomAny);
-
-            cond = (currentValue, target, runner) => currentValue.Z < 0.1f;
-            rules.AddRule(cond, AverageMax95);
-
-            cond = (currentValue, target, runner) => currentValue.X > 0.90f;
-            rules.AddRule(cond, swapFn1);
-
-            cond = (currentValue, target, runner) => Math.Abs(currentValue.X - currentValue.Y) > 0.9f;
-            rules.AddRule(cond, swapFn2);
-
-            cond = (currentValue, target, runner) => currentValue.Z < 0.1f || currentValue.Z > 0.94f;
-            rules.AddRule(cond, (currentValue, target) => {
+			
+            rules.AddRule(Rule.AllConditionsTrue(Rule.PassCountIsUnder(2), Rule.RandomChance(0.003f)), 
+	            Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
+            rules.AddRule(Rule.PassCountIsUnder(50), DarkenSmall);
+            rules.AddRule(Rule.AllConditionsTrue(Rule.PassCountIsUnder(52), Rule.RandomChance(0.0003f)), 
+	            Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
+            rules.AddRule(Rule.RandomChance(0.00001f), RandomAny);
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Max, Slot.Z, 0.99f), Rule.SetSeriesAtIndexFn(0, Colors.Black));
+            var act = Rule.AllConditionsTrue(
+	            Rule.NeighboursEvaluationIsOver(SeriesUtils.Max, Slot.Y, 0.99f),
+	            Rule.NeighboursEvaluationIsUnder(SeriesUtils.Min, Slot.Y, 0.01f)
+            );
+            rules.AddRule(act, RandomAny);
+            rules.AddRule(Rule.CurrentValueIsUnder(Slot.Z, 0.1f), AverageMax95);
+            rules.AddRule(Rule.CurrentValueIsOver(Slot.X, 0.9f), swapFn1);
+            rules.AddRule(Rule.CurrentValueIsFar(Slot.X, Slot.Y, 0.9f), swapFn2);
+            var oct = Rule.OneConditionTrue(
+	            Rule.CurrentValueIsUnder(Slot.Z, 0.1f),
+	            Rule.CurrentValueIsOver(Slot.Z, 0.94f)
+            );
+            rules.AddRule(oct, (currentValue, target) => {
                 var temp = swapFn1;
                 swapFn1 = swapFn2;
                 swapFn2 = temp;
                 return currentValue;
             });
-
-            cond = (currentValue, target, runner) => target.Average().Y < 0.001f;
-            rules.AddRule(cond, Mix1);
-
-            cond = (currentValue, target, runner) => true;
-            rules.AddRule(cond, Mix1);
+            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.Y, 0.001f), Mix1);
+            rules.AddRule(Rule.AlwaysTrue(), Mix1);
 
             runnerParam.AddRuleSet(rules);
             rules.Reset(runnerParam);
