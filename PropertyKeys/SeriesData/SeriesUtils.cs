@@ -34,7 +34,7 @@ namespace DataArcs.SeriesData
 		Max,
 		Min,
 		Count,
-        Clamp01,
+		Clamp01,
     }
 
 	public class SlotUtils
@@ -57,7 +57,14 @@ namespace DataArcs.SeriesData
 	    public static readonly Slot[] RGBA = new Slot[] { Slot.R, Slot.G, Slot.B, Slot.A };
 	    public static readonly Slot[] ARGB = new Slot[] { Slot.A, Slot.R, Slot.G, Slot.B };
 
-	    public static float GetFloatAt(Series series, Slot slot)
+	    public static readonly Slot[] Sum = new Slot[] { Slot.Sum };
+	    public static readonly Slot[] Average = new Slot[] { Slot.Average };
+	    public static readonly Slot[] Max = new Slot[] { Slot.Max };
+	    public static readonly Slot[] Min = new Slot[] { Slot.Min };
+	    public static readonly Slot[] Count = new Slot[] { Slot.Count };
+	    public static readonly Slot[] Clamp01 = new Slot[] { Slot.Clamp01 };
+
+        public static float GetFloatAt(Series series, Slot slot)
 	    {
 		    float result;
 		    if (slot < Slot.Combinatorial)
@@ -81,9 +88,12 @@ namespace DataArcs.SeriesData
 				    case Slot.Min:
 					    result = floats.Min();
 					    break;
-                    case Slot.Count:
+				    case Slot.Count:
 					    result = floats.Length;
-                        break;
+					    break;
+				    case Slot.Clamp01:
+					    result = Math.Max(0, Math.Min(1f, floats.Max()));
+					    break;
                     default:
 	                    result = floats.Last();
 	                    break;
@@ -120,7 +130,10 @@ namespace DataArcs.SeriesData
 				    case Slot.Count:
 					    result = ints.Length;
 					    break;
-				    default:
+				    case Slot.Clamp01:
+					    result = Math.Max(0, Math.Min(1, ints.Max()));
+					    break;
+                    default:
 					    result = ints.Last();
 					    break;
 			    }
