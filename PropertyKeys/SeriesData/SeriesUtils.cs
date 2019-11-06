@@ -1,5 +1,7 @@
 ﻿using DataArcs.Stores;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using DataArcs.Samplers;
 
 namespace DataArcs.SeriesData
@@ -24,7 +26,16 @@ namespace DataArcs.SeriesData
         S7 = 7,
         S8 = 8,
         S9 = 9,
-	}
+
+
+        Combinatorial = 1000,
+		Sum,
+		Average,
+		Max,
+		Min,
+		Count,
+        Clamp01,
+    }
 
 	public class SlotUtils
     {
@@ -46,8 +57,76 @@ namespace DataArcs.SeriesData
 	    public static readonly Slot[] RGBA = new Slot[] { Slot.R, Slot.G, Slot.B, Slot.A };
 	    public static readonly Slot[] ARGB = new Slot[] { Slot.A, Slot.R, Slot.G, Slot.B };
 
-	    public static float GetFloatAt(Series series, Slot slot) => series.FloatDataAt((int)slot);
-	    public static int GetIntAt(Series series, Slot slot) => series.IntDataAt((int)slot);
+	    public static float GetFloatAt(Series series, Slot slot)
+	    {
+		    float result;
+		    if (slot < Slot.Combinatorial)
+		    {
+                result = series.FloatDataAt((int)slot);
+		    }
+		    else
+		    {
+			    var floats = series.GetSeriesAtIndex(0).FloatDataRef;
+			    switch (slot)
+			    {
+				    case Slot.Sum:
+					    result = floats.Sum();
+					    break;
+				    case Slot.Average:
+					    result = floats.Average();
+					    break;
+				    case Slot.Max:
+					    result = floats.Max();
+					    break;
+				    case Slot.Min:
+					    result = floats.Min();
+					    break;
+                    case Slot.Count:
+					    result = floats.Length;
+                        break;
+                    default:
+	                    result = floats.Last();
+	                    break;
+                }
+		    }
+		    return result;
+	    }
+
+	    public static int GetIntAt(Series series, Slot slot)
+	    {
+		    int result;
+		    if (slot < Slot.Combinatorial)
+		    {
+			    int index = Math.Max(0, Math.Min(series.Count, (int)slot));
+			    result = series.IntDataAt(index);
+		    }
+		    else
+		    {
+			    var ints = series.GetSeriesAtIndex(0).IntDataRef;
+			    switch (slot)
+			    {
+				    case Slot.Sum:
+					    result = ints.Sum();
+					    break;
+				    case Slot.Average:
+					    result = (int)(ints.Sum() / (float)ints.Length);
+					    break;
+				    case Slot.Max:
+					    result = ints.Max();
+					    break;
+				    case Slot.Min:
+					    result = ints.Min();
+					    break;
+				    case Slot.Count:
+					    result = ints.Length;
+					    break;
+				    default:
+					    result = ints.Last();
+					    break;
+			    }
+		    }
+		    return result;
+	    }
     }
 
     public class SeriesUtils
@@ -61,8 +140,7 @@ namespace DataArcs.SeriesData
 		        Series value = series.GetSeriesAtIndex(0);
 		        for (int i = 0; i < swizzleMap.Length; i++)
 		        {
-			        int index = Math.Max(0, Math.Min(value.Count, (int) swizzleMap[i]));
-			        floats[i] = value.FloatDataAt(index);
+                    floats[i] = SlotUtils.GetFloatAt(value, swizzleMap[i]);
 		        }
 		        result = CreateSeriesOfType(series, floats);
             }
@@ -226,6 +304,7 @@ namespace DataArcs.SeriesData
 				series.SetSeriesAtIndex(b, sa);
 			}
 		}
+
         public static Series Sum(Series source)
         {
 	        var result = new float[source.VectorSize];
