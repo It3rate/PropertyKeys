@@ -157,19 +157,19 @@ namespace DataArcs.Tests.GraphicTests
             };
 
             cond = (currentValue, target) => runner.PassCount < 2 && SeriesUtils.Random.NextDouble() < 0.003;
-            rules.AddRule(cond, RuleUtils.SetValueFn(0, new FloatSeries(3, 0, 0, 0.7f)));
+            rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
 
             cond = (currentValue, target) => runner.PassCount < 50;
             rules.AddRule(cond, DarkenSmall);
 
             cond = (currentValue, target) => runner.PassCount < 52 && SeriesUtils.Random.NextDouble() < 0.0003;
-            rules.AddRule(cond, RuleUtils.SetValueFn(0, new FloatSeries(3, 0, 0, 0.7f)));
+            rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
 
             cond = (currentValue, target) => SeriesUtils.Random.NextDouble() < 0.00001;
             rules.AddRule(cond, RandomAny);
 
             cond = (currentValue, target) => target.Max().Z > 0.99;
-            rules.AddRule(cond, RuleUtils.SetValueFn(0, Colors.Black));
+            rules.AddRule(cond, Rule.SetSeriesAtIndexFn(0, Colors.Black));
 
             cond = (currentValue, target) => target.Max().Y > 0.99 && target.Min().Y < 0.01;
             rules.AddRule(cond, RandomAny);
@@ -203,17 +203,20 @@ namespace DataArcs.Tests.GraphicTests
         }
 
         // experimental functions
-        private static readonly ParameterizedFunction Darken = RuleUtils.InterpolateWithConstantFn(Colors.Black, 0.3f);
-        private static readonly ParameterizedFunction DarkenSmall = RuleUtils.InterpolateWithConstantFn(Colors.Black, 0.08f);
-        private static readonly ParameterizedFunction Lighten = RuleUtils.InterpolateWithConstantFn(Colors.White, 0.1f);
-        private static readonly ParameterizedFunction Average01 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.1f), SeriesUtils.Average);
-        private static readonly ParameterizedFunction AverageMax95 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.95f), SeriesUtils.Max);
-        private static readonly ParameterizedFunction MaxNeighbor02 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.2f), SeriesUtils.Max);
-        private static readonly ParameterizedFunction MinNeighbor99 = RuleUtils.ModifyNeighborsFn(RuleUtils.InterpolateFn(0.99f), SeriesUtils.Min);
-        private static readonly ParameterizedFunction Mix1 = RuleUtils.ModifyResultsFn(
-            RuleUtils.ModifyNeighborsFn(RuleUtils.MixFn(new ParametricSeries(3, 0.1f, 0.2f, 0.3f)), SeriesUtils.Average), SeriesUtils.ClampTo01);
-        private static readonly ParameterizedFunction RandomAny = RuleUtils.RandomColorFn(0, 1f);
-        private static readonly ParameterizedFunction RandomMid30_70 = RuleUtils.RandomColorFn(0.3f, 0.7f);
-        private static readonly ParameterizedFunction RandomDark00_30 = RuleUtils.RandomColorFn(0.0f, 0.3f);
+        private static readonly ParameterizedFunction Darken = Rule.InterpolateWithConstantFn(Colors.Black, 0.3f);
+        private static readonly ParameterizedFunction DarkenSmall = Rule.InterpolateWithConstantFn(Colors.Black, 0.08f);
+        private static readonly ParameterizedFunction Lighten = Rule.InterpolateWithConstantFn(Colors.White, 0.1f);
+
+        private static readonly ParameterizedFunction Average01 = Rule.EvalAndInterpolateFn(SeriesUtils.Average, 0.1f);
+        private static readonly ParameterizedFunction AverageMax95 = Rule.EvalAndInterpolateFn(SeriesUtils.Max, 0.95f);
+        private static readonly ParameterizedFunction MaxNeighbor02 = Rule.EvalAndInterpolateFn(SeriesUtils.Max, 0.2f);
+        private static readonly ParameterizedFunction MinNeighbor99 = Rule.EvalAndInterpolateFn(SeriesUtils.Min, 0.99f);
+
+        private static readonly ParameterizedFunction Mix1 = Rule.ModifyResultsFn(
+	        Rule.EvaluateNeighborsFn(Rule.MixFn(new ParametricSeries(3, 0.1f, 0.2f, 0.3f)), SeriesUtils.Average), SeriesUtils.ClampTo01);
+
+        private static readonly ParameterizedFunction RandomAny = Rule.RandomColorFn(0, 1f);
+        private static readonly ParameterizedFunction RandomMid30_70 = Rule.RandomColorFn(0.3f, 0.7f);
+        private static readonly ParameterizedFunction RandomDark00_30 = Rule.RandomColorFn(0.0f, 0.3f);
     }
 }

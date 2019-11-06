@@ -21,7 +21,7 @@ namespace DataArcs.Components.Simulators.Automata
 		{
 			for (int i = 0; i < Rules.Count; i++)
 			{
-				if (Rules[i].Invoke(currentValue, neighbors))
+				if (!Rules[i].Invoke(currentValue, neighbors))
 				{
 					break;
 				}
