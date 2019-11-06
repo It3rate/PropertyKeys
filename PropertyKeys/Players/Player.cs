@@ -59,10 +59,12 @@ namespace DataArcs.Players
         }
 
         //private float t = 0;
+        private bool _isBusy = false;
         private void Tick(object sender, ElapsedEventArgs e)
         {
-            if (!_isPaused)
+            if (!_isPaused && ! _isBusy)
             {
+	            _isBusy = true;
 	            lock (_activeElementIds)
 	            {
 		            for (int i = 0; i < _toRemoveActive.Count; i++)
@@ -114,6 +116,7 @@ namespace DataArcs.Players
 
                 _lastTime = _currentTime;
             }
+            _isBusy = false;
         }
 
         private void OnDraw(object sender, PaintEventArgs e)
@@ -202,6 +205,14 @@ namespace DataArcs.Players
             else
             {
                 _delayTime += DateTime.Now - _pauseTime;
+				_lastTime += DateTime.Now - _pauseTime;
+				//foreach (var id in _activeElementIds)
+				//{
+				//	if (_allComposites.ContainsKey(id) && (_allComposites[id] is ITimeable))
+				//	{
+				//		((ITimeable)_allComposites[id]).StartTime += (float)_delayTime.TotalMilliseconds;
+				//	} 
+				//}
             }
         }
 

@@ -14,7 +14,7 @@ namespace DataArcs.Components
     {
 	    float InterpolationT { get; set; }
         //float DeltaTime { get; }
-        //float CurrentTime { get; }
+        //float _currentTime { get; }
         //float PreviousTime { get; }
 
         float StartTime { get; set; }

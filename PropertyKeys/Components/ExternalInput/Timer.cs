@@ -16,6 +16,7 @@ namespace DataArcs.Components.Transitions
         public bool IsComplete { get; protected set; } = false;
 
         public float StartTime { get; set; }
+        private float _currentTime;
         public Series Delay { get; }
         public Series Duration { get; }
         protected bool IsReverse { get; set; } = false;
@@ -32,7 +33,8 @@ namespace DataArcs.Components.Transitions
 
         public void Restart()
         {
-            StartTime = (float)(DateTime.Now - Player.StartTime).TotalMilliseconds;
+	        StartTime = Player.GetPlayerById(0).CurrentMs;// (float)(DateTime.Now - Player.StartTime).TotalMilliseconds;
+	        _currentTime = StartTime;
             IsComplete = false;
         }
         public void Reverse()
@@ -40,10 +42,11 @@ namespace DataArcs.Components.Transitions
             IsReverse = !IsReverse;
         }
 		
-        public override void StartUpdate(float currentTime, float deltaTime)
+        public override void StartUpdate(float ct, float deltaTime)
         {
+	        _currentTime += deltaTime;
             float dur = Duration.X;
-            if (currentTime > StartTime + dur)
+            if (_currentTime > StartTime + dur)
             {
                 IsComplete = true;
                 InterpolationT = 1f;
@@ -51,9 +54,9 @@ namespace DataArcs.Components.Transitions
             else
             {
                 //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.X ? 1f : (deltaTime - _startTime) / _duration.X;
-                InterpolationT = currentTime < StartTime ? 0 :
-                    currentTime > StartTime + dur ? 1f :
-                    (currentTime - StartTime) / dur;
+                InterpolationT = _currentTime < StartTime ? 0 :
+                    _currentTime > StartTime + dur ? 1f :
+                    (_currentTime - StartTime) / dur;
             }
 
             InterpolationT = IsReverse ? 1f - InterpolationT : InterpolationT;
