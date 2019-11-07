@@ -7,6 +7,7 @@ using DataArcs.Components;
 using DataArcs.Players;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
+using DataArcs.SeriesData.Utils;
 
 namespace DataArcs.Stores
 {

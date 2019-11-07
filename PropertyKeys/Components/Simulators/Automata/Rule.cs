@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Adapters.Color;
 using DataArcs.SeriesData;
+using DataArcs.SeriesData.Utils;
 using DataArcs.Stores;
 
 namespace DataArcs.Components.Simulators.Automata
@@ -17,7 +18,6 @@ namespace DataArcs.Components.Simulators.Automata
 	{
 		public Condition Condition { get; }
 		public ParameterizedFunction ParameterizedFunction { get; }
-
 		private CombineFunction CombineFunction { get; set; } = CombineFunction.Final;
 
         public Rule(Condition condition, ParameterizedFunction parameterizedFunction)

@@ -1,4 +1,5 @@
 ﻿using System;
+using DataArcs.SeriesData.Utils;
 using DataArcs.Stores;
 
 namespace DataArcs.SeriesData

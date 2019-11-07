@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DataArcs.Components;
 using DataArcs.Players;
 using DataArcs.SeriesData;
+using DataArcs.SeriesData.Utils;
 
 namespace DataArcs.Samplers
 {

@@ -10,6 +10,7 @@ using DataArcs.Graphic;
 using DataArcs.Players;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
+using DataArcs.SeriesData.Utils;
 using DataArcs.Stores;
 
 namespace DataArcs.Components

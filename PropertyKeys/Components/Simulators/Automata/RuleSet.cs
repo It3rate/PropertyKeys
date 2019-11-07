@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.SeriesData;
+using DataArcs.SeriesData.Utils;
 
 namespace DataArcs.Components.Simulators.Automata
 {

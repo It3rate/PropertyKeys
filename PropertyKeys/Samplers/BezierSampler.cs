@@ -1,5 +1,6 @@
 ﻿using DataArcs.SeriesData;
 using System;
+using DataArcs.SeriesData.Utils;
 
 namespace DataArcs.Samplers
 {

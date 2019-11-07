@@ -11,6 +11,7 @@ using DataArcs.Players;
 using DataArcs.SeriesData;
 using DataArcs.Components.Transitions;
 using DataArcs.Graphic;
+using DataArcs.SeriesData.Utils;
 
 namespace DataArcs.Components.Transitions
 {

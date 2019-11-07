@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
+using DataArcs.SeriesData.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DataArcs.Tests

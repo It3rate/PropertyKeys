@@ -1,6 +1,7 @@
 ﻿using System;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
+using DataArcs.SeriesData.Utils;
 using DataArcs.Stores;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
