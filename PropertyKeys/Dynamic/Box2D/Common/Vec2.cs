@@ -192,5 +192,18 @@ namespace Box2DX.Common
 			Vec2 c = a - b;
 			return Vec2.Dot(c, c);
 		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is Vec2 vec2 && this == vec2;
+		}
+
+        public override int GetHashCode()
+		{
+			unchecked
+			{
+				return (X.GetHashCode() * 397) ^ Y.GetHashCode();
+			}
+		}
 	}
 }

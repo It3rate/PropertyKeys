@@ -47,16 +47,16 @@ namespace DataArcs.Components.ExternalInput
 		public FloatSeries ToFloatSeries()
 		{
 			var result = new float[Width * Height * 3];
-			int index = 0;
-			for (int x = 0; x < Width; x++)
+			int index;
+            for (int x = 0; x < Width; x++)
 			{
 				for (int y = 0; y < Height; y++)
 				{
 					int col = GetPixelValues(x, y);
-					result[index] = ((col >> 16) & 0xFF) / 255f; // red
+					index = x * 3 + y * Width * 3;
+					result[index + 0] = ((col >> 16) & 0xFF) / 255f; // red
 					result[index + 1] = ((col >> 8) & 0xFF) / 255f; // green
 					result[index + 2] = (col & 0xFF) / 255f; // blue
-					index += 3;
 				}
 			}
 			return new FloatSeries(3, result);
@@ -64,13 +64,14 @@ namespace DataArcs.Components.ExternalInput
 		public IntSeries ToIntSeries()
 		{
 			var result = new int[Width * Height * 3];
-			int index = 0;
+			int index;
 			for (int x = 0; x < Width; x++)
 			{
 				for (int y = 0; y < Height; y++)
 				{
 					int col = GetPixelValues(x, y);
-					result[index] = (col >> 16) & 0xFF; // red
+					index = x * 3 + y * Width * 3;
+                    result[index + 0] = (col >> 16) & 0xFF; // red
 					result[index + 1] = (col >> 8) & 0xFF; // green
 					result[index + 2] = col & 0xFF; // blue
 					index += 3;
