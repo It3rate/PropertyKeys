@@ -127,6 +127,7 @@ namespace DataArcs.Components.ExternalInput
 		    return result;
         }
 
+        
         public void Restart()
 	    {
 		    throw new NotImplementedException();
@@ -136,5 +137,14 @@ namespace DataArcs.Components.ExternalInput
 	    {
 		    throw new NotImplementedException();
 	    }
+
+        public void Pause()
+        {
+
+        }
+        public void Resume()
+        {
+
+        }
     }
 }

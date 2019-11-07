@@ -201,18 +201,25 @@ namespace DataArcs.Players
             if (_isPaused)
             {
                 _pauseTime = DateTime.Now;
+                foreach (var id in _activeElementIds)
+                {
+                    if (_allComposites.ContainsKey(id) && (_allComposites[id] is ITimeable))
+                    {
+                        ((ITimeable) _allComposites[id]).Pause();
+                    }
+                }
             }
             else
             {
                 _delayTime += DateTime.Now - _pauseTime;
 				_lastTime += DateTime.Now - _pauseTime;
-				//foreach (var id in _activeElementIds)
-				//{
-				//	if (_allComposites.ContainsKey(id) && (_allComposites[id] is ITimeable))
-				//	{
-				//		((ITimeable)_allComposites[id]).StartTime += (float)_delayTime.TotalMilliseconds;
-				//	} 
-				//}
+                foreach (var id in _activeElementIds)
+                {
+                    if (_allComposites.ContainsKey(id) && (_allComposites[id] is ITimeable))
+                    {
+                        ((ITimeable)_allComposites[id]).Resume();
+                    }
+                }
             }
         }
 

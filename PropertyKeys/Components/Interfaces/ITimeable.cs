@@ -30,7 +30,8 @@ namespace DataArcs.Components
 
         void Restart();
         void Reverse();
-        //void Pause();
-        //void Resume();
+        
+        void Pause();
+        void Resume();
     }
 }

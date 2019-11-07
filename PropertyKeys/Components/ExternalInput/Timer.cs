@@ -16,7 +16,11 @@ namespace DataArcs.Components.Transitions
         public bool IsComplete { get; protected set; } = false;
 
         public float StartTime { get; set; }
+        private float _runningTime;
         private float _currentTime;
+        private DateTime _pauseTime;
+        private bool _isPaused;
+        private float _delayTime = 0;
         public Series Delay { get; }
         public Series Duration { get; }
         protected bool IsReverse { get; set; } = false;
@@ -29,12 +33,15 @@ namespace DataArcs.Components.Transitions
         {
             Delay = new FloatSeries(1, delay);
             Duration = new FloatSeries(1, duration);
+            _pauseTime = DateTime.Now;
         }
 
         public void Restart()
         {
-	        StartTime = Player.GetPlayerById(0).CurrentMs;// (float)(DateTime.Now - Player.StartTime).TotalMilliseconds;
+            StartTime = (float)(DateTime.Now - Player.StartTime).TotalMilliseconds;
 	        _currentTime = StartTime;
+            _runningTime = 0;
+            _delayTime = 0;
             IsComplete = false;
         }
         public void Reverse()
@@ -44,22 +51,26 @@ namespace DataArcs.Components.Transitions
 		
         public override void StartUpdate(float ct, float deltaTime)
         {
-	        _currentTime += deltaTime;
-            float dur = Duration.X;
-            if (_currentTime > StartTime + dur)
+            if (!_isPaused)
             {
-                IsComplete = true;
-                InterpolationT = 1f;
-            }
-            else
-            {
-                //float t = deltaTime < _startTime ? 0 : deltaTime > _startTime + _duration.X ? 1f : (deltaTime - _startTime) / _duration.X;
-                InterpolationT = _currentTime < StartTime ? 0 :
-                    _currentTime > StartTime + dur ? 1f :
-                    (_currentTime - StartTime) / dur;
-            }
+                _runningTime += deltaTime + _delayTime;
+                _delayTime = 0;
+                _currentTime = StartTime + _runningTime;
+                float dur = Duration.X;
+                if (_currentTime > StartTime + dur)
+                {
+                    IsComplete = true;
+                    InterpolationT = 1f;
+                }
+                else
+                {
+                    InterpolationT = _currentTime < StartTime ? 0 :
+                        _currentTime > StartTime + dur ? 1f :
+                        (_currentTime - StartTime) / dur;
+                }
 
-            InterpolationT = IsReverse ? 1f - InterpolationT : InterpolationT;
+                InterpolationT = IsReverse ? 1f - InterpolationT : InterpolationT;
+            }
         }
         public override void EndUpdate(float currentTime, float deltaTime)
         {
@@ -100,6 +111,18 @@ namespace DataArcs.Components.Transitions
 		        result = base.GetSampledTs(propertyId, new ParametricSeries(1, InterpolationT));
             }
 	        return result;
+        }
+
+        public void Pause()
+        {
+            _isPaused = true;
+            _pauseTime = DateTime.Now;
+        }
+
+        public void Resume()
+        {
+            _isPaused = false;
+            _delayTime = (float)(DateTime.Now - _pauseTime).TotalMilliseconds;
         }
     }
 }
