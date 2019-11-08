@@ -13,11 +13,19 @@ namespace DataArcs.Graphic
 {
 	public class PolyShape : GraphicBase
 	{
-		private float _defaultOrientation = 0;
+		public bool FlatTop { get; set; }
+		public bool PackHorizontal { get; set; }
+        private float _defaultOrientation = 0;
 		private int _defaultPointCount = 4;
 		private float _defaultStarness = 0f;
 		private float _defaultRoundness = 0f;
 		private float _defaultRadius = 10f;
+
+		public PolyShape(bool flatTop = false, bool packHorizontal = false)
+		{
+			FlatTop = flatTop;
+			PackHorizontal = packHorizontal;
+		}
 		
         public BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, float radiusX, float radiusY, float starness)
 		{
@@ -27,7 +35,9 @@ namespace DataArcs.Graphic
 			var movesPerStep = pointsPerStep / 2;
 			var values = new float[count * 2 + 2];
 			var moves = new BezierMove[count + 1];
-			orientation += 0.5f;
+			orientation += 0.5f; // start at top, odd points up
+			orientation += (FlatTop || PackHorizontal) ? 1f / (pointCount * 2f) : 0;
+			orientation += PackHorizontal ? 0.25f : 0;
 
 			var step = Utils.M_PIx2 / pointCount;
 			for (var i = 0; i < pointCount; i++)

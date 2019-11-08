@@ -49,7 +49,7 @@ namespace DataArcs.Samplers
 			return SeriesUtils.CreateSeriesOfType(series, result);
         }
 
-        protected override int NeighborCount => 4;
+        public override int NeighborCount => 4;
         private int WrappedIndexes(int x, int y) => (x >= Strides[0] ? 0 : x < 0 ? Strides[0] - 1 : x) +  Strides[0] * (y >= Strides[1] ? 0 : y < 0 ? Strides[1] - 1 : y);
         public override Series GetNeighbors(Series series, int index, bool wrapEdges = true)
         {

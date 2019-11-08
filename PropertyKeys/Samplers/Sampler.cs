@@ -42,7 +42,7 @@ namespace DataArcs.Samplers
             return Swizzle(seriesT, seriesT);
         }
 
-        protected virtual int NeighborCount => 2;
+        public virtual int NeighborCount => 2;
 		private int WrappedIndex(int index, int capacity) => index >= capacity ? 0 : index < 0 ? capacity - 1 : index;
         public virtual Series GetNeighbors(Series series, int index, bool wrapEdges = true)
         {

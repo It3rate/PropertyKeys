@@ -27,7 +27,7 @@ namespace DataArcs.Tests.GraphicTests
         public BitmapTests(Player player)
         {
             _player = player;
-            bmp = Resources.it3rate;
+            bmp = Resources.face;
         }
 
         public void NextVersion()
@@ -44,28 +44,16 @@ namespace DataArcs.Tests.GraphicTests
         //}
         public Container GetComposite0()
         {
-	        int w = 100;
-	        int h = (int)(w * (bmp.Height / bmp.Width));
-	        float r = 400f / w;
-
-            var composite = new Container(Store.CreateItemStore(w * h));
-
-            var sampler = new GridSampler(new int[] { w, h });
-            //var sampler = new HexagonSampler(new int[] { w, h });
-            Store loc = new Store(new RectFSeries(20, 20, w * r, h * r), sampler);
-            composite.AddProperty(PropertyId.Location, loc);
-
-            composite.AddProperty(PropertyId.FillColor, bmp.ToFloatSeries(w, h).Store);
-            AddGraphic(composite, r);
-            return composite;
+	        int columns = 100;
+	        int width = 620;
+			var bounds = new RectFSeries(20, 20, width, width * (bmp.Height / (float)bmp.Width));
+            //var sampler = new GridSampler(new int[] { w, h });
+			var container = HexagonSampler.CreateBestFit(bounds, columns, out int rows);
+			container.AddProperty(PropertyId.FillColor, bmp.ToFloatSeries(columns, rows).Store);
+            return container;
         }
         private static void AddGraphic(Container container, float radius)
         {
-            container.AddProperty(PropertyId.Radius, new FloatSeries(2, radius, radius).Store);
-            container.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
-            //container.AddProperty(PropertyId.PenColor, Colors.White.Store);
-            //container.AddProperty(PropertyId.PenWidth, new IntSeries(1, 1).Store);
-            container.Renderer = new PolyShape();
         }
     }
 }

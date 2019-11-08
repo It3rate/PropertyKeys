@@ -13,7 +13,7 @@ namespace DataArcs.SeriesData
 	    private const int RectSize = 4;
 
 		/// <summary>
-        /// Create a rectF with x,y,w,h.
+        /// Create a rectF with l,t,r,b.
         /// </summary>
         /// <param name="values"></param>
 	    public RectFSeries(params float[] values) : base(2, values)
