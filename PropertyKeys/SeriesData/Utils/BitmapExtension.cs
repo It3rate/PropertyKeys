@@ -17,7 +17,14 @@ namespace DataArcs.SeriesData.Utils
 		    DirectBitmap dBmp = new DirectBitmap(bitmap, w, h);
 		    return dBmp.ToFloatSeries();
 	    }
-	    public static IntSeries ToIntSeries(this Bitmap bitmap, int targetWidth = -1, int targetHeight = -1)
+	    public static FloatSeries ToFloatSeriesHex(this Bitmap bitmap, int targetWidth = -1, int targetHeight = -1)
+	    {
+		    int w = targetWidth == -1 ? bitmap.Width : targetWidth;
+		    int h = targetHeight == -1 ? bitmap.Height : targetHeight;
+		    DirectBitmap dBmp = new DirectBitmap(bitmap, w, h);
+		    return dBmp.ToFloatSeriesHex();
+	    }
+        public static IntSeries ToIntSeries(this Bitmap bitmap, int targetWidth = -1, int targetHeight = -1)
 	    {
 		    int w = targetWidth == -1 ? bitmap.Width : targetWidth;
 		    int h = targetHeight == -1 ? bitmap.Height : targetHeight;

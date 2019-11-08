@@ -28,6 +28,7 @@ namespace DataArcs.Samplers
 	        return GetSeriesSample(series, seriesT);
         }
 
+		// todo: Why is this in sample? Needs to move to series, and a rect vs grid series can use different algorithms to generate values (needed).
         public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
