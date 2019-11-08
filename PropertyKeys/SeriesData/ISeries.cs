@@ -12,7 +12,7 @@ namespace DataArcs.SeriesData
 {
 	public interface ISeries : IEnumerable
 	{
-		int VectorSize { get; set; }
+		int VectorSize { get; }
 		int Count { get; }
 		SeriesType Type { get; }
 		int DataSize { get; }
