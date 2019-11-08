@@ -67,7 +67,23 @@ namespace DataArcs.SeriesData.Utils
 			var result = true;
 			if (a.GetType() == b.GetType() && a.Count == b.Count && a.VectorSize == b.VectorSize)
 			{
-                if (a.Type == SeriesType.Float)
+                if (a.Type == SeriesType.Int)
+                {
+                    for (var i = 0; i < a.DataSize; i++)
+                    {
+                        var ar = a.GetSeriesAtIndex(i).IntDataRef;
+                        var br = b.GetSeriesAtIndex(i).IntDataRef;
+                        for (var j = 0; j < ar.Length; j++)
+                        {
+                            if (ar[j] != br[j])
+                            {
+                                result = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
                 {
                     for (var i = 0; i < a.DataSize; i++)
                     {
@@ -84,22 +100,6 @@ namespace DataArcs.SeriesData.Utils
                         }
                     }
                 }
-                else
-                {
-                    for (var i = 0; i < a.DataSize; i++)
-                    {
-                        var ar = a.GetSeriesAtIndex(i).IntDataRef;
-                        var br = b.GetSeriesAtIndex(i).IntDataRef;
-                        for (var j = 0; j < ar.Length; j++)
-                        {
-                            if (ar[j] != br[j])
-                            {
-                                result = false;
-                                break;
-                            }
-                        }
-                    }
-				}
 			}
 			else
 			{

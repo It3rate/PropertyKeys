@@ -13,18 +13,19 @@ namespace DataArcs.Samplers
 	{
 		public HexagonSampler(int[] strides, Slot[] swizzleMap = null) : base(strides, swizzleMap) { }
 
-        public override Series GetSeriesSample(Series series, ParametricSeries seriesT)
-		{
-			var result = base.GetSeriesSample(series, seriesT);
-			var curRow = SamplerUtils.IndexFromT(Strides[1], seriesT.Y);// (int)Math.Round(seriesT.Y * (Strides[1] - 1));
-            if ((curRow & 1) == 1)
+        public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
+        {
+            var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, Capacity, seriesT.X) : seriesT;
+            bool isOddRow = (SamplerUtils.IndexFromT(Strides[1], result.Y) & 1) == 1;
+            float hexRowScale = 1f / (Strides[0] - 1f) * 0.5f;
+            result[0] *= (1f - hexRowScale);
+            result[1] *= (1f - hexRowScale);
+            if (isOddRow)
             {
-	            var data = result.FloatDataRef;
-	            data[0] += series.Size.X / (Strides[0] - 1f) * 0.5f;
+                result[0] += hexRowScale;
             }
-	        return result;
+            return Swizzle(result, seriesT);
         }
-
         public override int NeighborCount => 6;
         private int WrappedIndexes(int x, int y) => (x >= Strides[0] ? 0 : x < 0 ? Strides[0] - 1 : x) + Strides[0] * (y >= Strides[1] ? 0 : y < 0 ? Strides[1] - 1 : y);
         public override Series GetNeighbors(Series series, int index, bool wrapEdges = true)
@@ -35,15 +36,7 @@ namespace DataArcs.Samplers
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
 	        var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
             int offset = (indexY & 1) == 1 ? 0 : -1;
-
-            //var a = WrappedIndexes(indexX + 1, indexY);
-            //var b = WrappedIndexes(indexX, indexY - 1);
-            //var c = WrappedIndexes(indexX - 1, indexY - 1);
-            //var d = WrappedIndexes(indexX - 1, indexY);
-            //var e = WrappedIndexes(indexX - 1, indexY + 1);
-            //var f = WrappedIndexes(indexX, indexY + 1);
-            //Debug.WriteLine(index + " * " + indexX + " : " + indexY + "      :" + a + " : " + b + " : " + c + " : " + d + " : " + e + " : " + f + " ::: " + offset);
-
+            
             result.SetSeriesAtIndex(0, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 1, indexY), Capacity)); // right
 	        result.SetSeriesAtIndex(1, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 1 + offset, indexY - 1), Capacity)); // top right
 	        result.SetSeriesAtIndex(2, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 0 + offset, indexY - 1), Capacity)); // top Left
@@ -62,7 +55,7 @@ namespace DataArcs.Samplers
         public static Container CreateBestFit(RectFSeries bounds, int columns, out int rows)
 		{
 			float totalWidth = bounds.Width;
-            float w = bounds.Width / (columns - 1); // calculating spacing, from centers, so subtract 1
+            float w = bounds.Width / (columns - 1f); // calculating spacing, from centers, so subtract 1
             float h = w * (float)(2.0 / Math.Sqrt(3));
 			float vSpacing = h * .75f;
 	        rows = (int)(bounds.Height / vSpacing);
@@ -76,8 +69,9 @@ namespace DataArcs.Samplers
 
             var sampler = new HexagonSampler(new int[] { columns, rows });
 	        var composite = new Container(Store.CreateItemStore(sampler.Capacity));
-	        float overdraw = 1.04f;
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, h/2f * overdraw).Store);
+	        float overdraw = 1.00f;
+            float radiusScale = 1f - 1f / (columns - 1f) * 0.5f; // rows are offset, and thus compressed when drawn by this much.
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, h/2f * radiusScale * overdraw).Store);
 
 	        Store loc = new Store(bounds, sampler);
 	        composite.AddProperty(PropertyId.Location, loc);

@@ -44,7 +44,7 @@ namespace DataArcs.Tests.GraphicTests
         //}
         public Container GetComposite0()
         {
-	        int columns = 100;
+	        int columns = 180;
 	        int width = 620;
 			var bounds = new RectFSeries(20, 20, width, width * (bmp.Height / (float)bmp.Width));
             //var sampler = new GridSampler(new int[] { w, h });

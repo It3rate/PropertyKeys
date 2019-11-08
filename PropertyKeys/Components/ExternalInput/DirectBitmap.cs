@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using DataArcs.Samplers;
 using DataArcs.SeriesData;
 
 namespace DataArcs.Components.ExternalInput
@@ -43,8 +44,8 @@ namespace DataArcs.Components.ExternalInput
             //float scale = Math.Min(Width / sourceBitmap.Width, Height / sourceBitmap.Height);
             g.DrawImage(sourceBitmap, 0, 0, Width, Height);
 		}
-
-		public FloatSeries ToFloatSeries()
+        
+        public FloatSeries ToFloatSeries()
 		{
 			var result = new float[Width * Height * 3];
 			int index;
@@ -106,9 +107,9 @@ namespace DataArcs.Components.ExternalInput
 			Color result = Color.FromArgb(col);
 
 			return result;
-		}
+        }
 
-		public void Dispose()
+        public void Dispose()
 		{
 			if (Disposed) return;
 			Disposed = true;
