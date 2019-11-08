@@ -48,8 +48,11 @@ namespace DataArcs.Tests.GraphicTests
 	        int width = 620;
 			var bounds = new RectFSeries(20, 20, width, width * (bmp.Height / (float)bmp.Width));
             //var sampler = new GridSampler(new int[] { w, h });
-			var container = HexagonSampler.CreateBestFit(bounds, columns, out int rows);
-			container.AddProperty(PropertyId.FillColor, bmp.ToFloatSeries(columns, rows).Store);
+			var container = HexagonSampler.CreateBestFit(bounds, columns, out int rows, out HexagonSampler sampler);
+            var colorStore = new Store(bmp.ToFloatSeries(columns, rows));
+            //colorStore.BakeData();
+            //colorStore.Sampler = sampler;
+			container.AddProperty(PropertyId.FillColor, colorStore);
             return container;
         }
         private static void AddGraphic(Container container, float radius)
