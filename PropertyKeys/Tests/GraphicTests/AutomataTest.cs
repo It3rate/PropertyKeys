@@ -185,12 +185,14 @@ namespace DataArcs.Tests.GraphicTests
             rules.ResetFn = (Runner runner) =>
             {
                 int index = (int)(runner.Automata.Capacity / 2.13f);
-                runner.Automata.GetFullSeries().SetSeriesAtIndex(index, new FloatSeries(3, 0f, 0f, .7f));
+                runner.Automata.GetFullSeries().SetSeriesAtIndex(index, new FloatSeries(3, 0.1f, 0.1f, .7f));
             };
-            rules.AddRule(Rule.AllConditionsTrue(Rule.PassCountIsUnder(2), Rule.RandomChance(0.003f)), 
+            rules.AddRule(Rule.PassCountIsUnder(40), DarkenSmall);
+            rules.AddRule(Rule.AllConditionsTrue(Rule.PassCountIsUnder(42), Rule.RandomChance(0.003f)), 
 	            Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
-            rules.AddRule(Rule.PassCountIsUnder(50), DarkenSmall);
-            rules.AddRule(Rule.AllConditionsTrue(Rule.PassCountIsUnder(52), Rule.RandomChance(0.0003f)), 
+            rules.AddRule(Rule.PassCountIsUnder(45), DarkenSmall);
+            rules.AddRule(Rule.AllConditionsTrue(Rule.PassCountIsUnder(46), Rule.RandomChance(0.0003f)),
+	            
 	            Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
             rules.AddRule(Rule.RandomChance(0.00001f), RandomAny);
             rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Max, Slot.Z, 0.99f), Rule.SetSeriesAtIndexFn(0, Colors.Black));

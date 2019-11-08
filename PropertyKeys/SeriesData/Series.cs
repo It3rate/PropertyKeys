@@ -15,7 +15,7 @@ namespace DataArcs.SeriesData
 		Bool,
 	}
 
-    public abstract class Series : IEnumerable
+    public abstract class Series : ISeries, IEnumerable
     {
         public int VectorSize { get; set; }
         public abstract int Count { get; }
@@ -82,7 +82,6 @@ namespace DataArcs.SeriesData
 
         public abstract Series GetSeriesAtIndex(int index);
         public abstract void SetSeriesAtIndex(int index, Series series);
-
         /// <summary>
         /// Gets data with an assumed count. Series do not know about capacities, so needs to be passed.
         /// </summary>
@@ -91,7 +90,6 @@ namespace DataArcs.SeriesData
 	        var indexT = SamplerUtils.TFromIndex(capacity, index);// index / (capacity - 1f);
             return GetValueAtT(indexT);
         }
-		
         public virtual Series GetValueAtT(float t)
         {
             Series result;
@@ -129,8 +127,6 @@ namespace DataArcs.SeriesData
         public abstract float FloatDataAt(int index);
         public abstract int IntDataAt(int index);
         public abstract bool BoolDataAt(int index);
-
-		// todo: make an IEnumerable overload for the internal data type.
         public abstract float[] FloatDataRef { get; }
         public abstract int[] IntDataRef { get; }
         public abstract bool[] BoolDataRef { get; }
@@ -155,7 +151,6 @@ namespace DataArcs.SeriesData
                 return result;
             }
         }
-
         public Store ToStore(Sampler sampler) => new Store(this, sampler);
 
         public abstract Series Copy();
