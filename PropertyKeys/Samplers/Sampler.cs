@@ -34,7 +34,7 @@ namespace DataArcs.Samplers
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)
             {
-                result[i] = series.GetValueAtT(seriesT[i]).FloatDataAt(i);
+                result[i] = series.GetVirtualValueAt(seriesT[i]).FloatDataAt(i);
             }
             return SeriesUtils.CreateSeriesOfType(series, result);
         }
@@ -49,8 +49,8 @@ namespace DataArcs.Samplers
         {
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
-	        result.SetSeriesAtIndex(0, series.GetValueAtVirtualIndex(WrappedIndex(index - 1, Capacity), Capacity));
-	        result.SetSeriesAtIndex(1, series.GetValueAtVirtualIndex(WrappedIndex(index + 1, Capacity), Capacity));
+	        result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndex(index - 1, Capacity), Capacity));
+	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndex(index + 1, Capacity), Capacity));
             return result;
         }
 

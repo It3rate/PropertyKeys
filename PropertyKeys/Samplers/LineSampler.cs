@@ -11,12 +11,12 @@ namespace DataArcs.Samplers
 
         public override Series GetValueAtIndex(Series series, int index)
 		{
-			return series.GetValueAtVirtualIndex(index, Capacity);
+			return series.GetVirtualValueAt(index, Capacity);
 		}
 
 		public override Series GetValuesAtT(Series series, float t)
 		{
-			return series.GetValueAtT(t);
+			return series.GetVirtualValueAt(t);
 		}
 	}
 }

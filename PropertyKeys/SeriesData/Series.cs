@@ -15,7 +15,7 @@ namespace DataArcs.SeriesData
 		Bool,
 	}
 
-    public abstract class Series : ISeries, IEnumerable
+    public abstract class Series : IEnumerable
     {
         public int VectorSize { get; set; }
         public abstract int Count { get; }
@@ -80,22 +80,22 @@ namespace DataArcs.SeriesData
 
         protected abstract void CalculateFrame();
 
-        public abstract Series GetSeriesAtIndex(int index);
-        public abstract void SetSeriesAtIndex(int index, Series series);
+        public abstract Series GetRawDataAt(int index);
+        public abstract void SetRawDataAt(int index, Series series);
         /// <summary>
         /// Gets data with an assumed count. Series do not know about capacities, so needs to be passed.
         /// </summary>
-        public virtual Series GetValueAtVirtualIndex(int index, int capacity)
+        public virtual Series GetVirtualValueAt(int index, int capacity)
         {
 	        var indexT = SamplerUtils.TFromIndex(capacity, index);// index / (capacity - 1f);
-            return GetValueAtT(indexT);
+            return GetVirtualValueAt(indexT);
         }
-        public virtual Series GetValueAtT(float t)
+        public virtual Series GetVirtualValueAt(float t)
         {
             Series result;
             if (t >= 1)
             {
-                result = GetSeriesAtIndex(Count - 1);
+                result = GetRawDataAt(Count - 1);
             }
             else if (Count > 1)
             {
@@ -107,18 +107,18 @@ namespace DataArcs.SeriesData
                 if (pos < endIndex)
                 {
                     var remainderT = pos - startIndex;
-                    result = GetSeriesAtIndex(startIndex);
-                    var end = GetSeriesAtIndex(startIndex + 1);
+                    result = GetRawDataAt(startIndex);
+                    var end = GetRawDataAt(startIndex + 1);
                     result.InterpolateInto(end, remainderT);
                 }
                 else
                 {
-                    result = GetSeriesAtIndex(startIndex);
+                    result = GetRawDataAt(startIndex);
                 }
             }
             else
             {
-                result = GetSeriesAtIndex(0);
+                result = GetRawDataAt(0);
             }
 
             return result;
@@ -196,7 +196,7 @@ namespace DataArcs.SeriesData
                 _position++;
                 return (_position < (int)(_instance.DataSize / _instance.VectorSize));
             }
-            public object Current => _instance.GetSeriesAtIndex(_position);
+            public object Current => _instance.GetRawDataAt(_position);
 
             public void Reset()
             {

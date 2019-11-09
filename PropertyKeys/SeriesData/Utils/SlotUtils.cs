@@ -73,7 +73,7 @@ namespace DataArcs.SeriesData.Utils
 			}
 			else
 			{
-				var floats = series.GetSeriesAtIndex(0).FloatDataRef;
+				var floats = series.GetRawDataAt(0).FloatDataRef;
 				switch (slot)
 				{
 					case Slot.Sum:
@@ -112,7 +112,7 @@ namespace DataArcs.SeriesData.Utils
 			}
 			else
 			{
-				var ints = series.GetSeriesAtIndex(0).IntDataRef;
+				var ints = series.GetRawDataAt(0).IntDataRef;
 				switch (slot)
 				{
 					case Slot.Sum:

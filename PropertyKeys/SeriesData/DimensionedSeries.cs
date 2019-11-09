@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DataArcs.SeriesData
 {
-    public class DimensionedSeries : ISeries
+    public class DimensionedSeries 
     {
 	    public int Dimensions { get; private set; }
 	    public int VectorSize { get; private set; }
@@ -55,7 +55,7 @@ namespace DataArcs.SeriesData
 		        var values = new int[VectorSize];
 		        for (var i = 0; i < values.Length; i++)
 		        {
-			        values[i] = _seriesList[i].GetValueAtT(seriesT[i]).IntDataAt(0);
+			        values[i] = _seriesList[i].GetVirtualValueAt(seriesT[i]).IntDataAt(0);
 		        }
 
 		        result = new IntSeries(VectorSize, values);
@@ -65,34 +65,30 @@ namespace DataArcs.SeriesData
 		        var values = new float[VectorSize];
 		        for (var i = 0; i < values.Length; i++)
 		        {
-			        values[i] = _seriesList[i].GetValueAtT(seriesT[i]).X;
+			        values[i] = _seriesList[i].GetVirtualValueAt(seriesT[i]).X;
 		        }
 
 		        result = new FloatSeries(VectorSize, values);
             }
 	        return result;
         }
-
-        public Series GetSeriesAtIndex(int index)
+        
+        public Series GetRawDataAt(int index)
         {
             throw new NotImplementedException();
         }
-
-        public Series GetValueAtT(float t)
+        public void SetRawDataAt(int index, Series series)
         {
             throw new NotImplementedException();
         }
-
-        public Series GetValueAtVirtualIndex(int index, int capacity)
+        public Series GetVirtualValueAt(float t)
         {
             throw new NotImplementedException();
         }
-
-        public void SetSeriesAtIndex(int index, Series series)
+        public Series GetVirtualValueAt(int index, int capacity)
         {
             throw new NotImplementedException();
         }
-
 
 
         public Series Copy()

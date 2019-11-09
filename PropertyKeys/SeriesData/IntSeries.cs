@@ -29,9 +29,9 @@ namespace DataArcs.SeriesData
 			}
 		}
 
-		//public int[] this[int index] => GetSeriesAtIndex(index).IntDataRef;
+		//public int[] this[int index] => GetRawDataAt(index).IntDataRef;
 
-        public override Series GetSeriesAtIndex(int index)
+        public override Series GetRawDataAt(int index)
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
@@ -47,7 +47,7 @@ namespace DataArcs.SeriesData
 			return new IntSeries(VectorSize, result);
 		}
 
-		public override void SetSeriesAtIndex(int index, Series series)
+		public override void SetRawDataAt(int index, Series series)
         {
             var len = DataSize / VectorSize;
             var startIndex = Math.Min(len - 1, Math.Max(0, index));
@@ -58,9 +58,9 @@ namespace DataArcs.SeriesData
 		{
 			for (int i = 0; i < Count; i++)
 			{
-				var org = GetSeriesAtIndex(i).IntDataRef;
+				var org = GetRawDataAt(i).IntDataRef;
 				Array.Reverse(org);
-				SetSeriesAtIndex(i, new IntSeries(VectorSize, org));
+				SetRawDataAt(i, new IntSeries(VectorSize, org));
 			}
 		}
 

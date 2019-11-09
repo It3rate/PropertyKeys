@@ -68,7 +68,7 @@ namespace DataArcs.Stores
                     {
 	                    resultArray[i] = _mixStore?.GetValuesAtT(slotMapped.FloatDataAt(i)).FloatDataAt(i) ?? result.FloatDataAt(i);
                     }
-					result.SetSeriesAtIndex(0, new FloatSeries(slotMapped.VectorSize, resultArray));
+					result.SetRawDataAt(0, new FloatSeries(slotMapped.VectorSize, resultArray));
                     //result = _mixStore?.GetValuesAtT(slotMapped.X);
                 }
             }

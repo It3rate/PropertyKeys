@@ -33,13 +33,13 @@ namespace DataArcs.SeriesData
 			Moves = moves;
 		}
 
-		public override Series GetValueAtT(float t)
+		public override Series GetVirtualValueAt(float t)
 		{
 			var index = (int) (t * Count);
-			return GetSeriesAtIndex(index);
+			return GetRawDataAt(index);
 		}
 
-		public override Series GetSeriesAtIndex(int index)
+		public override Series GetRawDataAt(int index)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 			var start = 0;
@@ -54,7 +54,7 @@ namespace DataArcs.SeriesData
 			return new BezierSeries(result, new[] {Moves[index]});
 		}
         // todo: need an insertDataAtIndex
-		public override void SetSeriesAtIndex(int index, Series series)
+		public override void SetRawDataAt(int index, Series series)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 			var start = 0;

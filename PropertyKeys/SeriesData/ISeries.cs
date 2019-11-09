@@ -10,54 +10,89 @@ using DataArcs.Stores;
 
 namespace DataArcs.SeriesData
 {
-	public interface ISeries : IEnumerable
-	{
-		int VectorSize { get; }
-		int Count { get; }
-		SeriesType Type { get; }
-		int DataSize { get; }
-		RectFSeries Frame { get; }
-		Series Size { get; }
+    public interface ISeriesBase : IEnumerable
+    {
+        SeriesType Type { get; }
+        int VectorSize { get; }
+        ISeriesElement GetSample(ParametricSeries seriesT);
 
-		Series GetSeriesAtIndex(int index);
-		void SetSeriesAtIndex(int index, Series series);
-		Series GetValueAtVirtualIndex(int index, int capacity);
-		Series GetValueAtT(float t);
+        ISeriesBase Copy();
+        void Reverse();
+    }
 
-		Series Copy();
+    public interface ISeriesFloatElement : ISeriesBase
+    {
+        void CombineInto(ISeriesElement b, CombineFunction combineFunction, float t = 0);
+        void InterpolateInto(ISeriesElement b, float t);
+        void InterpolateInto(ISeriesElement b, ParametricSeries seriesT);
 
-		//void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
-		//void InterpolateInto(Series b, float t);
-		//void InterpolateInto(Series b, ParametricSeries seriesT);
+        float Sum();
+        float Average();
+        float Max();
+        float Min();
 
-		//void ResetData();
-		//void Update(float time);
-		//void Reverse();
+        float this[int index] { get; set; }
+        float FloatDataAt(int index);
+        float[] FloatDataRef { get; }
 
-		//Series Sum();
-		//Series Average();
-		//Series Max();
-		//Series Min();
+        float X { get; }
+        float Y { get; }
+        float Z { get; }
+        float W { get; }
 
-		//float X { get; }
-		//float Y { get; }
-		//float Z { get; }
-		//float W { get; }
-		//float FloatDataAt(int index);
-		//int IntDataAt(int index);
-		//bool BoolDataAt(int index);
-		//float[] FloatDataRef { get; }
-		//int[] IntDataRef { get; }
-		//bool[] BoolDataRef { get; }
+        ISeriesElement GetZeroSeries();
+        ISeriesElement GetMinSeries();
+        ISeriesElement GetMaxSeries();
+    }
 
-		//Store CreateLinearStore(int capacity);
-		//Store Store { get; }
-		//Store BakedStore { get; }
-		//Store ToStore(Sampler sampler);
+    public interface ISeriesElement : ISeriesFloatElement
+    {
+        int IntDataAt(int index);
+        int[] IntDataRef { get; }
 
-		//Series GetZeroSeries();
-		//Series GetZeroSeries(int elements);
-		//Series GetMinSeries();
-		//Series GetMaxSeries();
-	}
+        int A { get; }
+        int B { get; }
+        int C { get; }
+        int D { get; }
+    }
+
+    public interface ISeries : ISeriesBase
+    {
+        int Count { get; }
+        bool CanInterpolate { get; }
+
+        int DataSize { get; }
+
+        ISeriesElement GetRawDataAt(int index);
+        void SetRawDataAt(int index, ISeriesElement series);
+        ISeriesElement GetVirtualValueAt(int index, int capacity);
+        ISeriesElement GetVirtualValueAt(float t);
+
+        ISeries SeriesSum();
+        ISeries SeriesAverage();
+        ISeries SeriesMax();
+        ISeries SeriesMin();
+
+        //void ResetData();
+        //void Update(float time);
+
+
+        //Store CreateLinearStore(int capacity);
+        //Store Store { get; }
+        //Store BakedStore { get; }
+        //Store ToStore(Sampler sampler);
+
+        //Series GetZeroSeries(int elements);
+
+    }
+
+    public interface IDimensionedSeries : ISeries
+    {
+        int Dimensions { get; }
+        //List<Series> SeriesList { get; }
+
+        RectFSeries Frame { get; }
+        Series Size { get; }
+
+    }
 }

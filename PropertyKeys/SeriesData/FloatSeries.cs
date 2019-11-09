@@ -30,9 +30,9 @@ namespace DataArcs.SeriesData
 			
 		}
 
-		//public float[] this[int index] => GetSeriesAtIndex(index).FloatDataRef;
+		//public float[] this[int index] => GetRawDataAt(index).FloatDataRef;
 
-        public override Series GetSeriesAtIndex(int index)
+        public override Series GetRawDataAt(int index)
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new float[VectorSize];
@@ -48,7 +48,7 @@ namespace DataArcs.SeriesData
 			return new FloatSeries(VectorSize, result);
 		}
 
-		public override void SetSeriesAtIndex(int index, Series series)
+		public override void SetRawDataAt(int index, Series series)
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
@@ -86,15 +86,15 @@ namespace DataArcs.SeriesData
 		{
 			for (int i = 0; i < Count; i++)
 			{
-				var org = GetSeriesAtIndex(i).FloatDataRef;
+				var org = GetRawDataAt(i).FloatDataRef;
 				Array.Reverse(org);
 			}
         }
 
 		public void Normalize()
         {
-            float[] frameMin = Frame.GetValueAtT(0).FloatDataRef;
-            float[] frameMax = Frame.GetValueAtT(1).FloatDataRef;
+            float[] frameMin = Frame.GetVirtualValueAt(0).FloatDataRef;
+            float[] frameMax = Frame.GetVirtualValueAt(1).FloatDataRef;
             float maxDif = int.MinValue;
             for (int i = 0; i < frameMax.Length; i++)
             {
@@ -117,8 +117,8 @@ namespace DataArcs.SeriesData
             Normalize();
 
             Series frame = bounds.Frame;
-            float[] boundsMin = frame.GetValueAtT(0).FloatDataRef;
-			float[] boundsDif = (float[])frame.GetValueAtT(1).FloatDataRef.Clone();
+            float[] boundsMin = frame.GetVirtualValueAt(0).FloatDataRef;
+			float[] boundsDif = (float[])frame.GetVirtualValueAt(1).FloatDataRef.Clone();
 			for (int i = 0; i < boundsDif.Length; i++)
 			{
 				boundsDif[i] -= boundsMin[i];

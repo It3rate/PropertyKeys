@@ -42,13 +42,13 @@ namespace DataArcs.Stores
 
         public override Series GetValuesAtIndex(int index)
 		{
-			return IsBaked ? _series.GetValueAtVirtualIndex(index, Capacity) : Sampler.GetValueAtIndex(_series, index);
+			return IsBaked ? _series.GetVirtualValueAt(index, Capacity) : Sampler.GetValueAtIndex(_series, index);
 		}
 
 		public override Series GetValuesAtT(float t)
 		{
 			// GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
-            return IsBaked ? _series.GetValueAtT(t) : Sampler.GetValuesAtT(_series, t);
+            return IsBaked ? _series.GetVirtualValueAt(t) : Sampler.GetValuesAtT(_series, t);
 		}
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -76,7 +76,7 @@ namespace DataArcs.Stores
                 for (var i = 0; i < Capacity; i++)
                 {
 	                float t = i / (float) (Capacity - 1);
-                    result.SetSeriesAtIndex(i, GetValuesAtT(t));
+                    result.SetRawDataAt(i, GetValuesAtT(t));
                 }
                 _series = result;
                 IsBaked = true;

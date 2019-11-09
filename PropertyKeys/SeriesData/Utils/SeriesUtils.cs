@@ -10,7 +10,7 @@ namespace DataArcs.SeriesData.Utils
 	        if (swizzleMap != null)
 	        {
 		        float[] floats = new float[swizzleMap.Length];
-		        Series value = series.GetSeriesAtIndex(0);
+		        Series value = series.GetRawDataAt(0);
 		        for (int i = 0; i < swizzleMap.Length; i++)
 		        {
                     floats[i] = SlotUtils.GetFloatAt(value, swizzleMap[i]);
@@ -71,8 +71,8 @@ namespace DataArcs.SeriesData.Utils
                 {
                     for (var i = 0; i < a.DataSize; i++)
                     {
-                        var ar = a.GetSeriesAtIndex(i).IntDataRef;
-                        var br = b.GetSeriesAtIndex(i).IntDataRef;
+                        var ar = a.GetRawDataAt(i).IntDataRef;
+                        var br = b.GetRawDataAt(i).IntDataRef;
                         for (var j = 0; j < ar.Length; j++)
                         {
                             if (ar[j] != br[j])
@@ -88,8 +88,8 @@ namespace DataArcs.SeriesData.Utils
                     for (var i = 0; i < a.DataSize; i++)
                     {
                         var delta = 0.0001f;
-                        var ar = a.GetSeriesAtIndex(i).FloatDataRef;
-                        var br = b.GetSeriesAtIndex(i).FloatDataRef;
+                        var ar = a.GetRawDataAt(i).FloatDataRef;
+                        var br = b.GetRawDataAt(i).FloatDataRef;
                         for (var j = 0; j < ar.Length; j++)
                         {
                             if (Math.Abs(ar[j] - br[j]) > delta)
@@ -161,7 +161,7 @@ namespace DataArcs.SeriesData.Utils
         }
         public static Series SetSeriesAtIndex(Series destination, int index, Series value)
         {
-	        destination.SetSeriesAtIndex(index, value);
+	        destination.SetRawDataAt(index, value);
 	        return destination;
         }
         public static void Shuffle(Series series)
@@ -171,10 +171,10 @@ namespace DataArcs.SeriesData.Utils
 			{
 				var a = Random.Next(len);
 				var b = Random.Next(len);
-				var sa = series.GetSeriesAtIndex(a);
-				var sb = series.GetSeriesAtIndex(b);
-				series.SetSeriesAtIndex(a, sb);
-				series.SetSeriesAtIndex(b, sa);
+				var sa = series.GetRawDataAt(a);
+				var sb = series.GetRawDataAt(b);
+				series.SetRawDataAt(a, sb);
+				series.SetRawDataAt(b, sa);
 			}
 		}
 
@@ -183,7 +183,7 @@ namespace DataArcs.SeriesData.Utils
 	        var result = new float[source.VectorSize];
 	        for (int i = 0; i < source.Count; i++)
 	        {
-		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        var svals = source.GetRawDataAt(i).FloatDataRef;
 		        for (int j = 0; j < svals.Length; j++)
 		        {
 			        result[j] += svals[j];
@@ -196,7 +196,7 @@ namespace DataArcs.SeriesData.Utils
 	        var result = new float[source.VectorSize];
 	        for (int i = 0; i < source.Count; i++)
 	        {
-		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        var svals = source.GetRawDataAt(i).FloatDataRef;
 		        for (int j = 0; j < svals.Length; j++)
 		        {
 			        result[j] *= svals[j];
@@ -219,7 +219,7 @@ namespace DataArcs.SeriesData.Utils
 	        var result = new float[source.VectorSize];
 	        for (int i = 0; i < source.Count; i++)
 	        {
-		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        var svals = source.GetRawDataAt(i).FloatDataRef;
 		        for (int j = 0; j < svals.Length; j++)
 		        {
 			        result[j] = svals[j] > result[j] ? svals[j] : result[j];
@@ -232,7 +232,7 @@ namespace DataArcs.SeriesData.Utils
 	        var result = new float[source.VectorSize];
 	        for (int i = 0; i < source.Count; i++)
 	        {
-		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        var svals = source.GetRawDataAt(i).FloatDataRef;
 		        for (int j = 0; j < svals.Length; j++)
 		        {
 			        result[j] = svals[j] < result[j] ? svals[j] : result[j];
@@ -245,7 +245,7 @@ namespace DataArcs.SeriesData.Utils
 	        var result = new float[source.VectorSize];
 	        for (int i = 0; i < source.Count; i++)
 	        {
-		        var svals = source.GetSeriesAtIndex(i).FloatDataRef;
+		        var svals = source.GetRawDataAt(i).FloatDataRef;
 		        for (int j = 0; j < svals.Length; j++)
 		        {
 			        result[j] = Math.Max(0, Math.Min(1, svals[j]));

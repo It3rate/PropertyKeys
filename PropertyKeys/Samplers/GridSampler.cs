@@ -43,7 +43,7 @@ namespace DataArcs.Samplers
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)
 			{
-				result[i] = (i < Strides.Length) ? series.GetValueAtT(seriesT[i]).FloatDataAt(i) : 0;
+				result[i] = (i < Strides.Length) ? series.GetVirtualValueAt(seriesT[i]).FloatDataAt(i) : 0;
 			}
 
 			return SeriesUtils.CreateSeriesOfType(series, result);
@@ -59,10 +59,10 @@ namespace DataArcs.Samplers
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
 
-            result.SetSeriesAtIndex(0, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 1, indexY), Capacity));
-            result.SetSeriesAtIndex(1, series.GetValueAtVirtualIndex(WrappedIndexes(indexX, indexY - 1), Capacity));
-            result.SetSeriesAtIndex(2, series.GetValueAtVirtualIndex(WrappedIndexes(indexX - 1, indexY), Capacity));;
-            result.SetSeriesAtIndex(3, series.GetValueAtVirtualIndex(WrappedIndexes(indexX, indexY + 1), Capacity));
+            result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndexes(indexX + 1, indexY), Capacity));
+            result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndexes(indexX, indexY - 1), Capacity));
+            result.SetRawDataAt(2, series.GetVirtualValueAt(WrappedIndexes(indexX - 1, indexY), Capacity));;
+            result.SetRawDataAt(3, series.GetVirtualValueAt(WrappedIndexes(indexX, indexY + 1), Capacity));
 
             return result;
         }

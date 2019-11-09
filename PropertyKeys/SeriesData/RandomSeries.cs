@@ -39,7 +39,7 @@ namespace DataArcs.SeriesData
 			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.GetZeroFloatSeries(vectorSize, _count) : GenerateDataSeries();
 		}
 		
-		public float[] this[int index] => _series.GetSeriesAtIndex(index).FloatDataRef;
+		public float[] this[int index] => _series.GetRawDataAt(index).FloatDataRef;
 
 		public override Store BakedStore => GenerateDataSeries().Store;
 
@@ -60,7 +60,7 @@ namespace DataArcs.SeriesData
 				{
                     for (int j = 0; j < VectorSize; j++)
                     {
-                        data[i * VectorSize + j] = _random.Next(_minMax.GetSeriesAtIndex(0).IntDataAt(j), _minMax.GetSeriesAtIndex(1).IntDataAt(j));
+                        data[i * VectorSize + j] = _random.Next(_minMax.GetRawDataAt(0).IntDataAt(j), _minMax.GetRawDataAt(1).IntDataAt(j));
                     }
 				}
 
@@ -73,8 +73,8 @@ namespace DataArcs.SeriesData
                 {
                     for (int j = 0; j < VectorSize; j++)
                     {
-                        float min = _minMax.GetSeriesAtIndex(0).FloatDataAt(j);
-                        float max = _minMax.GetSeriesAtIndex(1).FloatDataAt(j);
+                        float min = _minMax.GetRawDataAt(0).FloatDataAt(j);
+                        float max = _minMax.GetRawDataAt(1).FloatDataAt(j);
                         data[i * VectorSize + j] = (float)(_random.NextDouble() * (max - min) + min);
                     }
                 }
@@ -86,19 +86,19 @@ namespace DataArcs.SeriesData
 
 		public override int DataSize => _series.DataSize;
 
-		public override Series GetSeriesAtIndex(int index)
+		public override Series GetRawDataAt(int index)
 		{
-			return _series.GetSeriesAtIndex(index);
+			return _series.GetRawDataAt(index);
 		}
 
-		public override void SetSeriesAtIndex(int index, Series series)
+		public override void SetRawDataAt(int index, Series series)
 		{
-			_series.SetSeriesAtIndex(index, series);
+			_series.SetRawDataAt(index, series);
 		}
 
-		public override Series GetValueAtT(float t)
+		public override Series GetVirtualValueAt(float t)
 		{
-			return _series.GetValueAtT(t);
+			return _series.GetVirtualValueAt(t);
 		}
 
 		public override void ResetData()
@@ -128,8 +128,8 @@ namespace DataArcs.SeriesData
 		protected override void CalculateFrame()
 		{
             Frame = (RectFSeries)_minMax.Copy();
-            float[] max = _minMax.GetValueAtT(1f).FloatDataRef;
-            ArrayExtension.SubtractFloatArrayFrom(max, _minMax.GetValueAtT(0).FloatDataRef);
+            float[] max = _minMax.GetVirtualValueAt(1f).FloatDataRef;
+            ArrayExtension.SubtractFloatArrayFrom(max, _minMax.GetVirtualValueAt(0).FloatDataRef);
             Size = new FloatSeries(VectorSize, max);
         }
 

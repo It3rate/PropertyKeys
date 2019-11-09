@@ -37,12 +37,12 @@ namespace DataArcs.Samplers
 	        var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
             int offset = (indexY & 1) == 1 ? 0 : -1;
             
-            result.SetSeriesAtIndex(0, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 1, indexY), Capacity)); // right
-	        result.SetSeriesAtIndex(1, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 1 + offset, indexY - 1), Capacity)); // top right
-	        result.SetSeriesAtIndex(2, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 0 + offset, indexY - 1), Capacity)); // top Left
-            result.SetSeriesAtIndex(3, series.GetValueAtVirtualIndex(WrappedIndexes(indexX - 1, indexY), Capacity)); // left
-            result.SetSeriesAtIndex(4, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 0 + offset, indexY + 1), Capacity)); // bottom left
-            result.SetSeriesAtIndex(5, series.GetValueAtVirtualIndex(WrappedIndexes(indexX + 1 + offset, indexY + 1), Capacity)); // bottom right
+            result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndexes(indexX + 1, indexY), Capacity)); // right
+	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndexes(indexX + 1 + offset, indexY - 1), Capacity)); // top right
+	        result.SetRawDataAt(2, series.GetVirtualValueAt(WrappedIndexes(indexX + 0 + offset, indexY - 1), Capacity)); // top Left
+            result.SetRawDataAt(3, series.GetVirtualValueAt(WrappedIndexes(indexX - 1, indexY), Capacity)); // left
+            result.SetRawDataAt(4, series.GetVirtualValueAt(WrappedIndexes(indexX + 0 + offset, indexY + 1), Capacity)); // bottom left
+            result.SetRawDataAt(5, series.GetVirtualValueAt(WrappedIndexes(indexX + 1 + offset, indexY + 1), Capacity)); // bottom right
             return result;
         }
 
