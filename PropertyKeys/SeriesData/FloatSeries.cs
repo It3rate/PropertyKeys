@@ -36,7 +36,7 @@ namespace DataArcs.SeriesData
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new float[VectorSize];
-			if (startIndex * VectorSize + VectorSize <= DataSize)
+			if (startIndex * VectorSize + VectorSize - 1 <= DataSize)
 			{
 				Array.Copy(_floatValues, startIndex * VectorSize, result, 0, VectorSize);
 			}

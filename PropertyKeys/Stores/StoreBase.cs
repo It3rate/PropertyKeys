@@ -14,6 +14,7 @@ namespace DataArcs.Stores
         public virtual CombineTarget CombineTarget { get; set; }
         public virtual Sampler Sampler { get; set; }
         public virtual int Capacity => Sampler.Capacity;
+        public virtual bool ShouldIterpolate { get; set; } = false;
 
         protected StoreBase()
         {

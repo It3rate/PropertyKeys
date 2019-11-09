@@ -11,8 +11,8 @@ namespace DataArcs.SeriesData
         private readonly int[] _intValues;
         public override int Count => (int)(_intValues.Length / VectorSize);
         public override int DataSize => _intValues.Length;
-        
-		public IntSeries(int vectorSize, params int[] values) : base(vectorSize)
+
+        public IntSeries(int vectorSize, params int[] values) : base(vectorSize)
 		{
 			// insure at least vectorSize elements in values array.
 			if (values.Length < vectorSize)
@@ -35,7 +35,7 @@ namespace DataArcs.SeriesData
 		{
 			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
-			if (startIndex * VectorSize + VectorSize <= DataSize)
+			if (startIndex * VectorSize + VectorSize - 1 <= DataSize)
 			{
 				Array.Copy(_intValues, startIndex * VectorSize, result, 0, VectorSize);
 			}
@@ -49,8 +49,7 @@ namespace DataArcs.SeriesData
 
 		public override void SetRawDataAt(int index, Series series)
         {
-            var len = DataSize / VectorSize;
-            var startIndex = Math.Min(len - 1, Math.Max(0, index));
+            var startIndex = Math.Min(Count - 1, Math.Max(0, index));
             Array.Copy(series.IntDataRef, 0, _intValues, startIndex * VectorSize, VectorSize);
         }
 
@@ -172,7 +171,7 @@ namespace DataArcs.SeriesData
 		}
 
 		public override float[] FloatDataRef => throw new NotImplementedException(); //_intValues.ToFloat();
-		public override int[] IntDataRef => (int[]) _intValues.Clone();
+		public override int[] IntDataRef => (int[]) _intValues;
 		public override bool[] BoolDataRef => throw new NotImplementedException();
 
 		public override float FloatDataAt(int index)

@@ -7,7 +7,6 @@ namespace DataArcs.Stores
 {
 	public class Store : StoreBase
     {
-	    public bool IsBaked { get; set; } = false;
         protected Series _series;
 
         protected Store() { }
@@ -42,13 +41,13 @@ namespace DataArcs.Stores
 
         public override Series GetValuesAtIndex(int index)
 		{
-			return IsBaked ? _series.GetVirtualValueAt(index, Capacity) : Sampler.GetValueAtIndex(_series, index);
+			return ShouldIterpolate ? _series.GetVirtualValueAt(index, Capacity) : Sampler.GetValueAtIndex(_series, index);
 		}
 
 		public override Series GetValuesAtT(float t)
 		{
 			// GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
-            return IsBaked ? _series.GetVirtualValueAt(t) : Sampler.GetValuesAtT(_series, t);
+            return ShouldIterpolate ? _series.GetVirtualValueAt(t) : Sampler.GetValuesAtT(_series, t);
 		}
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -79,7 +78,7 @@ namespace DataArcs.Stores
                     result.SetRawDataAt(i, GetValuesAtT(t));
                 }
                 _series = result;
-                IsBaked = true;
+                ShouldIterpolate = _series.Type != SeriesType.Int;
             }
 		}
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace DataArcs.SeriesData.Utils
 {
@@ -166,17 +168,16 @@ namespace DataArcs.SeriesData.Utils
         }
         public static void Shuffle(Series series)
 		{
-			var len = series.DataSize;
-			for (var i = 0; i < series.DataSize; i++)
+			var len = series.Count;
+            for (var i = 0; i < len; i++)
 			{
 				var a = Random.Next(len);
 				var b = Random.Next(len);
-				var sa = series.GetRawDataAt(a);
-				var sb = series.GetRawDataAt(b);
-				series.SetRawDataAt(a, sb);
-				series.SetRawDataAt(b, sa);
+					var sa = series.GetRawDataAt(a);
+					series.SetRawDataAt(a, series.GetRawDataAt(b));
+					series.SetRawDataAt(b, sa);
 			}
-		}
+        }
 
         public static Series Sum(Series source)
         {

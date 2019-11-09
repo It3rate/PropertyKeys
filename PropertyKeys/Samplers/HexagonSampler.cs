@@ -71,9 +71,9 @@ namespace DataArcs.Samplers
 	        var composite = new Container(Store.CreateItemStore(sampler.Capacity));
 	        float overdraw = 1.00f;
             float radiusScale = 1f - 1f / (columns - 1f) * 0.5f; // rows are offset, and thus compressed when drawn by this much.
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, h/2f * radiusScale * overdraw).Store);
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, h / 2f * radiusScale * overdraw).Store);
 
-	        Store loc = new Store(bounds, sampler);
+            Store loc = new Store(bounds, sampler);
 	        composite.AddProperty(PropertyId.Location, loc);
 
 	        composite.Renderer = new PolyShape(packHorizontal:true);

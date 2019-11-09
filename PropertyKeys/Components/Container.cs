@@ -272,12 +272,15 @@ namespace DataArcs.Components
             var capacity = NestedItemCount;// NestedItemCountAtT(InterpolationT);
             if (capacity > 0)// != null)
             {
+				SortedList<int, int> sl = new SortedList<int, int>();
                 for (int i = 0; i < capacity; i++)
                 {
-                    float indexT = i / (capacity - 1f);
+	                //int itemIndex = _items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
+	                int itemIndex = _items?.GetFullSeries().IntDataAt(i) ?? i;
+
+                    float indexT = itemIndex / (capacity - 1f);
                     dict.Clear();
                     IRenderable renderer = QueryPropertiesAtT(dict, indexT, true);
-                    //Debug.WriteLine(dict[PropertyId.PointCount].X + " : " + indexT);
                     renderer?.DrawWithProperties(dict, g);
                 }
             }

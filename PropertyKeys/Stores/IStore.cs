@@ -12,6 +12,7 @@ namespace DataArcs.Stores
         CombineFunction CombineFunction { get; set; }
 		CombineTarget CombineTarget { get; set; }
 		Sampler Sampler { get; set; }
+		bool ShouldIterpolate { get; set; }
 
         Series GetFullSeries();
         void SetFullSeries(Series value);
