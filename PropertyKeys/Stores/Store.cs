@@ -24,7 +24,7 @@ namespace DataArcs.Stores
             CombineTarget combineTarget = CombineTarget.Destination)
 		{
 			_series = series;
-			Sampler = sampler ?? new LineSampler();
+			Sampler = sampler ?? new LineSampler(series.Count);
 			CombineFunction = combineFunction;
 			CombineTarget = combineTarget;
         }

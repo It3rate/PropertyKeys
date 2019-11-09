@@ -18,42 +18,47 @@ namespace DataArcs.SeriesData
 
         ISeriesBase Copy();
         void Reverse();
+
+	    float ElementSum(int index = 0);
+	    float ElementAverage(int index = 0);
+	    float ElementMax(int index = 0);
+	    float ElementMin(int index = 0);
     }
 
     public interface ISeriesFloatElement : ISeriesBase
     {
-        void CombineInto(ISeriesElement b, CombineFunction combineFunction, float t = 0);
-        void InterpolateInto(ISeriesElement b, float t);
-        void InterpolateInto(ISeriesElement b, ParametricSeries seriesT);
+	    float this[int index] { get; set; }
+	    float FloatDataAt(int index);
+	    float[] FloatDataRef { get; }
 
-        float Sum();
-        float Average();
-        float Max();
-        float Min();
-
-        float this[int index] { get; set; }
-        float FloatDataAt(int index);
-        float[] FloatDataRef { get; }
-
-        float X { get; }
-        float Y { get; }
-        float Z { get; }
-        float W { get; }
-
-        ISeriesElement GetZeroSeries();
-        ISeriesElement GetMinSeries();
-        ISeriesElement GetMaxSeries();
+	    float X { get; }
+	    float Y { get; }
+	    float Z { get; }
+	    float W { get; }
     }
 
-    public interface ISeriesElement : ISeriesFloatElement
+    public interface ISeriesIntElement : ISeriesBase
     {
-        int IntDataAt(int index);
-        int[] IntDataRef { get; }
+	    int IntDataAt(int index);
+	    int[] IntDataRef { get; }
 
-        int A { get; }
-        int B { get; }
-        int C { get; }
-        int D { get; }
+	    int A { get; }
+	    int B { get; }
+	    int C { get; }
+	    int D { get; }
+    }
+
+
+    public interface ISeriesElement : ISeriesFloatElement, ISeriesIntElement
+    {
+	    void CombineInto(ISeriesElement b, CombineFunction combineFunction, float t = 0);
+	    void InterpolateInto(ISeriesElement b, float t);
+	    void InterpolateInto(ISeriesElement b, ParametricSeries seriesT);
+
+	    ISeriesElement GetZeroSeries();
+	    ISeriesElement GetMinSeries();
+	    ISeriesElement GetMaxSeries();
+	    Series GetZeroSeries(int elements);
     }
 
     public interface ISeries : ISeriesBase
@@ -89,6 +94,8 @@ namespace DataArcs.SeriesData
     public interface IDimensionedSeries : ISeries
     {
         int Dimensions { get; }
+        ISeries GetRawSeriesAt(int index);
+        void SetRawSeriesAt(int index, ISeries series);
         //List<Series> SeriesList { get; }
 
         RectFSeries Frame { get; }

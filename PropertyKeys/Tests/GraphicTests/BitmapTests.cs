@@ -50,8 +50,7 @@ namespace DataArcs.Tests.GraphicTests
             //var sampler = new GridSampler(new int[] { w, h });
 			var container = HexagonSampler.CreateBestFit(bounds, columns, out int rows, out HexagonSampler sampler);
             var colorStore = new Store(bmp.ToFloatSeriesHex(columns, rows));
-            //colorStore.BakeData();
-            //colorStore.Sampler = sampler;
+            colorStore.BakeData();
 			container.AddProperty(PropertyId.FillColor, colorStore);
             return container;
         }
