@@ -75,7 +75,7 @@ namespace DataArcs.Tests.GraphicTests
 	        Store radiusStore = new Store(new FloatSeries(2, 8f, 8f), new LineSampler(70));
 	        composite.AddProperty(PropertyId.Radius, radiusStore);
 	        radiusStore.BakeData();
-	        radiusStore.GetFullSeries().SetRawDataAt(standOutStar, new FloatSeries(2, 16f,16f));
+	        radiusStore.GetSeriesRef().SetRawDataAt(standOutStar, new FloatSeries(2, 16f,16f));
 	        composite.Renderer = new PolyShape();
 
             IStore blendColors = GetBlendColor(2);
@@ -165,7 +165,7 @@ namespace DataArcs.Tests.GraphicTests
             var colorEndStore2 = new Store(new FloatSeries(3, end2), hexSampler);
 
             colorEndStore1.BakeData();
-            colorEndStore1.GetFullSeries().SetRawDataAt(standOutStar, new FloatSeries(3, 1f,0f,0f));
+            colorEndStore1.GetSeriesRef().SetRawDataAt(standOutStar, new FloatSeries(3, 1f,0f,0f));
 
             if (index == 0) return colorStartStore;
             else if (index == 1) return colorEndStore1;

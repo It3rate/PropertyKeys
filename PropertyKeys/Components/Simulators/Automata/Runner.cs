@@ -76,10 +76,10 @@ namespace DataArcs.Components.Simulators.Automata
 		        BeginPass();
 		        for (int i = 0; i < capacity; i++)
 		        {
-			        var currentValue = _previousAutomata.GetFullSeries().GetVirtualValueAt(i, capacity);
+			        var currentValue = _previousAutomata.GetSeriesRef().GetVirtualValueAt(i, capacity);
 			        var neighbors = _previousAutomata.GetNeighbors(i);
 			        var result = InvokeRuleSet(currentValue, neighbors, i);
-			        Automata.GetFullSeries().SetRawDataAt(i, result);
+			        Automata.GetSeriesRef().SetRawDataAt(i, result);
 		        }
 
 		        PassCount++;

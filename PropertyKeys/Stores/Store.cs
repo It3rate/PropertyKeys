@@ -30,7 +30,7 @@ namespace DataArcs.Stores
 
 		public Series this[int index] => GetValuesAtIndex(index);
 
-		public override Series GetFullSeries()
+		public override Series GetSeriesRef()
 		{
 			return _series;
         }
@@ -88,17 +88,17 @@ namespace DataArcs.Stores
 		}
 		public override void CopySeriesDataInto(IStore target)
 		{
-			Series targetSeries = target.GetFullSeries();
+			Series targetSeries = target.GetSeriesRef();
 			
             if (_series.Type == targetSeries.Type && _series.DataSize == targetSeries.DataSize)
 			{
 				if (_series.Type == SeriesType.Float)
 				{
-					Array.Copy(_series.FloatDataRef, target.GetFullSeries().FloatDataRef, _series.DataSize);
+					Array.Copy(_series.FloatDataRef, target.GetSeriesRef().FloatDataRef, _series.DataSize);
 				}
 				else if (_series.Type == SeriesType.Int)
 				{
-					Array.Copy(_series.IntDataRef, target.GetFullSeries().IntDataRef, _series.DataSize);
+					Array.Copy(_series.IntDataRef, target.GetSeriesRef().IntDataRef, _series.DataSize);
                 }
 			}
             else

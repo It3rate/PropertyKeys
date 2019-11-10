@@ -135,11 +135,11 @@ namespace DataArcs.Components
             float t = deltaTime % 1f;
             if (t <= 0.05f && shouldShuffle)
             {
-                SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetFullSeries());
+                SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetSeriesRef());
             }
             if (t > 0.99 && shouldShuffle)
             {
-                Series s = GetStore(PropertyId.Location).GetFullSeries();
+                Series s = GetStore(PropertyId.Location).GetSeriesRef();
                 RandomSeries rs = (RandomSeries)s;
                 rs.Seed = rs.Seed + 1;
             }
@@ -276,7 +276,7 @@ namespace DataArcs.Components
                 for (int i = 0; i < capacity; i++)
                 {
 	                //int itemIndex = _items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
-	                int itemIndex = _items?.GetFullSeries().IntDataAt(i) ?? i;
+	                int itemIndex = _items?.GetSeriesRef().IntDataAt(i) ?? i;
 
                     float indexT = itemIndex / (capacity - 1f);
                     dict.Clear();

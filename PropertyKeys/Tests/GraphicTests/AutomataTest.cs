@@ -85,7 +85,7 @@ namespace DataArcs.Tests.GraphicTests
 
             var automataStore = new Store(new FloatSeries(3, 0f,0f,0f), sampler);
 			automataStore.BakeData();
-            automataStore.GetFullSeries().SetRawDataAt(575, new FloatSeries(3, 0f,0f,.7f));
+            automataStore.GetSeriesRef().SetRawDataAt(575, new FloatSeries(3, 0f,0f,.7f));
 
 		    var runner = new Runner(automataStore);
 		    CreateBlock1(runner);
@@ -185,7 +185,7 @@ namespace DataArcs.Tests.GraphicTests
             rules.ResetFn = (Runner runner) =>
             {
                 int index = (int)(runner.Automata.Capacity / 2.13f);
-                runner.Automata.GetFullSeries().SetRawDataAt(index, new FloatSeries(3, 0.1f, 0.1f, .7f));
+                runner.Automata.GetSeriesRef().SetRawDataAt(index, new FloatSeries(3, 0.1f, 0.1f, .7f));
             };
             rules.AddRule(Rule.PassCountIsUnder(40), DarkenSmall);
             rules.AddRule(Rule.AllConditionsTrue(Rule.PassCountIsUnder(42), Rule.RandomChance(0.003f)), 

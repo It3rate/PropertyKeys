@@ -177,6 +177,20 @@ namespace DataArcs.SeriesData
 	        return SeriesUtils.Min(this);
         }
 
+        public void MapToItemOrder(IntSeries items)
+        {
+	        int indexA = items.IntDataAt(0);
+	        Series first = GetRawDataAt(indexA);
+	        for (int i = 1; i < items.Count; i++)
+	        {
+		        int indexB = items.IntDataAt(i);
+				Series second = GetRawDataAt(indexB);
+				SetRawDataAt(i, second);
+				indexA = indexB;
+	        }
+	        SetRawDataAt(indexA, first);
+        }
+
         #region Enumeration
         public IEnumerator GetEnumerator()
         {

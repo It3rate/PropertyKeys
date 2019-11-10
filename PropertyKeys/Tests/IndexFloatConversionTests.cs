@@ -113,13 +113,13 @@ namespace DataArcs.Tests
 			TVectorSize1();
             var store = series_1.CreateLinearStore(100);
             store.BakeData();
-            series_1 = (FloatSeries)store.GetFullSeries();
+            series_1 = (FloatSeries)store.GetSeriesRef();
             TVectorSize1();
 
 			IndexVectorSize1();
             store = series_1_31.CreateLinearStore(31);
             store.BakeData();
-            series_1_31 = (FloatSeries)store.GetFullSeries();
+            series_1_31 = (FloatSeries)store.GetSeriesRef();
             IndexVectorSize1();
 		}
 
@@ -129,7 +129,7 @@ namespace DataArcs.Tests
 			TVectorSize2();
             var store = series_2.CreateLinearStore(100);
             store.BakeData();
-            series_2 = (FloatSeries)store.GetFullSeries();
+            series_2 = (FloatSeries)store.GetSeriesRef();
             TVectorSize2();
 		}
 

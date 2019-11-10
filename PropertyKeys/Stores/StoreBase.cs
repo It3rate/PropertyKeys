@@ -28,7 +28,7 @@ namespace DataArcs.Stores
         //    CombineTarget = store.CombineTarget;
         //}
 
-        public abstract Series GetFullSeries();
+        public abstract Series GetSeriesRef();
         public abstract void SetFullSeries(Series value);
 
         public abstract Series GetValuesAtIndex(int index);
@@ -38,7 +38,7 @@ namespace DataArcs.Stores
         public abstract ParametricSeries GetSampledTs(ParametricSeries seriesT);
         public virtual Series GetNeighbors(int index, bool wrapEdges = true)
         {
-	        return Sampler.GetNeighbors(GetFullSeries(), index, wrapEdges);
+	        return Sampler.GetNeighbors(GetSeriesRef(), index, wrapEdges);
         }
 		
 

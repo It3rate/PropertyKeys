@@ -11,7 +11,7 @@ namespace DataArcs.Stores
 		private readonly List<IStore> _stores;
 
 		public override int Capacity => GetStartDataStore().Capacity; // todo: use combine math to get functional store virtual count. Rename to capacity.
-		public override Series GetFullSeries() => GetStartDataStore().GetFullSeries();
+		public override Series GetSeriesRef() => GetStartDataStore().GetSeriesRef();
 		public override void SetFullSeries(Series value) => GetStartDataStore().SetFullSeries(value);
 
 		public override Sampler Sampler

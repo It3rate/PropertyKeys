@@ -14,7 +14,7 @@ namespace DataArcs.Stores
 		Sampler Sampler { get; set; }
 		bool ShouldIterpolate { get; set; }
 
-        Series GetFullSeries();
+        Series GetSeriesRef();
         void SetFullSeries(Series value);
 
         Series GetValuesAtIndex(int index);

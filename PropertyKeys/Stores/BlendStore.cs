@@ -44,7 +44,7 @@ namespace DataArcs.Stores
 			_stores.Reverse();
 		}
 
-		public override Series GetFullSeries()
+		public override Series GetSeriesRef()
 		{
 			throw new NotImplementedException();
         }

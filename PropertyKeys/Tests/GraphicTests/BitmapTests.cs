@@ -50,19 +50,19 @@ namespace DataArcs.Tests.GraphicTests
             //var sampler = new GridSampler(new int[] { w, h });
 			var container = HexagonSampler.CreateBestFit(bounds, columns, out int rows, out HexagonSampler sampler);
             var colorStore = new Store(bmp.ToFloatSeriesHex(columns, rows));
+            container.AddProperty(PropertyId.FillColor, colorStore);
             //colorStore.BakeData();
-            //SeriesUtils.Shuffle(colorStore.GetFullSeries());
+            //SeriesUtils.Shuffle(colorStore.GetSeriesRef());
 
             IStore items = container.GetStore(PropertyId.Items);
 			items.BakeData();
-			SeriesUtils.Shuffle(items.GetFullSeries());
+			SeriesUtils.Shuffle(items.GetSeriesRef());
+
+			colorStore.GetSeriesRef().MapToItemOrder((IntSeries)items.GetSeriesRef());
 			//items.ShouldIterpolate = false;
-            //Array.Sort(items.GetFullSeries().IntDataRef);
-            //Array.Reverse(items.GetFullSeries().IntDataRef);
+            //Array.Sort(items.GetSeriesRef().IntDataRef);
+            //Array.Reverse(items.GetSeriesRef().IntDataRef);
 
-
-            container.AddProperty(PropertyId.FillColor, new FloatSeries(3, 1f, 0.3f, 0.4f, 0.3f, 0.4f, 1f).Store);
-            container.AddProperty(PropertyId.FillColor, colorStore);
             return container;
         }
         private static void AddGraphic(Container container, float radius)
