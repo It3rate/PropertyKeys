@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using DataArcs.Samplers;
 using DataArcs.SeriesData.Utils;
 using DataArcs.Stores;
@@ -177,6 +178,22 @@ namespace DataArcs.SeriesData
 	        return SeriesUtils.Min(this);
         }
 
+        public List<Series> ToList()
+        {
+            var result = new List<Series>(Count);
+            for (int i = 0; i < Count; i++)
+            {
+                result.Add(GetRawDataAt(i));
+            }
+            return result;
+        }
+        public void SetByList(List<Series> items)
+        {
+            for (int i = 0; i < items.Count; i++)
+            {
+                SetRawDataAt(i, items[i]);
+            }
+        }
         public void MapToItemOrder(IntSeries items)
         {
             var selfCopy = Copy();

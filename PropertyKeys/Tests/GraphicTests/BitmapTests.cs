@@ -51,18 +51,20 @@ namespace DataArcs.Tests.GraphicTests
 			var container = HexagonSampler.CreateBestFit(bounds, columns, out int rows, out HexagonSampler sampler);
             var colorStore = new Store(bmp.ToFloatSeriesHex(columns, rows));
             container.AddProperty(PropertyId.FillColor, colorStore);
-            //colorStore.BakeData();
+            colorStore.BakeData();
+
+            var colors = colorStore.GetSeriesRef().ToList();
+            colors.Sort((a,b)=> (int)((a.X+a.Y+a.Z)*100f - (b.X+b.Y+b.Z)*100));
+            //colors.RemoveRange(1000, 5000);
+            colorStore.GetSeriesRef().SetByList(colors);
+
             //SeriesUtils.Shuffle(colorStore.GetSeriesRef());
 
             IStore items = container.GetStore(PropertyId.Items);
 			items.BakeData();
-            //Array.Sort(items.GetSeriesRef().IntDataRef);
-            Array.Reverse(items.GetSeriesRef().IntDataRef);
-            //SeriesUtils.Shuffle(items.GetSeriesRef());
-
-            colorStore.GetSeriesRef().MapToItemOrder((IntSeries)items.GetSeriesRef());
-            //items.ShouldIterpolate = false;
             //Array.Reverse(items.GetSeriesRef().IntDataRef);
+            //SeriesUtils.Shuffle(items.GetSeriesRef());
+            //colorStore.GetSeriesRef().MapToItemOrder((IntSeries)items.GetSeriesRef());
 
             return container;
         }
