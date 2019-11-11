@@ -8,7 +8,7 @@ namespace DataArcs.SeriesData
 	{
 		public override SeriesType Type => SeriesType.Int;
 
-        private readonly int[] _intValues;
+        private int[] _intValues;
         public override int Count => (int)(_intValues.Length / VectorSize);
         public override int DataSize => _intValues.Length;
 
@@ -53,7 +53,13 @@ namespace DataArcs.SeriesData
             Array.Copy(series.IntDataRef, 0, _intValues, startIndex * VectorSize, VectorSize);
         }
 
-		public override void Reverse()
+        public override void Append(Series series)
+		{
+			Array.Resize(ref _intValues, _intValues.Length + VectorSize);
+			SetRawDataAt(Count - 1, series);
+		}
+
+        public override void ReverseEachElement()
 		{
 			for (int i = 0; i < Count; i++)
 			{
@@ -213,7 +219,7 @@ namespace DataArcs.SeriesData
 
 		public override Series Copy()
 		{
-			IntSeries result = new IntSeries(VectorSize, IntDataRef);
+			IntSeries result = new IntSeries(VectorSize, (int[])_intValues.Clone());
 			return result;
 		}
 

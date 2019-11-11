@@ -77,7 +77,7 @@ namespace DataArcs.SeriesData
         {
         }
 
-        public abstract void Reverse();
+        public abstract void ReverseEachElement();
 
         protected abstract void CalculateFrame();
 
@@ -178,6 +178,7 @@ namespace DataArcs.SeriesData
 	        return SeriesUtils.Min(this);
         }
 
+        public abstract void Append(Series series);
         public List<Series> ToList()
         {
             var result = new List<Series>(Count);

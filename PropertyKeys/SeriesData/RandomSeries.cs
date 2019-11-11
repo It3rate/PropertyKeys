@@ -43,9 +43,9 @@ namespace DataArcs.SeriesData
 
 		public override Store BakedStore => GenerateDataSeries().Store;
 
-        public override void Reverse()
+        public override void ReverseEachElement()
 		{
-			_series.Reverse();
+			_series.ReverseEachElement();
 		}
 
 		public Series GenerateDataSeries()
@@ -94,6 +94,11 @@ namespace DataArcs.SeriesData
 		public override void SetRawDataAt(int index, Series series)
 		{
 			_series.SetRawDataAt(index, series);
+		}
+
+		public override void Append(Series series)
+		{
+			_series.Append(series);
 		}
 
 		public override Series GetVirtualValueAt(float t)

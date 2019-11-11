@@ -90,9 +90,9 @@ namespace DataArcs.SeriesData
             }
 		}
 
-		public override void Reverse()
+		public override void ReverseEachElement()
 		{
-			base.Reverse();
+			base.ReverseEachElement();
 			Array.Reverse(Moves);
 		}
 

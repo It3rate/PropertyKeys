@@ -2,6 +2,7 @@
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using System.Collections;
+using DataArcs.SeriesData.Utils;
 
 namespace DataArcs.Stores
 {
@@ -71,7 +72,16 @@ namespace DataArcs.Stores
             var len = Capacity * _series.VectorSize;
             if (_series.DataSize != len)
             {
-                Series result = _series.GetZeroSeries(Capacity);
+	            Series result;
+	            if (_series.Type == SeriesType.Int)
+	            {
+					result = SeriesUtils.GetZeroIntSeries(_series.VectorSize, Capacity);
+	            }
+		         else
+	            {
+		            result = SeriesUtils.GetZeroFloatSeries(_series.VectorSize, Capacity);
+	            }
+
                 for (var i = 0; i < Capacity; i++)
                 {
 	                float t = i / (float) (Capacity - 1);

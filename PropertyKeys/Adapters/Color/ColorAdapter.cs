@@ -1,5 +1,6 @@
 ﻿using DataArcs.SeriesData;
 using System;
+using System.Linq;
 using DataArcs.SeriesData.Utils;
 
 namespace DataArcs.Adapters.Color
@@ -33,7 +34,54 @@ namespace DataArcs.Adapters.Color
         }
         public static float AlphaComponent(this Series series)
         {
-            return series.FloatDataAt(3);
+	        return series.FloatDataAt(3);
+        }
+
+        public static ParametricSeries RgbToHsl(this Series series)
+        {
+	        float[] input = series.GetRawDataAt(0).FloatDataRef;
+			float[] result = new float[3];
+	        var max = input.Max();
+	        var min = input.Min();
+	        var diff = max - min;
+	        result[2] = (max + min) / 2f; // lightness
+	        if (Math.Abs(diff) < 0.00001)
+	        {
+		        result[1] = 0; // saturation
+		        result[0] = 0; // hue
+	        }
+	        else
+	        {
+		        if (result[2] <= 0.5)
+		        {
+			        result[1] = diff / (max + min);
+		        }
+		        else
+		        {
+			        result[1] = diff / (2 - max - min);
+		        }
+
+		        var rDist = (max - input[0]) / diff;
+		        var gDist = (max - input[1]) / diff;
+		        var bDist = (max - input[2]) / diff;
+
+		        if (input[0] == max)
+		        {
+			        result[0] = bDist - gDist;
+		        }
+		        else if (input[1] == max)
+		        {
+			        result[0] = 2 + rDist - bDist;
+		        }
+		        else
+		        {
+			        result[0] = 4 + gDist - rDist;
+		        }
+
+		        result[0] /= 6f;
+		        if (result[0] < 0) result[0] += 1f;
+	        }
+            return new ParametricSeries(3, result);
         }
 
         public static System.Drawing.Color RGB(this Series a)

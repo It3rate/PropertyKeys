@@ -27,6 +27,11 @@ namespace DataArcs.SeriesData
 	        set => _floatValues[index < _floatValues.Length ? index : _floatValues.Length - 1] = value;
         }
 
+        public float MinValue => _floatValues.Min();
+        public float MaxValue => _floatValues.Max();
+        public float AverageValue => _floatValues.Average();
+        public float SumValue => _floatValues.Sum();
+
         public override Series GetZeroSeries()
         {
 	        return new ParametricSeries(VectorSize, ArrayExtension.GetFloatZeroArray(VectorSize));

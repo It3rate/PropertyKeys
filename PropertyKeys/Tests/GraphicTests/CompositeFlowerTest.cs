@@ -79,7 +79,7 @@ namespace DataArcs.Tests.GraphicTests
 	        composite.Renderer = new PolyShape();
 
             IStore blendColors = GetBlendColor(2);
-			//blendColors.Reverse();
+			//blendColors.ReverseEachElement();
             composite.AddProperty(PropertyId.FillColor, blendColors);
 
             return composite;

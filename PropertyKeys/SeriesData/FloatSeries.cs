@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using DataArcs.SeriesData.Utils;
 using DataArcs.Stores;
 
@@ -55,6 +56,11 @@ namespace DataArcs.SeriesData
 			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, VectorSize);
 		}
 
+		public override void Append(Series series)
+		{
+			Array.Resize(ref _floatValues, _floatValues.Length + VectorSize);
+			SetRawDataAt(Count - 1, series);
+		}
 		protected override void CalculateFrame()
 		{
 			var min = ArrayExtension.GetFloatMaxArray(VectorSize);
@@ -82,7 +88,7 @@ namespace DataArcs.SeriesData
 		}
 
 		// todo: should reverse based on slots, e.g. a grid sample may have more than xy in vectorSize
-		public override void Reverse()
+		public override void ReverseEachElement()
 		{
 			for (int i = 0; i < Count; i++)
 			{
