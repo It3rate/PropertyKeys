@@ -121,18 +121,18 @@ namespace DataArcs.Tests.GraphicTests
 
             var locStore = new Store(orgStore.GetSeriesRef().Copy(), orgStore.Sampler);
             locStore.BakeData();
-            locStore.GetSeriesRef().MapToItemOrder(itemsSeries);
+            locStore.GetSeriesRef().MapFromItemToIndex(itemsSeries);
             //locStore.ShouldIterpolate = false;
-            //locStore.GetSeriesRef().MapToItemOrder((IntSeries)container2.GetStore(PropertyId.Items).GetSeriesRef()); 
+            //locStore.GetSeriesRef().MapFromIndexToItem((IntSeries)container2.GetStore(PropertyId.Items).GetSeriesRef()); 
 	        container2.AddProperty(PropertyId.Location, locStore);
 
-            //colorStore2.GetSeriesRef().MapToItemOrder(itemsSeries);
+            //colorStore2.GetSeriesRef().MapFromIndexToItem(itemsSeries);
             //colorStore2.GetSeriesRef().SetByList(colors);
             //container2.AddProperty(PropertyId.FillColor, colorStore2);
 
 
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
-			var result = new BlendTransition(container, container2, new Timer(0, 4000), easeStore);
+			var result = new BlendTransition(container, container2, new Timer(0, 8000), easeStore);
 			return result;
         }
         private static void AddGraphic(Container container, float radius)

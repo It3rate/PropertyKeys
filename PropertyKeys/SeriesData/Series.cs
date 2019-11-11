@@ -195,19 +195,25 @@ namespace DataArcs.SeriesData
                 SetRawDataAt(i, items[i]);
             }
         }
-        public void MapToItemOrder(IntSeries items)
+        public void MapFromItemToIndex(IntSeries items)
         {
             var selfCopy = Copy();
-	        int indexA = items.IntDataAt(0);
-	        Series first = selfCopy.GetRawDataAt(indexA);
-	        for (int i = 1; i < items.Count; i++)
+            for (int i = 0; i < items.Count; i++)
+            {
+                int index = items.IntDataAt(i);
+                Series second = selfCopy.GetRawDataAt(i);
+                SetRawDataAt(index, second);
+            }
+        }
+        public void MapFromIndexToItem(IntSeries items)
+        {
+            var selfCopy = Copy();
+	        for (int i = 0; i < items.Count; i++)
 	        {
-		        int indexB = items.IntDataAt(i);
-				Series second = selfCopy.GetRawDataAt(indexB);
+		        int index = items.IntDataAt(i);
+				Series second = selfCopy.GetRawDataAt(index);
 				SetRawDataAt(i, second);
-				indexA = indexB;
 	        }
-	        SetRawDataAt(indexA, first);
         }
 
         #region Enumeration
