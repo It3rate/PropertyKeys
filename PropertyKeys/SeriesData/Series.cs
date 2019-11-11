@@ -179,12 +179,13 @@ namespace DataArcs.SeriesData
 
         public void MapToItemOrder(IntSeries items)
         {
+            var selfCopy = Copy();
 	        int indexA = items.IntDataAt(0);
-	        Series first = GetRawDataAt(indexA);
+	        Series first = selfCopy.GetRawDataAt(indexA);
 	        for (int i = 1; i < items.Count; i++)
 	        {
 		        int indexB = items.IntDataAt(i);
-				Series second = GetRawDataAt(indexB);
+				Series second = selfCopy.GetRawDataAt(indexB);
 				SetRawDataAt(i, second);
 				indexA = indexB;
 	        }

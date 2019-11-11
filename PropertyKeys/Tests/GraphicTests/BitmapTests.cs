@@ -56,11 +56,12 @@ namespace DataArcs.Tests.GraphicTests
 
             IStore items = container.GetStore(PropertyId.Items);
 			items.BakeData();
-			SeriesUtils.Shuffle(items.GetSeriesRef());
-
-			colorStore.GetSeriesRef().MapToItemOrder((IntSeries)items.GetSeriesRef());
-			//items.ShouldIterpolate = false;
             //Array.Sort(items.GetSeriesRef().IntDataRef);
+            Array.Reverse(items.GetSeriesRef().IntDataRef);
+            //SeriesUtils.Shuffle(items.GetSeriesRef());
+
+            colorStore.GetSeriesRef().MapToItemOrder((IntSeries)items.GetSeriesRef());
+            //items.ShouldIterpolate = false;
             //Array.Reverse(items.GetSeriesRef().IntDataRef);
 
             return container;

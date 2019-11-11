@@ -275,8 +275,7 @@ namespace DataArcs.Components
 				SortedList<int, int> sl = new SortedList<int, int>();
                 for (int i = 0; i < capacity; i++)
                 {
-	                //int itemIndex = _items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
-	                int itemIndex = _items?.GetSeriesRef().IntDataAt(i) ?? i;
+	                int itemIndex = _items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
 
                     float indexT = itemIndex / (capacity - 1f);
                     dict.Clear();
