@@ -101,35 +101,20 @@ namespace DataArcs.Tests.GraphicTests
             //container2.AddProperty(PropertyId.FillColor, colorStore2);
 
             var items2 = container2.GetStore(PropertyId.Items).GetSeriesRef().Copy();
-            //items2.ShouldIterpolate = false;
             var cap = items2.Count;
             IntSeries itemsSeries = (IntSeries) items2;
-
-            //var list = itemsSeries.ToList();
-            //list.Reverse();
-            //itemsSeries.SetByList(list);
 
             for (int i = 0; i < cap; i++)
             {
                 int idx = (int)(Math.Round(colors[i].GetRawDataAt(1).Z * countCapacity));
                 itemsSeries.SetRawDataAt(i, new IntSeries(1, idx));
             }
-
-            //container2.AddProperty(PropertyId.Items, new Store(itemsSeries));
-
+			
             var orgStore = container2.GetStore(PropertyId.Location);
-
-            var locStore = new Store(orgStore.GetSeriesRef().Copy(), orgStore.Sampler);
+            var locStore = orgStore.Clone();
             locStore.BakeData();
             locStore.GetSeriesRef().MapFromItemToIndex(itemsSeries);
-            //locStore.ShouldIterpolate = false;
-            //locStore.GetSeriesRef().MapFromIndexToItem((IntSeries)container2.GetStore(PropertyId.Items).GetSeriesRef()); 
 	        container2.AddProperty(PropertyId.Location, locStore);
-
-            //colorStore2.GetSeriesRef().MapFromIndexToItem(itemsSeries);
-            //colorStore2.GetSeriesRef().SetByList(colors);
-            //container2.AddProperty(PropertyId.FillColor, colorStore2);
-
 
             Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
 			var result = new BlendTransition(container, container2, new Timer(0, 8000), easeStore);

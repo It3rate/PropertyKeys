@@ -42,13 +42,13 @@ namespace DataArcs.Stores
 
         public override Series GetValuesAtIndex(int index)
 		{
-			return ShouldIterpolate ? _series.GetVirtualValueAt(index, Capacity) : Sampler.GetValueAtIndex(_series, index);
+			return ShouldIterpolate ? _series.GetRawDataAt(index) : Sampler.GetValueAtIndex(_series, index);
 		}
 
 		public override Series GetValuesAtT(float t)
 		{
 			// GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
-            return ShouldIterpolate ? _series.GetVirtualValueAt(t) : Sampler.GetValuesAtT(_series, t);
+            return ShouldIterpolate ? _series.GetRawDataAt(t) : Sampler.GetValuesAtT(_series, t);
 		}
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)

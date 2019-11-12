@@ -81,6 +81,7 @@ namespace DataArcs.SeriesData
 
         protected abstract void CalculateFrame();
 
+        public virtual Series GetRawDataAt(float t) => GetRawDataAt(SamplerUtils.IndexFromT(Count, t));
         public abstract Series GetRawDataAt(int index);
         public abstract void SetRawDataAt(int index, Series series);
         /// <summary>
