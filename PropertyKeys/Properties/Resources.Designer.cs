@@ -73,6 +73,26 @@ namespace DataArcs.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap face2 {
+            get {
+                object obj = ResourceManager.GetObject("face2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap face3 {
+            get {
+                object obj = ResourceManager.GetObject("face3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap it3rate {
             get {
                 object obj = ResourceManager.GetObject("it3rate", resourceCulture);

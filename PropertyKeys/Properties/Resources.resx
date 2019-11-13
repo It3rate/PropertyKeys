@@ -121,6 +121,12 @@
   <data name="face" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\face.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="face2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\face2.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="face3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\face3.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="it3rate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\it3rate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
