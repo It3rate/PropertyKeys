@@ -9,11 +9,13 @@ namespace DataArcs.Samplers
 	{
 		public int Capacity { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
+		public int[] Strides { get; protected set; }
 
 		public Sampler(Slot[] swizzleMap = null, int capacity = 1)
 		{
 			SwizzleMap = swizzleMap;
 			Capacity = capacity;
+			Strides = new int[Capacity];
         }
 
         public virtual Series GetValueAtIndex(Series series, int index)

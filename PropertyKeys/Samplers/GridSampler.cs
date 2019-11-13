@@ -6,8 +6,6 @@ namespace DataArcs.Samplers
 {
 	public class GridSampler : Sampler
 	{
-		protected int[] Strides { get; }
-
         public GridSampler(int[] strides, Slot[] swizzleMap = null) : base(swizzleMap)
         {
 			Strides = strides;
