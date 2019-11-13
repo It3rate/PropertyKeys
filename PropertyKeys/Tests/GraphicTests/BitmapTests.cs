@@ -71,14 +71,41 @@ namespace DataArcs.Tests.GraphicTests
 	                break;
                 case 4:
 	                int nextImageIndex = _bitmapIndex < bitmaps.Length - 1 ? _bitmapIndex + 1 : 0;
+	                //var compBlend = BlendImages(_bitmapIndex, nextImageIndex);
+
 					var image2 = GetImage(bitmaps[nextImageIndex]);
-                    //containerB = GetHistogram(containerA, false, false, true);
                     var compBlend = GetBlend(containerA, image2);
+
 	                _player.AddActiveElement(compBlend);
 	                compBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
 	                break;
             }
 
+        }
+
+        private BlendTransition BlendImages(int indexA, int indexB)
+        {
+	        IContainer containerA = GetImage(bitmaps[indexA]);
+	        IContainer containerB = GetImage(bitmaps[indexB]);
+	        var indexesA = GetHistogramIndexes(containerA);
+	        var indexesB = GetHistogramIndexes(containerB);
+
+            // todo: blend locations A -> AHist -> invBHist  ---- ColorB -> invLocs?
+            var locsA = containerA.GetStore(PropertyId.Location);
+            locsA.BakeData();
+            var locsB = containerB.GetStore(PropertyId.Location);
+            locsB.BakeData();
+            locsB.GetSeriesRef().MapFromItemToIndex(indexesA);
+	        return GetBlend(containerA, containerB);
+        }
+
+        private IntSeries GetHistogramIndexes(IContainer container)
+        {
+	        var colorStore2 = container.GetStore(PropertyId.FillColor).Clone();
+	        var attributedColors = AppendLocationToColors(colorStore2, 0, 0);
+	        attributedColors.Sort((a, b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000));
+	        IntSeries itemsSeries = SetItemsFromAttributedColorOrder(attributedColors);
+	        return itemsSeries;
         }
 
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
@@ -110,6 +137,7 @@ namespace DataArcs.Tests.GraphicTests
             return container;
         }
 
+
         private List<Series> AppendLocationToColors(IStore colorStore, int columns, int rows)
         {
 	        var colors = colorStore.GetSeriesRef().ToList();
@@ -140,10 +168,12 @@ namespace DataArcs.Tests.GraphicTests
 
         public IContainer GetHistogram(Container imageContainer, bool reverse, bool adjustLocations, bool adjustColors)
         {
+	        var result = imageContainer.CreateChild();
+
 	        int[] strides = imageContainer.GetStore(PropertyId.Location).Sampler.Strides;
 	        int columns = strides[0];
 	        int rows = strides[1];
-	        var result = imageContainer.CreateChild();
+
 	        var colorStore2 = result.GetStore(PropertyId.FillColor).Clone();
 
 	        var attributedColors = AppendLocationToColors(colorStore2, columns, rows);
