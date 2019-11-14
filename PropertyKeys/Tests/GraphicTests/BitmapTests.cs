@@ -3,14 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.Versioning;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using DataArcs.Adapters.Color;
 using DataArcs.Components;
 using DataArcs.Components.Transitions;
-using DataArcs.Graphic;
 using DataArcs.Players;
 using DataArcs.Properties;
 using DataArcs.Samplers;
@@ -47,65 +41,40 @@ namespace DataArcs.Tests.GraphicTests
             {
                 case 0:
                     _player.AddActiveElement(containerA);
-                    _timer = new Timer(0, 1000, null);
+                    _timer = new Timer(0, 500, null);
                     _timer.EndTimedEvent += CompOnEndTransitionEvent;
                     _player.AddActiveElement(_timer);
                     break;
                 case 1:
-	                containerB = GetHistogram(containerA, false, true, false);
-                    var comp = GetBlend(containerA, containerB);
+                    containerB = GetHistogram(containerA, false, true, false);
+                    var comp = GetBlend(containerA, containerB, 1000);
                     _player.AddActiveElement(comp);
                     comp.Runner.EndTimedEvent += CompOnEndTransitionEvent;
                     break;
                 case 2:
-	                containerB = GetHistogram(containerA, true, true, false);
-                    var compRev = GetBlend(containerA, containerB);
-	                _player.AddActiveElement(compRev);
-	                compRev.Runner.EndTimedEvent += CompOnEndTransitionEvent;
-	                break;
+                    containerB = GetHistogram(containerA, true, true, false);
+                    var compRev = GetBlend(containerA, containerB,1000);
+                    _player.AddActiveElement(compRev);
+                    compRev.Runner.EndTimedEvent += CompOnEndTransitionEvent;
+                    break;
                 case 3:
-	                _player.AddActiveElement(containerA);
-	                _timer = new Timer(0, 1000, null);
-	                _timer.EndTimedEvent += CompOnEndTransitionEvent;
-	                _player.AddActiveElement(_timer);
-	                break;
+                    _player.AddActiveElement(containerA);
+                    _timer = new Timer(0, 500, null);
+                    _timer.EndTimedEvent += CompOnEndTransitionEvent;
+                    _player.AddActiveElement(_timer);
+                    break;
                 case 4:
 	                int nextImageIndex = _bitmapIndex < bitmaps.Length - 1 ? _bitmapIndex + 1 : 0;
-	                //var compBlend = BlendImages(_bitmapIndex, nextImageIndex);
+	                var compBlend = BlendImages(_bitmapIndex, nextImageIndex);
 
-					var image2 = GetImage(bitmaps[nextImageIndex]);
-                    var compBlend = GetBlend(containerA, image2);
+					//var image2 = GetImage(bitmaps[nextImageIndex]);
+     //               var compBlend = GetBlend(containerA, image2);
 
 	                _player.AddActiveElement(compBlend);
 	                compBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
 	                break;
             }
 
-        }
-
-        private BlendTransition BlendImages(int indexA, int indexB)
-        {
-	        IContainer containerA = GetImage(bitmaps[indexA]);
-	        IContainer containerB = GetImage(bitmaps[indexB]);
-	        var indexesA = GetHistogramIndexes(containerA);
-	        var indexesB = GetHistogramIndexes(containerB);
-
-            // todo: blend locations A -> AHist -> invBHist  ---- ColorB -> invLocs?
-            var locsA = containerA.GetStore(PropertyId.Location);
-            locsA.BakeData();
-            var locsB = containerB.GetStore(PropertyId.Location);
-            locsB.BakeData();
-            locsB.GetSeriesRef().MapFromItemToIndex(indexesA);
-	        return GetBlend(containerA, containerB);
-        }
-
-        private IntSeries GetHistogramIndexes(IContainer container)
-        {
-	        var colorStore2 = container.GetStore(PropertyId.FillColor).Clone();
-	        var attributedColors = AppendLocationToColors(colorStore2, 0, 0);
-	        attributedColors.Sort((a, b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000));
-	        IntSeries itemsSeries = SetItemsFromAttributedColorOrder(attributedColors);
-	        return itemsSeries;
         }
 
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
@@ -120,12 +89,59 @@ namespace DataArcs.Tests.GraphicTests
             NextVersion();
         }
 
+        private int cl;
+        private int rw;
+        private BlendTransition BlendImages(int indexA, int indexB)
+        {
+	        IContainer containerA = GetImage(bitmaps[indexA]);
+	        IContainer containerB = GetImage(bitmaps[indexB]);
+	        var indexesA = GetHistogramIndexes(containerA);
+	        var indexesB = GetHistogramIndexes(containerB);
+
+            // todo: blend locations A -> AHist -> invBHist  ---- ColorB -> invLocs?
+            var colsA = containerA.GetStore(PropertyId.FillColor);
+            colsA.BakeData();
+            var items = GetHistogramIndexes(containerA);
+
+            var colsB = containerB.GetStore(PropertyId.FillColor);
+            colsB.BakeData();
+            var attrB = AppendLocationToColors(colsB, items);
+            attrB.Sort((a, b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000));
+            IntSeries sortedB = SetItemsFromAttributedColorOrder(attrB);
+
+            var locsB = containerB.GetStore(PropertyId.Location);
+            locsB.BakeData();
+            locsB.GetSeriesRef().MapFromItemToIndex(sortedB);
+
+            colsB.GetSeriesRef().MapFromItemToIndex(sortedB);
+	        return GetBlend(containerA, containerB, 6000);
+        }
+
+        private List<Series> AppendLocationToColors(IStore colorStore, IntSeries itemSeries)
+        {
+            float cap = itemSeries.Count - 1f;
+            var colors = colorStore.GetSeriesRef().ToList();
+            for (int i = 0; i < itemSeries.Count; i++)
+            {
+                colors[i].Append(new FloatSeries(3, 0, 0, itemSeries.FloatDataAt(i)/ cap));
+            }
+            return colors;
+        }
+        private IntSeries GetHistogramIndexes(IContainer container)
+        {
+	        var colorStore2 = container.GetStore(PropertyId.FillColor).Clone();
+	        var attributedColors = AppendLocationToColors(colorStore2, cl, rw);
+	        attributedColors.Sort((a, b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000));
+	        IntSeries itemsSeries = SetItemsFromAttributedColorOrder(attributedColors);
+	        return itemsSeries;
+        }
+
         public Container GetImage(Bitmap bitmap)
         {
-        int columns = 120;
-        int width = 675;
-        int rows;
-        var bounds = new RectFSeries(0, 0, width, width * (bitmap.Height / (float)bitmap.Width));
+            int columns = 100;
+            int width = 675;
+            int rows;
+            var bounds = new RectFSeries(0, 0, width, width * (bitmap.Height / (float)bitmap.Width));
             //var sampler = new GridSampler(new int[] { w, h });
             var container = HexagonSampler.CreateBestFit(bounds, columns, out int rowCount, out HexagonSampler sampler);
             rows = rowCount;
@@ -134,6 +150,8 @@ namespace DataArcs.Tests.GraphicTests
             colorStore.BakeData();
             IStore items = container.GetStore(PropertyId.Items);
             items.BakeData();
+            cl = columns;
+            rw = rows;
             return container;
         }
 
@@ -218,10 +236,10 @@ namespace DataArcs.Tests.GraphicTests
 	        return result;
         }
 
-        public BlendTransition GetBlend(IContainer containerA, IContainer containerB)
+        public BlendTransition GetBlend(IContainer containerA, IContainer containerB, int ms)
         {
 	        Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.SmoothStart3));//, new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
-            var result = new BlendTransition(containerA, containerB, new Timer(0, 2000), easeStore);
+            var result = new BlendTransition(containerA, containerB, new Timer(0, ms), easeStore);
             return result;
         }
 
