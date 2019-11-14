@@ -89,32 +89,46 @@ namespace DataArcs.Tests.GraphicTests
             NextVersion();
         }
 
+        public static int ColorSortRev(Series a, Series b) => (int)((RGBXYDistance1(b) - RGBXYDistance1(a)) * 10000);
+        public static int ColorSort(Series a, Series b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000);
+
         private int cl;
         private int rw;
         private BlendTransition BlendImages(int indexA, int indexB)
         {
 	        IContainer containerA = GetImage(bitmaps[indexA]);
 	        IContainer containerB = GetImage(bitmaps[indexB]);
-	        var indexesA = GetHistogramIndexes(containerA);
-	        var indexesB = GetHistogramIndexes(containerB);
 
-            // todo: blend locations A -> AHist -> invBHist  ---- ColorB -> invLocs?
             var colsA = containerA.GetStore(PropertyId.FillColor);
             colsA.BakeData();
-            var items = GetHistogramIndexes(containerA);
-
             var colsB = containerB.GetStore(PropertyId.FillColor);
             colsB.BakeData();
-            var attrB = AppendLocationToColors(colsB, items);
-            attrB.Sort((a, b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000));
-            IntSeries sortedB = SetItemsFromAttributedColorOrder(attrB);
-
             var locsB = containerB.GetStore(PropertyId.Location);
             locsB.BakeData();
-            locsB.GetSeriesRef().MapFromItemToIndex(sortedB);
 
-            colsB.GetSeriesRef().MapFromItemToIndex(sortedB);
-	        return GetBlend(containerA, containerB, 6000);
+            var itemsA = GetHistogramIndexes(containerA).IntDataRef;
+            var itemsB = GetHistogramIndexes(containerB).IntDataRef;
+            var itemsBFinal = new int[itemsA.Length];
+            for (int i = 0; i < itemsBFinal.Length; i++)
+            {
+	            itemsBFinal[i] = itemsA[itemsB[i]];
+            }
+			var bItemSeries = new IntSeries(1, itemsBFinal);
+			// b order is fori b[i] =  itemsB[itemsA[i]]
+
+            //var attrB = AppendLocationToColors(colsB, items);
+            //attrB.Sort(ColorSort);
+            //IntSeries sortedB = SetItemsFromAttributedColorOrder(attrB);
+
+            locsB.GetSeriesRef().MapValuesToItemPositions(bItemSeries);
+            colsB.GetSeriesRef().MapValuesToItemPositions(bItemSeries);
+            //locsB.GetSeriesRef().MapOrderToItemPositions(bItemSeries);
+            //colsB.GetSeriesRef().MapOrderToItemPositions(bItemSeries);
+
+            var blend = GetBlend(containerA, containerB, 5000);
+			//blend.AddProperty(PropertyId.Items, Store.CreateItemStore(1000));
+
+            return blend;
         }
 
         private List<Series> AppendLocationToColors(IStore colorStore, IntSeries itemSeries)
@@ -131,14 +145,14 @@ namespace DataArcs.Tests.GraphicTests
         {
 	        var colorStore2 = container.GetStore(PropertyId.FillColor).Clone();
 	        var attributedColors = AppendLocationToColors(colorStore2, cl, rw);
-	        attributedColors.Sort((a, b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000));
-	        IntSeries itemsSeries = SetItemsFromAttributedColorOrder(attributedColors);
+	        attributedColors.Sort(ColorSort);
+            IntSeries itemsSeries = SetItemsFromAttributedColorOrder(attributedColors);
 	        return itemsSeries;
         }
 
         public Container GetImage(Bitmap bitmap)
         {
-            int columns = 100;
+            int columns = 120;
             int width = 675;
             int rows;
             var bounds = new RectFSeries(0, 0, width, width * (bitmap.Height / (float)bitmap.Width));
@@ -196,10 +210,10 @@ namespace DataArcs.Tests.GraphicTests
 
 	        var attributedColors = AppendLocationToColors(colorStore2, columns, rows);
 	        //colors.Sort((a, b) => (int)(a.RgbToHsl()[2] - b.RgbToHsl()[2]));
-	        attributedColors.Sort((a, b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000));
+	        attributedColors.Sort(ColorSort);//(a, b) => (int)((RGBXYDistance1(b) - RGBXYDistance1(a)) * 10000));
 
 
-	        IntSeries itemsSeries = SetItemsFromAttributedColorOrder(attributedColors);
+            IntSeries itemsSeries = SetItemsFromAttributedColorOrder(attributedColors);
 
 	        if (adjustLocations)
 	        {
@@ -209,11 +223,11 @@ namespace DataArcs.Tests.GraphicTests
 		        if (reverse)
 		        {
 			        orgLocStore.BakeData();
-			        orgLocStore.GetSeriesRef().MapFromItemToIndex(itemsSeries);
+			        orgLocStore.GetSeriesRef().MapValuesToItemPositions(itemsSeries);
 		        }
 		        else
 		        {
-			        newLocStore.GetSeriesRef().MapFromItemToIndex(itemsSeries);
+			        newLocStore.GetSeriesRef().MapValuesToItemPositions(itemsSeries);
 		        }
 
 		        result.AddProperty(PropertyId.Location, newLocStore);
@@ -238,7 +252,7 @@ namespace DataArcs.Tests.GraphicTests
 
         public BlendTransition GetBlend(IContainer containerA, IContainer containerB, int ms)
         {
-	        Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.SmoothStart3));//, new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
+	        Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3));//, CombineFunction.Multiply, CombineTarget.T);//, new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
             var result = new BlendTransition(containerA, containerB, new Timer(0, ms), easeStore);
             return result;
         }

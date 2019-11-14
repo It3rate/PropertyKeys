@@ -196,7 +196,7 @@ namespace DataArcs.SeriesData
                 SetRawDataAt(i, items[i]);
             }
         }
-        public void MapFromItemToIndex(IntSeries items)
+        public void MapValuesToItemPositions(IntSeries items)
         {
             var selfCopy = Copy();
             for (int i = 0; i < items.Count; i++)
@@ -206,7 +206,7 @@ namespace DataArcs.SeriesData
                 SetRawDataAt(index, second);
             }
         }
-        public void MapFromIndexToItem(IntSeries items)
+        public void MapOrderToItemPositions(IntSeries items)
         {
             var selfCopy = Copy();
 	        for (int i = 0; i < items.Count; i++)
