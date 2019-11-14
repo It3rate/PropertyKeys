@@ -41,19 +41,19 @@ namespace DataArcs.Tests.GraphicTests
             {
                 case 0:
                     _player.AddActiveElement(containerA);
-                    _timer = new Timer(0, 500, null);
+                    _timer = new Timer(0, 1000, null);
                     _timer.EndTimedEvent += CompOnEndTransitionEvent;
                     _player.AddActiveElement(_timer);
                     break;
                 case 1:
                     containerB = GetHistogram(containerA, false, true, false);
-                    var comp = GetBlend(containerA, containerB, 1000);
+                    var comp = GetBlend(containerA, containerB, 1500);
                     _player.AddActiveElement(comp);
                     comp.Runner.EndTimedEvent += CompOnEndTransitionEvent;
                     break;
                 case 2:
                     containerB = GetHistogram(containerA, true, true, false);
-                    var compRev = GetBlend(containerA, containerB,1000);
+                    var compRev = GetBlend(containerA, containerB,1500);
                     _player.AddActiveElement(compRev);
                     compRev.Runner.EndTimedEvent += CompOnEndTransitionEvent;
                     break;
