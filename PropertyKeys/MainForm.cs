@@ -68,8 +68,8 @@ namespace DataArcs
             NextTest();
         }
 
-        private static int _testCount = 7;
-        private int _testIndex = _testCount;
+        private static int _testCount = 8;
+        private int _testIndex = 0;//_testCount;
         private void NextTest()
         {
 	        _testIndex--;
@@ -100,6 +100,9 @@ namespace DataArcs
 			        break;
 		        case 5:
 			        _testScreen = new CompositeTestObjects(_player);
+			        break;
+		        case 7:
+			        _testScreen = new ImageCompressionTest(_player);
 			        break;
             }
             _player.Pause();
