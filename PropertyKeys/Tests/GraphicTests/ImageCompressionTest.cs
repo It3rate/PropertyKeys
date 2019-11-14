@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Components;
+using DataArcs.Components.ExternalInput;
 using DataArcs.Components.Transitions;
 using DataArcs.Players;
 using DataArcs.Properties;
@@ -22,17 +23,35 @@ namespace DataArcs.Tests.GraphicTests
     {
 	    private readonly Player _player;
 	    private Bitmap[] bitmaps;
+	    private MouseInput _mouseInput;
+	    private int _bitmapIndex;
 
         public ImageCompressionTest(Player player)
 	    {
 		    _player = player;
-	    }
-
-	    public void NextVersion()
-	    {
-		    int root = 12;
 		    bitmaps = new[] { Resources.face, Resources.face2, Resources.face3 };
-		    var bmp = bitmaps[1];
+			NextVersion();
+        }
+
+        public void NextBlock()
+        {
+	        _bitmapIndex++;
+	        if (_bitmapIndex >= bitmaps.Length)
+	        {
+		        _bitmapIndex = 0;
+	        }
+			NextVersion();
+        }
+
+        public void NextVersion()
+	    {
+			_player.Clear();
+		    _mouseInput = new MouseInput();
+		    _mouseInput.MouseClick = NextBlock;
+		    _player.AddActiveElement(_mouseInput);
+
+		    int root = 12;
+		    var bmp = bitmaps[_bitmapIndex];
             IComposite comp0 = GetImage(bmp, root*2, 0);
             _player.AddActiveElement(comp0);
             IComposite comp1 = GetImage(bmp, root * 3, 2);
@@ -68,13 +87,13 @@ namespace DataArcs.Tests.GraphicTests
 		    var newItems = new int[(int)(items.Capacity)];
 		    int index = 0;
 		    int loc = 0;
-		    float adjX = maskedQuadrant == 1 || maskedQuadrant == 3 ? 0.1f : 0;
-		    for (int y = 0; y < rows; y++)
+		    float adj = maskedQuadrant == 1 || maskedQuadrant == 3 ? 0.1f : 0;
+            for (int y = 0; y < rows; y++)
 		    {
 			    for (int x = 0; x < columns; x++)
 			    {
-				    int quad = (x <= columns * (0.4f - adjX) || x >= columns * (.6f + adjX)) ? 0 : 1;
-				    quad += (y <= rows * .2f || y > rows * .6f) ? 0 : 2;
+				    int quad = (x <= columns * (0.4f - adj) || x >= columns * (.6f + adj)) ? 0 : 1;
+				    quad += (y <= rows * (0.2f - adj) || y > rows * (0.6f + adj)) ? 0 : 2;
 				    if (quad == maskedQuadrant && index <= newItems.Length)
 				    {
 					    newItems[index] = loc;

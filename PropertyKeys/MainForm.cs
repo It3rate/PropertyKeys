@@ -69,7 +69,7 @@ namespace DataArcs
         }
 
         private static int _testCount = 8;
-        private int _testIndex = 0;//_testCount;
+        private int _testIndex = _testCount;
         private void NextTest()
         {
 	        _testIndex--;
@@ -81,28 +81,28 @@ namespace DataArcs
 	        switch (_testIndex)
 	        {
 		        case 0:
-			        _testScreen = new BitmapTests(_player);
+			        _testScreen = new ImageCompressionTest(_player);
 			        break;
 		        case 1:
+			        _testScreen = new BitmapTests(_player);
+			        break;
+		        case 2:
 			        _testScreen = new AutomataTest(_player);
 			        break;
-                case 2:
+                case 3:
 			        _testScreen = new PhysicsTest(_player);
 			        break;
-                case 3:
+                case 4:
 			        _testScreen = new UserInputTest(_player);
 			        break;
-                case 4:
+                case 5:
 			        _testScreen = new CompositeFlowerTest(_player);
 			        break;
 		        case 6:
-			        _testScreen = new CompositeChildSlideTest(_player);
-			        break;
-		        case 5:
 			        _testScreen = new CompositeTestObjects(_player);
 			        break;
 		        case 7:
-			        _testScreen = new ImageCompressionTest(_player);
+			        _testScreen = new CompositeChildSlideTest(_player);
 			        break;
             }
             _player.Pause();
