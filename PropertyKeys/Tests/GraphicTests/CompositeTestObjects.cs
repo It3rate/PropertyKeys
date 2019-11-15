@@ -64,13 +64,13 @@ namespace DataArcs.Tests.GraphicTests
                     comp = GetTest3(0, 3000f);
                     break;
                 case 1:
-                    comp = GetTest0(0, 1000f);
+                    comp = GetTest0(0, 2000f);
                     break;
                 case 2:
-                    comp = GetTest2(0, 1000f);
+                    comp = GetTest2(0, 2000f);
                     break;
                 default:
-                    comp = GetTest1(0, _player.CurrentMs, 1000f);
+                    comp = GetTest1(0, _player.CurrentMs, 2000f);
                     break;
             }
             comp.Runner.EndTimedEvent += CompOnEndTransitionEvent;
@@ -81,13 +81,13 @@ namespace DataArcs.Tests.GraphicTests
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
             _count++;
-            if (_count < 2)
+            if (_count < 4)
             {
                 ITimeable anim = (ITimeable)sender;
                 anim.Reverse();
                 anim.Restart();
             }
-            else if (_count < 3)
+            else if (_count < 5)
             {
                 BlendTransition nextComp = GetVersion(NextVersionIndex());
 
