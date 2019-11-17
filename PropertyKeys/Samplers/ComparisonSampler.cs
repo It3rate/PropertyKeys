@@ -172,7 +172,6 @@ namespace DataArcs.Samplers
 
 
 
-        private delegate float FloatEquation(float a, float b);
         private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, FloatEquation floatEquation)
         {
 	        int max = Math.Max(seriesA.VectorSize, seriesB.VectorSize);

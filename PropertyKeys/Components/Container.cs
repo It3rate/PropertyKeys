@@ -135,7 +135,7 @@ namespace DataArcs.Components
             float t = deltaTime % 1f;
             if (t <= 0.05f && shouldShuffle)
             {
-                SeriesUtils.Shuffle(GetStore(PropertyId.Location).GetSeriesRef());
+                SeriesUtils.ShuffleElements(GetStore(PropertyId.Location).GetSeriesRef());
             }
             if (t > 0.99 && shouldShuffle)
             {

@@ -185,7 +185,7 @@ namespace DataArcs.Tests.GraphicTests
             AddColor(startComp);
 			
             // items.BakeData();
-            //SeriesUtils.Shuffle(items.GetSeriesRef(0));
+            //SeriesUtils.ShuffleElements(items.GetSeriesRef(0));
 
             var pointArray = new FloatSeries(1, 8f, 5f, 5f, 8f);
             startComp.AddProperty(PropertyId.PointCount, new Store(pointArray, new Easing(EasingType.EaseInOut)));
