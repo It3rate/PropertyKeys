@@ -9,7 +9,7 @@ namespace DataArcs.Components.Simulators.Automata
 	public class Runner
     {
         public IStore Automata { get; }
-        private readonly IStore _previousAutomata;
+        private readonly IStore _workingAutomata;
 
         public int RuleSetCount => RuleSets.Count;
         protected List<RuleSet> RuleSets { get; }
@@ -26,11 +26,12 @@ namespace DataArcs.Components.Simulators.Automata
 
         public int LastInvokedRuleSet { get; private set; }
         public int LastInvokedRule { get; private set; }
+        public bool UpdateValuesAfterPass { get; set; } = true;
 
         public Runner(IStore automata, params RuleSet[] ruleSets)
         {
             Automata = automata;
-            _previousAutomata = Automata.Clone();
+            _workingAutomata = Automata.Clone();
             RuleSets = new List<RuleSet>();
             for (int i = 0; i < ruleSets.Length; i++)
             {
@@ -40,10 +41,12 @@ namespace DataArcs.Components.Simulators.Automata
         public void AddRuleSet(RuleSet ruleSet) => RuleSets.Add(ruleSet);
         public void NextBlock()
         {
+	        UpdateValuesAfterPass = true;
 	        AlternateIndex = ActiveIndex;
 	        ActiveIndex = (ActiveIndex < RuleSets.Count - 1) ? ActiveIndex + 1 : 0;
 	        PassCount = 0;
 	        _transitionIndex = 0;
+	        RuleSets[ActiveIndex].Reset(this);
         }
 
         public virtual RuleSet GetRuleSet(int elementIndex)
@@ -58,15 +61,18 @@ namespace DataArcs.Components.Simulators.Automata
             var ruleSet = GetRuleSet(elementIndex);
             Series result = ruleSet.InvokeRules(currentValue, neighbors, this);
             LastInvokedRule = ruleSet.InvokedRule;
-            if (LastInvokedRule > 0)
-            {
-                int x = 5;
-            }
             return result;
         }
 
+        private bool _isFirstRun = true;
         private void BeginPass()
         {
+	        if (_isFirstRun)
+	        {
+		        _isFirstRun = false;
+		        RuleSets[ActiveIndex].Reset(this);
+
+            }
 	        RuleSets[ActiveIndex].BeginPass();
 	        if (ActiveIndex != AlternateIndex)
 	        {
@@ -82,12 +88,23 @@ namespace DataArcs.Components.Simulators.Automata
 
 		        int capacity = Automata.Capacity;
 		        _transitionIndex += capacity * RuleSets[ActiveIndex].TransitionSpeed;// * (16f / (int)_totalDeltaTime);
-		        Automata.CopySeriesDataInto(_previousAutomata);
+		        IStore workingStore;
+		        if (UpdateValuesAfterPass)
+		        {
+					Automata.CopySeriesDataInto(_workingAutomata);
+					workingStore = _workingAutomata;
+
+		        }
+		        else
+		        {
+			        workingStore = Automata;
+		        }
+
 		        BeginPass();
 		        for (int i = 0; i < capacity; i++)
 		        {
-			        var currentValue = _previousAutomata.GetSeriesRef().GetVirtualValueAt(i, capacity);
-			        var neighbors = _previousAutomata.GetNeighbors(i);
+			        var currentValue = workingStore.GetSeriesRef().GetVirtualValueAt(i, capacity);
+			        var neighbors = workingStore.GetNeighbors(i);
 			        var result = InvokeRuleSet(currentValue, neighbors, i);
 			        Automata.GetSeriesRef().SetRawDataAt(i, result);
 		        }
