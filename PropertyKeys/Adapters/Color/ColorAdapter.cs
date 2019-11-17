@@ -8,14 +8,22 @@ namespace DataArcs.Adapters.Color
 	public static class Colors
 	{
 	    public static readonly FloatSeries Black = new FloatSeries(3, 0, 0, 0);
-	    public static readonly FloatSeries White = new FloatSeries(3, 1f, 1f, 1f);
-	    public static readonly FloatSeries Red = new FloatSeries(3, 1f, 0f, 0f);
+        public static readonly FloatSeries White = new FloatSeries(3, 1f, 1f, 1f);
+        public static readonly FloatSeries LightGray = new FloatSeries(3, .75f, .75f, .75f);
+        public static readonly FloatSeries MidGray = new FloatSeries(3, .5f, .5f, .5f);
+        public static readonly FloatSeries DarkGray = new FloatSeries(3, .25f, .25f, .25f);
+        public static readonly FloatSeries Red = new FloatSeries(3, 1f, 0f, 0f);
 	    public static readonly FloatSeries Green = new FloatSeries(3, 0f, 1f, 0f);
 	    public static readonly FloatSeries Blue = new FloatSeries(3, 0f, 0f, 1f);
 	    public static readonly FloatSeries Yellow = new FloatSeries(3, 1f, 1f, 0f);
 	    public static readonly FloatSeries Cyan = new FloatSeries(3, 0f, 1f, 1f);
         public static readonly FloatSeries Magenta = new FloatSeries(3, 1f, 0f, 1f);
-	}
+
+        public static readonly FloatSeries Pink = new FloatSeries(3, 1f, .75f, .75f);
+        public static readonly FloatSeries DarkBlue = new FloatSeries(3, 0f, 0f, .25f);
+        public static readonly FloatSeries MidBlue = new FloatSeries(3, 0f, 0f, .5f);
+        public static readonly FloatSeries DarkRed = new FloatSeries(3, .25f, 0f, 0f);
+    }
 
     public static class ColorAdapter
     {

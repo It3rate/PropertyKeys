@@ -24,10 +24,13 @@ namespace DataArcs.Components.Simulators.Automata
         private bool _isBusy = false; // avoid updating until pass complete.
         private float _totalDeltaTime;
 
+        public int LastInvokedRuleSet { get; private set; }
+        public int LastInvokedRule { get; private set; }
+
         public Runner(IStore automata, params RuleSet[] ruleSets)
         {
             Automata = automata;
-            _previousAutomata = Automata;
+            _previousAutomata = Automata.Clone();
             RuleSets = new List<RuleSet>();
             for (int i = 0; i < ruleSets.Length; i++)
             {
@@ -46,13 +49,20 @@ namespace DataArcs.Components.Simulators.Automata
         public virtual RuleSet GetRuleSet(int elementIndex)
         {
 	        int currentIndex = elementIndex < _transitionIndex ? ActiveIndex : AlternateIndex;
+            LastInvokedRuleSet = currentIndex;
             return RuleSets[currentIndex];
         }
 
         public virtual Series InvokeRuleSet(Series currentValue, Series neighbors, int elementIndex)
         {
             var ruleSet = GetRuleSet(elementIndex);
-            return ruleSet.InvokeRules(currentValue, neighbors, this);
+            Series result = ruleSet.InvokeRules(currentValue, neighbors, this);
+            LastInvokedRule = ruleSet.InvokedRule;
+            if (LastInvokedRule > 0)
+            {
+                int x = 5;
+            }
+            return result;
         }
 
         private void BeginPass()

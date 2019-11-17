@@ -215,22 +215,42 @@ namespace DataArcs.SeriesData.Utils
 	        }
 	        return CreateSeriesOfType(source, result);
         }
+        public static Series MaxDiff(Series source)
+        {
+            var max = ArrayExtension.GetFloatMinArray(source.VectorSize);
+            var min = ArrayExtension.GetFloatMaxArray(source.VectorSize);
+            for (int i = 0; i < source.Count; i++)
+            {
+                var svals = source.GetRawDataAt(i).FloatDataRef;
+                for (int j = 0; j < svals.Length; j++)
+                {
+                    max[j] = svals[j] > max[j] ? svals[j] : max[j];
+                    min[j] = svals[j] < min[j] ? svals[j] : min[j];
+                }
+            }
+
+            for (int i = 0; i < max.Length; i++)
+            {
+                max[i] -= min[1];
+            }
+            return CreateSeriesOfType(source, max);
+        }
         public static Series Max(Series source)
         {
-	        var result = new float[source.VectorSize];
-	        for (int i = 0; i < source.Count; i++)
-	        {
-		        var svals = source.GetRawDataAt(i).FloatDataRef;
-		        for (int j = 0; j < svals.Length; j++)
-		        {
-			        result[j] = svals[j] > result[j] ? svals[j] : result[j];
-		        }
-	        }
-	        return CreateSeriesOfType(source, result);
+            var result = ArrayExtension.GetFloatMinArray(source.VectorSize);
+            for (int i = 0; i < source.Count; i++)
+            {
+                var svals = source.GetRawDataAt(i).FloatDataRef;
+                for (int j = 0; j < svals.Length; j++)
+                {
+                    result[j] = svals[j] > result[j] ? svals[j] : result[j];
+                }
+            }
+            return CreateSeriesOfType(source, result);
         }
         public static Series Min(Series source)
         {
-	        var result = new float[source.VectorSize];
+            var result = ArrayExtension.GetFloatMaxArray(source.VectorSize);
 	        for (int i = 0; i < source.Count; i++)
 	        {
 		        var svals = source.GetRawDataAt(i).FloatDataRef;

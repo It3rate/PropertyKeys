@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,12 +86,13 @@ namespace DataArcs.Tests.GraphicTests
 
             var automataStore = new Store(new FloatSeries(3, 0f,0f,0f), sampler);
 			automataStore.BakeData();
-            automataStore.GetSeriesRef().SetRawDataAt(575, new FloatSeries(3, 0f,0f,.7f));
+            //automataStore.GetSeriesRef().SetRawDataAt(575, new FloatSeries(3, 0f,0f,.7f));
 
 		    var runner = new Runner(automataStore);
-		    CreateBlock1(runner);
-		    CreateBlock2(runner);
-		    CreateBlock3(runner);
+            CreateBlock0(runner);
+            CreateBlock1(runner);
+            CreateBlock2(runner);
+            CreateBlock3(runner);
             runner.ActiveIndex = 0;
 
 			var composite = new AutomataComposite(itemStore, automataStore, runner);
@@ -98,10 +100,10 @@ namespace DataArcs.Tests.GraphicTests
 			var ls = new LinkingStore(composite.CompositeId, PropertyId.Automata, SlotUtils.XYZ, null);
 		    composite.AddProperty(PropertyId.FillColor, ls);
 
-           // composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 6.8f).Store);
-		    var radStore = new Store(new FloatSeries(1, 6.5f, 6.5f, 9f, 9f), new LineSampler(), CombineFunction.Multiply);
-		    var radiusLink = new LinkingStore(composite.CompositeId, PropertyId.Automata, new[] { Slot.Max }, radStore);
-		    composite.AddProperty(PropertyId.Radius, radiusLink);
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 6.8f).Store);
+		    //var radStore = new Store(new FloatSeries(1, 6.5f, 6.5f, 9f, 9f), new LineSampler(), CombineFunction.Multiply);
+		    //var radiusLink = new LinkingStore(composite.CompositeId, PropertyId.Automata, new[] { Slot.Max }, radStore);
+		    //composite.AddProperty(PropertyId.Radius, radiusLink);
 
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
 
@@ -114,7 +116,61 @@ namespace DataArcs.Tests.GraphicTests
 		    composite.AppendProperty(PropertyId.Location, loc);
 		    return composite;
         }
-		
+
+
+        private RuleSet CreateBlock0(Runner runnerParam)
+        {
+            RuleSet rules = new RuleSet();
+            
+            rules.BeginPass = () =>
+            {
+                //Debug.WriteLine(runnerParam.LastInvokedRule);
+            };
+
+            rules.ResetFn = (Runner runner) =>
+            {
+                int index = (int)(runner.Automata.Capacity / 2.13f);
+                runner.Automata.GetSeriesRef().SetRawDataAt(index, new FloatSeries(3, 1f, 1f, 1f));
+            };
+
+
+            rules.AddRule(Rule.PassCountIsUnder(30), Rule.ConstInterpFn(Colors.Black, 0.8f));
+
+            rules.AddRule(Rule.RandomChance(0.0004f), Rule.ConstInterpFn(Colors.Cyan, 0.1f));
+
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Sum, Slot.Y,5.99f),
+                Rule.ConstInterpFn(Colors.Red, 1f));
+            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Min, Slot.X, .0001f),
+                Rule.ConstInterpFn(Colors.White, .1f));
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxDiff, Slot.X, .15f),
+                Rule.ConstInterpFn(Colors.Black, .208f));
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Max, Slot.X, 0.9f),
+                Rule.ConstInterpFn(Colors.DarkBlue, .6f));
+            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 1f),
+                Rule.ConstInterpFn(Colors.Yellow, .19f));
+
+
+
+            //rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Average, Slot.X, 0.51f),
+            //    Rule.ConstInterpFn(Colors.DarkRed, .4f));
+            //rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 0.49f),
+            //    Rule.ConstInterpFn(Colors.Pink, .6f));
+            //rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 1f),
+            //    Rule.ConstInterpFn(Colors.MidBlue, 1f));
+
+            //rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Average, Slot.X, 0.51f),
+            //    Rule.ConstInterpFn(Colors.Black, 1f));
+            //rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 0.49f),
+            //    Rule.ConstInterpFn(Colors.LightGray, .1f));
+            //rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 1f),
+            //    Rule.ConstInterpFn(Colors.White, 1f));
+
+
+            runnerParam.AddRuleSet(rules);
+            rules.Reset(runnerParam);
+
+            return rules;
+        }
 
 
         private RuleSet CreateBlock1(Runner runnerParam)
@@ -124,7 +180,7 @@ namespace DataArcs.Tests.GraphicTests
 	        float perPassRnd = 0;
 	        rules.BeginPass = () => { perPassRnd = (float) SeriesUtils.Random.NextDouble(); };
 
-	        rules.AddRule(Rule.PassCountIsUnder(30), Darken);
+            rules.AddRule(Rule.PassCountIsUnder(30), Darken);
 	        rules.AddRule(Rule.RandomChance(0.00002f), Rule.RandomColorFn(0.1f, .9f, .4f,.7f, .4f, .7f) );
             var isBrightTest = Rule.CurrentValueIsOver(Slot.Max, 0.9f);
 	        var dimStars = Rule.AllConditionsTrue(
