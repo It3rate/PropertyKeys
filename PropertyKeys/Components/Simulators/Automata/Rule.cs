@@ -12,7 +12,7 @@ namespace DataArcs.Components.Simulators.Automata
 {
 	public delegate bool Condition(Series currentValue, Series neighbors, Runner runner);
 	public delegate Series ParameterizedFunction(Series currentValue, Series neighbors);
-	public delegate Series SeriesModifier(Series elements);
+	public delegate Series SeriesModifier(Series elements, params Slot[] slots);
 
     public class Rule
 	{

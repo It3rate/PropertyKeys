@@ -8,8 +8,9 @@ namespace DataArcs.SeriesData.Utils
 {
 	public enum Slot
 	{
+		All = -1,
 		X = 0,
-		Y = 1,
+        Y = 1,
 		Z = 2,
 		W = 3,
 		R = 0,
@@ -63,8 +64,9 @@ namespace DataArcs.SeriesData.Utils
 		public static readonly Slot[] Min = new Slot[] { Slot.Min };
 		public static readonly Slot[] Count = new Slot[] { Slot.Count };
 		public static readonly Slot[] Clamp01 = new Slot[] { Slot.Clamp01 };
+		public static readonly Slot[] All = new Slot[] { Slot.All };
 
-		public static float GetFloatAt(Series series, Slot slot)
+        public static float GetFloatAt(Series series, Slot slot)
 		{
 			float result;
 			if (slot < Slot.Combinatorial)

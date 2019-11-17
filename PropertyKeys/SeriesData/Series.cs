@@ -162,21 +162,21 @@ namespace DataArcs.SeriesData
         public float Z => FloatDataAt(Math.Min(2, DataSize - 1));
         public float W => FloatDataAt(Math.Min(3, DataSize - 1));
 
-        public Series Sum()
+        public Series SumSlots(params Slot[] slots)
         {
-	        return SeriesUtils.Sum(this);
+	        return SeriesUtils.SumSlots(this, slots);
         }
-        public Series Average()
+        public Series AverageSlots(params Slot[] slots)
         {
-	        return SeriesUtils.Average(this);
+	        return SeriesUtils.AverageSlots(this, slots);
         }
-        public Series Max()
+        public Series MaxSlots(params Slot[] slots)
         {
-	        return SeriesUtils.Max(this);
+	        return SeriesUtils.MaxSlots(this, slots);
         }
-        public Series Min()
+        public Series MinSlots(params Slot[] slots)
         {
-	        return SeriesUtils.Min(this);
+	        return SeriesUtils.MinSlots(this, slots);
         }
 
         public abstract void Append(Series series);

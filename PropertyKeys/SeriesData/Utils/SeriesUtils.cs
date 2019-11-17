@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml.Schema;
 
 namespace DataArcs.SeriesData.Utils
 {
@@ -179,35 +180,58 @@ namespace DataArcs.SeriesData.Utils
 			}
         }
 
-        public static Series Sum(Series source)
+        public static Series SumSlots(Series source, params Slot[] slots)
         {
-	        var result = new float[source.VectorSize];
+			var slotSize = slots.Length == 0 ? source.VectorSize : slots.Length;
+	        var result = new float[slotSize];
 	        for (int i = 0; i < source.Count; i++)
 	        {
 		        var svals = source.GetRawDataAt(i).FloatDataRef;
-		        for (int j = 0; j < svals.Length; j++)
+		        if (slots.Length == 0)
 		        {
-			        result[j] += svals[j];
+			        for (int j = 0; j < svals.Length; j++)
+			        {
+				        result[j] += svals[j];
+			        }
+		        }
+		        else
+		        {
+			        for (int j = 0; j < slots.Length; j++)
+			        {
+				        result[j] += svals[(int)slots[j]];
+			        }
+
+                }
+	        }
+	        return CreateSeriesOfType(source, result);
+        }
+        public static Series ScaleSlots(Series source, params Slot[] slots)
+        {
+	        var slotSize = slots.Length == 0 ? source.VectorSize : slots.Length;
+            var result = new float[slotSize];
+	        for (int i = 0; i < source.Count; i++)
+	        {
+		        var svals = source.GetRawDataAt(i).FloatDataRef;
+		        if (slots.Length == 0)
+		        {
+			        for (int j = 0; j < svals.Length; j++)
+			        {
+				        result[j] *= svals[j];
+			        }
+		        }
+		        else
+		        {
+			        for (int j = 0; j < slots.Length; j++)
+			        {
+				        result[j] *= svals[(int)slots[j]];
+			        }
 		        }
 	        }
 	        return CreateSeriesOfType(source, result);
         }
-        public static Series Scale(Series source)
+        public static Series AverageSlots(Series source, params Slot[] slots)
         {
-	        var result = new float[source.VectorSize];
-	        for (int i = 0; i < source.Count; i++)
-	        {
-		        var svals = source.GetRawDataAt(i).FloatDataRef;
-		        for (int j = 0; j < svals.Length; j++)
-		        {
-			        result[j] *= svals[j];
-		        }
-	        }
-	        return CreateSeriesOfType(source, result);
-        }
-        public static Series Average(Series source)
-        {
-	        var result = Sum(source).FloatDataRef; // already a copy
+            var result = SumSlots(source, slots).FloatDataRef; // now a copy due to SumSlots
 	        float len = source.Count;
 	        for (int j = 0; j < result.Length; j++)
 	        {
@@ -215,17 +239,31 @@ namespace DataArcs.SeriesData.Utils
 	        }
 	        return CreateSeriesOfType(source, result);
         }
-        public static Series MaxDiff(Series source)
+        public static Series MaxDiffSlots(Series source, params Slot[] slots)
         {
-            var max = ArrayExtension.GetFloatMinArray(source.VectorSize);
-            var min = ArrayExtension.GetFloatMaxArray(source.VectorSize);
+	        var slotSize = slots.Length == 0 ? source.VectorSize : slots.Length;
+	        var max = ArrayExtension.GetFloatMinArray(slotSize);
+            var min = ArrayExtension.GetFloatMaxArray(slotSize);
             for (int i = 0; i < source.Count; i++)
             {
                 var svals = source.GetRawDataAt(i).FloatDataRef;
-                for (int j = 0; j < svals.Length; j++)
+                if (slots.Length == 0)
                 {
-                    max[j] = svals[j] > max[j] ? svals[j] : max[j];
-                    min[j] = svals[j] < min[j] ? svals[j] : min[j];
+	                for (int j = 0; j < svals.Length; j++)
+	                {
+		                max[j] = svals[j] > max[j] ? svals[j] : max[j];
+		                min[j] = svals[j] < min[j] ? svals[j] : min[j];
+                    }
+                }
+                else
+                {
+	                for (int j = 0; j < slots.Length; j++)
+	                {
+		                var index = (int) slots[j];
+		                max[j] = svals[index] > max[j] ? svals[index] : max[j];
+		                min[j] = svals[index] < min[j] ? svals[index] : min[j];
+	                }
+
                 }
             }
 
@@ -235,43 +273,81 @@ namespace DataArcs.SeriesData.Utils
             }
             return CreateSeriesOfType(source, max);
         }
-        public static Series Max(Series source)
+        public static Series MaxSlots(Series source, params Slot[] slots)
         {
-            var result = ArrayExtension.GetFloatMinArray(source.VectorSize);
-            for (int i = 0; i < source.Count; i++)
-            {
-                var svals = source.GetRawDataAt(i).FloatDataRef;
-                for (int j = 0; j < svals.Length; j++)
-                {
-                    result[j] = svals[j] > result[j] ? svals[j] : result[j];
-                }
-            }
-            return CreateSeriesOfType(source, result);
-        }
-        public static Series Min(Series source)
-        {
-            var result = ArrayExtension.GetFloatMaxArray(source.VectorSize);
+	        var slotSize = slots.Length == 0 ? source.VectorSize : slots.Length;
+	        var result = ArrayExtension.GetFloatMinArray(slotSize);
 	        for (int i = 0; i < source.Count; i++)
 	        {
 		        var svals = source.GetRawDataAt(i).FloatDataRef;
-		        for (int j = 0; j < svals.Length; j++)
+		        if (slots.Length == 0)
 		        {
-			        result[j] = svals[j] < result[j] ? svals[j] : result[j];
+			        for (int j = 0; j < svals.Length; j++)
+			        {
+				        result[j] = svals[j] > result[j] ? svals[j] : result[j];
+			        }
+		        }
+		        else
+		        {
+			        for (int j = 0; j < slots.Length; j++)
+			        {
+				        var index = (int)slots[j];
+				        result[j] = svals[index] > result[j] ? svals[index] : result[j];
+			        }
 		        }
 	        }
 	        return CreateSeriesOfType(source, result);
         }
-        public static Series ClampTo01(Series source)
+        public static Series MinSlots(Series source, params Slot[] slots)
         {
-	        var result = new float[source.VectorSize];
+	        var slotSize = slots.Length == 0 ? source.VectorSize : slots.Length;
+	        var result = ArrayExtension.GetFloatMaxArray(slotSize);
 	        for (int i = 0; i < source.Count; i++)
 	        {
 		        var svals = source.GetRawDataAt(i).FloatDataRef;
-		        for (int j = 0; j < svals.Length; j++)
+		        if (slots.Length == 0)
 		        {
-			        result[j] = Math.Max(0, Math.Min(1, svals[j]));
+			        for (int j = 0; j < svals.Length; j++)
+			        {
+				        result[j] = svals[j] < result[j] ? svals[j] : result[j];
+			        }
+		        }
+		        else
+		        {
+			        for (int j = 0; j < slots.Length; j++)
+			        {
+				        var index = (int)slots[j];
+				        result[j] = svals[index] < result[j] ? svals[index] : result[j];
+			        }
 		        }
 	        }
+	        return CreateSeriesOfType(source, result);
+        }
+
+        public static Series ClampTo01Slots(Series source, params Slot[] slots)
+        {
+	        var slotSize = slots.Length == 0 ? source.VectorSize : slots.Length;
+	        var result = new float[slotSize];
+	        for (int i = 0; i < source.Count; i++)
+	        {
+		        var svals = source.GetRawDataAt(i).FloatDataRef;
+		        if (slots.Length == 0)
+		        {
+			        for (int j = 0; j < svals.Length; j++)
+			        {
+				        result[j] = Math.Max(0, Math.Min(1, svals[j]));
+			        }
+		        }
+		        else
+		        {
+			        for (int j = 0; j < slots.Length; j++)
+			        {
+				        var index = (int)slots[j];
+				        result[j] = Math.Max(0, Math.Min(1, svals[(int)slots[j]]));
+			        }
+                }
+	        }
+
 	        return CreateSeriesOfType(source, result);
         }
     }

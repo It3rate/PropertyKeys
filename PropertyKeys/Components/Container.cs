@@ -255,7 +255,7 @@ namespace DataArcs.Components
 	        }
 	        else
 	        {
-		        int childIndex = SamplerUtils.IndexFromT(_children.Count, indexT); // Math.Max(0, Math.Min(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
+		        int childIndex = SamplerUtils.IndexFromT(_children.Count, indexT); // Math.MaxSlots(0, Math.MinSlots(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
 		        IContainer child = _children[childIndex];
 				
 		        float indexTNorm = indexT * (child.Capacity / (child.Capacity - 1f)); // normalize

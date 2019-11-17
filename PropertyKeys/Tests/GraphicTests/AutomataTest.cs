@@ -82,8 +82,8 @@ namespace DataArcs.Tests.GraphicTests
         private AutomataComposite GetAutomata(Sampler sampler)
 	    {
 		    Store itemStore = Store.CreateItemStore(sampler.Capacity);
-
-
+			itemStore.BakeData();
+			
             var automataStore = new Store(new FloatSeries(3, 0f,0f,0f), sampler);
 			automataStore.BakeData();
             //automataStore.GetSeriesRef().SetRawDataAt(575, new FloatSeries(3, 0f,0f,.7f));
@@ -103,7 +103,7 @@ namespace DataArcs.Tests.GraphicTests
 
             composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 6.8f).Store);
 		    //var radStore = new Store(new FloatSeries(1, 6.5f, 6.5f, 9f, 9f), new LineSampler(), CombineFunction.Multiply);
-		    //var radiusLink = new LinkingStore(composite.CompositeId, PropertyId.Automata, new[] { Slot.Max }, radStore);
+		    //var radiusLink = new LinkingStore(composite.CompositeId, PropertyId.Automata, new[] { Slot.MaxSlots }, radStore);
 		    //composite.AddProperty(PropertyId.Radius, radiusLink);
 
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
@@ -133,19 +133,20 @@ namespace DataArcs.Tests.GraphicTests
             };
 
             rules.AddRule(Rule.PassCountIsUnder(30), Rule.ConstInterpFn(Colors.Black, 0.8f));
-			
-            //rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Average, Slot.X, 0.51f),
+            rules.AddRule(Rule.PassCountIsUnder(31), Rule.RandomColorFn(0, 1));
+
+            //rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.AverageSlots, Slot.X, 0.51f),
             //    Rule.ConstInterpFn(Colors.DarkRed, .4f));
-            //rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 0.49f),
+            //rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.AverageSlots, Slot.X, 0.49f),
             //    Rule.ConstInterpFn(Colors.Pink, .6f));
-            //rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 1f),
+            //rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.AverageSlots, Slot.X, 1f),
             //    Rule.ConstInterpFn(Colors.MidBlue, 1f));
 
-            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Average, Slot.X, 0.51f),
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.AverageSlots, Slot.X, 0.51f),
                 Rule.ConstInterpFn(Colors.Black, 1f));
-            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 0.49f),
+            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.AverageSlots, Slot.X, 0.49f),
                 Rule.ConstInterpFn(Colors.LightGray, .1f));
-            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 1f),
+            rules.AddRule(Rule.AlwaysTrue(),
                 Rule.ConstInterpFn(Colors.White, 1f));
 
             runnerParam.AddRuleSet(rules);
@@ -165,16 +166,16 @@ namespace DataArcs.Tests.GraphicTests
 
             rules.AddRule(Rule.RandomChance(0.0004f), Rule.ConstInterpFn(Colors.Cyan, 0.1f));
 
-            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Sum, Slot.Y, 5.99f),
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.SumSlots, Slot.Y, 5.99f),
                 Rule.ConstInterpFn(Colors.Red, 1f));
-            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Min, Slot.X, .0001f),
+            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.MinSlots, Slot.X, .0001f),
                 Rule.ConstInterpFn(Colors.White, .1f));
-            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxDiff, Slot.X, .15f),
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxDiffSlots, Slot.X, .15f),
 	            (currentValue, neighbors) => 
 		            SeriesUtils.InterpolateInto(currentValue, Colors.Black, .208f));// Rule.ConstInterpFn(Colors.Black, .208f));
-            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Max, Slot.X, 0.9f),
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.X, 0.9f),
                 Rule.ConstInterpFn(Colors.DarkBlue, .6f));
-            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.X, 1f),
+            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.AverageSlots, Slot.X, 1f),
                 Rule.ConstInterpFn(Colors.Yellow, .19f));
             
             runnerParam.AddRuleSet(rules);
@@ -202,11 +203,11 @@ namespace DataArcs.Tests.GraphicTests
             );
             rules.AddRule(dimStars, Rule.ConstInterpFn(Colors.Black, 0.05f));
             rules.AddRule(isBrightTest, Rule.NopFn());
-            rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.Max, Slot.Y, Slot.Z, 0.09f), Rule.CombineFn(Rule.ShuffleValuesFn(), Rule.ConstInterpFn(Colors.Black, 0.005f)));
-            rules.AddRule(Rule.CurrentValueIsUnder(Slot.Min, 0.35f), Rule.EvalInterpFn(SeriesUtils.Max, 0.07f));
+            rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.MaxSlots, Slot.Y, Slot.Z, 0.09f), Rule.CombineFn(Rule.ShuffleValuesFn(), Rule.ConstInterpFn(Colors.Black, 0.005f)));
+            rules.AddRule(Rule.CurrentValueIsUnder(Slot.Min, 0.35f), Rule.EvalInterpFn(SeriesUtils.MaxSlots, 0.07f));
             rules.AddRule(Rule.RandomChance(0.004f), Rule.ConstInterpFn(Colors.Cyan, 0.1f));
-            rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.Max, Slot.X, Slot.Y, 0.06f), Rule.ConstInterpFn(Colors.Red, 0.07f));
-            rules.AddRule(Rule.CurrentValueIsOver(Slot.Average, 0.2f), Rule.EvalInterpFn(SeriesUtils.Min, 0.5f));
+            rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.MaxSlots, Slot.X, Slot.Y, 0.06f), Rule.ConstInterpFn(Colors.Red, 0.07f));
+            rules.AddRule(Rule.CurrentValueIsOver(Slot.Average, 0.2f), Rule.EvalInterpFn(SeriesUtils.MinSlots, 0.5f));
 
 	        runnerParam.AddRuleSet(rules);
 
@@ -262,10 +263,10 @@ namespace DataArcs.Tests.GraphicTests
 	            
 	            Rule.SetSeriesAtIndexFn(0, new FloatSeries(3, 0, 0, 0.7f)));
             rules.AddRule(Rule.RandomChance(0.00001f), RandomAny);
-            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.Max, Slot.Z, 0.99f), Rule.SetSeriesAtIndexFn(0, Colors.Black));
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.Z, 0.99f), Rule.SetSeriesAtIndexFn(0, Colors.Black));
             var act = Rule.AllConditionsTrue(
-	            Rule.NeighboursEvaluationIsOver(SeriesUtils.Max, Slot.Y, 0.99f),
-	            Rule.NeighboursEvaluationIsUnder(SeriesUtils.Min, Slot.Y, 0.01f)
+	            Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.Y, 0.99f),
+	            Rule.NeighboursEvaluationIsUnder(SeriesUtils.MinSlots, Slot.Y, 0.01f)
             );
             rules.AddRule(act, RandomAny);
             rules.AddRule(Rule.CurrentValueIsUnder(Slot.Z, 0.1f), AverageMax95);
@@ -281,7 +282,7 @@ namespace DataArcs.Tests.GraphicTests
                 swapFn2 = temp;
                 return currentValue;
             });
-            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.Average, Slot.Y, 0.001f), Mix1);
+            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.AverageSlots, Slot.Y, 0.001f), Mix1);
             rules.AddRule(Rule.AlwaysTrue(), Mix1);
 
             runnerParam.AddRuleSet(rules);
@@ -294,13 +295,13 @@ namespace DataArcs.Tests.GraphicTests
         private static readonly ParameterizedFunction DarkenSmall = Rule.ConstInterpFn(Colors.Black, 0.08f);
         private static readonly ParameterizedFunction Lighten = Rule.ConstInterpFn(Colors.White, 0.1f);
 
-        private static readonly ParameterizedFunction Average01 = Rule.EvalInterpFn(SeriesUtils.Average, 0.1f);
-        private static readonly ParameterizedFunction AverageMax95 = Rule.EvalInterpFn(SeriesUtils.Max, 0.95f);
-        private static readonly ParameterizedFunction MaxNeighbor02 = Rule.EvalInterpFn(SeriesUtils.Max, 0.2f);
-        private static readonly ParameterizedFunction MinNeighbor99 = Rule.EvalInterpFn(SeriesUtils.Min, 0.99f);
+        private static readonly ParameterizedFunction Average01 = Rule.EvalInterpFn(SeriesUtils.AverageSlots, 0.1f);
+        private static readonly ParameterizedFunction AverageMax95 = Rule.EvalInterpFn(SeriesUtils.MaxSlots, 0.95f);
+        private static readonly ParameterizedFunction MaxNeighbor02 = Rule.EvalInterpFn(SeriesUtils.MaxSlots, 0.2f);
+        private static readonly ParameterizedFunction MinNeighbor99 = Rule.EvalInterpFn(SeriesUtils.MinSlots, 0.99f);
 
         private static readonly ParameterizedFunction Mix1 = Rule.ModifyResultsFn(
-	        Rule.EvaluateNeighborsFn(Rule.MixFn(new ParametricSeries(3, 0.1f, 0.2f, 0.3f)), SeriesUtils.Average), SeriesUtils.ClampTo01);
+	        Rule.EvaluateNeighborsFn(Rule.MixFn(new ParametricSeries(3, 0.1f, 0.2f, 0.3f)), SeriesUtils.AverageSlots), SeriesUtils.ClampTo01Slots);
 
         private static readonly ParameterizedFunction RandomAny = Rule.RandomColorFn(0, 1f);
         private static readonly ParameterizedFunction RandomMid30_70 = Rule.RandomColorFn(0.3f, 0.7f);

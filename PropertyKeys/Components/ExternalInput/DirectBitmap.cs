@@ -41,7 +41,7 @@ namespace DataArcs.Components.ExternalInput
             g.CompositingQuality = CompositingQuality.HighQuality;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            //float scale = Math.Min(Width / sourceBitmap.Width, Height / sourceBitmap.Height);
+            //float scale = Math.MinSlots(Width / sourceBitmap.Width, Height / sourceBitmap.Height);
             g.DrawImage(sourceBitmap, 0, 0, Width, Height);
 		}
 
