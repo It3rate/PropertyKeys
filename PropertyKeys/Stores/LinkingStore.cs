@@ -85,6 +85,7 @@ namespace DataArcs.Stores
                 else
                 {
                     result = _player[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
+                    result = SeriesUtils.SwizzleSeries(SlotMapping, result);
                 }
             }
             return result;

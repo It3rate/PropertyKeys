@@ -50,7 +50,7 @@ namespace DataArcs.Samplers
         public virtual Series GetNeighbors(Series series, int index, bool wrapEdges = true)
         {
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
-            var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
+            var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);
 	        result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndex(index - 1, Capacity), Capacity));
 	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndex(index + 1, Capacity), Capacity));
             return result;

@@ -110,7 +110,7 @@ namespace DataArcs.Adapters.Color
                     result = System.Drawing.Color.FromArgb(255, (int)(r * 255), (int)(g * 255), (int)(b * 255));
 				    break;
                 default:
-                    float al = a.AlphaComponent();
+	                float al = Math.Max(0, Math.Min(1, a.AlphaComponent()));
                     result = System.Drawing.Color.FromArgb((int)(al * 255), (int)(r * 255), (int)(g * 255), (int)(b * 255));
 				    break;
 		    }

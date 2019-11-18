@@ -20,7 +20,7 @@ namespace DataArcs.SeriesData.Utils
 		        {
                     floats[i] = SlotUtils.ComputeOnElement(value, swizzleMap[i]);
 		        }
-		        result = CreateSeriesOfType(series, floats);
+		        result = CreateSeriesOfType(series, floats, floats.Length);
             }
 	        else
 	        {
