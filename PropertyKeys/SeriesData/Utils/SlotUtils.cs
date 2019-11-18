@@ -35,8 +35,9 @@ namespace DataArcs.SeriesData.Utils
 		Max,
 		Min,
 		Count,
-		Clamp01,
-	}
+		MaxOr1,
+		MinOr0,
+    }
 
     public class SlotUtils
 	{
@@ -63,10 +64,10 @@ namespace DataArcs.SeriesData.Utils
 		public static readonly Slot[] Max = new Slot[] { Slot.Max };
 		public static readonly Slot[] Min = new Slot[] { Slot.Min };
 		public static readonly Slot[] Count = new Slot[] { Slot.Count };
-		public static readonly Slot[] Clamp01 = new Slot[] { Slot.Clamp01 };
+		public static readonly Slot[] Clamp01 = new Slot[] { Slot.MaxOr1 };
 		public static readonly Slot[] All = new Slot[] { Slot.All };
 
-        public static float GetFloatAt(Series series, Slot slot)
+		public static float ComputeOnElement(Series series, Slot slot, int index = 0)
 		{
 			float result;
 			if (slot < Slot.Combinatorial)
@@ -75,7 +76,7 @@ namespace DataArcs.SeriesData.Utils
 			}
 			else
 			{
-				var floats = series.GetRawDataAt(0).FloatDataRef;
+				var floats = series.GetRawDataAt(index).FloatDataRef;
 				switch (slot)
 				{
 					case Slot.Sum:
@@ -93,11 +94,14 @@ namespace DataArcs.SeriesData.Utils
 					case Slot.Count:
 						result = floats.Length;
 						break;
-					case Slot.Clamp01:
+					case Slot.MaxOr1:
 						result = Math.Max(0, Math.Min(1f, floats.Max()));
 						break;
-					default:
-						result = floats.Last();
+					case Slot.MinOr0:
+						result = Math.Max(0, Math.Min(1f, floats.Min()));
+						break;
+                    default:
+						result = (floats.Length > (int)slot) ? floats[(int)slot] : floats.Last();
 						break;
 				}
 			}
@@ -132,7 +136,7 @@ namespace DataArcs.SeriesData.Utils
 					case Slot.Count:
 						result = ints.Length;
 						break;
-					case Slot.Clamp01:
+					case Slot.MaxOr1:
 						result = Math.Max(0, Math.Min(1, ints.Max()));
 						break;
 					default:

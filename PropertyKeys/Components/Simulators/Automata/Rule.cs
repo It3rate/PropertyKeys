@@ -135,19 +135,21 @@ namespace DataArcs.Components.Simulators.Automata
         public static Condition PassCountIsUnder(int minCount) => (currentValue, neighbors, runner) => runner.PassCount < minCount;
         public static Condition PassCountIsOver(int maxCount) => (currentValue, neighbors, runner) => runner.PassCount > maxCount;
 
-        public static Condition CurrentValueIsUnder(Slot slot, float value) => (currentValue, neighbors, runner) => SlotUtils.GetFloatAt(currentValue, slot) < value;
-        public static Condition CurrentValueIsOver(Slot slot, float value) => (currentValue, neighbors, runner) => SlotUtils.GetFloatAt(currentValue, slot) > value;
+        public static Condition CurrentValueIsUnder(Slot slot, float value) =>
+	        (currentValue, neighbors, runner) => SlotUtils.ComputeOnElement(currentValue, slot) < value;
+        public static Condition CurrentValueIsOver(Slot slot, float value) => 
+	        (currentValue, neighbors, runner) => SlotUtils.ComputeOnElement(currentValue, slot) > value; //SeriesUtils.SumPerElement(currentValue, slot).X > value;//
         public static Condition CurrentValueIsNear(Slot slotA, Slot slotB, float maxDelta) => (currentValue, neighbors, runner) => 
-	        Math.Abs(SlotUtils.GetFloatAt(currentValue, slotA) - SlotUtils.GetFloatAt(currentValue, slotB)) < maxDelta;
+	        Math.Abs(SlotUtils.ComputeOnElement(currentValue, slotA) - SlotUtils.ComputeOnElement(currentValue, slotB)) < maxDelta;
         public static Condition CurrentValueIsFar(Slot slotA, Slot slotB, float minDelta) => (currentValue, neighbors, runner) => 
-	        Math.Abs(SlotUtils.GetFloatAt(currentValue, slotA) - SlotUtils.GetFloatAt(currentValue, slotB)) > minDelta;
+	        Math.Abs(SlotUtils.ComputeOnElement(currentValue, slotA) - SlotUtils.ComputeOnElement(currentValue, slotB)) > minDelta;
 
         public static Condition NeighboursEvaluationIsOver(SeriesModifier neighborModifier, Slot slot, float compareValue)
         {
 	        return (currentValue, neighbors, runner) =>
 	        {
 		        var mod = neighborModifier(neighbors);
-		        float val = SlotUtils.GetFloatAt(mod, slot);
+		        float val = SlotUtils.ComputeOnElement(mod, slot);
 		        return val > compareValue;
 	        };
         }
@@ -156,7 +158,7 @@ namespace DataArcs.Components.Simulators.Automata
 	        return (currentValue, neighbors, runner) =>
 	        {
 		        var mod = neighborModifier(neighbors);
-		        float val = SlotUtils.GetFloatAt(mod, slot);
+		        float val = SlotUtils.ComputeOnElement(mod, slot);
 		        return val < compareValue;
 	        };
         }
@@ -165,8 +167,8 @@ namespace DataArcs.Components.Simulators.Automata
 	        return (currentValue, neighbors, runner) =>
 	        {
 		        var mod = neighborModifier(neighbors);
-		        float valA = SlotUtils.GetFloatAt(mod, slotA);
-		        float valB = SlotUtils.GetFloatAt(mod, slotB);
+		        float valA = SlotUtils.ComputeOnElement(mod, slotA);
+		        float valB = SlotUtils.ComputeOnElement(mod, slotB);
 		        return Math.Abs(valA - valB) < maxDelta;
 	        };
         }
@@ -175,8 +177,8 @@ namespace DataArcs.Components.Simulators.Automata
 	        return (currentValue, neighbors, runner) =>
 	        {
 		        var mod = neighborModifier(neighbors);
-		        float valA = SlotUtils.GetFloatAt(mod, slotA);
-		        float valB = SlotUtils.GetFloatAt(mod, slotB);
+		        float valA = SlotUtils.ComputeOnElement(mod, slotA);
+		        float valB = SlotUtils.ComputeOnElement(mod, slotB);
 		        return Math.Abs(valA - valB) > minDelta;
 	        };
         }

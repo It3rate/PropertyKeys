@@ -18,7 +18,7 @@ namespace DataArcs.SeriesData.Utils
 		        Series value = series.GetRawDataAt(0);
 		        for (int i = 0; i < swizzleMap.Length; i++)
 		        {
-                    floats[i] = SlotUtils.GetFloatAt(value, swizzleMap[i]);
+                    floats[i] = SlotUtils.ComputeOnElement(value, swizzleMap[i]);
 		        }
 		        result = CreateSeriesOfType(series, floats);
             }
@@ -29,39 +29,41 @@ namespace DataArcs.SeriesData.Utils
 
 	        return result;
 	    }
-		public static Series CreateSeriesOfType(Series series, int[] values)
+		public static Series CreateSeriesOfType(Series series, int[] values, int vectorSize = -1)
 		{
 			Series result;
-			if (series.Type == SeriesType.Int)
+			vectorSize = (vectorSize == -1) ? series.VectorSize : vectorSize;
+            if (series.Type == SeriesType.Int)
 			{
-				result = new IntSeries(series.VectorSize, values);
+				result = new IntSeries(vectorSize, values);
 			}
 			else if (series.Type == SeriesType.Parametric)
 			{
-				result = new ParametricSeries(series.VectorSize, values.ToFloat());
+				result = new ParametricSeries(vectorSize, values.ToFloat());
 			}
             else
 			{
-				result = new FloatSeries(series.VectorSize, values.ToFloat());
+				result = new FloatSeries(vectorSize, values.ToFloat());
 			}
 
 			return result;
 		}
 
-		public static Series CreateSeriesOfType(Series series, float[] values)
+		public static Series CreateSeriesOfType(Series series, float[] values, int vectorSize = -1)
 		{
 			Series result;
+			vectorSize = (vectorSize == -1) ? series.VectorSize : vectorSize;
 			if (series.Type == SeriesType.Int)
 			{
-				result = new IntSeries(series.VectorSize, values.ToInt());
+				result = new IntSeries(vectorSize, values.ToInt());
 			}
 			else if (series.Type == SeriesType.Parametric)
 			{
-				result = new ParametricSeries(series.VectorSize, values);
+				result = new ParametricSeries(vectorSize, values);
 			}
             else
 			{
-				result = new FloatSeries(series.VectorSize, values);
+				result = new FloatSeries(vectorSize, values);
 			}
 
 			return result;
@@ -173,12 +175,13 @@ namespace DataArcs.SeriesData.Utils
 
         private static Series SlotsFunction(FloatEquation equation, float defaultValue, Series source, params Slot[] slots)
         {
-	        var slotSize = slots.Length == 0 ? source.VectorSize : slots.Length;
+	        bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
+	        var slotSize = useAllSlots ? source.VectorSize : slots.Length;
 	        var result = ArrayExtension.GetSizedFloatArray(slotSize, defaultValue);
 	        for (int i = 0; i < source.Count; i++)
 	        {
 		        var svals = source.GetRawDataAt(i).FloatDataRef;
-		        if (slots.Length == 0)
+		        if (useAllSlots)
 		        {
 			        for (int j = 0; j < svals.Length; j++)
 			        {
@@ -189,9 +192,15 @@ namespace DataArcs.SeriesData.Utils
 		        {
 			        for (int j = 0; j < slots.Length; j++)
 			        {
-				        result[j] = equation(result[j], svals[(int)slots[j]]);
+				        if (slots[j] < Slot.Combinatorial)
+				        {
+					        result[j] = equation(result[j], svals[(int)slots[j]]);
+                        }
+				        else
+				        {
+					        result[j] = equation(result[j], SlotUtils.ComputeOnElement(source, slots[j], i));
+				        }
 			        }
-
 		        }
 	        }
 	        return CreateSeriesOfType(source, result);
@@ -230,13 +239,14 @@ namespace DataArcs.SeriesData.Utils
         }
         public static Series MaxDiffSlots(Series source, params Slot[] slots)
         {
-	        var slotSize = slots.Length == 0 ? source.VectorSize : slots.Length;
+            bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
+            var slotSize = useAllSlots ? source.VectorSize : slots.Length;
 	        var max = ArrayExtension.GetFloatMinArray(slotSize);
             var min = ArrayExtension.GetFloatMaxArray(slotSize);
             for (int i = 0; i < source.Count; i++)
             {
                 var svals = source.GetRawDataAt(i).FloatDataRef;
-                if (slots.Length == 0)
+                if (useAllSlots)
                 {
 	                for (int j = 0; j < svals.Length; j++)
 	                {
@@ -248,9 +258,18 @@ namespace DataArcs.SeriesData.Utils
                 {
 	                for (int j = 0; j < slots.Length; j++)
 	                {
-		                var index = (int) slots[j];
-		                max[j] = svals[index] > max[j] ? svals[index] : max[j];
-		                min[j] = svals[index] < min[j] ? svals[index] : min[j];
+		                if (slots[j] < Slot.Combinatorial)
+		                {
+			                var index = (int)slots[j];
+			                max[j] = svals[index] > max[j] ? svals[index] : max[j];
+			                min[j] = svals[index] < min[j] ? svals[index] : min[j];
+                        }
+		                else
+		                {
+			                var calc = SlotUtils.ComputeOnElement(source, slots[j], i);
+			                max[j] = calc > max[j] ? calc : max[j];
+			                min[j] = calc < min[j] ? calc : min[j];
+		                }
 	                }
 
                 }
@@ -263,7 +282,56 @@ namespace DataArcs.SeriesData.Utils
             return CreateSeriesOfType(source, max);
         }
 
-        // todo: added SumPerElement(Series source, params Slot[] slots), returns a series of length count, where the vectors are summed per index.
+        // Note: For simple cases it may be easier to use: float SlotUtils.ComputeOnElement(series, Slot.Sum, index)
+        private static Series PerElementFunction(FloatEquation equation, float defaultValue, Series source, params Slot[] slots)
+        {
+	        bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
+	        var slotSize = useAllSlots ? source.VectorSize : slots.Length;
+	        var result = ArrayExtension.GetSizedFloatArray(source.Count, defaultValue);
+	        for (int i = 0; i < source.Count; i++)
+	        {
+		        var svals = source.GetRawDataAt(i).FloatDataRef;
+		        if (useAllSlots)
+		        {
+			        for (int j = 0; j < svals.Length; j++)
+			        {
+				        result[i] = equation(result[i], svals[j]);
+			        }
+		        }
+		        else
+		        {
+			        for (int j = 0; j < slots.Length; j++)
+			        {
+				        if (slots[j] < Slot.Combinatorial)
+				        {
+					        result[i] = equation(result[i], svals[(int) slots[j]]);
+				        }
+				        else
+				        {
+					        result[i] = equation(result[i], SlotUtils.ComputeOnElement(source, slots[j], i));
+				        }
+			        }
+		        }
+	        }
+	        return CreateSeriesOfType(source, result, 1);
+        }
+        public static Series SumPerElement(Series source, params Slot[] slots)
+        {
+	        return PerElementFunction((a, b) => a + b, 0, source, slots);
+        }
+        public static Series ScalePerElement(Series source, params Slot[] slots)
+        {
+	        return PerElementFunction((a, b) => a * b, 0, source, slots);
+        }
+        public static Series MaxPerElement(Series source, params Slot[] slots)
+        {
+	        return PerElementFunction((a, b) => b > a ? b : a, float.MinValue, source, slots);
+        }
+        public static Series MinPerElement(Series source, params Slot[] slots)
+        {
+	        return PerElementFunction((a, b) => b < a ? b : a, float.MaxValue, source, slots);
+        }
+
 
         public static void ShuffleElements(Series series)
         {
