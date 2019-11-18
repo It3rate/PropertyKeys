@@ -68,7 +68,7 @@ namespace DataArcs.Tests.GraphicTests
 		    int rows;
 		    var bounds = new RectFSeries(0, 0, width, width * (bitmap.Height / (float)bitmap.Width));
 		    //var sampler = new GridSampler(new int[] { w, h });
-		    var container = HexagonSampler.CreateBestFit(bounds, columns, out int rowCount, out HexagonSampler sampler);
+		    var container = HexagonSampler.CreateBestFit(bounds, columns, out int rowCount, out float radius, out HexagonSampler sampler);
 		    rows = rowCount;
 
 		    var colorStore = new Store(bitmap.ToFloatSeriesHex(columns, rows));

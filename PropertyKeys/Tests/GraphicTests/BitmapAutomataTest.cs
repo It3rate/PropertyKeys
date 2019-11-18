@@ -42,7 +42,7 @@ namespace DataArcs.Tests.GraphicTests
             switch (_step)
             {
                 case 0:
-                    //_player.AddActiveElement(containerA);
+                    _player.AddActiveElement(containerA);
 
                     //_timer = new Timer(0, 1000, null);
                     //_timer.EndTimedEvent += CompOnEndTransitionEvent;
@@ -67,58 +67,41 @@ namespace DataArcs.Tests.GraphicTests
 
         public Container GetImage(Bitmap bitmap)
         {
-            int columns = 20;
+            int columns = 100;
             int width = 675;
-            int rows;
             var bounds = new RectFSeries(0, 0, width, width * (bitmap.Height / (float)bitmap.Width));
-            //var sampler = new GridSampler(new int[] { w, h });
-            var container = HexagonSampler.CreateBestFit(bounds, columns, out int rowCount, out HexagonSampler sampler);
-            rows = rowCount;
-            var colorStore = new Store(bitmap.ToFloatSeriesHex(columns, rows));
-            container.AddProperty(PropertyId.FillColor, colorStore);
-            colorStore.BakeData();
-            IStore items = container.GetStore(PropertyId.Items);
+            var hexContainer = HexagonSampler.CreateBestFit(bounds, columns, out int rowCount, out float radius, out HexagonSampler sampler);
+            IStore items = hexContainer.GetStore(PropertyId.Items);
             items.BakeData();
+            int itemCount = items.Capacity;
 
-            var automata = GetAutomata(sampler);
-			_player.AddActiveElement(automata);
+            var colorSeries = bitmap.ToFloatSeriesHex(columns, rowCount);
+            var radiusSeries = new FloatSeries(1, ArrayExtension.GetSizedFloatArray(itemCount, 1f));
+            var prioritySeries = new FloatSeries(1, ArrayExtension.GetSizedFloatArray(itemCount, 0f));
 
-            return container;
-        }
-
-        private AutomataComposite GetAutomata(Sampler sampler)
-        {
-            Store itemStore = Store.CreateItemStore(sampler.Capacity);
-            itemStore.BakeData();
-
-            var automataStore = new Store(new FloatSeries(4, 0f, 0f, 0f, 1f, 1f), sampler);
-            automataStore.BakeData();
+            var automataStore = new Store(SeriesUtils.MergeSeriesElements(colorSeries, radiusSeries, prioritySeries));
+            //automataStore.BakeData();
             //automataStore.GetSeriesRef().SetRawDataAt(575, new FloatSeries(3, 0f,0f,.7f));
 
             var runner = new Runner(automataStore);
             CreateBlock1(runner);
             runner.ActiveIndex = 0;
 
-            var composite = new AutomataComposite(itemStore, automataStore, runner);
+            var automataComposite = new AutomataComposite(items, automataStore, runner);
+			automataComposite.AddProperty(PropertyId.Location, hexContainer.GetStore(PropertyId.Location));
 
-            var ls = new LinkingStore(composite.CompositeId, PropertyId.Automata, SlotUtils.XYZ, null);
-            composite.AddProperty(PropertyId.FillColor, ls);
+            var ls = new LinkingStore(automataComposite.CompositeId, PropertyId.Automata, SlotUtils.XYZ, null);
+            automataComposite.AddProperty(PropertyId.FillColor, ls);
 
             //composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 6.8f).Store);
-            //var radStore = new Store(new FloatSeries(1, 6.5f, 6.5f, 9f, 9f), new LineSampler(), CombineFunction.Multiply);
-            //var radiusLink = new LinkingStore(composite.CompositeId, PropertyId.Automata, new[] { Slot.MaxSlots }, radStore);
-            //composite.AddProperty(PropertyId.Radius, radiusLink);
+            var radStore = new Store(new FloatSeries(1, radius), new LineSampler(), CombineFunction.Multiply);
+            var radiusLink = new LinkingStore(automataComposite.CompositeId, PropertyId.Automata, new[] { Slot.S3 }, radStore);
+            automataComposite.AddProperty(PropertyId.Radius, radiusLink);
 
-            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
-
-            //composite.AddProperty(PropertyId.Orientation, new FloatSeries(1, 0f).Store);
-            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
-            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
-            composite.Renderer = new PolyShape();
-
-            Store loc = new Store(MouseInput.MainFrameRect.Outset(-0f), sampler);
-            composite.AppendProperty(PropertyId.Location, loc);
-            return composite;
+            automataComposite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
+            automataComposite.Renderer = new PolyShape();
+			
+            return automataComposite;
         }
 
         private RuleSet CreateBlock1(Runner runnerParam)
@@ -131,25 +114,27 @@ namespace DataArcs.Tests.GraphicTests
 		        perPassRnd = (float)SeriesUtils.Random.NextDouble();
 	        };
 
-	        rules.AddRule(Rule.PassCountIsUnder(30), Darken);
-	        rules.AddRule(Rule.RandomChance(0.00002f), Rule.RandomColorFn(0.1f, .9f, .4f, .7f, .4f, .7f));
-	        var isBrightTest = Rule.CurrentValueIsOver(Slot.Max, 0.9f);
-	        var dimStars = Rule.AllConditionsTrue(
-		        Rule.RandomChance(0.005f),
-		        isBrightTest
-	        );
-	        rules.AddRule(dimStars, Rule.ConstInterpFn(Colors.Black, 0.05f));
-	        rules.AddRule(isBrightTest, Rule.NopFn());
-	        rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.MaxSlots, Slot.Y, Slot.Z, 0.09f), Rule.CombineFn(Rule.ShuffleValuesFn(), Rule.ConstInterpFn(Colors.Black, 0.005f)));
-	        rules.AddRule(Rule.CurrentValueIsUnder(Slot.Min, 0.35f), Rule.EvalInterpFn(SeriesUtils.MaxSlots, 0.07f));
-	        rules.AddRule(Rule.RandomChance(0.004f), Rule.ConstInterpFn(Colors.Cyan, 0.1f));
-	        rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.MaxSlots, Slot.X, Slot.Y, 0.06f), Rule.ConstInterpFn(Colors.Red, 0.07f));
-	        rules.AddRule(Rule.CurrentValueIsOver(Slot.Average, 0.2f), Rule.EvalInterpFn(SeriesUtils.MinSlots, 0.5f));
+            rules.ResetFn = (Runner runner) =>
+            {
+                int index = (int)(runner.Automata.Capacity / 2.13f);
+                runner.Automata.GetSeriesRef().SetRawDataAt(index, new FloatSeries(3, 0.1f, 0.1f, .7f));
+            };
 
-	        runnerParam.AddRuleSet(rules);
+
+            //rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.Z, 0.99f), Rule.SetSeriesAtIndexFn(0, Colors.Black));
+            //var act = Rule.AllConditionsTrue(
+            //    Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.Y, 0.99f),
+            //    Rule.NeighboursEvaluationIsUnder(SeriesUtils.MinSlots, Slot.Y, 0.01f)
+            //);
+            //rules.AddRule(act, RandomAny);
+            rules.AddRule(Rule.RandomChance(0.0008f), Rule.ConstInterpFn(Colors.Red, 0.1f));
+            rules.AddRule(Rule.CurrentValueIsUnder(Slot.Average, 0.3f), Rule.ConstInterpFn(Colors.Black, .005f));
+            rules.AddRule(Rule.CurrentValueIsOver(Slot.Average, 0.6f), Rule.ConstInterpFn(Colors.White, .005f));
+            rules.AddRule(Rule.AlwaysTrue(), Rule.EvalInterpFn(SeriesUtils.AverageSlots, 0.1f));
+
+            runnerParam.AddRuleSet(rules);
 
 	        return rules;
         }
-        private static readonly ParameterizedFunction Darken = Rule.ConstInterpFn(Colors.Black, 0.3f);
     }
 }

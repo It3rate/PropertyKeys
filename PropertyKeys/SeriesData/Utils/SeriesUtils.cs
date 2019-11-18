@@ -172,6 +172,32 @@ namespace DataArcs.SeriesData.Utils
 	        return destination;
         }
 
+        public static Series MergeSeriesElements(params Series[] seriesArray)
+        {
+			Debug.Assert(seriesArray.Length > 0);
+	        var totalElements = 0;
+	        var firstSeries = seriesArray[0];
+	        foreach (var series in seriesArray)
+	        {
+		        totalElements += series.VectorSize;
+	        }
+			var values = new float[totalElements * firstSeries.Count];
+			int len = 0;
+			for (int seriesIndex = 0; seriesIndex < seriesArray.Length; seriesIndex++)
+			{
+				Series series = seriesArray[seriesIndex];
+                for (int index = 0; index < series.Count; index++)
+                {
+	                var svals = series.GetRawDataAt(index).FloatDataRef;
+	                Array.Copy(svals, 0, values, index * totalElements + len, series.VectorSize);
+				}
+                len += series.VectorSize;
+			}
+
+	        var result = SeriesUtils.CreateSeriesOfType(firstSeries, values, totalElements);
+	        return result;
+        }
+
 
         private static Series SlotsFunction(FloatEquation equation, float defaultValue, Series source, params Slot[] slots)
         {
@@ -205,7 +231,6 @@ namespace DataArcs.SeriesData.Utils
 	        }
 	        return CreateSeriesOfType(source, result);
         }
-
         public static Series SumSlots(Series source, params Slot[] slots)
         {
 	        return SlotsFunction((a, b) => a + b, 0, source, slots);
@@ -226,7 +251,6 @@ namespace DataArcs.SeriesData.Utils
         {
 	        return SlotsFunction((a, b) => Math.Max(0, Math.Min(1, b)), 0, source, slots);
         }
-		
         public static Series AverageSlots(Series source, params Slot[] slots)
         {
             var result = SumSlots(source, slots).FloatDataRef; // now a copy due to SumSlots

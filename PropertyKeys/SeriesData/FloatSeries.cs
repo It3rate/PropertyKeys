@@ -53,7 +53,7 @@ namespace DataArcs.SeriesData
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
-			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, VectorSize);
+			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, series.VectorSize);
 		}
 
 		public override void Append(Series series)
@@ -172,64 +172,65 @@ namespace DataArcs.SeriesData
         }
 
         public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
-		{
+        {
+	        int minSize = Math.Min(DataSize, b.VectorSize);
 			switch (combineFunction)
 			{
 				case CombineFunction.Add:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						_floatValues[i] += b.FloatDataAt(i);
 					}
 
 					break;
                 case CombineFunction.Subtract:
-                    for (var i = 0; i < DataSize; i++)
+                    for (var i = 0; i < minSize; i++)
                     {
                         _floatValues[i] -= b.FloatDataAt(i);
                     }
                     break;
                 case CombineFunction.SubtractFrom:
-                    for (var i = 0; i < DataSize; i++)
+                    for (var i = 0; i < minSize; i++)
                     {
                         _floatValues[i] = b.FloatDataAt(i) - _floatValues[i];
                     }
                     break;
                 case CombineFunction.Multiply:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						_floatValues[i] *= b.FloatDataAt(i);
 					}
 
 					break;
                 case CombineFunction.Divide:
-                    for (var i = 0; i < DataSize; i++)
+                    for (var i = 0; i < minSize; i++)
                     {
                         var div = b.FloatDataAt(i);
                         _floatValues[i] = div != 0 ? _floatValues[i] / div : _floatValues[i];
                     }
                     break;
                 case CombineFunction.DivideFrom:
-                    for (var i = 0; i < DataSize; i++)
+                    for (var i = 0; i < minSize; i++)
                     {
                         var div = b.FloatDataAt(i);
                         _floatValues[i] = _floatValues[i] != 0 ? div /_floatValues[i] : div;
                     }
                     break;
                 case CombineFunction.Average:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						_floatValues[i] = (_floatValues[i] + b.FloatDataAt(i)) / 2.0f;
 					}
 					break;
 				case CombineFunction.Replace:
 				case CombineFunction.Final:
-                    for (var i = 0; i < DataSize; i++)
+                    for (var i = 0; i < minSize; i++)
 					{
 						_floatValues[i] = b.FloatDataAt(i);
 					}
 					break;
 				case CombineFunction.Interpolate:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						_floatValues[i] += (b.FloatDataAt(i) - _floatValues[i]) * t;
 					}

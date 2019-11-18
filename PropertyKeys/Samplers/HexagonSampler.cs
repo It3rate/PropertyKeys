@@ -52,7 +52,7 @@ namespace DataArcs.Samplers
         /// <param name="bounds">The bounds to fit the grid into.</param>
         /// <param name="columns">The set number of columns. The number of rows is calculated based on this and the height.</param>
         /// <returns>A fitted composite hex grid.</returns>
-        public static Container CreateBestFit(RectFSeries bounds, int columns, out int rows, out HexagonSampler sampler)
+        public static Container CreateBestFit(RectFSeries bounds, int columns, out int rows, out float radius, out HexagonSampler sampler)
 		{
 			float totalWidth = bounds.Width;
             float w = bounds.Width / (columns - 1f); // calculating spacing, from centers, so subtract 1
@@ -71,7 +71,8 @@ namespace DataArcs.Samplers
 	        var composite = new Container(Store.CreateItemStore(sampler.Capacity));
 	        float overdraw = 1.00f;
             float radiusScale = 1f - 1f / (columns - 1f) * 0.5f; // rows are offset, and thus compressed when drawn by this much.
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, h / 2f * radiusScale * overdraw).Store);
+            radius = h / 2f * radiusScale * overdraw;
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, radius).Store);
 
             Store loc = new Store(bounds, sampler);
 	        composite.AddProperty(PropertyId.Location, loc);
