@@ -88,7 +88,10 @@ namespace DataArcs.Components.Simulators.Automata
 
 		        int capacity = Automata.Capacity;
 		        _transitionIndex += capacity * RuleSets[ActiveIndex].TransitionSpeed;// * (16f / (int)_totalDeltaTime);
-		        IStore workingStore;
+
+		        BeginPass();
+
+                IStore workingStore;
 		        if (UpdateValuesAfterPass)
 		        {
 					Automata.CopySeriesDataInto(_workingAutomata);
@@ -100,7 +103,6 @@ namespace DataArcs.Components.Simulators.Automata
 			        workingStore = Automata;
 		        }
 
-		        BeginPass();
 		        for (int i = 0; i < capacity; i++)
 		        {
 			        var currentValue = workingStore.GetSeriesRef().GetVirtualValueAt(i, capacity);

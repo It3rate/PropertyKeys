@@ -88,8 +88,8 @@ namespace DataArcs.Stores
                     result.SetRawDataAt(i, GetValuesAtT(t));
                 }
                 _series = result;
-                ShouldIterpolate = _series.Type != SeriesType.Int;
             }
+            ShouldIterpolate = _series.Type != SeriesType.Int;
 		}
 
 		public override IStore Clone()

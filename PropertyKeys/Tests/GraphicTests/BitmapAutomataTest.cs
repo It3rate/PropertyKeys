@@ -25,11 +25,13 @@ namespace DataArcs.Tests.GraphicTests
         private Bitmap[] bitmaps;
         private Timer _timer;
         private int totalSteps = 0;
+        private MouseInput _mouseInput;
 
         public BitmapAutomataTest(Player player)
         {
             _player = player;
             bitmaps = new[] { Resources.face, Resources.face2, Resources.face3 };
+
         }
 
         private int _step = 0;
@@ -38,6 +40,10 @@ namespace DataArcs.Tests.GraphicTests
         public void NextVersion()
         {
             _player.Clear();
+            _mouseInput = new MouseInput();
+            _mouseInput.MouseClick = CompOnEndTransitionEvent;
+            _player.AddActiveElement(_mouseInput);
+
             Container containerA = GetImage(bitmaps[_bitmapIndex]);
             switch (_step)
             {
@@ -51,9 +57,8 @@ namespace DataArcs.Tests.GraphicTests
             }
         }
 
-        private void CompOnEndTransitionEvent(object sender, EventArgs e)
+        private void CompOnEndTransitionEvent()
         {
-            ITimeable anim = (ITimeable)sender;
             _step++;
             if (_step > totalSteps)
             {
@@ -79,21 +84,19 @@ namespace DataArcs.Tests.GraphicTests
             var radiusSeries = new FloatSeries(1, ArrayExtension.GetSizedFloatArray(itemCount, 1f));
             var prioritySeries = new FloatSeries(1, ArrayExtension.GetSizedFloatArray(itemCount, 0f));
 
-            var automataStore = new Store(SeriesUtils.MergeSeriesElements(colorSeries, radiusSeries, prioritySeries));
-            //automataStore.BakeData();
-            //automataStore.GetSeriesRef().SetRawDataAt(575, new FloatSeries(3, 0f,0f,.7f));
+            var automataStore = new Store(SeriesUtils.MergeSeriesElements(colorSeries, radiusSeries, prioritySeries), sampler);
+            automataStore.BakeData();
 
             var runner = new Runner(automataStore);
             CreateBlock1(runner);
             runner.ActiveIndex = 0;
 
             var automataComposite = new AutomataComposite(items, automataStore, runner);
-			automataComposite.AddProperty(PropertyId.Location, hexContainer.GetStore(PropertyId.Location));
 
             var ls = new LinkingStore(automataComposite.CompositeId, PropertyId.Automata, SlotUtils.XYZ, null);
             automataComposite.AddProperty(PropertyId.FillColor, ls);
+			automataComposite.AddProperty(PropertyId.Location, hexContainer.GetStore(PropertyId.Location));
 
-            //composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 6.8f).Store);
             var radStore = new Store(new FloatSeries(1, radius), new LineSampler(), CombineFunction.Multiply);
             var radiusLink = new LinkingStore(automataComposite.CompositeId, PropertyId.Automata, new[] { Slot.S3 }, radStore);
             automataComposite.AddProperty(PropertyId.Radius, radiusLink);
@@ -107,30 +110,32 @@ namespace DataArcs.Tests.GraphicTests
         private RuleSet CreateBlock1(Runner runnerParam)
         {
 	        RuleSet rules = new RuleSet();
-
-	        float perPassRnd = 0;
+			
 	        rules.BeginPass = () =>
 	        {
-		        perPassRnd = (float)SeriesUtils.Random.NextDouble();
+	            //runnerParam.Automata.GetSeriesRef().SetRawDataAt(550, new FloatSeries(5, 0,0,1f,2.1f,0));
 	        };
+
+            ParameterizedFunction shrink = (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue,
+	            new FloatSeries(4, 0, 0, 0, .1f),
+	            new ParametricSeries(4, 0, 0, 0, 0.08f));
+            ParameterizedFunction grow = (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue,
+	            new FloatSeries(4, 0, 0, 0, 2.6f),
+	            new ParametricSeries(4, 0, 0, 0, 0.02f));
+
 
             rules.ResetFn = (Runner runner) =>
             {
-                int index = (int)(runner.Automata.Capacity / 2.13f);
-                runner.Automata.GetSeriesRef().SetRawDataAt(index, new FloatSeries(3, 0.1f, 0.1f, .7f));
+	            //runnerParam.UpdateValuesAfterPass = false;
             };
 
+            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.S3, 1.1f), shrink);
+            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.MinSlots, Slot.S3, 0.9f), grow);
 
-            //rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.Z, 0.99f), Rule.SetSeriesAtIndexFn(0, Colors.Black));
-            //var act = Rule.AllConditionsTrue(
-            //    Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.Y, 0.99f),
-            //    Rule.NeighboursEvaluationIsUnder(SeriesUtils.MinSlots, Slot.Y, 0.01f)
-            //);
-            //rules.AddRule(act, RandomAny);
-            rules.AddRule(Rule.RandomChance(0.0008f), Rule.ConstInterpFn(Colors.Red, 0.1f));
-            rules.AddRule(Rule.CurrentValueIsUnder(Slot.Average, 0.3f), Rule.ConstInterpFn(Colors.Black, .005f));
-            rules.AddRule(Rule.CurrentValueIsOver(Slot.Average, 0.6f), Rule.ConstInterpFn(Colors.White, .005f));
-            rules.AddRule(Rule.AlwaysTrue(), Rule.EvalInterpFn(SeriesUtils.AverageSlots, 0.1f));
+            rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.MaxSlots, Slot.X, Slot.Y, 0.09f), grow);
+            //rules.AddRule(Rule.CurrentValueIsOver(Slot.Y, 0.8f),grow);
+            //rules.AddRule(Rule.CurrentValueIsOver(Slot.Average, 0.6f), Rule.ConstInterpFn(Colors.White, .005f));
+            //rules.AddRule(Rule.AlwaysTrue(), Rule.EvalInterpFn(SeriesUtils.AverageSlots, 0.1f));
 
             runnerParam.AddRuleSet(rules);
 
