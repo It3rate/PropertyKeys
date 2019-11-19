@@ -40,9 +40,7 @@ namespace DataArcs.SeriesData
 		}
 		
 		public float[] this[int index] => _series.GetRawDataAt(index).FloatDataRef;
-
-		public override Store BakedStore => GenerateDataSeries().Store;
-
+		
         public override void ReverseEachElement()
 		{
 			_series.ReverseEachElement();

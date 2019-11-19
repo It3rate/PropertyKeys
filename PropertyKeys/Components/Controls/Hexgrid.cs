@@ -13,8 +13,8 @@ namespace DataArcs.Components
 		public float Spacing { get; set; }
 		//public FloatStore Locations { get; set; }
 
-		private PolyShape graphic;
-		private HexagonSampler sampler;
+		//private PolyShape graphic;
+		//private HexagonSampler sampler;
 
 		public Matrix Transform { get; set; }
 

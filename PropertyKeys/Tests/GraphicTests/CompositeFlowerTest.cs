@@ -70,7 +70,7 @@ namespace DataArcs.Tests.GraphicTests
 
 	        Store loc = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] {10, 7}));
             composite.AddProperty(PropertyId.Location, loc);
-	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
+	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store());
 
 	        Store radiusStore = new Store(new FloatSeries(2, 8f, 8f), new LineSampler(70));
 	        composite.AddProperty(PropertyId.Radius, radiusStore);
@@ -90,7 +90,7 @@ namespace DataArcs.Tests.GraphicTests
 			int groupCount = 7;
 	        var composite = new Container(Store.CreateItemStore(groupCount));
 
-            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SlotUtils.X, new FloatSeries(1, 0f, 1f).Store);
+            LinkingStore ls = new LinkingStore(_timer.CompositeId, PropertyId.SampleAtT, SlotUtils.X, new FloatSeries(1, 0f, 1f).Store());
             Store loc = new Store(new RectFSeries(200f, 75f, 500f, 375f), new RingSampler(new int[] { groupCount }, ls));
             composite.AddProperty(PropertyId.Location, loc);
 
@@ -127,8 +127,8 @@ namespace DataArcs.Tests.GraphicTests
 	        composite.AddProperty(PropertyId.Location, loc);
 
 	        composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 11f, 11f)));
-	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store);
-	        composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0f, 0f, 0f).Store);
+	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store());
+	        composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0f, 0f, 0f).Store());
 
 	        IStore blendColors = GetBlendColor(0);
 	        LinkingStore col = new LinkingStore(_timer.CompositeId, PropertyId.EasedTCombined, SlotUtils.X, blendColors);

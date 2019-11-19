@@ -127,7 +127,7 @@ namespace DataArcs.Tests.GraphicTests
 				        loc++;
 			        }
 		        }
-		        container.AddProperty(PropertyId.Items, new IntSeries(1, newItems).Store);
+		        container.AddProperty(PropertyId.Items, new IntSeries(1, newItems).Store());
 	        }
         }
     }

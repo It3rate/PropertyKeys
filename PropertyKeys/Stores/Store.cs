@@ -114,7 +114,7 @@ namespace DataArcs.Stores
 			IntSeries result = new IntSeries(1, 0, count - 1);
 			return result.CreateLinearStore(count);
         }
-        private static readonly IStore _emptyItemStore = IntSeries.Empty.Store;
+        private static readonly IStore _emptyItemStore = IntSeries.Empty.Store();
         public static IStore EmptyItemStore => _emptyItemStore;
     }
 }

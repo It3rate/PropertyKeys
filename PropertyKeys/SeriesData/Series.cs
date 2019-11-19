@@ -135,17 +135,11 @@ namespace DataArcs.SeriesData
         public abstract void InterpolateInto(Series b, ParametricSeries seriesT);
 
         public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
-        public Store Store => new Store(this, new LineSampler(this.Count));
-        public virtual Store BakedStore
+        public IStore Store(Sampler sampler = null)
         {
-            get
-            {
-                var result = new Store(this, new LineSampler(this.Count));
-                result.BakeData();
-                return result;
-            }
+	        sampler = sampler ?? new LineSampler(this.Count);
+	        return new Store(this, sampler);
         }
-        public Store ToStore(Sampler sampler) => new Store(this, sampler);
 
         public abstract Series Copy();
 

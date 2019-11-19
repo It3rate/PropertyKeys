@@ -101,16 +101,16 @@ namespace DataArcs.Tests.GraphicTests
 			var ls = new LinkingStore(composite.CompositeId, PropertyId.Automata, SlotUtils.XYZ, null);
 		    composite.AddProperty(PropertyId.FillColor, ls);
 
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 6.8f).Store);
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, 6.8f).Store());
 		    //var radStore = new Store(new FloatSeries(1, 6.5f, 6.5f, 9f, 9f), new LineSampler(), CombineFunction.Multiply);
 		    //var radiusLink = new LinkingStore(composite.CompositeId, PropertyId.Automata, new[] { Slot.MaxSlots }, radStore);
 		    //composite.AddProperty(PropertyId.Radius, radiusLink);
 
-            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
+            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store());
 
             //composite.AddProperty(PropertyId.Orientation, new FloatSeries(1, 0f).Store);
-            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store);
-            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store);
+            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.2f, 0.1f, 0.1f).Store());
+            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.5f).Store());
             composite.Renderer = new PolyShape();
 			
 		    Store loc = new Store(MouseInput.MainFrameRect.Outset(-0f), sampler);
@@ -240,7 +240,6 @@ namespace DataArcs.Tests.GraphicTests
         private RuleSet CreateBlock3(Runner runnerParam)
         {
             RuleSet rules = new RuleSet();
-            Condition cond;
 
             ParameterizedFunction swapFn1 = Average01;
             ParameterizedFunction swapFn2 = RandomMid30_70;

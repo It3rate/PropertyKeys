@@ -72,13 +72,13 @@ namespace DataArcs.Samplers
 	        float overdraw = 1.00f;
             float radiusScale = 1f - 1f / (columns - 1f) * 0.5f; // rows are offset, and thus compressed when drawn by this much.
             radius = h / 2f * radiusScale * overdraw;
-            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, radius).Store);
+            composite.AddProperty(PropertyId.Radius, new FloatSeries(1, radius).Store());
 
             Store loc = new Store(bounds, sampler);
 	        composite.AddProperty(PropertyId.Location, loc);
 
 	        composite.Renderer = new PolyShape(packHorizontal:true);
-            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, sampler.NeighborCount).Store);
+            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, sampler.NeighborCount).Store());
 
             return composite;
         }

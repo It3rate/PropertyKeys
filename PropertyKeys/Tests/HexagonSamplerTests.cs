@@ -23,7 +23,7 @@ namespace DataArcs.Tests
 		{
 			series_1 = new FloatSeries(2, new[] {0f, 0f, 100f, 200f});
 			HexagonSamplerByT_1();
-            var store = series_1.Store;
+            var store = series_1.Store();
             store.BakeData();
             series_1 = (FloatSeries)store.GetSeriesRef();
 			HexagonSamplerByT_1();
@@ -34,7 +34,7 @@ namespace DataArcs.Tests
 		{
 			series_1 = new FloatSeries(2, new[] {0f, 0f, 100f, 200f});
 			HexagonSamplerByIndex_1();
-            var store = series_1.Store;
+            var store = series_1.Store();
             store.BakeData();
             series_1 = (FloatSeries)store.GetSeriesRef();
             HexagonSamplerByIndex_1();
@@ -53,7 +53,7 @@ namespace DataArcs.Tests
 			var sampler = new HexagonSampler(new[] {cols, rows});
 
 			VisualSampleByIndex(sampler);
-            var store = series_1.Store;
+            var store = series_1.Store();
             store.BakeData();
             series_1 = (FloatSeries)store.GetSeriesRef();
             VisualSampleByIndex(sampler);
@@ -72,7 +72,7 @@ namespace DataArcs.Tests
 			var sampler = new HexagonSampler(new[] {cols, rows});
 
 			VisualSampleByT(sampler);
-            var store = series_1.Store;
+            var store = series_1.Store();
             store.BakeData();
             series_1 = (FloatSeries)store.GetSeriesRef();
             VisualSampleByT(sampler);

@@ -24,7 +24,7 @@ namespace DataArcs.Tests.GraphicTests
     {
         private readonly Player _player;
         private Bitmap[] bitmaps;
-        private Timer _timer;
+        //private Timer _timer;
         private int totalSteps = 0;
         private MouseInput _mouseInput;
 
@@ -103,7 +103,7 @@ namespace DataArcs.Tests.GraphicTests
             var radiusLink = new LinkingStore(automataComposite.CompositeId, PropertyId.Automata, new[] { Slot.S3 }, radStore);
             automataComposite.AddProperty(PropertyId.Radius, radiusLink);
 
-            automataComposite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store);
+            automataComposite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store());
             automataComposite.Renderer = new PolyShape();
 			
             return automataComposite;
