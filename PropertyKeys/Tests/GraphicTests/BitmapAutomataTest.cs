@@ -84,8 +84,9 @@ namespace DataArcs.Tests.GraphicTests
             var colorSeries = bitmap.ToFloatSeriesHex(columns, rowCount);
             var radiusSeries = new FloatSeries(1, ArrayExtension.GetSizedFloatArray(itemCount, 1f));
             var prioritySeries = new FloatSeries(1, ArrayExtension.GetSizedFloatArray(itemCount, 0f));
+            var rowCols = sampler.GetBakedStrideIndexes();
 
-            var automataStore = new Store(SeriesUtils.MergeSeriesElements(colorSeries, radiusSeries, prioritySeries), sampler);
+            var automataStore = new Store(SeriesUtils.MergeSeriesElements(colorSeries, radiusSeries, rowCols), sampler);
             automataStore.BakeData();
 
             var runner = new Runner(automataStore);

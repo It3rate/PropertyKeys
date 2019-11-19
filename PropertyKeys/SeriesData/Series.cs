@@ -164,7 +164,11 @@ namespace DataArcs.SeriesData
 
         public Series SumSlots(params Slot[] slots)
         {
-	        return SeriesUtils.SumSlots(this, slots);
+            return SeriesUtils.SumSlots(this, slots);
+        }
+        public Series MultiplySlots(params Slot[] slots)
+        {
+            return SeriesUtils.MultiplySlots(this, slots);
         }
         public Series AverageSlots(params Slot[] slots)
         {

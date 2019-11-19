@@ -288,7 +288,7 @@ namespace DataArcs.SeriesData
 		}
 
         public override float[] FloatDataRef => _floatValues;
-		public override int[] IntDataRef => throw new NotImplementedException(); //_floatValues.ToInt();
+		public override int[] IntDataRef => _floatValues.ToInt(); //_floatValues.ToInt();
 		public override bool[] BoolDataRef => throw new NotImplementedException();
 
 		//public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value

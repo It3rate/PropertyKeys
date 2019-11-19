@@ -233,7 +233,11 @@ namespace DataArcs.SeriesData.Utils
         }
         public static Series SumSlots(Series source, params Slot[] slots)
         {
-	        return SlotsFunction((a, b) => a + b, 0, source, slots);
+            return SlotsFunction((a, b) => a + b, 0, source, slots);
+        }
+        public static Series MultiplySlots(Series source, params Slot[] slots)
+        {
+            return SlotsFunction((a, b) => a * b, 1, source, slots);
         }
         public static Series ScaleSlots(Series source, params Slot[] slots)
         {
@@ -341,7 +345,11 @@ namespace DataArcs.SeriesData.Utils
         }
         public static Series SumPerElement(Series source, params Slot[] slots)
         {
-	        return PerElementFunction((a, b) => a + b, 0, source, slots);
+            return PerElementFunction((a, b) => a + b, 0, source, slots);
+        }
+        public static Series MultiplyPerElement(Series source, params Slot[] slots)
+        {
+            return PerElementFunction((a, b) => a * b, 1, source, slots);
         }
         public static Series ScalePerElement(Series source, params Slot[] slots)
         {

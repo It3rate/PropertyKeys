@@ -89,5 +89,25 @@ namespace DataArcs.Samplers
 	        return result;
         }
 
+        public IntSeries GetBakedStrideIndexes()
+        {
+            int strideLen = Strides.Length;
+            var result = new IntSeries(strideLen, new int[Capacity * strideLen]);
+            int capacity = Capacity;
+            
+            var t = new ParametricSeries(1, 0);
+            for (int i = 0; i < capacity; i++)
+            {
+                t.FloatDataRef[0] = i / (float)capacity;
+                var ts = GetSampledTs(t);
+                for (int j = 0; j < ts.VectorSize; j++)
+                {
+                    result.IntDataRef[i * strideLen + j] = (int)(ts.FloatDataAt(j) * Strides[j]);
+                }
+            }
+
+            return result;
+        }
+
     }
 }
