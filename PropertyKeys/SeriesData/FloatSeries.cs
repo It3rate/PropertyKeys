@@ -289,7 +289,6 @@ namespace DataArcs.SeriesData
 
         public override float[] FloatDataRef => _floatValues;
 		public override int[] IntDataRef => _floatValues.ToInt(); //_floatValues.ToInt();
-		public override bool[] BoolDataRef => throw new NotImplementedException();
 
 		//public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
 		public override float FloatDataAt(int index)
@@ -303,32 +302,7 @@ namespace DataArcs.SeriesData
             index = Math.Max(0, Math.Min(_floatValues.Length - 1, index));
             return (int)_floatValues[index];
 		}
-
-		public override bool BoolDataAt(int index)
-		{
-			return index >= 0 && index < _floatValues.Length && Math.Abs(_floatValues[index]) < 0.0000001;
-		}
-
-		public override Series GetZeroSeries()
-		{
-			return new FloatSeries(VectorSize, ArrayExtension.GetFloatZeroArray(VectorSize));
-		}
-
-		public override Series GetZeroSeries(int elementCount)
-		{
-			return SeriesUtils.GetZeroFloatSeries(VectorSize, elementCount);
-		}
-
-		public override Series GetMinSeries()
-		{
-			return new FloatSeries(VectorSize, ArrayExtension.GetFloatMinArray(VectorSize));
-		}
-
-		public override Series GetMaxSeries()
-		{
-			return new FloatSeries(VectorSize, ArrayExtension.GetFloatMaxArray(VectorSize));
-		}
-
+		
 		public override Series Copy()
 		{
 			FloatSeries result = new FloatSeries(VectorSize, (float[])FloatDataRef.Clone());

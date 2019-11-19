@@ -151,7 +151,6 @@ namespace DataArcs.Tests.GraphicTests
                 else if (counter == 120)
                 {
                     ignore = true;
-                    Debug.WriteLine("***** FLIP *** " + runnerParam.PassCount);
                 }
                 else if (counter >= 130)
                 {

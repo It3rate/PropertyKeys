@@ -70,27 +70,6 @@ namespace DataArcs.SeriesData
 		    return new RectFSeries(X - outsetX, Y - outsetY, Right + outsetX * 2f, Bottom + outsetY * 2f);
 	    }
 
-        public override Series GetZeroSeries()
-	    {
-		    return new RectFSeries(ArrayExtension.GetFloatZeroArray(4));
-	    }
-
-	    public override Series GetZeroSeries(int elementCount)
-	    {
-			// rects are fixed size
-		    return GetZeroSeries();
-	    }
-
-	    public override Series GetMinSeries()
-	    {
-		    return new RectFSeries(int.MinValue, int.MinValue,0,0);
-	    }
-
-	    public override Series GetMaxSeries()
-	    {
-		    return new RectFSeries(int.MinValue, int.MinValue, int.MaxValue, int.MaxValue);
-        }
-
 	    public override Series Copy()
 	    {
 		    return new RectFSeries(_floatValues);

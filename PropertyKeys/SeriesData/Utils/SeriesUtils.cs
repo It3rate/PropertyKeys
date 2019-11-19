@@ -53,19 +53,49 @@ namespace DataArcs.SeriesData.Utils
 		{
 			Series result;
 			vectorSize = (vectorSize == -1) ? series.VectorSize : vectorSize;
-			if (series.Type == SeriesType.Int)
-			{
-				result = new IntSeries(vectorSize, values.ToInt());
-			}
-			else if (series.Type == SeriesType.Parametric)
-			{
-				result = new ParametricSeries(vectorSize, values);
-			}
-            else
-			{
-				result = new FloatSeries(vectorSize, values);
-			}
 
+			switch (series.Type)
+			{
+				case SeriesType.Int:
+					result = new IntSeries(vectorSize, values.ToInt());
+					break;
+				// don't use RectF here as a sample of a rect should mean a float array. Probably RectF should not be so special to have it's own series type.
+				//case SeriesType.RectF:
+				//	result = new RectFSeries(values);
+				//	break;
+				case SeriesType.Parametric:
+					result = new ParametricSeries(vectorSize, values);
+                    break;
+				case SeriesType.Float:
+				default:
+					result = new FloatSeries(vectorSize, values);
+                    break;
+			}
+			return result;
+		}
+
+		public static Series CreateSeriesOfType(SeriesType seriesType, int vectorSize, int elementCount, float defaultValue = 0)
+		{
+			Series result;
+			switch (seriesType)
+			{
+				case SeriesType.Int:
+					int[] intValues = ArrayExtension.GetSizedIntArray(elementCount, (int)defaultValue);
+					result = new IntSeries(vectorSize, intValues);
+					break;
+				//case SeriesType.RectF:
+				//	result = new RectFSeries(defaultValue, defaultValue, defaultValue + 1f, defaultValue + 1f);
+				//	break;
+				case SeriesType.Parametric:
+					float[] paramValues = ArrayExtension.GetSizedFloatArray(elementCount, defaultValue);
+					result = new ParametricSeries(vectorSize, paramValues);
+					break;
+				case SeriesType.Float:
+                default:
+					float[] floatValues = ArrayExtension.GetSizedFloatArray(elementCount, defaultValue);
+					result = new FloatSeries(vectorSize, floatValues);
+					break;
+            }
 			return result;
 		}
 
@@ -124,8 +154,7 @@ namespace DataArcs.SeriesData.Utils
 		{
 			return new ParametricSeries(vectorSize, ArrayExtension.GetFloatZeroArray(vectorSize * elementCount));
 		}
-
-        public static IntSeries GetZeroIntSeries(int vectorSize, int elementCount)
+		public static IntSeries GetZeroIntSeries(int vectorSize, int elementCount)
 		{
 			return new IntSeries(vectorSize, ArrayExtension.GetIntZeroArray(vectorSize * elementCount));
 		}
@@ -154,7 +183,6 @@ namespace DataArcs.SeriesData.Utils
 				virtualT = vt - startIndex;
 			}
 		}
-
 
         public static Series InterpolateInto(Series source, Series target, float t)
         {

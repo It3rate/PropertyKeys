@@ -13,7 +13,6 @@ namespace DataArcs.SeriesData
 		Float,
 		Parametric,
 		RectF,
-		Bool,
 	}
 
     public abstract class Series : IEnumerable
@@ -128,19 +127,12 @@ namespace DataArcs.SeriesData
 
         public abstract float FloatDataAt(int index);
         public abstract int IntDataAt(int index);
-        public abstract bool BoolDataAt(int index);
         public abstract float[] FloatDataRef { get; }
         public abstract int[] IntDataRef { get; }
-        public abstract bool[] BoolDataRef { get; }
 
         public abstract void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
         public abstract void InterpolateInto(Series b, float t);
         public abstract void InterpolateInto(Series b, ParametricSeries seriesT);
-
-        public abstract Series GetZeroSeries();
-        public abstract Series GetZeroSeries(int elements);
-        public abstract Series GetMinSeries();
-        public abstract Series GetMaxSeries();
 
         public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
         public Store Store => new Store(this, new LineSampler(this.Count));

@@ -32,31 +32,6 @@ namespace DataArcs.SeriesData
         public float AverageValue => _floatValues.Average();
         public float SumValue => _floatValues.Sum();
 
-        public override Series GetZeroSeries()
-        {
-	        return new ParametricSeries(VectorSize, ArrayExtension.GetFloatZeroArray(VectorSize));
-        }
-
-        public override Series GetZeroSeries(int elementCount)
-        {
-	        return SeriesUtils.GetZeroParametricSeries(VectorSize, elementCount);
-        }
-
-        public override Series GetMinSeries()
-        {
-	        return new ParametricSeries(VectorSize, new float[VectorSize]);
-        }
-
-        public override Series GetMaxSeries()
-        {
-	        var ar = new float[VectorSize];
-	        for (int i = 0; i < ar.Length; i++)
-	        {
-		        ar[i] = 1f;
-	        }
-	        return new ParametricSeries(VectorSize, ar);
-        }
-
         public override Series Copy()
         {
 	        ParametricSeries result = new ParametricSeries(VectorSize, (float[])FloatDataRef.Clone());

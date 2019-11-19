@@ -140,7 +140,7 @@ namespace DataArcs.Components.Transitions
             }
             else if(result == null)
             {
-                result = End?.GetNestedSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.GetZeroFloatSeries(1, 0);
+                result = End?.GetNestedSeriesAtT(propertyId, t, parentSeries) ?? SeriesUtils.CreateSeriesOfType(SeriesType.Float, 1, 1, 0f);
             }
             return result;
         }

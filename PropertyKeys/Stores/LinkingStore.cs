@@ -62,7 +62,7 @@ namespace DataArcs.Stores
                         slotMapped.CombineInto(new FloatSeries(1, t), CombineFunction, t);
                     }
 
-                    result = _mixStore?.GetValuesAtT(t) ?? slotMapped.GetZeroSeries(1);
+                    result = _mixStore?.GetValuesAtT(t) ?? SeriesUtils.CreateSeriesOfType(slotMapped.Type, slotMapped.VectorSize, 1, 0f);
                     float[] resultArray = new float[result.VectorSize];
                     for (int i = 0; i < result.VectorSize; i++)
                     {

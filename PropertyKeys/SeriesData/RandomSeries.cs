@@ -36,7 +36,7 @@ namespace DataArcs.SeriesData
 			_seed = seed;
             _minMax = minMax ?? new RectFSeries(0,0,1f,1f);
 			_combineFunction = combineFunction;
-			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.GetZeroFloatSeries(vectorSize, _count) : GenerateDataSeries();
+			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.CreateSeriesOfType(_type, VectorSize, _count, 0f) : GenerateDataSeries();
 		}
 		
 		public float[] this[int index] => _series.GetRawDataAt(index).FloatDataRef;
@@ -152,15 +152,10 @@ namespace DataArcs.SeriesData
 		{
 			return _series.IntDataAt(index);
 		}
-
-		public override bool BoolDataAt(int index)
-		{
-			return _series.BoolDataAt(index);
-		}
+		
 
 		public override float[] FloatDataRef => _series.FloatDataRef;
 		public override int[] IntDataRef => _series.IntDataRef;
-		public override bool[] BoolDataRef => _series.BoolDataRef;
 
 		public override void InterpolateInto(Series b, float t)
 		{
@@ -172,25 +167,6 @@ namespace DataArcs.SeriesData
 			_series.InterpolateInto(b, seriesT);
         }
 
-		public override Series GetZeroSeries()
-		{
-			return _series.GetZeroSeries();
-		}
-
-		public override Series GetZeroSeries(int elements)
-		{
-			return _series.GetZeroSeries(elements);
-		}
-
-		public override Series GetMinSeries()
-		{
-			return _series.GetMinSeries();
-		}
-
-		public override Series GetMaxSeries()
-		{
-			return _series.GetMaxSeries();
-		}
 		public override Series Copy()
 		{
 			RandomSeries result = new RandomSeries(VectorSize, Type, Count, (RectFSeries)_minMax.Copy(), _seed);
