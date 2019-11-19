@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -110,29 +111,60 @@ namespace DataArcs.Tests.GraphicTests
         private RuleSet CreateBlock1(Runner runnerParam)
         {
 	        RuleSet rules = new RuleSet();
-			
-	        rules.BeginPass = () =>
-	        {
-	            //runnerParam.Automata.GetSeriesRef().SetRawDataAt(550, new FloatSeries(5, 0,0,1f,2.1f,0));
-	        };
+            rules.ResetFn = (runner) => { };
 
-            ParameterizedFunction shrink = (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue,
-	            new FloatSeries(4, 0, 0, 0, .1f),
-	            new ParametricSeries(4, 0, 0, 0, 0.08f));
-            ParameterizedFunction grow = (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue,
-	            new FloatSeries(4, 0, 0, 0, 2.6f),
-	            new ParametricSeries(4, 0, 0, 0, 0.02f));
-
-
-            rules.ResetFn = (Runner runner) =>
+            ParameterizedFunction shrink = (currentValue, neighbors) =>
             {
-	            //runnerParam.UpdateValuesAfterPass = false;
+                return SeriesUtils.InterpolateInto(currentValue,
+                    new FloatSeries(4, 0, 0, 0, .2f),
+                    new ParametricSeries(4, 0, 0, 0, 0.055f));
+            };
+            ParameterizedFunction grow = (currentValue, neighbors) =>
+            {
+                float minR = neighbors.MinSlots(Slot.S3).X;
+                return SeriesUtils.InterpolateInto(currentValue,
+                    new FloatSeries(4, 0, 0, 0, Math.Min(3f, 1.5f / minR)),
+                    new ParametricSeries(4, 0, 0, 0, 0.01f));
             };
 
-            rules.AddRule(Rule.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.S3, 1.1f), shrink);
-            rules.AddRule(Rule.NeighboursEvaluationIsUnder(SeriesUtils.MinSlots, Slot.S3, 0.9f), grow);
+            bool flip = false;
+            bool ignore = false;
+            ParameterizedFunction fnA = (currentValue, neighbors) =>
+            {
+                if (ignore) return currentValue;
+                return flip ? shrink(currentValue, neighbors) : grow(currentValue, neighbors);
+            };
+            ParameterizedFunction fnB = (currentValue, neighbors) =>
+            {
+                if (ignore) return currentValue;
+                return !flip ? shrink(currentValue, neighbors) : grow(currentValue, neighbors);
+            };
 
-            rules.AddRule(Rule.NeighboursEvaluationIsNear(SeriesUtils.MaxSlots, Slot.X, Slot.Y, 0.09f), grow);
+            int counter = 0;
+            rules.BeginPass = () =>
+            {
+                if (counter == 100)
+                {
+                    flip = !flip;
+                }
+                else if (counter == 120)
+                {
+                    ignore = true;
+                    Debug.WriteLine("***** FLIP *** " + runnerParam.PassCount);
+                }
+                else if (counter >= 130)
+                {
+                    flip = !flip;
+                    counter = 0;
+                    ignore = false;
+                }
+                counter++;
+            };
+
+            rules.AddRule(RuleCondition.NeighboursEvaluationIsOver(SeriesUtils.MaxSlots, Slot.S3, 1.1f), shrink);//fnB);//
+            rules.AddRule(RuleCondition.NeighboursEvaluationIsUnder(SeriesUtils.MinSlots, Slot.S3, 0.9f), fnA);
+
+            rules.AddRule(RuleCondition.NeighboursEvaluationIsNear(SeriesUtils.MaxSlots, Slot.Z, Slot.X, 0.092f), fnA);
             //rules.AddRule(Rule.CurrentValueIsOver(Slot.Y, 0.8f),grow);
             //rules.AddRule(Rule.CurrentValueIsOver(Slot.Average, 0.6f), Rule.ConstInterpFn(Colors.White, .005f));
             //rules.AddRule(Rule.AlwaysTrue(), Rule.EvalInterpFn(SeriesUtils.AverageSlots, 0.1f));

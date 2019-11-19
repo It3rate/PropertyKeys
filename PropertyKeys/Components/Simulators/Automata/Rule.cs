@@ -45,24 +45,138 @@ namespace DataArcs.Components.Simulators.Automata
 	        }
 	        return canContinue;
         }
+    }
 
-		// Evaluators
-		public static ParameterizedFunction MixFn(ParametricSeries mix)
+    public class RuleCondition
+    {
+        public static Condition AlwaysTrue() => (currentValue, neighbors, runner) => true;
+        public static Condition AlwaysFalse() => (currentValue, neighbors, runner) => false;
+        public static Condition RandomChance(float chance) => (currentValue, neighbors, runner) => SeriesUtils.Random.NextDouble() < chance;
+        public static Condition PassCountIsUnder(int minCount) => (currentValue, neighbors, runner) => runner.PassCount < minCount;
+        public static Condition PassCountIsOver(int maxCount) => (currentValue, neighbors, runner) => runner.PassCount > maxCount;
+
+        public static Condition CurrentValueIsUnder(Slot slot, float value) =>
+            (currentValue, neighbors, runner) => SlotUtils.ComputeOnElement(currentValue, slot) < value;
+
+        public static Condition CurrentValueIsOver(Slot slot, float value) =>
+            (currentValue, neighbors, runner) => SlotUtils.ComputeOnElement(currentValue, slot) > value; //SeriesUtils.SumPerElement(currentValue, slot).X > value;//
+
+        public static Condition CurrentValueIsNear(Slot slotA, Slot slotB, float maxDelta) => (currentValue, neighbors, runner) =>
+            Math.Abs(SlotUtils.ComputeOnElement(currentValue, slotA) - SlotUtils.ComputeOnElement(currentValue, slotB)) < maxDelta;
+
+        public static Condition CurrentValueIsFar(Slot slotA, Slot slotB, float minDelta) => (currentValue, neighbors, runner) =>
+            Math.Abs(SlotUtils.ComputeOnElement(currentValue, slotA) - SlotUtils.ComputeOnElement(currentValue, slotB)) > minDelta;
+
+        public static Condition NeighboursEvaluationIsOver(SeriesModifier neighborModifier, Slot slot, float compareValue)
+        {
+            return (currentValue, neighbors, runner) =>
+            {
+                var mod = neighborModifier(neighbors);
+                float val = SlotUtils.ComputeOnElement(mod, slot);
+                return val > compareValue;
+            };
+        }
+
+        public static Condition NeighboursEvaluationIsUnder(SeriesModifier neighborModifier, Slot slot, float compareValue)
+        {
+            return (currentValue, neighbors, runner) =>
+            {
+                var mod = neighborModifier(neighbors);
+                float val = SlotUtils.ComputeOnElement(mod, slot);
+                return val < compareValue;
+            };
+        }
+
+        public static Condition NeighboursEvaluationIsNear(SeriesModifier neighborModifier, Slot slotA, Slot slotB, float maxDelta)
+        {
+            return (currentValue, neighbors, runner) =>
+            {
+                var mod = neighborModifier(neighbors);
+                float valA = SlotUtils.ComputeOnElement(mod, slotA);
+                float valB = SlotUtils.ComputeOnElement(mod, slotB);
+                return Math.Abs(valA - valB) < maxDelta;
+            };
+        }
+
+        public static Condition NeighboursEvaluationIsFar(SeriesModifier neighborModifier, Slot slotA, Slot slotB, float minDelta)
+        {
+            return (currentValue, neighbors, runner) =>
+            {
+                var mod = neighborModifier(neighbors);
+                float valA = SlotUtils.ComputeOnElement(mod, slotA);
+                float valB = SlotUtils.ComputeOnElement(mod, slotB);
+                return Math.Abs(valA - valB) > minDelta;
+            };
+        }
+
+        public static Condition AllConditionsTrue(params Condition[] conditions) => (currentValue, neighbors, runner) =>
+        {
+            bool result = true;
+            for (int i = 0; i < conditions.Length; i++)
+            {
+                if (!conditions[i].Invoke(currentValue, neighbors, runner))
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        };
+
+        public static Condition AllConditionsFalse(params Condition[] conditions) => (currentValue, neighbors, runner) =>
+        {
+            bool result = true;
+            for (int i = 0; i < conditions.Length; i++)
+            {
+                if (conditions[i].Invoke(currentValue, neighbors, runner))
+                {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+        };
+
+        public static Condition OneConditionTrue(params Condition[] conditions) => (currentValue, neighbors, runner) =>
+        {
+            bool result = false;
+            for (int i = 0; i < conditions.Length; i++)
+            {
+                if (conditions[i].Invoke(currentValue, neighbors, runner))
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        };
+    }
+
+    public class RuleProduction
+    {
+        public static ParameterizedFunction MixFn(ParametricSeries mix)
         {
             return (currentValue, target) => RuleUtils.Mix(currentValue, target, mix);
         }
+
         public static ParameterizedFunction InterpolateFn(float interpolationAmount)
         {
             return (currentValue, target) => SeriesUtils.InterpolateInto(currentValue, target, interpolationAmount);
         }
+
         public static ParameterizedFunction ConstInterpFn(Series constant, float amount)
         {
             return (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue, constant, amount);// ignore neighbors
         }
+
         public static ParameterizedFunction SetSeriesAtIndexFn(int index, Series value)
         {
             return (currentValue, target) => SeriesUtils.SetSeriesAtIndex(currentValue, index, value);
         }
+
         public static ParameterizedFunction EvaluateNeighborsFn(ParameterizedFunction targetFn, params SeriesModifier[] neighborModifiers)
         {
             return (currentValue, neighbors) =>
@@ -74,6 +188,7 @@ namespace DataArcs.Components.Simulators.Automata
                 return targetFn(currentValue, neighbors);
             };
         }
+
         public static ParameterizedFunction ModifyResultsFn(ParameterizedFunction targetFn, params SeriesModifier[] resultsModifiers)
         {
             return (currentValue, neighbors) =>
@@ -86,29 +201,32 @@ namespace DataArcs.Components.Simulators.Automata
                 return result;
             };
         }
+
         public static ParameterizedFunction RandomColorFn(float min, float max)
         {
-	        return (currentValue, neighbors) => ColorAdapter.RandomColor(min, max, min, max, min, max);
+            return (currentValue, neighbors) => ColorAdapter.RandomColor(min, max, min, max, min, max);
         }
+
         public static ParameterizedFunction RandomColorFn(float minR, float maxR, float minG, float maxG, float minB, float maxB)
         {
-	        return (currentValue, neighbors) => ColorAdapter.RandomColor(minR, maxR, minG, maxG, minB, maxB);
+            return (currentValue, neighbors) => ColorAdapter.RandomColor(minR, maxR, minG, maxG, minB, maxB);
         }
+
         public static ParameterizedFunction ShuffleValuesFn()
         {
-	        return (currentValue, neighbors) =>
-	        {
-		        var floats = currentValue.FloatDataRef;
-		        for (int i = 0; i < floats.Length; i++)
-		        {
-			        int indexA = SeriesUtils.Random.Next(floats.Length);
-			        int indexB = SeriesUtils.Random.Next(floats.Length);
-			        float temp = floats[indexA];
-			        floats[indexA] = floats[indexB];
-			        floats[indexB] = temp;
-		        }
-		        return currentValue;
-	        };
+            return (currentValue, neighbors) =>
+            {
+                var floats = currentValue.FloatDataRef;
+                for (int i = 0; i < floats.Length; i++)
+                {
+                    int indexA = SeriesUtils.Random.Next(floats.Length);
+                    int indexB = SeriesUtils.Random.Next(floats.Length);
+                    float temp = floats[indexA];
+                    floats[indexA] = floats[indexB];
+                    floats[indexB] = temp;
+                }
+                return currentValue;
+            };
         }
 
         public static ParameterizedFunction EvalInterpFn(SeriesModifier evaluator, float interpolationAmount) => EvaluateNeighborsFn(InterpolateFn(interpolationAmount), evaluator);
@@ -116,115 +234,15 @@ namespace DataArcs.Components.Simulators.Automata
 
         public static ParameterizedFunction CombineFn(params ParameterizedFunction[] functions)
         {
-	        return (currentValue, neighbors) =>
-	        {
-		        var result = currentValue;
-		        for (int i = 0; i < functions.Length; i++)
-		        {
-			        result = functions[i](result, neighbors);
-		        }
-		        return result;
-	        };
+            return (currentValue, neighbors) =>
+            {
+                var result = currentValue;
+                for (int i = 0; i < functions.Length; i++)
+                {
+                    result = functions[i](result, neighbors);
+                }
+                return result;
+            };
         }
-
-
-        // Conditions
-        public static Condition AlwaysTrue() => (currentValue, neighbors, runner) => true;
-        public static Condition AlwaysFalse() => (currentValue, neighbors, runner) => false;
-        public static Condition RandomChance(float chance) => (currentValue, neighbors, runner) => SeriesUtils.Random.NextDouble() < chance;
-        public static Condition PassCountIsUnder(int minCount) => (currentValue, neighbors, runner) => runner.PassCount < minCount;
-        public static Condition PassCountIsOver(int maxCount) => (currentValue, neighbors, runner) => runner.PassCount > maxCount;
-
-        public static Condition CurrentValueIsUnder(Slot slot, float value) =>
-	        (currentValue, neighbors, runner) => SlotUtils.ComputeOnElement(currentValue, slot) < value;
-        public static Condition CurrentValueIsOver(Slot slot, float value) => 
-	        (currentValue, neighbors, runner) => SlotUtils.ComputeOnElement(currentValue, slot) > value; //SeriesUtils.SumPerElement(currentValue, slot).X > value;//
-        public static Condition CurrentValueIsNear(Slot slotA, Slot slotB, float maxDelta) => (currentValue, neighbors, runner) => 
-	        Math.Abs(SlotUtils.ComputeOnElement(currentValue, slotA) - SlotUtils.ComputeOnElement(currentValue, slotB)) < maxDelta;
-        public static Condition CurrentValueIsFar(Slot slotA, Slot slotB, float minDelta) => (currentValue, neighbors, runner) => 
-	        Math.Abs(SlotUtils.ComputeOnElement(currentValue, slotA) - SlotUtils.ComputeOnElement(currentValue, slotB)) > minDelta;
-
-        public static Condition NeighboursEvaluationIsOver(SeriesModifier neighborModifier, Slot slot, float compareValue)
-        {
-	        return (currentValue, neighbors, runner) =>
-	        {
-		        var mod = neighborModifier(neighbors);
-		        float val = SlotUtils.ComputeOnElement(mod, slot);
-		        return val > compareValue;
-	        };
-        }
-        public static Condition NeighboursEvaluationIsUnder(SeriesModifier neighborModifier, Slot slot, float compareValue)
-        {
-	        return (currentValue, neighbors, runner) =>
-	        {
-		        var mod = neighborModifier(neighbors);
-		        float val = SlotUtils.ComputeOnElement(mod, slot);
-		        return val < compareValue;
-	        };
-        }
-        public static Condition NeighboursEvaluationIsNear(SeriesModifier neighborModifier, Slot slotA, Slot slotB, float maxDelta)
-        {
-	        return (currentValue, neighbors, runner) =>
-	        {
-		        var mod = neighborModifier(neighbors);
-		        float valA = SlotUtils.ComputeOnElement(mod, slotA);
-		        float valB = SlotUtils.ComputeOnElement(mod, slotB);
-		        return Math.Abs(valA - valB) < maxDelta;
-	        };
-        }
-        public static Condition NeighboursEvaluationIsFar(SeriesModifier neighborModifier, Slot slotA, Slot slotB, float minDelta)
-        {
-	        return (currentValue, neighbors, runner) =>
-	        {
-		        var mod = neighborModifier(neighbors);
-		        float valA = SlotUtils.ComputeOnElement(mod, slotA);
-		        float valB = SlotUtils.ComputeOnElement(mod, slotB);
-		        return Math.Abs(valA - valB) > minDelta;
-	        };
-        }
-
-        public static Condition AllConditionsTrue(params Condition[] conditions) => (currentValue, neighbors, runner) =>
-        {
-	        bool result = true;
-	        for (int i = 0; i < conditions.Length; i++)
-	        {
-		        if (!conditions[i].Invoke(currentValue, neighbors, runner))
-		        {
-			        result = false;
-			        break;
-		        }
-	        }
-
-	        return result;
-        };
-        public static Condition AllConditionsFalse(params Condition[] conditions) => (currentValue, neighbors, runner) =>
-        {
-	        bool result = true;
-	        for (int i = 0; i < conditions.Length; i++)
-	        {
-		        if (conditions[i].Invoke(currentValue, neighbors, runner))
-		        {
-			        result = false;
-			        break;
-		        }
-	        }
-
-	        return result;
-        };
-        public static Condition OneConditionTrue(params Condition[] conditions) => (currentValue, neighbors, runner) =>
-        {
-	        bool result = false;
-	        for (int i = 0; i < conditions.Length; i++)
-	        {
-		        if (conditions[i].Invoke(currentValue, neighbors, runner))
-		        {
-			        result = true;
-			        break;
-		        }
-	        }
-
-	        return result;
-        };
-	}
-
+    }
 }
