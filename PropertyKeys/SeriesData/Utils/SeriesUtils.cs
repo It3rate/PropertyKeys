@@ -77,29 +77,30 @@ namespace DataArcs.SeriesData.Utils
 		public static Series CreateSeriesOfType(SeriesType seriesType, int vectorSize, int elementCount, float defaultValue = 0)
 		{
 			Series result;
+			int arraySize = elementCount * vectorSize;
 			switch (seriesType)
 			{
 				case SeriesType.Int:
-					int[] intValues = ArrayExtension.GetSizedIntArray(elementCount, (int)defaultValue);
+					int[] intValues = ArrayExtension.GetSizedIntArray(arraySize, (int)defaultValue);
 					result = new IntSeries(vectorSize, intValues);
 					break;
 				//case SeriesType.RectF:
 				//	result = new RectFSeries(defaultValue, defaultValue, defaultValue + 1f, defaultValue + 1f);
 				//	break;
 				case SeriesType.Parametric:
-					float[] paramValues = ArrayExtension.GetSizedFloatArray(elementCount, defaultValue);
+					float[] paramValues = ArrayExtension.GetSizedFloatArray(arraySize, defaultValue);
 					result = new ParametricSeries(vectorSize, paramValues);
 					break;
 				case SeriesType.Float:
-                default:
-					float[] floatValues = ArrayExtension.GetSizedFloatArray(elementCount, defaultValue);
+				default:
+					float[] floatValues = ArrayExtension.GetSizedFloatArray(arraySize, defaultValue);
 					result = new FloatSeries(vectorSize, floatValues);
 					break;
-            }
+			}
 			return result;
 		}
 
-		public static bool IsEqual(Series a, Series b)
+        public static bool IsEqual(Series a, Series b)
 		{
 			var result = true;
 			if (a.GetType() == b.GetType() && a.Count == b.Count && a.VectorSize == b.VectorSize)
