@@ -14,12 +14,12 @@ namespace DataArcs.SeriesData
     {
         SeriesType Type { get; }
         int VectorSize { get; }
-        ISeriesElement GetSample(ParametricSeries seriesT);
 
         ISeriesBase Copy();
         void Reverse();
 
-	    float ElementSum(int index = 0);
+        ISeriesElement GetSample(ParametricSeries seriesT);
+        float ElementSum(int index = 0);
 	    float ElementAverage(int index = 0);
 	    float ElementMax(int index = 0);
 	    float ElementMin(int index = 0);
@@ -65,7 +65,6 @@ namespace DataArcs.SeriesData
     {
         int Count { get; }
         bool CanInterpolate { get; }
-
         int DataSize { get; }
 
         ISeriesElement GetRawDataAt(int index);

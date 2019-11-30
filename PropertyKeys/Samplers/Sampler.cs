@@ -31,6 +31,7 @@ namespace DataArcs.Samplers
         }
 
 		// todo: Why is this in sample? Needs to move to series, and a rect vs grid series can use different algorithms to generate values (needed).
+		// counter: only samplers know about capacity. Series only knows it's own count, not the virtual count it represents.
         public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
