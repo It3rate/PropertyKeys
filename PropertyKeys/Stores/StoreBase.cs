@@ -11,7 +11,6 @@ namespace DataArcs.Stores
 	    public int StoreId { get; }
 
         public virtual CombineFunction CombineFunction { get; set; }
-        public virtual CombineTarget CombineTarget { get; set; }
         public virtual Sampler Sampler { get; set; }
         public virtual int Capacity => Sampler.Capacity;
         public virtual bool ShouldIterpolate { get; set; } = false; // linear vs nearest

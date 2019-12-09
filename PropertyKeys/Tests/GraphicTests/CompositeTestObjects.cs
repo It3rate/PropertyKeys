@@ -60,15 +60,15 @@ namespace DataArcs.Tests.GraphicTests
             BlendTransition comp;
             switch (index)
             {
-                case 0:
-                    comp = GetTest3(0, 3000f);
-                    break;
-                case 1:
-                    comp = GetTest0(0, 2000f);
-                    break;
-                case 2:
-                    comp = GetTest2(0, 2000f);
-                    break;
+	            case 0:
+		            comp = GetTest3(0, 3000f);
+		            break;
+	            case 1:
+		            comp = GetTest0(0, 2000f);
+		            break;
+	            case 2:
+		            comp = GetTest2(0, 2000f);
+		            break;
                 default:
                     comp = GetTest1(0, _player.CurrentMs, 2000f);
                     break;
@@ -81,17 +81,17 @@ namespace DataArcs.Tests.GraphicTests
         private void CompOnEndTransitionEvent(object sender, EventArgs e)
         {
             _count++;
-            if (_count < 4)
+            if (_count < 1)
             {
                 ITimeable anim = (ITimeable)sender;
                 anim.Reverse();
                 anim.Restart();
             }
-            else if (_count < 5)
+            else if (_count < 2)
             {
                 BlendTransition nextComp = GetVersion(NextVersionIndex());
 
-                var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Multiply, CombineTarget.T);
+                var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Multiply);
                 //BlendTransition newBT = new BlendTransition(bt, comp, 0, _player.CurrentMs, 3000, easeStore);
                 //_player.AddActiveElement(newBT);
 
@@ -135,7 +135,7 @@ namespace DataArcs.Tests.GraphicTests
             float[] end = { start[0] - growth, start[1] - growth, start[2] + growth, start[3] + growth };
             endComp.AddProperty(PropertyId.Location, new Store(new FloatSeries(2, end), hexSampler, CombineFunction.Replace));
 
-            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Replace, CombineTarget.T);
+            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Replace);
             return new BlendTransition(composite, endComp, new Timer(delay, duration), easeStore);
         }
 
@@ -144,7 +144,7 @@ namespace DataArcs.Tests.GraphicTests
 	        BlendTransition bt = (BlendTransition)GetTest0(delay, duration);
 
             IStore endLocStore = bt.End.GetStore(PropertyId.Location);
-            RectFSeries minMax = new RectFSeries(-200f, -100f, 200f, 100f);
+            RectFSeries minMax = new RectFSeries(-8f, -4f, 8f, 4f);
             var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.Capacity, minMax, 1111, CombineFunction.ContinuousAdd).CreateLinearStore(endLocStore.Capacity);
             randomStore.CombineFunction = CombineFunction.Add;
             var fs = new FunctionalStore(endLocStore, randomStore);
@@ -171,7 +171,7 @@ namespace DataArcs.Tests.GraphicTests
 
             startStore.Sampler = new RingSampler(new int[] {100, 25,15,10});
 
-            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
+            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply);
 
             composite.shouldShuffle = true;
             return new BlendTransition(composite, endComp, new Timer(delay, duration), easeStore);
@@ -210,7 +210,7 @@ namespace DataArcs.Tests.GraphicTests
             endComp.AddProperty(PropertyId.Location, endStore);
             endComp.AddProperty(PropertyId.Radius, new FloatSeries(2, 12f, 12f, 21f, 21f, 12f, 12f).Store());
 
-            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
+            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply);
             return new BlendTransition(startComp, endComp, new Timer(delay, duration), easeStore);
         }
 

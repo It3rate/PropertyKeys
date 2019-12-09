@@ -45,11 +45,7 @@ namespace DataArcs.Stores
 			Series series = null;
 			foreach (var store in _stores)
 			{
-				if (store.CombineTarget == CombineTarget.T)
-				{
-					t = store.GetValuesAtT(t).X;
-				}
-				else if (series != null)
+				if (series != null)
 				{
 					var b = store.GetValuesAtT(t);
 					series.CombineInto(b, store.CombineFunction);
@@ -69,11 +65,7 @@ namespace DataArcs.Stores
 
 			foreach (var store in _stores)
 			{
-				if (store.CombineTarget == CombineTarget.T)
-				{
-					seriesT = store.GetSampledTs(seriesT);
-				}
-				else if (result != null)
+				if (result != null)
 				{
 					var b = store.GetSampledTs(seriesT);
 					result.CombineInto(b, store.CombineFunction);
@@ -115,9 +107,9 @@ namespace DataArcs.Stores
 		{
 			IStore result = _stores[0];
 			int index = 1;
-			while (result.CombineTarget == CombineTarget.T && index < _stores.Count)
+			while (index < _stores.Count)
 			{
-				result = _stores[index];
+				result = _stores[index++];
 			}
 
 			return result;

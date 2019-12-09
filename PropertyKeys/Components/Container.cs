@@ -25,7 +25,7 @@ namespace DataArcs.Components
         private IStore _items;
         public IStore Items => _items ?? GetStore(PropertyId.Items);
 		// todo: move away from location being so important.
-        public override int Capacity => GetStore(PropertyId.Location)?.Capacity ?? Items.Capacity;
+        public override int Capacity => Math.Max(GetStore(PropertyId.Location)?.Capacity ?? 0, Items.Capacity);
 
         protected Container(IStore items)
         {
@@ -165,6 +165,7 @@ namespace DataArcs.Components
 				AddLocalPropertiesAtT(data, t);
 	        }
 
+	        int capacity = NestedItemCount;
 	        var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, SamplerUtils.IndexFromT(NestedItemCount, t));// (int)Math.Floor(t * (NestedItemCount - 1f) + 0.5f));
 	        float indexT = sample.X;
 	        float segmentT = sample.Y;

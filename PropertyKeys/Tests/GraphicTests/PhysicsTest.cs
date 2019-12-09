@@ -35,7 +35,7 @@ namespace DataArcs.Tests.GraphicTests
 			_player = player;
 			_player.Pause();
             _easeStore = new Store(new FloatSeries(1, 0f, 1f), 
-                new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
+                new Easing(EasingType.EaseInOut3), CombineFunction.Replace);
         }
 
         HexagonSampler Hex => new HexagonSampler(new int[] { 10, 9 });

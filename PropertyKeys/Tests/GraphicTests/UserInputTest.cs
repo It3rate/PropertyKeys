@@ -53,16 +53,16 @@ namespace DataArcs.Tests.GraphicTests
 	        composite.AppendProperty(PropertyId.Location, loc);
 
             var csLoc = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Bubble, SlotUtils.XY);
-			csLoc.EffectRatio = new ParametricSeries(2, 0.1f, 0.4f);
-			var chained = new ChainedSampler(csLoc, new Easing(EasingType.EaseInOut, EasingType.EaseInOut));
+            csLoc.EffectRatio = new ParametricSeries(2, 0.1f, 0.4f);
+            var chained = new ChainedSampler(csLoc, new Easing(EasingType.EaseInOut, EasingType.EaseInOut));
 
-            var locMouseStore = new Store(new FloatSeries(2, 1.1f,1.1f, 0.9f,0.9f), chained, CombineFunction.Multiply);
+            var locMouseStore = new Store(new FloatSeries(2, 1.1f, 1.1f, 0.9f, 0.9f), chained, CombineFunction.Multiply);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
 
             ComparisonSampler cs = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
             cs.EffectRatio = new ParametricSeries(2, 2.5f, 1.2f);
-            var chained2 = new ChainedSampler(cs, new Easing(EasingType.SmoothStart2, clamp:true));
+            var chained2 = new ChainedSampler(cs, new Easing(EasingType.SmoothStart2, clamp: true));
             var mouseRadius = new Store(new FloatSeries(2, 10f, 10f, 9f, 9f, 3f, 3f), cs);
             composite.AppendProperty(PropertyId.Radius, mouseRadius);
 

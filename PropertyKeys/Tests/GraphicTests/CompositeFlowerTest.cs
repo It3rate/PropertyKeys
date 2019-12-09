@@ -42,7 +42,7 @@ namespace DataArcs.Tests.GraphicTests
             IContainer ring = GetRing();
             IContainer comp = GetComposite0();
             IContainer hex = GetHex();
-            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Replace, CombineTarget.T);
+            Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3), CombineFunction.Replace);
             var blend = new BlendTransition(comp, hex, new Timer(0, 3500), easeStore);
             //var blend = new BlendTransition(comp, comp, 0, _player.CurrentMs, 4000, easeStore);
             blend.Runner.EndTimedEvent += CompOnEndTransitionEvent;

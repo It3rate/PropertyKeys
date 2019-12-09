@@ -36,7 +36,9 @@ namespace DataArcs.SeriesData
 			_seed = seed;
             _minMax = minMax ?? new RectFSeries(0,0,1f,1f);
 			_combineFunction = combineFunction;
-			_series = combineFunction == CombineFunction.ContinuousAdd ? SeriesUtils.CreateSeriesOfType(_type, VectorSize, _count, 0f) : GenerateDataSeries();
+			_series = combineFunction == CombineFunction.ContinuousAdd ?
+				SeriesUtils.CreateSeriesOfType(_type, VectorSize, _count, 0f) :
+				GenerateDataSeries();
 		}
 		
 		public float[] this[int index] => _series.GetRawDataAt(index).FloatDataRef;

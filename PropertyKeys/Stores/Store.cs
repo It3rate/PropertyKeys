@@ -20,13 +20,11 @@ namespace DataArcs.Stores
         //    CombineTarget = store?.CombineTarget ?? CombineTarget.Destination;
         //}
 
-        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace, 
-            CombineTarget combineTarget = CombineTarget.Destination)
+        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace)
 		{
 			_series = series;
 			Sampler = sampler ?? new LineSampler(series.Count);
 			CombineFunction = combineFunction;
-			CombineTarget = combineTarget;
         }
 
 		public Series this[int index] => GetValuesAtIndex(index);
@@ -86,7 +84,7 @@ namespace DataArcs.Stores
 
 		public override IStore Clone()
 		{
-			return new Store(_series.Copy(), Sampler, CombineFunction, CombineTarget);
+			return new Store(_series.Copy(), Sampler, CombineFunction);
 		}
 		public override void CopySeriesDataInto(IStore target)
 		{

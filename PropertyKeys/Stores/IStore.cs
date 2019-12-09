@@ -10,7 +10,6 @@ namespace DataArcs.Stores
         int StoreId { get; }
         int Capacity { get; }
         CombineFunction CombineFunction { get; set; }
-		CombineTarget CombineTarget { get; set; }
 		Sampler Sampler { get; set; }
 		bool ShouldIterpolate { get; set; }
 

@@ -127,31 +127,32 @@ namespace DataArcs.SeriesData
 
 		public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
 		{
-			switch (combineFunction)
+			int minSize = Math.Min(DataSize, b.DataSize);
+            switch (combineFunction)
 			{
 				case CombineFunction.Add:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						_intValues[i] += b.IntDataAt(i);
 					}
 
 					break;
 				case CombineFunction.Subtract:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						_intValues[i] -= b.IntDataAt(i);
 					}
 
 					break;
 				case CombineFunction.Multiply:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						_intValues[i] *= b.IntDataAt(i);
 					}
 
 					break;
 				case CombineFunction.Divide:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						var div = IntDataAt(i);
 						_intValues[i] = div != 0 ? _intValues[i] / div : _intValues[i];
@@ -159,7 +160,7 @@ namespace DataArcs.SeriesData
 
 					break;
 				case CombineFunction.Average:
-					for (var i = 0; i < DataSize; i++)
+					for (var i = 0; i < minSize; i++)
 					{
 						_intValues[i] = (int) ((_intValues[i] + b.IntDataAt(i)) / 2.0f);
 					}
@@ -167,7 +168,7 @@ namespace DataArcs.SeriesData
 					break;
 				case CombineFunction.Replace:
 				case CombineFunction.Final:
-                    for (var i = 0; i < DataSize; i++)
+                    for (var i = 0; i < minSize; i++)
 					{
 						_intValues[i] = b.IntDataAt(i);
 					}

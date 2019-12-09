@@ -57,7 +57,7 @@ namespace DataArcs.Tests.GraphicTests
             compositeEnd.AddProperty(PropertyId.Location, loc);
             compositeEnd.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.7f, 0.2f, 0.9f).Store());
 
-            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply, CombineTarget.T);
+            var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply);
             var result = new BlendTransition(compositeStart, compositeEnd, new Timer(0, 3000), easeStore);
 
             var radStore = new Store(new FloatSeries(1, 20f, 20f, 24f, 24f), new LineSampler(), CombineFunction.Multiply);

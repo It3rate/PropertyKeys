@@ -173,7 +173,7 @@ namespace DataArcs.SeriesData
 
         public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
         {
-	        int minSize = Math.Min(DataSize, b.VectorSize);
+	        int minSize = Math.Min(DataSize, b.DataSize);
 			switch (combineFunction)
 			{
 				case CombineFunction.Add:

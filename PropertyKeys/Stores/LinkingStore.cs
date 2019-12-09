@@ -22,7 +22,6 @@ namespace DataArcs.Stores
         private IStore MixStore => _mixStore;// ?? _player[LinkedCompositeId]?.GetStore(PropertyId);
 		// todo: consider implications of having own samplers and combines here. Or copy masked store into this.
         public override CombineFunction CombineFunction { get => MixStore.CombineFunction; set => MixStore.CombineFunction = value; }
-        public override CombineTarget CombineTarget { get => MixStore.CombineTarget; set => MixStore.CombineTarget = value; }
         public override Sampler Sampler
         {
 	        get => MixStore?.Sampler ?? _player[LinkedCompositeId]?.GetStore(PropertyId)?.Sampler;

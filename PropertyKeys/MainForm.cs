@@ -69,7 +69,7 @@ namespace DataArcs
         }
 
         private static int _testCount = 9;
-        private int _testIndex = 9;//_testCount;
+        private int _testIndex = 5;//_testCount;
         private void NextTest()
         {
 	        _testIndex--;

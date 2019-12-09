@@ -54,7 +54,7 @@ namespace DataArcs.SeriesData
 	    void CombineInto(ISeriesElement b, CombineFunction combineFunction, float t = 0);
 	    void InterpolateInto(ISeriesElement b, float t);
 	    void InterpolateInto(ISeriesElement b, ParametricSeries seriesT);
-
+			
 	    ISeriesElement GetZeroSeries();
 	    ISeriesElement GetMinSeries();
 	    ISeriesElement GetMaxSeries();
