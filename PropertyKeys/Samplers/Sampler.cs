@@ -32,6 +32,7 @@ namespace DataArcs.Samplers
 
 		// todo: Why is this in sample? Needs to move to series, and a rect vs grid series can use different algorithms to generate values (needed).
 		// counter: only samplers know about capacity. Series only knows it's own count, not the virtual count it represents.
+		// counter counter: Why do samplers care about capacity? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
         public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);

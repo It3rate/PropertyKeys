@@ -4,12 +4,9 @@ namespace DataArcs.Samplers
 {
 	public class LineSampler : Sampler
 	{
-		public LineSampler(int capacity = 1)
-		{
-			Capacity = capacity;
-		}
+		public LineSampler(int capacity = 1) : base(capacity: capacity) { }
 
-        public override Series GetValueAtIndex(Series series, int index)
+		public override Series GetValueAtIndex(Series series, int index)
 		{
 			return series.GetVirtualValueAt(index, Capacity);
 		}
