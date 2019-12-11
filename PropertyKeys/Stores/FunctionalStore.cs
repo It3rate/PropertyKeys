@@ -16,8 +16,8 @@ namespace DataArcs.Stores
 
 		public override Sampler Sampler
 		{
-			get { return GetStartDataStore().Sampler; }
-			set { GetStartDataStore().Sampler = value; }
+			get => GetStartDataStore().Sampler;
+			set => GetStartDataStore().Sampler = value;
 		}
 
 		public FunctionalStore(params IStore[] stores)

@@ -8,7 +8,6 @@ namespace DataArcs.Stores
 {
 	public class Store : StoreBase
     {
-        protected Series _series;
 
         protected Store() { }
 
@@ -20,9 +19,8 @@ namespace DataArcs.Stores
         //    CombineTarget = store?.CombineTarget ?? CombineTarget.Destination;
         //}
 
-        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace)
+        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace) : base(series)
 		{
-			_series = series;
 			Sampler = sampler ?? new LineSampler(series.Count);
 			CombineFunction = combineFunction;
         }
@@ -31,22 +29,22 @@ namespace DataArcs.Stores
 
 		public override Series GetSeriesRef()
 		{
-			return _series;
+			return Series;
         }
 		public override void SetFullSeries(Series value)
 		{
-			_series = value;
+			Series = value;
 		}
 
         public override Series GetValuesAtIndex(int index)
 		{
-			return ShouldIterpolate ? _series.GetRawDataAt(index) : Sampler.GetValueAtIndex(_series, index);
+			return ShouldIterpolate ? Series.GetRawDataAt(index) : Sampler.GetValueAtIndex(Series, index);
 		}
 
 		public override Series GetValuesAtT(float t)
 		{
 			// GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
-            return ShouldIterpolate ? _series.GetRawDataAt(t) : Sampler.GetValuesAtT(_series, t);
+            return ShouldIterpolate ? Series.GetRawDataAt(t) : Sampler.GetValuesAtT(Series, t);
 		}
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -57,53 +55,53 @@ namespace DataArcs.Stores
 
         public override void Update(float deltaTime)
 		{
-			_series.Update(deltaTime);
+			Series.Update(deltaTime);
 		}
 
         public override void ResetData()
 		{
-			_series.ResetData();
+			Series.ResetData();
 		}
 
 		public override void BakeData()
         {
-            var len = Capacity * _series.VectorSize;
-            if (_series.DataSize != len)
+            var len = Capacity * Series.VectorSize;
+            if (Series.DataSize != len)
             {
-	            Series result = SeriesUtils.CreateSeriesOfType(_series.Type, _series.VectorSize, Capacity, 0f);
+	            Series result = SeriesUtils.CreateSeriesOfType(Series.Type, Series.VectorSize, Capacity, 0f);
 	            
                 for (var i = 0; i < Capacity; i++)
                 {
 	                float t = i / (float) (Capacity - 1);
                     result.SetRawDataAt(i, GetValuesAtT(t));
                 }
-                _series = result;
+                Series = result;
             }
-            ShouldIterpolate = _series.Type != SeriesType.Int;
+            ShouldIterpolate = Series.Type != SeriesType.Int;
 		}
 
 		public override IStore Clone()
 		{
-			return new Store(_series.Copy(), Sampler, CombineFunction);
+			return new Store(Series.Copy(), Sampler, CombineFunction);
 		}
 		public override void CopySeriesDataInto(IStore target)
 		{
 			Series targetSeries = target.GetSeriesRef();
 			
-            if (_series.Type == targetSeries.Type && _series.DataSize == targetSeries.DataSize)
+            if (Series.Type == targetSeries.Type && Series.DataSize == targetSeries.DataSize)
 			{
-				if (_series.Type == SeriesType.Float)
+				if (Series.Type == SeriesType.Float)
 				{
-					Array.Copy(_series.FloatDataRef, target.GetSeriesRef().FloatDataRef, _series.DataSize);
+					Array.Copy(Series.FloatDataRef, target.GetSeriesRef().FloatDataRef, Series.DataSize);
 				}
-				else if (_series.Type == SeriesType.Int)
+				else if (Series.Type == SeriesType.Int)
 				{
-					Array.Copy(_series.IntDataRef, target.GetSeriesRef().IntDataRef, _series.DataSize);
+					Array.Copy(Series.IntDataRef, target.GetSeriesRef().IntDataRef, Series.DataSize);
                 }
 			}
             else
             {
-				target.SetFullSeries(_series.Copy());
+				target.SetFullSeries(Series.Copy());
             }
 		}
 

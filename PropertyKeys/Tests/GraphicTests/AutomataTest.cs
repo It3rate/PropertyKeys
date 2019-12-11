@@ -24,7 +24,7 @@ namespace DataArcs.Tests.GraphicTests
 	    private readonly Player _player;
 	    int _versionIndex = -1;
 	    int _versionCount = 4;
-	    private Timer _timer;
+	    //private Timer _timer;
 	    private MouseInput _mouseInput;
 
         AutomataComposite _current;
