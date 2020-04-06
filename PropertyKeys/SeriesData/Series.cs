@@ -23,7 +23,7 @@ namespace DataArcs.SeriesData
         public int Capacity { get; protected set; } = 1;
 
         /// <summary>
-        /// The raw size of the stored data array, ignores Capacity and VectorSize.
+        /// The raw size of the stored data array, ignores SliceCount and VectorSize.
         /// </summary>
         public abstract int DataSize { get; }
 

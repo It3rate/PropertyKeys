@@ -113,7 +113,7 @@ namespace DataArcs.Tests.GraphicTests
         
 		IContainer GetContainer(Sampler sampler, bool is2D)
         {
-            Store itemStore = Store.CreateItemStore(sampler.Capacity);
+            Store itemStore = Store.CreateItemStore(sampler.SliceCount);
             var composite = new Container(itemStore);
 
             composite.AddProperty(PropertyId.Orientation, new FloatSeries(1, 0f).Store());

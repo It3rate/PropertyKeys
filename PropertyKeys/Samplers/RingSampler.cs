@@ -17,10 +17,10 @@ namespace DataArcs.Samplers
         {
             RingCounts = ringCounts;
             Orientation = orientation;
-            Capacity = ringCounts[0];
+            SliceCount = ringCounts[0];
             for (int i = 1; i < ringCounts.Length; i++)
             {
-                Capacity += ringCounts[i];
+                SliceCount += ringCounts[i];
             }
 
             MinRadius = 0.3f;

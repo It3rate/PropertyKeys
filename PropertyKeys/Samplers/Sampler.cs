@@ -7,32 +7,32 @@ namespace DataArcs.Samplers
 {
 	public abstract class Sampler
 	{
-		public int Capacity { get; protected set; } = 1;
+		public int SliceCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
 		public int[] Strides { get; protected set; }
 
-		public Sampler(Slot[] swizzleMap = null, int capacity = 1)
+		public Sampler(Slot[] swizzleMap = null, int sliceCount = 1)
 		{
 			SwizzleMap = swizzleMap;
-			Capacity = capacity;
-			Strides = new int[Capacity];
+			SliceCount = sliceCount;
+			Strides = new int[SliceCount];
         }
 
         public virtual Series GetValueAtIndex(Series series, int index)
         {
-	        var indexT = SamplerUtils.TFromIndex(Capacity, index); // index / (Capacity - 1f);
+	        var indexT = SamplerUtils.TFromIndex(SliceCount, index); // index / (SliceCount - 1f);
             return GetValuesAtT(series, indexT);
         }
 
         public virtual Series GetValuesAtT(Series series, float t)
-        {
+        {	
 	        var seriesT = GetSampledTs(new ParametricSeries(1, t));
 	        return GetSeriesSample(series, seriesT);
         }
 
 		// todo: Why is this in sample? Needs to move to series, and a rect vs grid series can use different algorithms to generate values (needed).
-		// counter: only samplers know about capacity. Series only knows it's own count, not the virtual count it represents.
-		// counter counter: Why do samplers care about capacity? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
+		// counter: only samplers know about sliceCount. Series only knows it's own count, not the virtual count it represents.
+		// counter counter: Why do samplers care about sliceCount? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
         public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
@@ -53,8 +53,8 @@ namespace DataArcs.Samplers
         {
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);
-	        result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndex(index - 1, Capacity), Capacity));
-	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndex(index + 1, Capacity), Capacity));
+	        result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndex(index - 1, SliceCount), SliceCount));
+	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndex(index + 1, SliceCount), SliceCount));
             return result;
         }
 
@@ -94,8 +94,8 @@ namespace DataArcs.Samplers
         public IntSeries GetBakedStrideIndexes()
         {
             int strideLen = Strides.Length;
-            var result = new IntSeries(strideLen, new int[Capacity * strideLen]);
-            int capacity = Capacity;
+            var result = new IntSeries(strideLen, new int[SliceCount * strideLen]);
+            int capacity = SliceCount;
             
             var t = new ParametricSeries(1, 0);
             for (int i = 0; i < capacity; i++)

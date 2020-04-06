@@ -41,7 +41,7 @@ namespace DataArcs.Components
 			    {
 				    _stores[id] = new FunctionalStore(curStore, store);
 				    _stores[id].CombineFunction = curStore.CombineFunction;
-				    //_stores[id].Capacity = curStore.Capacity;
+				    //_stores[id].SliceCount = curStore.SliceCount;
                 }
 		    }
 		    else

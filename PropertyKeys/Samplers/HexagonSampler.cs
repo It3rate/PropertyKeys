@@ -15,7 +15,7 @@ namespace DataArcs.Samplers
 
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-            var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, Capacity, seriesT.X) : seriesT;
+            var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, SliceCount, seriesT.X) : seriesT;
             bool isOddRow = (SamplerUtils.IndexFromT(Strides[1], result.Y) & 1) == 1;
             float hexRowScale = 1f / (Strides[0] - 1f) * 0.5f;
             result[0] *= (1f - hexRowScale);
@@ -30,19 +30,19 @@ namespace DataArcs.Samplers
         private int WrappedIndexes(int x, int y) => (x >= Strides[0] ? 0 : x < 0 ? Strides[0] - 1 : x) + Strides[0] * (y >= Strides[1] ? 0 : y < 0 ? Strides[1] - 1 : y);
         public override Series GetNeighbors(Series series, int index, bool wrapEdges = true)
         {
-	        var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, Capacity, index);
+	        var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, SliceCount, index);
 	        int indexX = SamplerUtils.IndexFromT(Strides[0], seriesT[0]);
 	        int indexY = SamplerUtils.IndexFromT(Strides[1], seriesT[1]);
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
 	        var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
             int offset = (indexY & 1) == 1 ? 0 : -1;
             
-            result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndexes(indexX + 1, indexY), Capacity)); // right
-	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndexes(indexX + 1 + offset, indexY - 1), Capacity)); // top right
-	        result.SetRawDataAt(2, series.GetVirtualValueAt(WrappedIndexes(indexX + 0 + offset, indexY - 1), Capacity)); // top Left
-            result.SetRawDataAt(3, series.GetVirtualValueAt(WrappedIndexes(indexX - 1, indexY), Capacity)); // left
-            result.SetRawDataAt(4, series.GetVirtualValueAt(WrappedIndexes(indexX + 0 + offset, indexY + 1), Capacity)); // bottom left
-            result.SetRawDataAt(5, series.GetVirtualValueAt(WrappedIndexes(indexX + 1 + offset, indexY + 1), Capacity)); // bottom right
+            result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndexes(indexX + 1, indexY), SliceCount)); // right
+	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndexes(indexX + 1 + offset, indexY - 1), SliceCount)); // top right
+	        result.SetRawDataAt(2, series.GetVirtualValueAt(WrappedIndexes(indexX + 0 + offset, indexY - 1), SliceCount)); // top Left
+            result.SetRawDataAt(3, series.GetVirtualValueAt(WrappedIndexes(indexX - 1, indexY), SliceCount)); // left
+            result.SetRawDataAt(4, series.GetVirtualValueAt(WrappedIndexes(indexX + 0 + offset, indexY + 1), SliceCount)); // bottom left
+            result.SetRawDataAt(5, series.GetVirtualValueAt(WrappedIndexes(indexX + 1 + offset, indexY + 1), SliceCount)); // bottom right
             return result;
         }
 
@@ -68,7 +68,7 @@ namespace DataArcs.Samplers
             bounds[3] = bounds.Top + totalHeight;
 
             sampler = new HexagonSampler(new int[] { columns, rows });
-	        var composite = new Container(Store.CreateItemStore(sampler.Capacity));
+	        var composite = new Container(Store.CreateItemStore(sampler.SliceCount));
 	        float overdraw = 1.00f;
             float radiusScale = 1f - 1f / (columns - 1f) * 0.5f; // rows are offset, and thus compressed when drawn by this much.
             radius = h / 2f * radiusScale * overdraw;

@@ -13,7 +13,7 @@ namespace DataArcs.Stores
         public virtual CombineFunction CombineFunction { get; set; }
         public virtual Sampler Sampler { get; set; }
         protected Series Series { get; set; }
-        public virtual int Capacity => Sampler.Capacity;
+        public virtual int Capacity => Sampler.SliceCount;
         public virtual bool ShouldIterpolate { get; set; } = false; // linear vs nearest
 
         protected StoreBase(Series series = null)
