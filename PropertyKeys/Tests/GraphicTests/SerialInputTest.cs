@@ -43,7 +43,7 @@ namespace DataArcs.Tests.GraphicTests
 
         IComposite GetHexGrid()
         {
-            var mouseLink = new LinkSampler(_sensorInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
+            var mouseLink = new LinkSampler(_sensorInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.YX);
 
             var composite = new Container(Store.CreateItemStore(20 * 11));
             Store loc = new Store(MouseInput.MainFrameRect, new HexagonSampler(new int[] { 20, 11 }));
@@ -56,6 +56,17 @@ namespace DataArcs.Tests.GraphicTests
             var locMouseStore = new Store(new FloatSeries(2, 1.1f, 1.1f, 0.9f, 0.9f), chained, CombineFunction.Multiply);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
+            var penColorSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.MpuGyroscope, SlotUtils.XYZ);
+            var penColorStore = new Store(new FloatSeries(3, 0.4f, 1.0f, 0.4f, 1.0f, 0.4f, 1.0f), penColorSampler);
+            composite.AddProperty(PropertyId.PenColor, penColorStore);
+
+            var colorSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.MpuAcceleration, SlotUtils.XYZ);
+            var colorStore = new Store(new FloatSeries(3, 0.0f, 1.0f, 0.0f, 0.6f, 0.0f, 0.6f), colorSampler);
+            composite.AddProperty(PropertyId.FillColor, colorStore);
+
+            var pressureSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.MpuAccelerationZ, SlotUtils.X);
+            var pressureStore = new Store(new FloatSeries(1, -1.0f, 3.0f), pressureSampler);
+            composite.AddProperty(PropertyId.Starness, pressureStore);
 
             ComparisonSampler cs = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
             cs.EffectRatio = new ParametricSeries(2, 2.5f, 1.2f);
@@ -68,10 +79,10 @@ namespace DataArcs.Tests.GraphicTests
             composite.AddProperty(PropertyId.Orientation, mouseOrient);
 
             composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store());
-            composite.AddProperty(PropertyId.Starness, new FloatSeries(1, 2.2f).Store());
-            composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.3f, 0.6f, 0.3f, 0.7f, 0.7f, 0.2f).Store());
-            composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.9f, 0.9f, 0.7f, 0.99f, 0.99f, 0.9f).Store());
-            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 1.6f).Store());
+            //composite.AddProperty(PropertyId.Starness, new FloatSeries(1, 2.2f).Store());
+            composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 2f).Store());
+            //composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.3f, 0.6f, 0.3f, 0.7f, 0.7f, 0.2f).Store());
+            //composite.AddProperty(PropertyId.PenColor, new FloatSeries(3, 0.9f, 0.9f, 0.7f, 0.99f, 0.99f, 0.9f).Store());
             composite.Renderer = new PolyShape();
 
             return composite;

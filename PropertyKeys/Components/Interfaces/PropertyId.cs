@@ -52,7 +52,29 @@ namespace DataArcs.Components
         PenAngle,
         KeyboardState, // keyboard input events and text on composite
 
-		Automata,
+        Automata,
+
+        MpuAcceleration = 500,
+        MpuAccelerationX,
+        MpuAccelerationY,
+        MpuAccelerationZ,
+
+        MpuGyroscope,
+        MpuGyroscopeX,
+        MpuGyroscopeY,
+        MpuGyroscopeZ,
+
+        MpuMagnetometer,
+        MpuMagnetometerX,
+        MpuMagnetometerY,
+        MpuMagnetometerZ,
+
+        MpuTemperature,
+
+        BmeHumidity,
+        BmePressure,
+        BmeTemperature,
+		
 
         User = 0x1000,
 		User1 = 0x1001,

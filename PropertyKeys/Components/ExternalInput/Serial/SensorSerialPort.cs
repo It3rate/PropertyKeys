@@ -24,6 +24,22 @@ namespace DataArcs.Components.ExternalInput.Serial
 
         private float _x;
         private float _y;
+        private float _penPressure;
+
+        private float _accelX;
+        private float _accelY;
+        private float _accelZ;
+        private float _gyroX;
+        private float _gyroY;
+        private float _gyroZ;
+        private float _magX;
+        private float _magY;
+        private float _magZ;
+        private float _mpuTemperature;
+
+        private float _humidity;
+        private float _airPressure;
+        private float _temperature;
         private IComposite _container;
 
         public static RectFSeries MainFrameRect
@@ -51,12 +67,8 @@ namespace DataArcs.Components.ExternalInput.Serial
 
         }
 
-        protected virtual void OnSensorUpdated(int x, int y)
-        {
-	        _x = (int)(y / 2.5) - 200;
-	        _y = -((int)(x / 2.0) - 1000);
-	        Debug.WriteLine(_x + ", " + _y);
-        }
+
+
 
         public void StartListening(string portName)
         {
@@ -88,6 +100,17 @@ namespace DataArcs.Components.ExternalInput.Serial
         private int bytesIndex = 0;
         private Thread _readThread;
 
+        public struct MPUVector
+        {
+	        public int X;
+	        public int Y;
+	        public int Z;
+	        public override string ToString()
+	        {
+		        return "X:" + X + "\tY:" + X + "\tZ:" + Z;
+	        }
+        }
+
         public void Read()
         {
             while (continueReading)
@@ -97,19 +120,48 @@ namespace DataArcs.Components.ExternalInput.Serial
                 {
                     try
                     {
-                        _serialPort.Read(bytes, bytesIndex, len);
-                        bytesIndex += len;
-                        if (bytesIndex >= 10)
+                        string s = _serialPort.ReadLine();
+	                    //Debug.WriteLine(s);
+                        if (s.StartsWith("RT:"))
                         {
-                            bytesIndex = 0;
-                            int valX = BitConverter.ToInt16(bytes, 0);
-                            int valY = BitConverter.ToInt16(bytes, 2);
-                            OnSensorUpdated(valX, valY);
+	                        string[] blobs = s.Substring(3).Split(',');
+	                        int[] vals = new int[blobs.Length];
+	                        for (int i = 0; i < blobs.Length; i++)
+	                        {
+		                        vals[i] = Convert.ToInt32(blobs[i], 16); //int.Parse(blobs[i], NumberStyles.HexNumber);
+	                        }
+
+	                        OnTouchSensorUpdated(vals[0], vals[1], vals[2]);
+                        }
+                        else if (s.StartsWith("TPH:"))
+                        {
+	                        string[] blobs = s.Substring(4).Split(',');
+	                        int[] vals = new int[blobs.Length];
+	                        for (int i = 0; i < blobs.Length; i++)
+	                        {
+		                        vals[i] = Convert.ToInt16(blobs[i], 16);
+	                        }
+	                        OnHumiditySensorUpdated((float)vals[0], (float)vals[1], vals[2] / 100f);
+                        }
+                        else if (s.StartsWith("ATGM:"))
+                        {
+	                        string[] blobs = s.Substring(5).Split(',');
+	                        int[] vals = new int[blobs.Length];
+	                        for (int i = 0; i < blobs.Length; i++)
+	                        {
+		                        vals[i] = Convert.ToInt16(blobs[i], 16);
+	                        }
+	                        OnAccelSensorUpdated(
+		                        new MPUVector { X = vals[0], Y = vals[1], Z = vals[2] },
+		                        new MPUVector { X = vals[3], Y = vals[4], Z = vals[5] },
+		                        new MPUVector { X = vals[6], Y = vals[7], Z = vals[8] },
+		                        vals[9] / 100f
+	                        );
                         }
                     }
-                    catch (TimeoutException)
-                    {
-                    }
+                    catch (TimeoutException) { }
+                    catch (FormatException) { }
+                    catch (IndexOutOfRangeException) { }
                 }
                 else
                 {
@@ -117,6 +169,36 @@ namespace DataArcs.Components.ExternalInput.Serial
                 }
             }
         }
+
+        protected virtual void OnTouchSensorUpdated(int x, int y, int penPressure)
+        {
+	        _x = (int)(y / 2.5) - 200;
+	        _y = -((int)(x / 2.0) - 1000);
+	        _penPressure = (penPressure - 500) / 600.0f;
+        }
+        protected virtual void OnAccelSensorUpdated(MPUVector accel, MPUVector gyro, MPUVector mag, float mpuTemperature)
+        {
+            _accelX = (accel.X / 32767.0f) + 0.5f;
+	        _accelY = (accel.Y / 32767.0f) + 0.5f;
+	        _accelZ = (accel.Z / 32767.0f) + 0.5f;
+            _gyroX = (gyro.X / 32767.0f) + 0.5f;
+	        _gyroY = (gyro.Y / 32767.0f) + 0.5f;
+	        _gyroZ = (gyro.Z / 32767.0f) + 0.5f;
+            _magX = (mag.X / 32767.0f) + 0.5f;
+	        _magY = (mag.Y / 32767.0f) + 0.5f;
+	        _magZ = (mag.Z / 32767.0f) + 0.5f;
+            _mpuTemperature = (float)mpuTemperature;
+        }
+        protected virtual void OnHumiditySensorUpdated(float temperature, float airPressure, float humidity)
+        {
+	        _humidity = humidity;
+	        _airPressure = airPressure;
+	        _temperature = temperature;
+        }
+
+
+
+
 
         public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
         {
@@ -133,6 +215,48 @@ namespace DataArcs.Components.ExternalInput.Serial
                 case PropertyId.MouseLocationT:
                     result = new ParametricSeries(2, _x / MainFrameRect.FloatDataAt(2), _y / MainFrameRect.FloatDataAt(3));
                     break;
+                case PropertyId.PenPressure:
+	                result = new ParametricSeries(1, _penPressure);
+	                break;
+                case PropertyId.MpuAcceleration:
+	                result = new ParametricSeries(3, _accelX, _accelY, _accelZ);
+	                break;
+                case PropertyId.MpuGyroscope:
+	                result = new ParametricSeries(3, _gyroX, _gyroY, _gyroZ);
+	                break;
+                case PropertyId.MpuMagnetometer:
+	                result = new ParametricSeries(3, _magX, _magY, _magZ);
+	                break;
+                case PropertyId.MpuAccelerationX:
+	                result = new ParametricSeries(1, _accelX);
+	                break;
+                case PropertyId.MpuAccelerationY:
+	                result = new ParametricSeries(1, _accelY);
+	                break;
+                case PropertyId.MpuAccelerationZ:
+	                result = new ParametricSeries(1, _accelZ);
+	                break;
+                case PropertyId.MpuGyroscopeX:
+	                result = new ParametricSeries(1, _gyroX);
+	                break;
+                case PropertyId.MpuGyroscopeY:
+	                result = new ParametricSeries(1, _gyroY);
+	                break;
+                case PropertyId.MpuGyroscopeZ:
+	                result = new ParametricSeries(1, _gyroZ);
+	                break;
+                case PropertyId.MpuMagnetometerX:
+	                result = new ParametricSeries(1, _magX);
+	                break;
+                case PropertyId.MpuMagnetometerY:
+	                result = new ParametricSeries(1, _magY);
+	                break;
+                case PropertyId.MpuMagnetometerZ:
+	                result = new ParametricSeries(1, _magZ);
+	                break;
+                case PropertyId.MpuTemperature:
+	                result = new ParametricSeries(1, _mpuTemperature);
+	                break;
                 case PropertyId.Mouse:
                 case PropertyId.MouseLocation:
                 default:
