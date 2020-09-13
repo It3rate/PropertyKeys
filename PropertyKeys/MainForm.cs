@@ -68,8 +68,17 @@ namespace DataArcs
             NextTest();
         }
 
+		public async static void SkipTest()
+		{
+			await Task.Delay(50);
+            MainForm form = (MainForm)Application.OpenForms[0];
+			form.Invoke((MethodInvoker)delegate {
+				form.NextTest();
+			});
+		}
+
         private static int _testCount = 10;
-        private int _testIndex = 6;//_testCount;
+        private int _testIndex = 7;//_testCount;
         private void NextTest()
         {
 	        _testIndex--;

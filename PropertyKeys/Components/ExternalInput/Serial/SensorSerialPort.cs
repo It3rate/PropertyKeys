@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
@@ -67,9 +68,6 @@ namespace DataArcs.Components.ExternalInput.Serial
 
         }
 
-
-
-
         public void StartListening(string portName)
         {
             _readThread = new Thread(Read);
@@ -89,10 +87,17 @@ namespace DataArcs.Components.ExternalInput.Serial
             // Set the read/write timeouts
             _serialPort.ReadTimeout = 500;
             _serialPort.WriteTimeout = 500;
+            try
+            {
+	            _serialPort.Open();
+	            _serialPort.DiscardInBuffer();
+	            _readThread.Start();
+            }
+            catch (IOException)
+            {
+				MainForm.SkipTest();
+            }
 
-            _serialPort.Open();
-            _serialPort.DiscardInBuffer();
-            _readThread.Start();
         }
 
         private bool continueReading = true;

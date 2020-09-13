@@ -64,9 +64,13 @@ namespace DataArcs.Tests.GraphicTests
             var colorStore = new Store(new FloatSeries(3, 0.0f, 1.0f, 0.0f, 0.6f, 0.0f, 0.6f), colorSampler);
             composite.AddProperty(PropertyId.FillColor, colorStore);
 
-            var pressureSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.MpuAccelerationZ, SlotUtils.X);
-            var pressureStore = new Store(new FloatSeries(1, -1.0f, 3.0f), pressureSampler);
-            composite.AddProperty(PropertyId.Starness, pressureStore);
+            var starnessSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.MpuAccelerationZ, SlotUtils.X);
+            var starnessStore = new Store(new FloatSeries(1, -1.0f, 2.0f), starnessSampler);
+            composite.AddProperty(PropertyId.Starness, starnessStore);
+
+            var pressureSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.PenPressure, SlotUtils.X);
+            var pressureStore = new Store(new FloatSeries(1, 6.0f, 3f), pressureSampler);
+            composite.AddProperty(PropertyId.PointCount, pressureStore);
 
             ComparisonSampler cs = new ComparisonSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
             cs.EffectRatio = new ParametricSeries(2, 2.5f, 1.2f);
@@ -78,7 +82,7 @@ namespace DataArcs.Tests.GraphicTests
             var mouseOrient = new Store(new FloatSeries(1, 0f, 1f), cso);
             composite.AddProperty(PropertyId.Orientation, mouseOrient);
 
-            composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store());
+            //composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store());
             //composite.AddProperty(PropertyId.Starness, new FloatSeries(1, 2.2f).Store());
             composite.AddProperty(PropertyId.PenWidth, new FloatSeries(1, 2f).Store());
             //composite.AddProperty(PropertyId.FillColor, new FloatSeries(3, 0.3f, 0.6f, 0.3f, 0.7f, 0.7f, 0.2f).Store());
