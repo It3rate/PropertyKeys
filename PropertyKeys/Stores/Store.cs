@@ -38,13 +38,13 @@ namespace DataArcs.Stores
 
         public override Series GetValuesAtIndex(int index)
 		{
-			return ShouldIterpolate ? Series.GetRawDataAt(index) : Sampler.GetValueAtIndex(Series, index);
+			return ShouldInterpolate ? Series.GetRawDataAt(index) : Sampler.GetValueAtIndex(Series, index);
 		}
 
 		public override Series GetValuesAtT(float t)
 		{
 			// GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
-            return ShouldIterpolate ? Series.GetRawDataAt(t) : Sampler.GetValuesAtT(Series, t);
+            return ShouldInterpolate ? Series.GetRawDataAt(t) : Sampler.GetValuesAtT(Series, t);
 		}
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -77,7 +77,7 @@ namespace DataArcs.Stores
                 }
                 Series = result;
             }
-            ShouldIterpolate = Series.Type != SeriesType.Int;
+            ShouldInterpolate = Series.Type != SeriesType.Int;
 		}
 
 		public override IStore Clone()

@@ -13,7 +13,7 @@ using DataArcs.Tests.GraphicTests;
 
 namespace DataArcs
 {
-	public partial class MainForm : Form
+	public sealed partial class MainForm : Form
     {
         // Sequencer
         // convert to cuda
@@ -43,17 +43,11 @@ namespace DataArcs
 
 			BackColor = Color.Black;
 
-            _b0 = new Button();
-            _b0.Text = "Next";
-            _b0.Click += B0_Click;
-            _b0.Location = new Point(720, 5);
-            _b0.BackColor = Color.DarkGray;
+			_b0 = new Button {Text = "Next", Location = new Point(720, 5), BackColor = Color.DarkGray};
+			_b0.Click += B0_Click;
             Controls.Add(_b0);
 
-            _bPause = new Button();
-            _bPause.Text = "Pause";
-            _bPause.BackColor = Color.DarkGray;
-            _bPause.Location = new Point(720, 30);
+            _bPause = new Button {Text = "Pause", BackColor = Color.DarkGray, Location = new Point(720, 30)};
             Controls.Add(_bPause);
 
             _ = Execute(null, 50);
@@ -68,13 +62,13 @@ namespace DataArcs
             NextTest();
         }
 
-		public async static void SkipTest()
+		public static async void SkipTest()
 		{
 			await Task.Delay(50);
             MainForm form = (MainForm)Application.OpenForms[0];
-			form.Invoke((MethodInvoker)delegate {
+			//form.Invoke((MethodInvoker)delegate {
 				form.NextTest();
-			});
+			//});
 		}
 
         private static int _testCount = 10;
@@ -129,7 +123,6 @@ namespace DataArcs
         {
             NextTest();
         }
-
 
     }
 }

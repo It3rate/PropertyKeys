@@ -11,7 +11,7 @@ namespace DataArcs.Stores
         int Capacity { get; }
         CombineFunction CombineFunction { get; set; }
 		Sampler Sampler { get; set; }
-		bool ShouldIterpolate { get; set; }
+		bool ShouldInterpolate { get; set; }
 
         Series GetSeriesRef();
         void SetFullSeries(Series value);

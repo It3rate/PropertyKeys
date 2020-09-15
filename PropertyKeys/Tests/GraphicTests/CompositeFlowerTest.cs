@@ -165,7 +165,7 @@ namespace DataArcs.Tests.GraphicTests
             var colorEndStore2 = new Store(new FloatSeries(3, end2), hexSampler);
 
             colorEndStore1.BakeData();
-            colorEndStore1.GetSeriesRef().SetRawDataAt(standOutStar, new FloatSeries(3, 1f,0f,0f));
+            colorEndStore1.GetSeriesRef().SetRawDataAt(standOutStar, new FloatSeries(3, 1f,0f,0f)); // Red star
 
             if (index == 0) return colorStartStore;
             else if (index == 1) return colorEndStore1;
