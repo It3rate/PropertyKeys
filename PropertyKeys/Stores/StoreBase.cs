@@ -8,7 +8,8 @@ namespace DataArcs.Stores
     public abstract class StoreBase : IStore
     {
 	    private static int _idCounter = 1;
-	    public int StoreId { get; }
+	    public string Name { get; set; }
+        public int Id { get; }
 
         public virtual CombineFunction CombineFunction { get; set; }
         public virtual Sampler Sampler { get; set; }
@@ -18,16 +19,19 @@ namespace DataArcs.Stores
 
         protected StoreBase(Series series = null)
         {
-            StoreId = _idCounter++;
+            Id = _idCounter++;
             Series = series;
         }
         //protected StoreBase(IStore store)
         //{
-        //    StoreId = _idCounter++;
+        //    Id = _idCounter++;
         //    Sampler = store.Sampler;
         //    CombineFunction = store.CombineFunction;
         //    CombineTarget = store.CombineTarget;
         //}
+
+        public virtual void OnActivate() { }
+        public virtual void OnDeactivate() { }
 
         public abstract Series GetSeriesRef();
         public abstract void SetFullSeries(Series value);
@@ -43,7 +47,7 @@ namespace DataArcs.Stores
         }
 		
 
-        public abstract void Update(double deltaTime);
+        public abstract void Update(double currentTime, double deltaTime);
 
         public abstract void ResetData();
 

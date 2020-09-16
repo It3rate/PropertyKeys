@@ -1,13 +1,16 @@
 ﻿using System;
 using DataArcs.SeriesData;
 using System.Collections;
+using DataArcs.Components.Libraries;
 using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
-	public interface IStore : IEnumerable
+	public interface IStore : IEnumerable, IDefinition
     {
-        int StoreId { get; }
+	    //int Id { get; }
+        //void Update(double currentTime, double deltaTime);
+
         int Capacity { get; }
         CombineFunction CombineFunction { get; set; }
 		Sampler Sampler { get; set; }
@@ -21,7 +24,6 @@ namespace DataArcs.Stores
         ParametricSeries GetSampledTs(ParametricSeries seriesT);
         Series GetNeighbors(int index, bool wrapEdges = true);
 
-        void Update(double deltaTime);
 		void ResetData();
 		void BakeData();
 		IStore Clone();

@@ -79,11 +79,11 @@ namespace DataArcs.Stores
 			return result;
 		}
 
-		public override void Update(double deltaTime)
+		public override void Update(double currentTime, double deltaTime)
 		{
 			foreach (var store in _stores)
 			{
-				store.Update(deltaTime);
+				store.Update(currentTime, deltaTime);
 			}
 		}
 
@@ -132,7 +132,7 @@ namespace DataArcs.Stores
 		public bool RemoveById(int id)
 		{
 			bool result = false;
-			int index = _stores.FindIndex(s => s.StoreId == id);
+			int index = _stores.FindIndex(s => s.Id == id);
 			if (index > -1)
 			{
 				_stores.RemoveAt(index);

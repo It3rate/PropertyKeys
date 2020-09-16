@@ -70,7 +70,7 @@ namespace DataArcs.Components.Transitions
             commonKeys.IntersectWith(endKeys);
             foreach (var key in commonKeys)
             {
-	            if (Start?.GetStore(key).StoreId != End?.GetStore(key).StoreId)
+	            if (Start?.GetStore(key).Id != End?.GetStore(key).Id)
 	            {
 					_blends[key] = (BlendStore)GetStore(key);
 	            }
@@ -85,7 +85,7 @@ namespace DataArcs.Components.Transitions
             End?.Update(currentTime, deltaTime);
             foreach (var item in _blends.Values)
             {
-                item.Update(Runner.InterpolationT);
+                item.Update(currentTime, Runner.InterpolationT);
             }
         }
 

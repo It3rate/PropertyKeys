@@ -75,7 +75,7 @@ namespace DataArcs.Components
 	    {
 		    foreach (var store in _stores.Values)
 		    {
-			    store.Update(deltaTime);
+			    store.Update(currentTime, deltaTime);
 		    }
 	    }
 	    public virtual void EndUpdate(double currentTime, double deltaTime) { }

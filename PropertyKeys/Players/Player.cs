@@ -22,7 +22,7 @@ namespace DataArcs.Players
 
         //private Definitions<Series> _series;
         //private Definitions<Sampler> _samplers;
-        //private Definitions<Store> _stores;
+        private Definitions<Store> _stores;
         private Definitions<IComposite> _composites = new Definitions<IComposite>();
 
         private bool _isPaused;

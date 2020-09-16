@@ -103,9 +103,9 @@ namespace DataArcs.Stores
         }
 
 
-        public override void Update(double deltaTime)
+        public override void Update(double currentTime, double deltaTime)
         {
-            _mixStore?.Update(deltaTime);
+            _mixStore?.Update(currentTime, deltaTime);
         }
 
         public override void ResetData()
