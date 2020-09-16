@@ -7,20 +7,20 @@ namespace DataArcs.Samplers
 {
 	public abstract class Sampler
 	{
-		public int SliceCount { get; protected set; } = 1;
+		public int SampleCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
 		public int[] Strides { get; protected set; }
 
-		public Sampler(Slot[] swizzleMap = null, int sliceCount = 1)
+		public Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
 		{
 			SwizzleMap = swizzleMap;
-			SliceCount = sliceCount;
-			Strides = new int[SliceCount];
+			SampleCount = sampleCount;
+			Strides = new int[SampleCount];
         }
 
         public virtual Series GetValueAtIndex(Series series, int index)
         {
-	        var indexT = SamplerUtils.TFromIndex(SliceCount, index); // index / (SliceCount - 1f);
+	        var indexT = SamplerUtils.TFromIndex(SampleCount, index); // index / (SampleCount - 1f);
             return GetValuesAtT(series, indexT);
         }
 
@@ -31,8 +31,9 @@ namespace DataArcs.Samplers
         }
 
 		// todo: Why is this in sample? Needs to move to series, and a rect vs grid series can use different algorithms to generate values (needed).
-		// counter: only samplers know about sliceCount. Series only knows it's own count, not the virtual count it represents.
-		// counter counter: Why do samplers care about sliceCount? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
+		// counter: only samplers know about sampleCount. Series only knows it's own count, not the virtual count it represents.
+		// counter counter: Why do samplers care about sampleCount? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
+		// ans: A grid knows it's max size by strides. Need an infinite scroll mode where sampleCount is read from series, but also want (more common) option to set size from sampler.
         public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
@@ -53,8 +54,8 @@ namespace DataArcs.Samplers
         {
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);
-	        result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndex(index - 1, SliceCount), SliceCount));
-	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndex(index + 1, SliceCount), SliceCount));
+	        result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndex(index - 1, SampleCount), SampleCount));
+	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndex(index + 1, SampleCount), SampleCount));
             return result;
         }
 
@@ -94,8 +95,8 @@ namespace DataArcs.Samplers
         public IntSeries GetBakedStrideIndexes()
         {
             int strideLen = Strides.Length;
-            var result = new IntSeries(strideLen, new int[SliceCount * strideLen]);
-            int capacity = SliceCount;
+            var result = new IntSeries(strideLen, new int[SampleCount * strideLen]);
+            int capacity = SampleCount;
             
             var t = new ParametricSeries(1, 0);
             for (int i = 0; i < capacity; i++)

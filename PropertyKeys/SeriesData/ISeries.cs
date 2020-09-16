@@ -78,7 +78,7 @@ namespace DataArcs.SeriesData
         ISeries SeriesMin();
 
         //void ResetData();
-        //void Update(float time);
+        //void Update(double time);
 
 
         //Store CreateLinearStore(int capacity);

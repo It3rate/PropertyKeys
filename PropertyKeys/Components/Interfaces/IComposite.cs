@@ -17,7 +17,7 @@ namespace DataArcs.Components
         int CompositeId { get; }
         int Capacity { get; }
 
-        void Update(float currentTime, float deltaTime);
+        void Update(double currentTime, double deltaTime);
 
         void AddProperty(PropertyId id, IStore store);
         void AppendProperty(PropertyId id, IStore store);

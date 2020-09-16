@@ -17,7 +17,7 @@ namespace DataArcs.Samplers
 
 		public override Series GetValueAtIndex(Series series, int index)
 		{
-			float t = SliceCount != 1 ? SamplerUtils.TFromIndex(SliceCount, index) : 0; // index / (SliceCount - 1f) : 0;
+			float t = SampleCount != 1 ? SamplerUtils.TFromIndex(SampleCount, index) : 0; // index / (SampleCount - 1f) : 0;
             return GetValuesAtT(series, t);
         }
 
@@ -42,7 +42,7 @@ namespace DataArcs.Samplers
 
         private Series GetSeriesAtT(float t)
         {
-            SeriesUtils.GetScaledT(t, SliceCount, out var vT, out var startIndex, out var endIndex);
+            SeriesUtils.GetScaledT(t, SampleCount, out var vT, out var startIndex, out var endIndex);
             var aSeries = BezierSeries.GetRawDataAt(startIndex);
             var a = aSeries.GetVirtualValueAt(startIndex == endIndex ? 0 : aSeries.Count - 1, aSeries.Count).FloatDataRef;
             var b = BezierSeries.GetRawDataAt(endIndex).FloatDataRef; // GetFloatArrayAtIndex(endIndex);

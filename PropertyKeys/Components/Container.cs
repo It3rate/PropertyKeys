@@ -129,10 +129,10 @@ namespace DataArcs.Components
 #region Updates
 
         public bool shouldShuffle; // temp basis for switching to events
-        public override void StartUpdate(float currentTime, float deltaTime)
+        public override void StartUpdate(double currentTime, double deltaTime)
         {
 			base.StartUpdate(currentTime, deltaTime);
-            float t = deltaTime % 1f;
+            float t = (float)(deltaTime % 1.0);
             if (t <= 0.05f && shouldShuffle)
             {
                 SeriesUtils.ShuffleElements(GetStore(PropertyId.Location).GetSeriesRef());

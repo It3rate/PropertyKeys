@@ -23,7 +23,7 @@ namespace DataArcs.Mutators
 			return Store.GetValuesAtT(t);
 		}
 
-		public abstract void Update(float t);
+		public abstract void Update(double t);
 		public abstract void ResetData();
 	}
 }

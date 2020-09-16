@@ -41,7 +41,7 @@ namespace DataArcs.Components
 			    {
 				    _stores[id] = new FunctionalStore(curStore, store);
 				    _stores[id].CombineFunction = curStore.CombineFunction;
-				    //_stores[id].SliceCount = curStore.SliceCount;
+				    //_stores[id].SampleCount = curStore.SampleCount;
                 }
 		    }
 		    else
@@ -66,19 +66,19 @@ namespace DataArcs.Components
 		    }
 	    }
 
-	    public void Update(float currentTime, float deltaTime)
+	    public void Update(double currentTime, double deltaTime)
 	    {
 		    StartUpdate(currentTime, deltaTime);
 		    EndUpdate(currentTime, deltaTime);
 	    }
-	    public virtual void StartUpdate(float currentTime, float deltaTime)
+	    public virtual void StartUpdate(double currentTime, double deltaTime)
 	    {
 		    foreach (var store in _stores.Values)
 		    {
 			    store.Update(deltaTime);
 		    }
 	    }
-	    public virtual void EndUpdate(float currentTime, float deltaTime) { }
+	    public virtual void EndUpdate(double currentTime, double deltaTime) { }
 
 	    public virtual Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
 	    {

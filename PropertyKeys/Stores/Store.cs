@@ -53,7 +53,7 @@ namespace DataArcs.Stores
         }
 
 
-        public override void Update(float deltaTime)
+        public override void Update(double deltaTime)
 		{
 			Series.Update(deltaTime);
 		}

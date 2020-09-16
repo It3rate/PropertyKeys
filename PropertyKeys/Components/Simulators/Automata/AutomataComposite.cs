@@ -21,7 +21,7 @@ namespace DataArcs.Components.Simulators.Automata
         }
 
 
-        public override void StartUpdate(float currentTime, float deltaTime)
+        public override void StartUpdate(double currentTime, double deltaTime)
         {
 	        base.StartUpdate(currentTime, deltaTime);
 	        //if (SeriesUtils.Random.NextDouble() < 0.01 && Runner.PassCount > 250)

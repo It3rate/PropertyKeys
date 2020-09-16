@@ -81,7 +81,7 @@ namespace DataArcs.Tests.GraphicTests
 
         private AutomataComposite GetAutomata(Sampler sampler)
 	    {
-		    Store itemStore = Store.CreateItemStore(sampler.SliceCount);
+		    Store itemStore = Store.CreateItemStore(sampler.SampleCount);
 			itemStore.BakeData();
 			
             var automataStore = new Store(new FloatSeries(3, 0f,0f,0f), sampler);

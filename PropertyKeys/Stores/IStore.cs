@@ -21,7 +21,7 @@ namespace DataArcs.Stores
         ParametricSeries GetSampledTs(ParametricSeries seriesT);
         Series GetNeighbors(int index, bool wrapEdges = true);
 
-        void Update(float deltaTime);
+        void Update(double deltaTime);
 		void ResetData();
 		void BakeData();
 		IStore Clone();

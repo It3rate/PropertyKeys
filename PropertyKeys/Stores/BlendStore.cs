@@ -11,7 +11,7 @@ namespace DataArcs.Stores
 	public class BlendStore : StoreBase
 	{
 		private readonly List<IStore> _stores;
-		public float CurrentT { get; set; }
+		public double CurrentT { get; set; }
 		private readonly IStore _easing = null;
 
 		public override int Capacity
@@ -54,7 +54,7 @@ namespace DataArcs.Stores
 			throw new NotImplementedException();
 		}
 
-		public override void Update(float deltaTime)
+		public override void Update(double deltaTime)
 		{
 			CurrentT = deltaTime;
 			foreach (var store in _stores)
@@ -81,12 +81,12 @@ namespace DataArcs.Stores
 
 		public override Series GetValuesAtIndex(int index)
 		{
-			return GetSeriesAtIndex(index, CurrentT * Capacity);
+			return GetSeriesAtIndex(index, (float)CurrentT * Capacity);
 		}
 
 		public override Series GetValuesAtT(float t)
 		{
-			return GetSeriesAtT(t, CurrentT);
+			return GetSeriesAtT(t, (float)CurrentT);
 		}
 
 		public override ParametricSeries GetSampledTs(ParametricSeries seriesT)

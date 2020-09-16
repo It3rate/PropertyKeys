@@ -1,16 +1,17 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace DataArcs.Commands
 {
 	public interface ICommand
 	{
-		int StartTime { get; }
-		int EndTime { get; }
+		double StartTime { get; }
+		double EndTime { get; }
 
         void Execute();
 		void UnExecute();
 
-		void Update(float time);
+		void Update(double time);
 		void Draw(Graphics graphics);
 	}
 }

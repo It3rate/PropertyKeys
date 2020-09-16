@@ -48,14 +48,14 @@ namespace DataArcs.Components.Simulators
         private float MeterToPixel(float value) => value * PixelsPerMeter;
         private float PixelToMeter(float value) => value / PixelsPerMeter;
 
-        public override void StartUpdate(float currentTime, float deltaTime)
+        public override void StartUpdate(double currentTime, double deltaTime)
 	    {
             base.StartUpdate(currentTime, deltaTime);
 
 		    //float timeStep = 1.0f / 60.0f;
 		    int velocityIterations = 8;
 		    int positionIterations = 1;
-		    _world.Step(deltaTime/1000f, velocityIterations, positionIterations);
+		    _world.Step((float)(deltaTime/1000.0), velocityIterations, positionIterations);
 	    }
 		
 	    public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)

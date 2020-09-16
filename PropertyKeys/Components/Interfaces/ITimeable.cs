@@ -13,11 +13,11 @@ namespace DataArcs.Components
     public interface ITimeable : IComposite
     {
 	    float InterpolationT { get; set; }
-        //float DeltaTime { get; }
-        //float _currentTime { get; }
-        //float PreviousTime { get; }
+        //double DeltaTime { get; }
+        //double _currentTime { get; }
+        //double PreviousTime { get; }
 
-        float StartTime { get; set; }
+        double StartTime { get; set; }
         Series Duration { get; }
         Series Delay { get; }
 

@@ -14,7 +14,7 @@ namespace DataArcs.Components.ExternalInput.Serial
     class SensorSerialPort : BaseComposite, ITimeable, IDisposable
     {
 	    public float InterpolationT { get; set; }
-	    public float StartTime { get; set; }
+	    public double StartTime { get; set; }
 	    public Series Duration { get; } = new FloatSeries(1, 0);
 	    public Series Delay { get; } = new FloatSeries(1, 0);
 	    public event TimedEventHandler StartTimedEvent;
@@ -65,7 +65,9 @@ namespace DataArcs.Components.ExternalInput.Serial
         {
 	        _container = container;
 	        Application.ApplicationExit += new EventHandler(ApplicationExit);
-
+	        _accelX = 0;
+	        _accelY = 0;
+	        _accelZ = 0;
         }
 
         public void StartListening(string portName)
@@ -92,6 +94,7 @@ namespace DataArcs.Components.ExternalInput.Serial
 	            _serialPort.Open();
 	            _serialPort.DiscardInBuffer();
 	            _readThread.Start();
+	            StartTimedEvent?.Invoke(this, EventArgs.Empty);
             }
             catch (IOException)
             {
@@ -102,7 +105,6 @@ namespace DataArcs.Components.ExternalInput.Serial
 
         private bool continueReading = true;
         private readonly byte[] bytes = new byte[10];
-        private int bytesIndex = 0;
         private Thread _readThread;
 
         public struct MPUVector
@@ -163,6 +165,7 @@ namespace DataArcs.Components.ExternalInput.Serial
 		                        vals[9] / 100f
 	                        );
                         }
+                        StepTimedEvent?.Invoke(this, EventArgs.Empty);
                     }
                     catch (TimeoutException) { }
                     catch (FormatException) { }
@@ -314,6 +317,7 @@ namespace DataArcs.Components.ExternalInput.Serial
         {
 			base.OnDeactivate();
 			ReleaseUnmanagedResources();
+			EndTimedEvent?.Invoke(this, EventArgs.Empty);
         }
 
         public void Restart()

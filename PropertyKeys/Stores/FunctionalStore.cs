@@ -79,7 +79,7 @@ namespace DataArcs.Stores
 			return result;
 		}
 
-		public override void Update(float deltaTime)
+		public override void Update(double deltaTime)
 		{
 			foreach (var store in _stores)
 			{

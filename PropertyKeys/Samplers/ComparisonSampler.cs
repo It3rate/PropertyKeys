@@ -38,15 +38,15 @@ namespace DataArcs.Samplers
 	    private SeriesEquation _seriesEquation;
 		public ParametricSeries EffectRatio { get; set; }
 
-        public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] swizzleMap = null, int sliceCount = 1) : base(swizzleMap, sliceCount)
+        public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
         {
 		    _sampleA = sampleA;
 		    _sampleB = sampleB;
 		    _seriesEquation = seriesEquation;
-		    SliceCount = sliceCount;
+		    SampleCount = sampleCount;
 	    }
-	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int sliceCount = 1) : 
-		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzleMap, sliceCount){ }
+	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int sampleCount = 1) : 
+		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzleMap, sampleCount){ }
 		
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {

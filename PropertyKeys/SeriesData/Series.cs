@@ -13,7 +13,8 @@ namespace DataArcs.SeriesData
 		Float,
 		Parametric,
 		RectF,
-	}
+		Bezier,
+    }
 
     public abstract class Series : IEnumerable
     {
@@ -23,7 +24,7 @@ namespace DataArcs.SeriesData
         public int Capacity { get; protected set; } = 1;
 
         /// <summary>
-        /// The raw size of the stored data array, ignores SliceCount and VectorSize.
+        /// The raw size of the stored data array, ignores SampleCount and VectorSize.
         /// </summary>
         public abstract int DataSize { get; }
 
@@ -73,7 +74,7 @@ namespace DataArcs.SeriesData
         {
         }
 
-        public virtual void Update(float time)
+        public virtual void Update(double time)
         {
         }
 

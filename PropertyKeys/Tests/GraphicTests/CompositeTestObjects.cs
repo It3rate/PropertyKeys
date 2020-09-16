@@ -139,7 +139,7 @@ namespace DataArcs.Tests.GraphicTests
             return new BlendTransition(composite, endComp, new Timer(delay, duration), easeStore);
         }
 
-        public static BlendTransition GetTest1(float delay, float startTime, float duration)
+        public static BlendTransition GetTest1(float delay, double startTime, float duration)
         {
 	        BlendTransition bt = (BlendTransition)GetTest0(delay, duration);
 

@@ -77,7 +77,7 @@ namespace DataArcs.Components.Transitions
             }
         }
 
-        public override void StartUpdate(float currentTime, float deltaTime)
+        public override void StartUpdate(double currentTime, double deltaTime)
         {
             base.StartUpdate(currentTime, deltaTime);
 

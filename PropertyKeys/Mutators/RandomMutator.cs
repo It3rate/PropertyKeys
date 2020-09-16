@@ -13,7 +13,7 @@ namespace DataArcs.Mutators
 			RandomSeries = (RandomSeries) Store.GetSeriesRef();
 		}
 
-		public override void Update(float time)
+		public override void Update(double time)
 		{
 			RandomSeries.Update(time);
 		}

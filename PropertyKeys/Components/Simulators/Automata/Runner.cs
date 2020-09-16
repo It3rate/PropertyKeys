@@ -22,7 +22,7 @@ namespace DataArcs.Components.Simulators.Automata
         private float _transitionIndex;
 
         private bool _isBusy = false; // avoid updating until pass complete.
-        private float _totalDeltaTime;
+        private double _totalDeltaTime;
 
         public int LastInvokedRuleSet { get; private set; }
         public int LastInvokedRule { get; private set; }
@@ -79,7 +79,7 @@ namespace DataArcs.Components.Simulators.Automata
 				RuleSets[AlternateIndex].BeginPass();
 	        }
         }
-        public virtual void StartUpdate(float currentTime, float deltaTime)
+        public virtual void StartUpdate(double currentTime, double deltaTime)
         {
 	        _totalDeltaTime += deltaTime;
 	        if (!_isBusy)

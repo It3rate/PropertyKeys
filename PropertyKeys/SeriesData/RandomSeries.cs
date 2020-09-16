@@ -112,13 +112,13 @@ namespace DataArcs.SeriesData
 			GenerateDataSeries();
 		}
 
-		public override void Update(float time)
+		public override void Update(double time)
 		{
             if(_combineFunction == CombineFunction.ContinuousAdd)
             {
 	            _seed = SeriesUtils.Random.Next();
                 var b = GenerateDataSeries();
-                float tSec = time / 1000f;
+                float tSec = (float)(time / 1000.0);
                 var scaled = new FloatSeries(VectorSize, ArrayExtension.GetSizedFloatArray(VectorSize, tSec));
 				b.CombineInto(scaled, CombineFunction.Multiply);
                 _series.CombineInto(b, CombineFunction.Add);

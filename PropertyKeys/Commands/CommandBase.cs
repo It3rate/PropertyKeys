@@ -1,31 +1,34 @@
 ﻿using System;
 using System.Drawing;
+using DataArcs.Players;
 
 namespace DataArcs.Commands
 {
 	public abstract class CommandBase : ICommand
 	{
-		public int StartTime { get; }
-		public int EndTime { get; }
+		public double StartTime { get; protected set; }
+		public double EndTime { get; protected set; }
 
-		public void Execute()
+        public CommandBase()
 		{
-			throw new NotImplementedException();
 		}
 
-		public void UnExecute()
+		public virtual void Execute()
 		{
-			throw new NotImplementedException();
+			StartTime = Player.GetPlayerById(0).CurrentMs;
 		}
 
-		public void Update(float time)
+        public virtual void UnExecute()
 		{
-			throw new NotImplementedException();
-		}
+			EndTime = Player.GetPlayerById(0).CurrentMs;
+        }
 
-		public void Draw(Graphics graphics)
+        public virtual void Update(double time)
+        {
+        }
+
+        public virtual void Draw(Graphics graphics)
 		{
-			throw new NotImplementedException();
 		}
 	}
 }

@@ -44,7 +44,7 @@ namespace DataArcs.Stores
         { 
             // TODO: can't just pass this in because capacity may mean row capacity.
             // t needs to be a series always, and can get multi dim t from sampler.
-            return GetValuesAtT(SamplerUtils.TFromIndex(Capacity, index)); //   index / (SliceCount - 1f));
+            return GetValuesAtT(SamplerUtils.TFromIndex(Capacity, index)); //   index / (SampleCount - 1f));
         }
 
         public override Series GetValuesAtT(float t)
@@ -103,7 +103,7 @@ namespace DataArcs.Stores
         }
 
 
-        public override void Update(float deltaTime)
+        public override void Update(double deltaTime)
         {
             _mixStore?.Update(deltaTime);
         }

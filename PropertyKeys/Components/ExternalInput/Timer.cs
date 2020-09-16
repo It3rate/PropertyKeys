@@ -15,9 +15,9 @@ namespace DataArcs.Components.Transitions
         public float InterpolationT { get; set; }
         public bool IsComplete { get; protected set; } = false;
 
-        public float StartTime { get; set; }
-        private float _runningTime;
-        private float _currentTime;
+        public double StartTime { get; set; }
+        private double _runningTime;
+        private double _currentTime;
         private DateTime _pauseTime;
         private bool _isPaused;
         private float _delayTime = 0;
@@ -43,13 +43,14 @@ namespace DataArcs.Components.Transitions
             _runningTime = 0;
             _delayTime = 0;
             IsComplete = false;
+            StartTimedEvent?.Invoke(this, EventArgs.Empty);
         }
         public void Reverse()
         {
             IsReverse = !IsReverse;
         }
 		
-        public override void StartUpdate(float ct, float deltaTime)
+        public override void StartUpdate(double ct, double deltaTime)
         {
             if (!_isPaused)
             {
@@ -64,15 +65,17 @@ namespace DataArcs.Components.Transitions
                 }
                 else
                 {
-                    InterpolationT = _currentTime < StartTime ? 0 :
+                    InterpolationT = (float)(_currentTime < StartTime ? 0 :
                         _currentTime > StartTime + dur ? 1f :
-                        (_currentTime - StartTime) / dur;
+                        (_currentTime - StartTime) / dur);
                 }
 
                 InterpolationT = IsReverse ? 1f - InterpolationT : InterpolationT;
+
+                StepTimedEvent?.Invoke(this, EventArgs.Empty);
             }
         }
-        public override void EndUpdate(float currentTime, float deltaTime)
+        public override void EndUpdate(double currentTime, double deltaTime)
         {
             if (IsComplete)
             {

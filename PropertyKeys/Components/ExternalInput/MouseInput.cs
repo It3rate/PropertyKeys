@@ -13,7 +13,7 @@ namespace DataArcs.Components.ExternalInput
     public class MouseInput : BaseComposite, ITimeable
     {
 	    public float InterpolationT { get; set; }
-	    public float StartTime { get; set; }
+	    public double StartTime { get; set; }
 	    public Series Duration { get; } = new FloatSeries(1,0);
 	    public Series Delay { get; } = new FloatSeries(1, 0);
         public event TimedEventHandler StartTimedEvent;
@@ -52,11 +52,13 @@ namespace DataArcs.Components.ExternalInput
         {
 	        Application.OpenForms[0].MouseMove += OnMouseMove;
 	        Application.OpenForms[0].MouseClick += OnMouseClick;
+	        StartTimedEvent?.Invoke(this, EventArgs.Empty);
         }
         public override void OnDeactivate()
         {
             Application.OpenForms[0].MouseMove -= OnMouseMove;
             Application.OpenForms[0].MouseClick -= OnMouseClick;
+            EndTimedEvent?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnMouseMove(object sender, MouseEventArgs args)
@@ -64,6 +66,7 @@ namespace DataArcs.Components.ExternalInput
 	        _mouseX = args.X;
 	        _mouseY = args.Y;
             //Debug.WriteLine(args.X + " : " + args.Y);
+            StepTimedEvent?.Invoke(this, EventArgs.Empty);
         }
         private void OnMouseClick(object sender, MouseEventArgs args)
         {

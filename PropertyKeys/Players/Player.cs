@@ -34,7 +34,7 @@ namespace DataArcs.Players
         private Timer _timer;
         private TimeSpan _lastTime;
         private TimeSpan _currentTime;
-        public float CurrentMs => (float)_currentTime.TotalMilliseconds;
+        public double CurrentMs => _currentTime.TotalMilliseconds;
 
         public IComposite this[int index] => _allComposites.ContainsKey(index) ? _allComposites[index] : null;
 
@@ -102,7 +102,7 @@ namespace DataArcs.Players
 		            _toDestroy.Clear();
 
 		            _currentTime = e.SignalTime - (StartTime + _delayTime);
-		            float dt = (float) (_currentTime - _lastTime).TotalMilliseconds;
+		            double dt = (_currentTime - _lastTime).TotalMilliseconds;
 		            foreach (var id in _activeElementIds)
 		            {
 			            if (_allComposites.ContainsKey(id))

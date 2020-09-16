@@ -14,7 +14,7 @@ namespace DataArcs.Commands
         public SortedList<int, ICommand> Commands = new SortedList<int, ICommand>(DescendingComparer);
 
 		// All commands in list have the same start time.
-	    public int StartTime => Commands.Count > 0 ? Commands.Values[0].StartTime : 0;
-        public int MaxEndTime => Commands.Count > 0 ? Commands.Keys[Commands.Count - 1] : 0;
+	    public double StartTime => Commands.Count > 0 ? Commands.Values[0].StartTime : 0;
+        public double MaxEndTime => Commands.Count > 0 ? Commands.Keys[Commands.Count - 1] : 0;
     }
 }
