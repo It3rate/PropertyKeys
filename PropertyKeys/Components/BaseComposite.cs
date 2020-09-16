@@ -16,7 +16,7 @@ namespace DataArcs.Components
 	    public int Id { get; }
 		public virtual int Capacity { get; set; }
 
-        protected readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
+        protected readonly Dictionary<PropertyId, int> _properties = new Dictionary<PropertyId, int>();
 
 	    public BaseComposite()
 	    {
@@ -26,22 +26,21 @@ namespace DataArcs.Components
 
 	    public virtual void AddProperty(PropertyId id, IStore store)
 	    {
-		    _stores[id] = store;
+		    _properties[id] = store.Id;
+			Player.Stores.AddToLibrary(store);
 	    }
 	    public void AppendProperty(PropertyId id, IStore store)
 	    {
-		    if (_stores.ContainsKey(id))
+		    if (_properties.ContainsKey(id))
 		    {
-			    IStore curStore = _stores[id];
-			    if (curStore is FunctionalStore)
+			    IStore curStore = Player.Stores[_properties[id]];
+			    if (curStore is FunctionalStore functionalStore)
 			    {
-				    ((FunctionalStore)curStore).Add(store);
+				    functionalStore.Add(store);
 			    }
 			    else
 			    {
-				    _stores[id] = new FunctionalStore(curStore, store);
-				    _stores[id].CombineFunction = curStore.CombineFunction;
-				    //_stores[id].SampleCount = curStore.SampleCount;
+                    AddProperty(id, new FunctionalStore(curStore, store) { CombineFunction = curStore.CombineFunction });
                 }
 		    }
 		    else
@@ -51,16 +50,18 @@ namespace DataArcs.Components
 	    }
 	    public void RemoveProperty(PropertyId id)
 	    {
-		    _stores.Remove(id);
+			// can clean up removes is using ref counting, but maybe makes more sense to leave them and have a UI clean option?
+		    //Player.Stores.RemoveActiveElementById(_properties[id]);
+		    _properties.Remove(id);
 	    }
 	    public virtual IStore GetStore(PropertyId propertyId)
 	    {
-		    _stores.TryGetValue(propertyId, out var result);
-		    return result;
+		    _properties.TryGetValue(propertyId, out var result);
+		    return Player.Stores[result];
 	    }
 	    public virtual void GetDefinedStores(HashSet<PropertyId> ids)
 	    {
-		    foreach (var item in _stores.Keys)
+		    foreach (var item in _properties.Keys)
 		    {
 			    ids.Add(item);
 		    }
@@ -73,9 +74,9 @@ namespace DataArcs.Components
 	    }
 	    public virtual void StartUpdate(double currentTime, double deltaTime)
 	    {
-		    foreach (var store in _stores.Values)
+		    foreach (var storeId in _properties.Values)
 		    {
-			    store.Update(currentTime, deltaTime);
+			    Player.Stores[storeId].Update(currentTime, deltaTime);
 		    }
 	    }
 	    public virtual void EndUpdate(double currentTime, double deltaTime) { }

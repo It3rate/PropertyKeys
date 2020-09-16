@@ -8,6 +8,7 @@ namespace DataArcs.Stores
     public abstract class StoreBase : IStore
     {
 	    private static int _idCounter = 1;
+
 	    public string Name { get; set; }
         public int Id { get; }
 

@@ -149,7 +149,7 @@ namespace DataArcs.Components
 #region Sampling
         public void AddLocalPropertiesAtT(Dictionary<PropertyId, Series> data, float t)
         {
-	        foreach (var store in _stores)
+	        foreach (var store in _properties)
 	        {
 		        if (!data.ContainsKey(store.Key))
 		        {

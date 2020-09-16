@@ -18,11 +18,13 @@ namespace DataArcs.Players
         private static Player _currentPlayer;
         public static Player GetPlayerById(int id) => _currentPlayer;
 
+        public static Definitions<IStore> Stores => _currentPlayer._stores;
+
         private readonly Form _display;
 
         //private Definitions<Series> _series;
         //private Definitions<Sampler> _samplers;
-        private Definitions<Store> _stores;
+        private Definitions<IStore> _stores = new Definitions<IStore>();
         private Definitions<IComposite> _composites = new Definitions<IComposite>();
 
         private bool _isPaused;

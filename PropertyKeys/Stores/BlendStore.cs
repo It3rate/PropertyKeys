@@ -123,7 +123,7 @@ namespace DataArcs.Stores
 
 		public Series GetSeriesAtIndex(int index, float t)
 		{
-			return GetSeriesAtT(SamplerUtils.TFromIndex(_stores.Count, index), t); // index / (_stores.Count - 1f), t);
+			return GetSeriesAtT(SamplerUtils.TFromIndex(_stores.Count, index), t); // index / (_properties.Count - 1f), t);
 		}
 
 		public Series GetSeriesAtT(float indexT, float t)

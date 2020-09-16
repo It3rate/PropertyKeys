@@ -16,8 +16,12 @@ namespace DataArcs.Components.Libraries
         private readonly List<int> _toDestroy = new List<int>();
         public bool CanDestroy = true;
         public bool NeedsDestroy { get; private set; } = false;
-
-        public T this[int index] => _allItems.ContainsKey(index) ? _allItems[index] : null;
+		
+        public T this[int index]
+        {
+	        get => _allItems.ContainsKey(index) ? _allItems[index] : null;
+            set => _allItems[index] = value;
+        }
 
         public Definitions()
         {
@@ -86,8 +90,21 @@ namespace DataArcs.Components.Libraries
 	        _isBusy = false;
         }
 
+        public void AddToLibrary(T item)
+        {
+            // todo: use ref counting to remove dead elements.
+            if (_allItems.ContainsKey(item.Id))
+            {
+	            _allItems[item.Id] = item;
+            }
+            else
+            {
+	            _allItems.Add(item.Id, item);
+            }
+        }
         public void AddActiveElement(T item)
         {
+			AddToLibrary(item);
 	        _toAddActive.Add(item.Id, item);
         }
 
@@ -104,11 +121,6 @@ namespace DataArcs.Components.Libraries
             _toRemoveActive.AddRange(_activeIds);
         }
 
-        public void AddToLibrary(T item)
-        {
-            // todo: use ref counting to remove dead elements.
-            _allItems.Add(item.Id, item);
-        }
         public void Reset()
         {
 	        NeedsDestroy = false;
