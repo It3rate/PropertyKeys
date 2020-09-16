@@ -46,7 +46,7 @@ namespace DataArcs.Tests.GraphicTests
 
         IComposite GetHexGrid()
         {
-	        var mouseLink = new LinkSampler(_mouseInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.XY);
+	        var mouseLink = new LinkSampler(_mouseInput.Id, PropertyId.MouseLocationT, SlotUtils.XY);
 
 	        var composite = new Container(Store.CreateItemStore(20 * 11));
 	        Store loc = new Store(MouseInput.MainFrameRect, new HexagonSampler(new int[] { 20, 11 }));
@@ -86,7 +86,7 @@ namespace DataArcs.Tests.GraphicTests
 	        container.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 8).Store());
 
 	        var lineStore = new Store(new FloatSeries(1, .05f, .2f), new LineSampler(), CombineFunction.Multiply);
-	        var lineLink = new LinkingStore(container.CompositeId, PropertyId.Radius, SlotUtils.X, lineStore);
+	        var lineLink = new LinkingStore(container.Id, PropertyId.Radius, SlotUtils.X, lineStore);
 	        container.AddProperty(PropertyId.PenWidth, lineLink);
 	        container.Renderer = new PolyShape();
         }

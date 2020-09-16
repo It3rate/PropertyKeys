@@ -13,14 +13,14 @@ namespace DataArcs.Components
     {
 	    private static int _idCounter = 1;
 	    public string Name { get; set; }
-	    public int CompositeId { get; }
+	    public int Id { get; }
 		public virtual int Capacity { get; set; }
 
         protected readonly Dictionary<PropertyId, IStore> _stores = new Dictionary<PropertyId, IStore>();
 
 	    public BaseComposite()
 	    {
-		    CompositeId = _idCounter++;
+		    Id = _idCounter++;
 		    Player.GetPlayerById(0).AddCompositeToLibrary(this);
         }
 

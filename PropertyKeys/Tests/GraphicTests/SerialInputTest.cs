@@ -43,7 +43,7 @@ namespace DataArcs.Tests.GraphicTests
 
         IComposite GetHexGrid()
         {
-            var mouseLink = new LinkSampler(_sensorInput.CompositeId, PropertyId.MouseLocationT, SlotUtils.YX);
+            var mouseLink = new LinkSampler(_sensorInput.Id, PropertyId.MouseLocationT, SlotUtils.YX);
 
             var composite = new Container(Store.CreateItemStore(20 * 11));
             Store loc = new Store(MouseInput.MainFrameRect, new HexagonSampler(new int[] { 20, 11 }));
@@ -56,19 +56,19 @@ namespace DataArcs.Tests.GraphicTests
             var locMouseStore = new Store(new FloatSeries(2, 1.1f, 1.1f, 0.9f, 0.9f), chained, CombineFunction.Multiply);
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
-            var penColorSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.MpuGyroscope, SlotUtils.XYZ);
+            var penColorSampler = new LinkSampler(_sensorInput.Id, PropertyId.MpuGyroscope, SlotUtils.XYZ);
             var penColorStore = new Store(new FloatSeries(3, 0.4f, 1.0f, 0.4f, 1.0f, 0.4f, 1.0f), penColorSampler);
             composite.AddProperty(PropertyId.PenColor, penColorStore);
 
-            var colorSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.MpuAcceleration, SlotUtils.XYZ);
+            var colorSampler = new LinkSampler(_sensorInput.Id, PropertyId.MpuAcceleration, SlotUtils.XYZ);
             var colorStore = new Store(new FloatSeries(3, 0.0f, 1.0f, 0.0f, 0.6f, 0.0f, 0.6f), colorSampler);
             composite.AddProperty(PropertyId.FillColor, colorStore);
 
-            var starnessSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.MpuAccelerationZ, SlotUtils.X);
+            var starnessSampler = new LinkSampler(_sensorInput.Id, PropertyId.MpuAccelerationZ, SlotUtils.X);
             var starnessStore = new Store(new FloatSeries(1, -1.0f, 2.0f), starnessSampler);
             composite.AddProperty(PropertyId.Starness, starnessStore);
 
-            var pressureSampler = new LinkSampler(_sensorInput.CompositeId, PropertyId.PenPressure, SlotUtils.X);
+            var pressureSampler = new LinkSampler(_sensorInput.Id, PropertyId.PenPressure, SlotUtils.X);
             var pressureStore = new Store(new FloatSeries(1, 6.0f, 3f), pressureSampler);
             composite.AddProperty(PropertyId.PointCount, pressureStore);
 
@@ -98,7 +98,7 @@ namespace DataArcs.Tests.GraphicTests
             container.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 8).Store());
 
             var lineStore = new Store(new FloatSeries(1, .05f, .2f), new LineSampler(), CombineFunction.Multiply);
-            var lineLink = new LinkingStore(container.CompositeId, PropertyId.Radius, SlotUtils.X, lineStore);
+            var lineLink = new LinkingStore(container.Id, PropertyId.Radius, SlotUtils.X, lineStore);
             container.AddProperty(PropertyId.PenWidth, lineLink);
             container.Renderer = new PolyShape();
         }

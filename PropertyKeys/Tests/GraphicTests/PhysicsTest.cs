@@ -145,12 +145,12 @@ namespace DataArcs.Tests.GraphicTests
 
             // todo: LinkingStore location causes recursive location lookup error when getting capacity.
             //         composite.AppendProperty(PropertyId.PenPressure, locStore);
-            //         LinkingStore ls = new LinkingStore(composite.CompositeId, PropertyId.PenPressure, SlotUtils.XY, null);
+            //         LinkingStore ls = new LinkingStore(composite.Id, PropertyId.PenPressure, SlotUtils.XY, null);
             //         composite.AddProperty(PropertyId.Location, ls);
 
-            LinkingStore ls = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Location, SlotUtils.XY, null);
+            LinkingStore ls = new LinkingStore(_physicsComposite.Id, PropertyId.Location, SlotUtils.XY, null);
             composite.AddProperty(PropertyId.Location, ls);
-            LinkingStore lso = new LinkingStore(_physicsComposite.CompositeId, PropertyId.Orientation, SlotUtils.X, null);
+            LinkingStore lso = new LinkingStore(_physicsComposite.Id, PropertyId.Orientation, SlotUtils.X, null);
             composite.AddProperty(PropertyId.Orientation, lso);
 
         }

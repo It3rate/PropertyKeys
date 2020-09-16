@@ -95,12 +95,12 @@ namespace DataArcs.Tests.GraphicTests
 
             var automataComposite = new AutomataComposite(items, automataStore, runner);
 
-            var ls = new LinkingStore(automataComposite.CompositeId, PropertyId.Automata, SlotUtils.XYZ, null);
+            var ls = new LinkingStore(automataComposite.Id, PropertyId.Automata, SlotUtils.XYZ, null);
             automataComposite.AddProperty(PropertyId.FillColor, ls);
 			automataComposite.AddProperty(PropertyId.Location, hexContainer.GetStore(PropertyId.Location));
 
             var radStore = new Store(new FloatSeries(1, radius), new LineSampler(), CombineFunction.Multiply);
-            var radiusLink = new LinkingStore(automataComposite.CompositeId, PropertyId.Automata, new[] { Slot.S3 }, radStore);
+            var radiusLink = new LinkingStore(automataComposite.Id, PropertyId.Automata, new[] { Slot.S3 }, radStore);
             automataComposite.AddProperty(PropertyId.Radius, radiusLink);
 
             automataComposite.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store());

@@ -61,11 +61,11 @@ namespace DataArcs.Tests.GraphicTests
             var result = new BlendTransition(compositeStart, compositeEnd, new Timer(0, 3000), easeStore);
 
             var radStore = new Store(new FloatSeries(1, 20f, 20f, 24f, 24f), new LineSampler(), CombineFunction.Multiply);
-            var radiusLink = new LinkingStore(result.CompositeId, PropertyId.FillColor, SlotUtils.X, radStore);
+            var radiusLink = new LinkingStore(result.Id, PropertyId.FillColor, SlotUtils.X, radStore);
             compositeStart.AddProperty(PropertyId.Radius, radiusLink);
 
             var starStore = new Store(new FloatSeries(1, 400f), new LineSampler(), CombineFunction.DivideFrom);
-            var starnessLink = new LinkingStore(compositeEnd.CompositeId, PropertyId.Location, SlotUtils.Y, starStore);
+            var starnessLink = new LinkingStore(compositeEnd.Id, PropertyId.Location, SlotUtils.Y, starStore);
             compositeStart.AddProperty(PropertyId.Starness, starnessLink);
 
             return result;
@@ -78,7 +78,7 @@ namespace DataArcs.Tests.GraphicTests
 	        container.AddProperty(PropertyId.PenColor, new FloatSeries(3, .2f, .1f, .2f, 0.3f, 0f, 0f).Store());
 
 	        var lineStore = new Store(new FloatSeries(1, .05f, .18f), new LineSampler(), CombineFunction.Multiply);
-	        var lineLink = new LinkingStore(container.CompositeId, PropertyId.Radius, SlotUtils.X, lineStore);
+	        var lineLink = new LinkingStore(container.Id, PropertyId.Radius, SlotUtils.X, lineStore);
             container.AddProperty(PropertyId.PenWidth, lineLink);
             container.Renderer = new PolyShape();
         }

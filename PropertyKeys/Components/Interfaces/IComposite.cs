@@ -4,20 +4,23 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataArcs.Components.Libraries;
 using DataArcs.Graphic;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
 
 namespace DataArcs.Components
 {
-	public interface IComposite
+	public interface IComposite : IDefinition
     {
-        string Name { get; set; }
+        //string Name { get; set; }
+        //int Id { get; }
+        //void OnActivate();
+        //void OnDeactivate();
+        //void Update(double currentTime, double deltaTime);
 
-        int CompositeId { get; }
         int Capacity { get; }
 
-        void Update(double currentTime, double deltaTime);
 
         void AddProperty(PropertyId id, IStore store);
         void AppendProperty(PropertyId id, IStore store);
@@ -29,7 +32,5 @@ namespace DataArcs.Components
         Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
 		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 
-        void OnActivate();
-        void OnDeactivate();
     }
 }

@@ -12,45 +12,45 @@ namespace DataArcs.SeriesData
     public class CommandCreateSeries : CommandBase
     {
 	    private Series Series;
-	    private SeriesType type;
-	    private int vectorSize;
-	    private float[] floatValues;
-	    private int[] intValues;
+	    private readonly SeriesType _type;
+	    private readonly int _vectorSize;
+	    private readonly float[] _floatValues;
+	    private readonly int[] _intValues;
 
         public CommandCreateSeries(SeriesType type, int vectorSize, params float[] values)
         {
-	        this.type = type;
-	        this.vectorSize = vectorSize;
+	        this._type = type;
+	        this._vectorSize = vectorSize;
             if (type == SeriesType.Int)
 		    {
-			    intValues = values.ToInt();
+			    _intValues = values.ToInt();
 		    }
 	    }
 	    public CommandCreateSeries(SeriesType type, int vectorSize, params int[] values)
 	    {
-		    this.type = type;
-		    this.vectorSize = vectorSize;
+		    this._type = type;
+		    this._vectorSize = vectorSize;
 		    if (type != SeriesType.Int)
 		    {
-			    floatValues = values.ToFloat();
+			    _floatValues = values.ToFloat();
 		    }
         }
 
         public override void Execute()
         {
-	        switch (type)
+	        switch (_type)
 	        {
 		        case SeriesType.Float:
-			        Series = new FloatSeries(vectorSize, floatValues);
+			        Series = new FloatSeries(_vectorSize, _floatValues);
 			        break;
 		        case SeriesType.Parametric:
-			        Series = new ParametricSeries(vectorSize, floatValues);
+			        Series = new ParametricSeries(_vectorSize, _floatValues);
 			        break;
 		        case SeriesType.RectF:
-			        Series = new RectFSeries(floatValues);
+			        Series = new RectFSeries(_floatValues);
 			        break;
 		        case SeriesType.Int:
-			        Series = new IntSeries(vectorSize, intValues);
+			        Series = new IntSeries(_vectorSize, _intValues);
 			        break;
 	        }
 			// add to series library in Store (with option to 'export').
