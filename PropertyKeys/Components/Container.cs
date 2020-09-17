@@ -34,9 +34,10 @@ namespace DataArcs.Components
                 AddProperty(PropertyId.Items, items);
             }
         }
-        public Container(IStore items = null, IContainer parent = null) : this(items)
+        public Container(IStore items = null, IContainer parent = null, IRenderable renderer = null) : this(items)
         {
             Parent = parent;
+            Renderer = renderer;
         }
 
 #region Elements

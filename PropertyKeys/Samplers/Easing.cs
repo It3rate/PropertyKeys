@@ -48,12 +48,17 @@ namespace DataArcs.Samplers
 		public EasingType[] EasingTypes;
 		private bool _clamp;
 
+		public Easing(EasingType[] easingTypes, Slot[] swizzleMap = null, int sampleCount = 1, bool clamp = false) : base(swizzleMap, sampleCount)
+		{
+			EasingTypes = easingTypes;
+			_clamp = clamp;
+		}
 		public Easing(EasingType easingType = EasingType.Linear, Slot[] swizzleMap = null, int sampleCount = 1, bool clamp = false) : base(swizzleMap, sampleCount)
-        {
+		{
 			EasingTypes = new EasingType[] { easingType };
 			_clamp = clamp;
-        }
-		public Easing(params EasingType[] easingTypes)
+		}
+        public Easing(params EasingType[] easingTypes)
         {
 			EasingTypes = easingTypes;
 		}

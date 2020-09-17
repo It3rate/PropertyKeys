@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataArcs.Commands;
+using DataArcs.SeriesData;
 using DataArcs.SeriesData.Utils;
 
-namespace DataArcs.SeriesData
+namespace DataArcs.Commands
 {
     public class CommandCreateSeries : CommandBase
     {
@@ -25,6 +21,10 @@ namespace DataArcs.SeriesData
 		    {
 			    _intValues = values.ToInt();
 		    }
+            else
+            {
+	            _floatValues = values;
+            }
 	    }
 	    public CommandCreateSeries(SeriesType type, int vectorSize, params int[] values)
 	    {
@@ -33,6 +33,10 @@ namespace DataArcs.SeriesData
 		    if (type != SeriesType.Int)
 		    {
 			    _floatValues = values.ToFloat();
+		    }
+		    else
+		    {
+			    _intValues = values;
 		    }
         }
 
@@ -53,13 +57,11 @@ namespace DataArcs.SeriesData
 			        Series = new IntSeries(_vectorSize, _intValues);
 			        break;
 	        }
-			// add to series library in Store (with option to 'export').
         }
 
         public override void UnExecute()
         {
             throw new NotImplementedException();
-            // remove from series library in Store
         }
 
         public override void Update(double time)

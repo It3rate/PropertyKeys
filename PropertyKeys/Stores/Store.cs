@@ -25,6 +25,10 @@ namespace DataArcs.Stores
 			CombineFunction = combineFunction;
         }
 
+        public Store(int seriesId, int sampleId, CombineFunction combineFunction) : base(seriesId, sampleId, combineFunction)
+        {
+        }
+
 		public Series this[int index] => GetValuesAtIndex(index);
 
 		public override Series GetSeriesRef()

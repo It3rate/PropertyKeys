@@ -11,7 +11,8 @@ namespace DataArcs.Stores
 	    public string Name { get; set; }
         public int Id { get; private set; }
 
-        public virtual CombineFunction CombineFunction { get; set; }
+        private CombineFunction _combineFunction;
+        public virtual CombineFunction CombineFunction { get => _combineFunction; set => _combineFunction = value; }
 
         protected int _samplerId;
         public virtual Sampler Sampler
@@ -38,8 +39,15 @@ namespace DataArcs.Stores
 
         protected StoreBase(Series series = null)
         {
-            Series = series;
-            Player.CurrentStores.AddToLibrary(this);
+	        Series = series;
+	        Player.CurrentStores.AddToLibrary(this);
+        }
+        protected StoreBase(int seriesId, int sampleId, CombineFunction combineFunction)
+        {
+	        _seriesId = seriesId;
+	        _samplerId = sampleId;
+	        _combineFunction = combineFunction;
+	        Player.CurrentStores.AddToLibrary(this);
         }
 
         public bool AssignIdIfUnset(int id)
