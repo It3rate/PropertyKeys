@@ -10,24 +10,32 @@ namespace DataArcs.Samplers
 {
     public class ChainedSampler : Sampler
     {
-        private readonly List<Sampler> _samplers;
+        private readonly List<int> _samplers;
 
         public ChainedSampler(Slot[] swizzleMap, params Sampler[] samplers) : 
             base(swizzleMap)
         {
-            _samplers = new List<Sampler>(samplers);
+	        _samplers = new List<int>(samplers.Length);
+	        foreach (var sampler in samplers)
+	        {
+		        _samplers.Add(sampler.Id);
+	        }
         }
         public ChainedSampler(params Sampler[] samplers)
         {
-	        _samplers = new List<Sampler>(samplers);
+	        _samplers = new List<int>(samplers.Length);
+	        foreach (var sampler in samplers)
+	        {
+		        _samplers.Add(sampler.Id);
+	        }
         }
 
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
             ParametricSeries result = seriesT;
-            foreach (var sampler in _samplers)
+            foreach (var samplerId in _samplers)
             {
-                result = sampler.GetSampledTs(result);
+                result = GetSamplerById(samplerId).GetSampledTs(result);
             }
 
             return Swizzle(result, seriesT);

@@ -18,7 +18,7 @@ namespace DataArcs.Components
 
         protected readonly Dictionary<PropertyId, int> _properties = new Dictionary<PropertyId, int>();
 
-	    public BaseComposite()
+        protected BaseComposite()
 	    {
 		    Id = _idCounter++;
 		    Player.GetPlayerById(0).AddCompositeToLibrary(this);
@@ -27,7 +27,6 @@ namespace DataArcs.Components
 	    public virtual void AddProperty(PropertyId id, IStore store)
 	    {
 		    _properties[id] = store.Id;
-			Player.Stores.AddToLibrary(store);
 	    }
 	    public void AppendProperty(PropertyId id, IStore store)
 	    {

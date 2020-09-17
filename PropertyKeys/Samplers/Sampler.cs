@@ -1,22 +1,33 @@
 ﻿using System;
 using System.Linq;
+using DataArcs.Components.Libraries;
+using DataArcs.Players;
 using DataArcs.SeriesData;
 using DataArcs.SeriesData.Utils;
 
 namespace DataArcs.Samplers
 {
-	public abstract class Sampler
+	public abstract class Sampler : IDefinition
 	{
-		public int SampleCount { get; protected set; } = 1;
+		private static int _idCounter = 1;
+        public string Name { get; set; }
+		public int Id { get; }
+
+        public int SampleCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
 		public int[] Strides { get; protected set; }
 
-		public Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
+		protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
 		{
-			SwizzleMap = swizzleMap;
+			Id = _idCounter++;
+			Player.Samplers.AddToLibrary(this);
+
+            SwizzleMap = swizzleMap;
 			SampleCount = sampleCount;
 			Strides = new int[SampleCount];
         }
+
+		protected Sampler GetSamplerById(int id) => Player.Samplers[id];
 
         public virtual Series GetValueAtIndex(Series series, int index)
         {
@@ -112,5 +123,14 @@ namespace DataArcs.Samplers
             return result;
         }
 
-    }
+        public void Update(double currentTime, double deltaTime)
+        {
+        }
+        public void OnActivate()
+        {
+        }
+        public void OnDeactivate()
+        {
+        }
+	}
 }

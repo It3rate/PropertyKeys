@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using DataArcs.Players;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
 
@@ -13,7 +14,12 @@ namespace DataArcs.Stores
         public int Id { get; }
 
         public virtual CombineFunction CombineFunction { get; set; }
-        public virtual Sampler Sampler { get; set; }
+        protected int _samplerId;
+        public virtual Sampler Sampler
+        {
+	        get => Player.Samplers[_samplerId];
+	        set => _samplerId = value.Id;
+        }
         protected Series Series { get; set; }
         public virtual int Capacity => Sampler.SampleCount;
         public virtual bool ShouldInterpolate { get; set; } = false; // linear vs nearest
@@ -21,6 +27,8 @@ namespace DataArcs.Stores
         protected StoreBase(Series series = null)
         {
             Id = _idCounter++;
+            Player.Stores.AddToLibrary(this);
+
             Series = series;
         }
         //protected StoreBase(IStore store)
