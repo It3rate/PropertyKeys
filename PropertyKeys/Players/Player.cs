@@ -17,7 +17,8 @@ namespace DataArcs.Players
     {
         private static Player _currentPlayer;
         public static Player GetPlayerById(int id) => _currentPlayer;
-
+		
+        public static Definitions<IComposite> Composites => _currentPlayer._composites;
         public static Definitions<Sampler> Samplers => _currentPlayer._samplers;
         public static Definitions<IStore> Stores => _currentPlayer._stores;
 
@@ -39,7 +40,7 @@ namespace DataArcs.Players
         private TimeSpan _currentTime;
         public double CurrentMs => _currentTime.TotalMilliseconds;
 
-        public IComposite this[int index] => _composites[index];
+        //public IComposite this[int index] => _composites[index];
 
         public Player(Form display)
 		{
