@@ -11,6 +11,8 @@ namespace DataArcs.Components.Libraries
 	    string Name { get; set; }
 	    int Id { get; }
 
+	    bool AssignIdIfUnset(int id);
+
 	    void OnActivate();
 	    void OnDeactivate();
 

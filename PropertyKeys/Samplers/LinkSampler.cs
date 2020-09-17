@@ -23,7 +23,7 @@ namespace DataArcs.Samplers
 
 	    public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
 	    {
-		    ParametricSeries link = Player.Composites[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
+		    ParametricSeries link = Player.CurrentComposites[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
 		    return Swizzle(link, seriesT);
         }
     }

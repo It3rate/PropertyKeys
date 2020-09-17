@@ -9,9 +9,8 @@ namespace DataArcs.Samplers
 {
 	public abstract class Sampler : IDefinition
 	{
-		private static int _idCounter = 1;
         public string Name { get; set; }
-		public int Id { get; }
+		public int Id { get; private set; }
 
         public int SampleCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
@@ -19,15 +18,14 @@ namespace DataArcs.Samplers
 
 		protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
 		{
-			Id = _idCounter++;
-			Player.Samplers.AddToLibrary(this);
+			Player.CurrentSamplers.AddToLibrary(this);
 
             SwizzleMap = swizzleMap;
 			SampleCount = sampleCount;
 			Strides = new int[SampleCount];
         }
 
-		protected Sampler GetSamplerById(int id) => Player.Samplers[id];
+		protected Sampler GetSamplerById(int id) => Player.CurrentSamplers[id];
 
         public virtual Series GetValueAtIndex(Series series, int index)
         {
@@ -42,7 +40,7 @@ namespace DataArcs.Samplers
         }
 
 		// todo: Why is this in sample? Needs to move to series, and a rect vs grid series can use different algorithms to generate values (needed).
-		// counter: only samplers know about sampleCount. Series only knows it's own count, not the virtual count it represents.
+		// counter: only samplers know about sampleCount. CurrentSeries only knows it's own count, not the virtual count it represents.
 		// counter counter: Why do samplers care about sampleCount? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
 		// ans: A grid knows it's max size by strides. Need an infinite scroll mode where sampleCount is read from series, but also want (more common) option to set size from sampler.
         public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
@@ -123,6 +121,16 @@ namespace DataArcs.Samplers
             return result;
         }
 
+        public bool AssignIdIfUnset(int id)
+        {
+	        bool result = false;
+	        if (Id == 0 && id > 0)
+	        {
+		        Id = id;
+		        result = true;
+	        }
+	        return result;
+        }
         public void Update(double currentTime, double deltaTime)
         {
         }

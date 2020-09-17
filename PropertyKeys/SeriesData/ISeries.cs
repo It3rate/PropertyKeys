@@ -86,7 +86,7 @@ namespace DataArcs.SeriesData
         //Store BakedStore { get; }
         //Store ToStore(Sampler sampler);
 
-        //Series GetZeroSeries(int elements);
+        //CurrentSeries GetZeroSeries(int elements);
 
     }
 
@@ -95,7 +95,7 @@ namespace DataArcs.SeriesData
         int Dimensions { get; }
         ISeries GetRawSeriesAt(int index);
         void SetRawSeriesAt(int index, ISeries series);
-        //List<Series> SeriesList { get; }
+        //List<CurrentSeries> SeriesList { get; }
 
         RectFSeries Frame { get; }
         Series Size { get; }

@@ -21,7 +21,7 @@ namespace DataArcs.Components
 	    Series GetNestedSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 
         /// <summary>
-        /// Composites can be composed by merging with parent Composites. First match wins, though this could change to merge/add/interpolate with parents.
+        /// CurrentComposites can be composed by merging with parent CurrentComposites. First match wins, though this could change to merge/add/interpolate with parents.
         /// </summary>
         IContainer Parent { get; set; }
 

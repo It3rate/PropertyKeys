@@ -17,17 +17,18 @@ namespace DataArcs.Players
     {
         private static Player _currentPlayer;
         public static Player GetPlayerById(int id) => _currentPlayer;
-		
-        public static Definitions<IComposite> Composites => _currentPlayer._composites;
-        public static Definitions<Sampler> Samplers => _currentPlayer._samplers;
-        public static Definitions<IStore> Stores => _currentPlayer._stores;
+
+        public static Definitions<Series> CurrentSeries => _currentPlayer.Series;
+        public static Definitions<Sampler> CurrentSamplers => _currentPlayer.Samplers;
+        public static Definitions<IStore> CurrentStores => _currentPlayer.Stores;
+        public static Definitions<IComposite> CurrentComposites => _currentPlayer.Composites;
 
         private readonly Form _display;
 
-        //private Definitions<Series> _series;
-        private Definitions<Sampler> _samplers = new Definitions<Sampler>();
-        private Definitions<IStore> _stores = new Definitions<IStore>();
-        private Definitions<IComposite> _composites = new Definitions<IComposite>();
+        public Definitions<Series> Series { get; } = new Definitions<Series>();
+        public Definitions<Sampler> Samplers { get; } = new Definitions<Sampler>();
+        public Definitions<IStore> Stores { get; } = new Definitions<IStore>();
+        public Definitions<IComposite> Composites { get; } = new Definitions<IComposite>();
 
         private bool _isPaused;
         private static DateTime _pauseTime;
@@ -72,7 +73,7 @@ namespace DataArcs.Players
 
 		        _currentTime = e.SignalTime - (StartTime + _delayTime);
 		        double deltaTime = (_currentTime - _lastTime).TotalMilliseconds;
-		        _composites.Update(CurrentMs, deltaTime);
+		        Composites.Update(CurrentMs, deltaTime);
 
 		        _display.Invalidate();
 		        _lastTime = _currentTime;
@@ -82,17 +83,17 @@ namespace DataArcs.Players
 
         private void OnDraw(object sender, PaintEventArgs e)
         {
-	        if (!_composites.NeedsDestroy)
+	        if (!Composites.NeedsDestroy)
 	        {
-		        _composites.CanDestroy = false;
+		        Composites.CanDestroy = false;
 		        {
 			        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			        var elementIds = _composites.ActiveIdsCopy;
+			        var elementIds = Composites.ActiveIdsCopy;
 			        foreach (var id in elementIds)
 			        {
-				        if (_composites.ContainsKey(id))
+				        if (Composites.ContainsKey(id))
 				        {
-					        var element = _composites[id];
+					        var element = Composites[id];
 					        if (element is IDrawable drawable)
 					        {
 						        drawable.Draw(e.Graphics, new Dictionary<PropertyId, SeriesData.Series>());
@@ -102,7 +103,7 @@ namespace DataArcs.Players
 		        }
 	        }
 
-	        _composites.CanDestroy = true;
+	        Composites.CanDestroy = true;
         }
 
         public void AddActiveElement(IComposite composite)
@@ -111,32 +112,29 @@ namespace DataArcs.Players
 	        {
 		        anim.StartTime = (float) (DateTime.Now - Player.StartTime).TotalMilliseconds;
 	        }
-			_composites.AddActiveElement(composite);
+			Composites.AddActiveElement(composite);
         }
 
         public void RemoveActiveElement(IComposite composite)
         {
-	        _composites.RemoveActiveElement(composite);
+	        Composites.RemoveActiveElement(composite);
         }
         public void RemoveActiveElementById(int id)
         {
-	        _composites.RemoveActiveElementById(id);
+	        Composites.RemoveActiveElementById(id);
         }
         public void Clear()
         {
-	        _composites.Clear();
+	        Composites.Clear();
+			Stores.Clear();
+			Samplers.Clear();
+			Series.Clear();
         }
-
-        public void AddCompositeToLibrary(IComposite composite)
-        {
-            // todo: use ref counting to remove dead elements.
-            _composites.AddToLibrary(composite);
-        }
+		
         public void Reset()
         {
-            _composites.Reset();
+            Composites.Reset();
         }
-
 
         public void Pause()
         {
@@ -145,7 +143,6 @@ namespace DataArcs.Players
 		        OnPause(this, null);
 	        }
         }
-
         public void Unpause()
         {
 	        if (_isPaused)
@@ -159,11 +156,11 @@ namespace DataArcs.Players
             if (_isPaused)
             {
                 _pauseTime = DateTime.Now;
-                foreach (var id in _composites.ActiveIds)
+                foreach (var id in Composites.ActiveIds)
                 {
-                    if (_composites.ContainsKey(id) && (_composites[id] is ITimeable))
+                    if (Composites.ContainsKey(id) && (Composites[id] is ITimeable))
                     {
-                        ((ITimeable)_composites[id]).Pause();
+                        ((ITimeable)Composites[id]).Pause();
                     }
                 }
             }
@@ -171,11 +168,11 @@ namespace DataArcs.Players
             {
                 _delayTime += DateTime.Now - _pauseTime;
 				_lastTime += DateTime.Now - _pauseTime;
-                foreach (var id in _composites.ActiveIds)
+                foreach (var id in Composites.ActiveIds)
                 {
-                    if (_composites.ContainsKey(id) && (_composites[id] is ITimeable))
+                    if (Composites.ContainsKey(id) && (Composites[id] is ITimeable))
                     {
-                        ((ITimeable)_composites[id]).Resume();
+                        ((ITimeable)Composites[id]).Resume();
                     }
                 }
             }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DataArcs.Components.Libraries;
+using DataArcs.Players;
 using DataArcs.Samplers;
 using DataArcs.SeriesData.Utils;
 using DataArcs.Stores;
@@ -16,8 +18,11 @@ namespace DataArcs.SeriesData
 		Bezier,
     }
 
-    public abstract class Series : IEnumerable
+    public abstract class Series : IEnumerable, IDefinition
     {
+	    public string Name { get; set; }
+	    public int Id { get; private set; }
+
         public int VectorSize { get; set; }
         public abstract int Count { get; }
         public abstract SeriesType Type { get; }
@@ -86,7 +91,7 @@ namespace DataArcs.SeriesData
         public abstract Series GetRawDataAt(int index);
         public abstract void SetRawDataAt(int index, Series series);
         /// <summary>
-        /// Gets data with an assumed count. Series do not know about capacities, so needs to be passed.
+        /// Gets data with an assumed count. CurrentSeries do not know about capacities, so needs to be passed.
         /// </summary>
         public virtual Series GetVirtualValueAt(int index, int capacity)
         {
@@ -235,7 +240,28 @@ namespace DataArcs.SeriesData
                 _position = 0;
             }
         }
-#endregion
+        #endregion
 
+	    public bool AssignIdIfUnset(int id)
+	    {
+		    bool result = false;
+		    if (Id == 0 && id > 0)
+		    {
+			    Id = id;
+			    result = true;
+		    }
+		    return result;
+	    }
+        public void OnActivate()
+	    {
+	    }
+
+	    public void OnDeactivate()
+	    {
+	    }
+
+	    public void Update(double currentTime, double deltaTime)
+	    {
+	    }
     }
 }

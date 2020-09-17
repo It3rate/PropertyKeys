@@ -8,37 +8,50 @@ namespace DataArcs.Stores
 {
     public abstract class StoreBase : IStore
     {
-	    private static int _idCounter = 1;
-
 	    public string Name { get; set; }
-        public int Id { get; }
+        public int Id { get; private set; }
 
         public virtual CombineFunction CombineFunction { get; set; }
+
         protected int _samplerId;
         public virtual Sampler Sampler
         {
-	        get => Player.Samplers[_samplerId];
+	        get => Player.CurrentSamplers[_samplerId];
 	        set => _samplerId = value.Id;
         }
-        protected Series Series { get; set; }
+
+        protected int _seriesId;
+        public Series Series
+        {
+	        get => _seriesId > 0 ? Player.CurrentSeries[_seriesId] : null;
+	        set
+	        {
+		        if (value != null)
+		        {
+		            _seriesId = Player.CurrentSeries.AddToLibrary(value);
+		        }
+	        }
+        }
+
         public virtual int Capacity => Sampler.SampleCount;
         public virtual bool ShouldInterpolate { get; set; } = false; // linear vs nearest
 
         protected StoreBase(Series series = null)
         {
-            Id = _idCounter++;
-            Player.Stores.AddToLibrary(this);
-
             Series = series;
+            Player.CurrentStores.AddToLibrary(this);
         }
-        //protected StoreBase(IStore store)
-        //{
-        //    Id = _idCounter++;
-        //    Sampler = store.Sampler;
-        //    CombineFunction = store.CombineFunction;
-        //    CombineTarget = store.CombineTarget;
-        //}
 
+        public bool AssignIdIfUnset(int id)
+        {
+	        bool result = false;
+	        if (Id == 0 && id > 0)
+	        {
+		        Id = id;
+		        result = true;
+	        }
+	        return result;
+        }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
 

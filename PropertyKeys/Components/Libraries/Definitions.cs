@@ -9,6 +9,8 @@ namespace DataArcs.Components.Libraries
 {
     public class Definitions<T> where T : class, IDefinition
     {
+	    private int _idCounter = 1;
+
         private readonly Dictionary<int, T> _allItems = new Dictionary<int, T>();
         private readonly List<int> _activeIds = new List<int>();
         private readonly Dictionary<int, T> _toAddActive = new Dictionary<int, T>();
@@ -90,9 +92,13 @@ namespace DataArcs.Components.Libraries
 	        _isBusy = false;
         }
 
-        public void AddToLibrary(T item)
+        public int AddToLibrary(T item)
         {
-            // todo: use ref counting to remove dead elements.
+	        if (item.Id == 0)
+	        {
+		       _idCounter += item.AssignIdIfUnset(_idCounter + 1) ? 1 : 0;
+	        }
+
             if (_allItems.ContainsKey(item.Id))
             {
 	            _allItems[item.Id] = item;
@@ -101,6 +107,8 @@ namespace DataArcs.Components.Libraries
             {
 	            _allItems.Add(item.Id, item);
             }
+
+            return item.Id;
         }
         public void AddActiveElement(T item)
         {

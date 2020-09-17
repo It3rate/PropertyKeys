@@ -11,17 +11,15 @@ namespace DataArcs.Components
 {
     public abstract class BaseComposite : IComposite
     {
-	    private static int _idCounter = 1;
 	    public string Name { get; set; }
-	    public int Id { get; }
+	    public int Id { get; private set; }
 		public virtual int Capacity { get; set; }
 
         protected readonly Dictionary<PropertyId, int> _properties = new Dictionary<PropertyId, int>();
 
         protected BaseComposite()
 	    {
-		    Id = _idCounter++;
-		    Player.GetPlayerById(0).AddCompositeToLibrary(this);
+		    Player.CurrentComposites.AddToLibrary(this);
         }
 
 	    public virtual void AddProperty(PropertyId id, IStore store)
@@ -32,7 +30,7 @@ namespace DataArcs.Components
 	    {
 		    if (_properties.ContainsKey(id))
 		    {
-			    IStore curStore = Player.Stores[_properties[id]];
+			    IStore curStore = Player.CurrentStores[_properties[id]];
 			    if (curStore is FunctionalStore functionalStore)
 			    {
 				    functionalStore.Add(store);
@@ -50,13 +48,13 @@ namespace DataArcs.Components
 	    public void RemoveProperty(PropertyId id)
 	    {
 			// can clean up removes is using ref counting, but maybe makes more sense to leave them and have a UI clean option?
-		    //Player.Stores.RemoveActiveElementById(_properties[id]);
+		    //Player.CurrentStores.RemoveActiveElementById(_properties[id]);
 		    _properties.Remove(id);
 	    }
 	    public virtual IStore GetStore(PropertyId propertyId)
 	    {
 		    _properties.TryGetValue(propertyId, out var result);
-		    return Player.Stores[result];
+		    return Player.CurrentStores[result];
 	    }
 	    public virtual void GetDefinedStores(HashSet<PropertyId> ids)
 	    {
@@ -75,7 +73,7 @@ namespace DataArcs.Components
 	    {
 		    foreach (var storeId in _properties.Values)
 		    {
-			    Player.Stores[storeId].Update(currentTime, deltaTime);
+			    Player.CurrentStores[storeId].Update(currentTime, deltaTime);
 		    }
 	    }
 	    public virtual void EndUpdate(double currentTime, double deltaTime) { }
@@ -120,6 +118,16 @@ namespace DataArcs.Components
 		    return store != null ? store.GetSampledTs(seriesT) :seriesT;
         }
 
+	    public bool AssignIdIfUnset(int id)
+	    {
+		    bool result = false;
+		    if (Id == 0 && id > 0)
+		    {
+			    Id = id;
+			    result = true;
+		    }
+		    return result;
+	    }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
     }

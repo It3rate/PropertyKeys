@@ -24,12 +24,12 @@ namespace DataArcs.Stores
         public override CombineFunction CombineFunction { get => MixStore.CombineFunction; set => MixStore.CombineFunction = value; }
         public override Sampler Sampler
         {
-	        get => MixStore?.Sampler ?? Player.Composites[LinkedCompositeId]?.GetStore(PropertyId)?.Sampler;
+	        get => MixStore?.Sampler ?? Player.CurrentComposites[LinkedCompositeId]?.GetStore(PropertyId)?.Sampler;
 	        set{ if (MixStore != null) MixStore.Sampler = value; }
 
         }
         // todo: this can cause a cycle if this is a link for a locationProperty (capacity will use location recursively)
-        public override int Capacity => MixStore?.Capacity ?? Player.Composites[LinkedCompositeId]?.Capacity ?? 1;
+        public override int Capacity => MixStore?.Capacity ?? Player.CurrentComposites[LinkedCompositeId]?.Capacity ?? 1;
         
         public LinkingStore(int linkedCompositeId, PropertyId propertyId, Slot[] slotMapping, IStore store)
         {
@@ -52,7 +52,7 @@ namespace DataArcs.Stores
             Series result = null;
             if (PropertyIdSet.IsTSampling(PropertyId))
             {
-                Series link = Player.Composites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
+                Series link = Player.CurrentComposites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
                 if (link != null)
                 {
                     var slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
@@ -77,13 +77,13 @@ namespace DataArcs.Stores
                 if (result != null)
                 {
 					// This is two step in order to use slot mapping, probably can sensibly combine this.
-	                Series link = Player.Composites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
+	                Series link = Player.CurrentComposites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
 	                Series slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
 	                result.CombineInto(slotMapped, CombineFunction, t);
                 }
                 else
                 {
-                    result = Player.Composites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
+                    result = Player.CurrentComposites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
                     result = SeriesUtils.SwizzleSeries(SlotMapping, result);
                 }
             }
@@ -93,7 +93,7 @@ namespace DataArcs.Stores
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
             ParametricSeries result = _mixStore.GetSampledTs(seriesT);
-            ParametricSeries link = Player.Composites[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
+            ParametricSeries link = Player.CurrentComposites[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
             if (link != null)
             {
                 Series mappedValues = SeriesUtils.SwizzleSeries(SlotMapping, link);
