@@ -12,7 +12,7 @@ namespace DataArcs.Commands
 {
     public class CommandCreateEasing : CommandBase
     {
-	    private Easing Easing;
+	    private Easing _easing;
 
 	    private readonly EasingType[] _easingTypes;
 	    private readonly Slot[] _swizzleMap;
@@ -30,7 +30,7 @@ namespace DataArcs.Commands
 
 	    public override void Execute()
 	    {
-			Easing = new Easing(_easingTypes, _swizzleMap, _sampleCount, _clamp);
+			_easing = new Easing(_easingTypes, _swizzleMap, _sampleCount, _clamp);
 	    }
 
 	    public override void UnExecute()

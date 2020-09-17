@@ -13,11 +13,11 @@ namespace DataArcs.Commands
 {
     public class CommandCreateStore : CommandBase
     {
-	    private Store Store;
+	    private Store _store;
 
-	    private int _seriesId;
-	    private int _samplerId;
-	    private CombineFunction _combineFunction;
+	    private readonly int _seriesId;
+        private readonly int _samplerId;
+        private readonly CombineFunction _combineFunction;
 
         public CommandCreateStore(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace)
         {
@@ -29,7 +29,7 @@ namespace DataArcs.Commands
 
 	    public override void Execute()
 	    {
-		    Store = new Store(_seriesId, _samplerId, _combineFunction);
+		    _store = new Store(_seriesId, _samplerId, _combineFunction);
 	    }
 
 	    public override void UnExecute()

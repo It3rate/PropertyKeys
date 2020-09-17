@@ -7,7 +7,7 @@ namespace DataArcs.Commands
 {
     public class CommandCreateSeries : CommandBase
     {
-	    private Series Series;
+	    private Series _series;
 	    private readonly SeriesType _type;
 	    private readonly int _vectorSize;
 	    private readonly float[] _floatValues;
@@ -45,16 +45,16 @@ namespace DataArcs.Commands
 	        switch (_type)
 	        {
 		        case SeriesType.Float:
-			        Series = new FloatSeries(_vectorSize, _floatValues);
+			        _series = new FloatSeries(_vectorSize, _floatValues);
 			        break;
 		        case SeriesType.Parametric:
-			        Series = new ParametricSeries(_vectorSize, _floatValues);
+			        _series = new ParametricSeries(_vectorSize, _floatValues);
 			        break;
 		        case SeriesType.RectF:
-			        Series = new RectFSeries(_floatValues);
+			        _series = new RectFSeries(_floatValues);
 			        break;
 		        case SeriesType.Int:
-			        Series = new IntSeries(_vectorSize, _intValues);
+			        _series = new IntSeries(_vectorSize, _intValues);
 			        break;
 	        }
         }
