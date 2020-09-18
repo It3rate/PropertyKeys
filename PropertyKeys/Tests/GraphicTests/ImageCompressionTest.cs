@@ -48,7 +48,7 @@ namespace DataArcs.Tests.GraphicTests
 			_player.Clear();
 		    _mouseInput = new MouseInput();
 		    _mouseInput.MouseClick = NextBlock;
-		    _player.AddActiveElement(_mouseInput);
+		    _player.ActivateComposite(_mouseInput.Id);
 
 		    var bmp = bitmaps[_bitmapIndex];
 
@@ -59,7 +59,7 @@ namespace DataArcs.Tests.GraphicTests
         private void SampleImage(Bitmap bitmap)
         {
 	        var comp = GetImage(bitmap, 10);
-			_player.AddActiveElement(comp);
+			_player.ActivateComposite(comp.Id);
         }
 
         private Container GetImage(Bitmap bitmap, int columns)
@@ -84,19 +84,19 @@ namespace DataArcs.Tests.GraphicTests
 	        int root = 12;
 	        IComposite comp0 = GetImage(bitmap, root * 2);
 	        RemoveQuadrant(comp0, 0);
-	        _player.AddActiveElement(comp0);
+	        _player.ActivateComposite(comp0.Id);
 
 	        IComposite comp1 = GetImage(bitmap, root * 3);
 	        RemoveQuadrant(comp1, 1);
-	        _player.AddActiveElement(comp1);
+	        _player.ActivateComposite(comp1.Id);
 
 	        IComposite comp2 = GetImage(bitmap, root * 6);
 	        RemoveQuadrant(comp2, 2);
-	        _player.AddActiveElement(comp2);
+	        _player.ActivateComposite(comp2.Id);
 
 	        IComposite comp3 = GetImage(bitmap, root * 12);
 	        RemoveQuadrant(comp3, 3);
-	        _player.AddActiveElement(comp3);
+	        _player.ActivateComposite(comp3.Id);
 
         }
 

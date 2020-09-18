@@ -26,7 +26,7 @@ namespace DataArcs.Tests.GraphicTests
 	        var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack));
 	        _timer = _timer ?? new Timer(0, 3500, easeStore);
 	        _timer.EndTimedEvent += CompOnEndTimerEvent;
-	        _player.AddActiveElement(_timer);
+	        _player.ActivateComposite(_timer.Id);
         }
         private void CompOnEndTimerEvent(object sender, EventArgs e)
         {
@@ -52,7 +52,7 @@ namespace DataArcs.Tests.GraphicTests
             //IComposite itemToAdd = ring;
             IComposite itemToAdd = blend;
 			
-            _player.AddActiveElement(itemToAdd);
+            _player.ActivateComposite(itemToAdd.Id);
         }
 
         private void CompOnEndTransitionEvent(object sender, EventArgs e)

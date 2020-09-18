@@ -30,7 +30,7 @@ namespace DataArcs.Components.Transitions
         public BlendTransition(IContainer start, IContainer end, ITimeable runner, Store easing = null)
         {
 			Runner = runner;
-			Player.GetPlayerById(0).AddActiveElement(Runner);
+			Player.GetPlayerById(0).ActivateComposite(Runner.Id);
 
 			Easing = easing;
             Start = start;

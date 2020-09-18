@@ -22,11 +22,15 @@ namespace DataArcs.Components
 		    Player.CurrentComposites.AddToLibrary(this);
         }
 
-	    public virtual void AddProperty(PropertyId id, IStore store)
-	    {
-		    _properties[id] = store.Id;
-	    }
-	    public void AppendProperty(PropertyId id, IStore store)
+        public virtual void AddProperty(PropertyId id, int storeId)
+        {
+	        _properties[id] = storeId;
+        }
+        public virtual void AddProperty(PropertyId id, IStore store)
+        {
+	        _properties[id] = store.Id;
+        }
+        public void AppendProperty(PropertyId id, IStore store)
 	    {
 		    if (_properties.ContainsKey(id))
 		    {
@@ -51,12 +55,16 @@ namespace DataArcs.Components
 		    //Player.CurrentStores.RemoveActiveElementById(_properties[id]);
 		    _properties.Remove(id);
 	    }
-	    public virtual IStore GetStore(PropertyId propertyId)
+	    public IStore GetLocalStore(PropertyId propertyId)
 	    {
 		    _properties.TryGetValue(propertyId, out var result);
 		    return Player.CurrentStores[result];
 	    }
-	    public virtual void GetDefinedStores(HashSet<PropertyId> ids)
+	    public virtual IStore GetStore(PropertyId propertyId)
+	    {
+		    return GetLocalStore(propertyId);
+	    }
+        public virtual void GetDefinedStores(HashSet<PropertyId> ids)
 	    {
 		    foreach (var item in _properties.Keys)
 		    {

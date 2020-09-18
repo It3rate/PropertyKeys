@@ -43,17 +43,17 @@ namespace DataArcs.Tests.GraphicTests
             _player.Clear();
             _mouseInput = new MouseInput();
             _mouseInput.MouseClick = CompOnEndTransitionEvent;
-            _player.AddActiveElement(_mouseInput);
+            _player.ActivateComposite(_mouseInput.Id);
 
             Container containerA = GetImage(bitmaps[_bitmapIndex]);
             switch (_step)
             {
                 case 0:
-                    _player.AddActiveElement(containerA);
+                    _player.ActivateComposite(containerA.Id);
 
                     //_timer = new Timer(0, 1000, null);
                     //_timer.EndTimedEvent += CompOnEndTransitionEvent;
-                    //_player.AddActiveElement(_timer);
+                    //_player.ActivateElement(_timer);
                     break;
             }
         }

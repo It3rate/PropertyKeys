@@ -40,28 +40,28 @@ namespace DataArcs.Tests.GraphicTests
             switch (_step)
             {
                 case 0:
-                    _player.AddActiveElement(containerA);
+                    _player.ActivateComposite(containerA.Id);
                     _timer = new Timer(0, 1000, null);
                     _timer.EndTimedEvent += CompOnEndTransitionEvent;
-                    _player.AddActiveElement(_timer);
+                    _player.ActivateComposite(_timer.Id);
                     break;
                 case 1:
                     containerB = GetHistogram(containerA, false, true, false);
                     var comp = GetBlend(containerA, containerB, 1500);
-                    _player.AddActiveElement(comp);
+                    _player.ActivateComposite(comp.Id);
                     comp.Runner.EndTimedEvent += CompOnEndTransitionEvent;
                     break;
                 case 2:
                     containerB = GetHistogram(containerA, true, true, false);
                     var compRev = GetBlend(containerA, containerB,1500);
-                    _player.AddActiveElement(compRev);
+                    _player.ActivateComposite(compRev.Id);
                     compRev.Runner.EndTimedEvent += CompOnEndTransitionEvent;
                     break;
                 case 3:
-                    _player.AddActiveElement(containerA);
+                    _player.ActivateComposite(containerA.Id);
                     _timer = new Timer(0, 500, null);
                     _timer.EndTimedEvent += CompOnEndTransitionEvent;
-                    _player.AddActiveElement(_timer);
+                    _player.ActivateComposite(_timer.Id);
                     break;
                 case 4:
 	                int nextImageIndex = _bitmapIndex < bitmaps.Length - 1 ? _bitmapIndex + 1 : 0;
@@ -70,7 +70,7 @@ namespace DataArcs.Tests.GraphicTests
 					//var image2 = GetImage(bitmaps[nextImageIndex]);
      //               var compBlend = GetBlend(containerA, image2);
 
-	                _player.AddActiveElement(compBlend);
+	                _player.ActivateComposite(compBlend.Id);
 	                compBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
 	                break;
             }

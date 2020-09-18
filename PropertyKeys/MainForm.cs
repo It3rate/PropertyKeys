@@ -71,8 +71,8 @@ namespace DataArcs
 			//});
 		}
 
-        private static int _testCount = 10;
-        private int _testIndex = 7;//_testCount;
+        private static int _testCount = 11;
+        private int _testIndex = 0;//_testCount;
         private void NextTest()
         {
 	        _testIndex--;
@@ -112,6 +112,9 @@ namespace DataArcs
 			        break;
 		        case 9:
 			        _testScreen = new BitmapAutomataTest(_player);
+			        break;
+		        case 10:
+			        _testScreen = new CommandTest(_player);
 			        break;
             }
             _player.Pause();

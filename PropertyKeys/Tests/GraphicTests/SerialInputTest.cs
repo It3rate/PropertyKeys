@@ -25,10 +25,10 @@ namespace DataArcs.Tests.GraphicTests
         public void NextVersion()
         {
 	        _sensorInput = new SensorSerialPort();
-            _player.AddActiveElement(_sensorInput);
+            _player.ActivateComposite(_sensorInput.Id);
 
             IComposite comp = GetHexGrid();
-            _player.AddActiveElement(comp);
+            _player.ActivateComposite(comp.Id);
 
 
             //comp.EndTimedEvent += CompOnEndTransitionEvent;

@@ -51,55 +51,55 @@ namespace DataArcs.Tests.GraphicTests
             {
 	            case -3:
 		            // only happens once
-		            _player.AddActiveElement(GetContainer(Ring, false));
+		            _player.ActivateComposite(GetContainer(Ring, false).Id);
 		            _timer = new Timer(0, 2500, null);
 		            _timer.EndTimedEvent += CompOnEndTransitionEvent;
-		            _player.AddActiveElement(_timer);
+		            _player.ActivateComposite(_timer.Id);
                     break;
 	            case -2:
 		            // only happens once
 		            _currentBlend = new BlendTransition( GetContainer(Ring, false),GetContainer(Hex, false), new Timer(0, 1000), _easeStore);
 		            _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
-		            _player.AddActiveElement(_currentBlend);
+		            _player.ActivateComposite(_currentBlend.Id);
 		            break;
 	            case -1:
                     // only happens once
-                    _player.AddActiveElement(GetContainer(Hex, false));
+                    _player.ActivateComposite(GetContainer(Hex, false).Id);
                     _timer = new Timer(0, 2500, null);
                     _timer.EndTimedEvent += CompOnEndTransitionEvent;
-                    _player.AddActiveElement(_timer);
+                    _player.ActivateComposite(_timer.Id);
                     break;
 	            case 0:
 		            // only happens once
 		            _currentBlend = new BlendTransition(GetContainer(Hex, false), GetContainer(Ring, false), new Timer(0, 1000), _easeStore);
 		            _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
-		            _player.AddActiveElement(_currentBlend);
+		            _player.ActivateComposite(_currentBlend.Id);
 		            break;
                 case 1:
 	                _currentPhysics = _currentBlend.End;
                     AddPhysics(_currentPhysics);
-                    _player.AddActiveElement(_currentPhysics);
+                    _player.ActivateComposite(_currentPhysics.Id);
                     _timer = new Timer(0, 2500, null);
 		            _timer.EndTimedEvent += CompOnEndTransitionEvent;
-		            _player.AddActiveElement(_timer);
+		            _player.ActivateComposite(_timer.Id);
                     break;
                 case 2:
 	                _currentBlend = new BlendTransition(_currentPhysics, GetContainer(Hex, false), new Timer(0, 2000), _easeStore);
 	                _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
-	                _player.AddActiveElement(_currentBlend);
+	                _player.ActivateComposite(_currentBlend.Id);
                     break;
                 case 3:
 	                _currentPhysics = _currentBlend.End;
 	                AddPhysics(_currentPhysics);
-	                _player.AddActiveElement(_currentPhysics);
+	                _player.ActivateComposite(_currentPhysics.Id);
 	                _timer = new Timer(0, 2500, null);
 	                _timer.EndTimedEvent += CompOnEndTransitionEvent;
-	                _player.AddActiveElement(_timer);
+	                _player.ActivateComposite(_timer.Id);
                     break;
                 case 4:
 	                _currentBlend = new BlendTransition(_currentPhysics, GetContainer(Ring, false), new Timer(0, 2000), _easeStore);
 	                _currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
-	                _player.AddActiveElement(_currentBlend);
+	                _player.ActivateComposite(_currentBlend.Id);
 	                break;
             }
 
@@ -137,7 +137,7 @@ namespace DataArcs.Tests.GraphicTests
         private void AddPhysics(IContainer composite)
         {
             _physicsComposite = new PhysicsComposite();
-            _player.AddActiveElement(_physicsComposite);
+            _player.ActivateComposite(_physicsComposite.Id);
             for (int i = 0; i < composite.Capacity; i++)
             {
 	            _physicsComposite.CreateBezierBody(i, composite);

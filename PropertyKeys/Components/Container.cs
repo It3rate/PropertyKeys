@@ -21,11 +21,9 @@ namespace DataArcs.Components
 		
         public IContainer Parent { get; set; }
         public IRenderable Renderer { get; set; }
-
-        private IStore _items;
-        public IStore Items => _items ?? GetStore(PropertyId.Items);
-		// todo: move away from location being so important.
-        public override int Capacity => Math.Max(GetStore(PropertyId.Location)?.Capacity ?? 0, Items.Capacity);
+		
+        // todo: move away from location being so important.
+        public override int Capacity => Math.Max(GetStore(PropertyId.Location)?.Capacity ?? 0, GetStore(PropertyId.Items).Capacity);
 
         protected Container(IStore items)
         {
@@ -40,17 +38,9 @@ namespace DataArcs.Components
             Renderer = renderer;
         }
 
-#region Elements
-
-		public override void AddProperty(PropertyId id, IStore store)
-		{
-			base.AddProperty(id, store);
-			if (id == PropertyId.Items)
-			{
-				_items = store;
-			}
-		}
-		public override IStore GetStore(PropertyId propertyId)
+        #region Elements
+		
+        public override IStore GetStore(PropertyId propertyId)
 		{
 			var result = base.GetStore(propertyId);
 			if (result == null && Parent != null)
@@ -81,7 +71,7 @@ namespace DataArcs.Components
                 }
                 else
                 {
-                    result = Items?.Capacity ?? 0;
+                    result = GetStore(PropertyId.Items)?.Capacity ?? 0;
                 }
                 return result;
             }
@@ -275,9 +265,10 @@ namespace DataArcs.Components
             if (capacity > 0)// != null)
             {
 				SortedList<int, int> sl = new SortedList<int, int>();
+				var items = GetLocalStore(PropertyId.Items);
                 for (int i = 0; i < capacity; i++)
                 {
-	                int itemIndex = _items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
+	                int itemIndex = items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
 
                     float indexT = itemIndex / (capacity - 1f);
                     dict.Clear();

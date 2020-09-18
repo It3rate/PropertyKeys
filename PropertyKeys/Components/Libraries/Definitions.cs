@@ -110,10 +110,12 @@ namespace DataArcs.Components.Libraries
 
             return item.Id;
         }
-        public void AddActiveElement(T item)
+        public void ActivateElement(int id)
         {
-			AddToLibrary(item);
-	        _toAddActive.Add(item.Id, item);
+	        if (_allItems.ContainsKey(id))
+	        {
+		        _toAddActive.Add(id, _allItems[id]);
+	        }
         }
 
         public void RemoveActiveElement(T item)

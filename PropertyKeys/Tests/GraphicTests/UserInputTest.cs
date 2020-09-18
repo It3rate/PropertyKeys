@@ -28,10 +28,10 @@ namespace DataArcs.Tests.GraphicTests
 	    public void NextVersion()
 	    {
 		    _mouseInput = new MouseInput();
-			_player.AddActiveElement(_mouseInput);
+			_player.ActivateComposite(_mouseInput.Id);
 
             IComposite comp = GetHexGrid();
-		    _player.AddActiveElement(comp);
+		    _player.ActivateComposite(comp.Id);
 
 
 		    //comp.EndTimedEvent += CompOnEndTransitionEvent;

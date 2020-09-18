@@ -40,7 +40,7 @@ namespace DataArcs.Tests.GraphicTests
 
 		    _mouseInput = new MouseInput();
 			_mouseInput.MouseClick = NextBlock;
-		    _player.AddActiveElement(_mouseInput);
+		    _player.ActivateComposite(_mouseInput.Id);
         }
 
         public void NextBlock()
@@ -60,7 +60,7 @@ namespace DataArcs.Tests.GraphicTests
                     _current = GetAutomata(Hex);
                     //_current = GetAutomata(Grid);
                     //_currentBlend.Runner.EndTimedEvent += CompOnEndTransitionEvent;
-                    _player.AddActiveElement(_current);
+                    _player.ActivateComposite(_current.Id);
 				    break;
 			    case 1:
 				    break;
