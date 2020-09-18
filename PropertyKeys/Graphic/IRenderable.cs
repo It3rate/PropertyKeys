@@ -3,14 +3,13 @@ using DataArcs.SeriesData;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using DataArcs.Components.Libraries;
 
 namespace DataArcs.Graphic
 {
-    public interface IRenderable
+    public interface IRenderable : IDefinition
     {
-	    int RendererId { get; }
-
-        BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict);
+	    BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict);
         void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using DataArcs.Components;
+using DataArcs.Players;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
 
@@ -8,15 +9,37 @@ namespace DataArcs.Graphic
 {
 	public abstract class GraphicBase : IRenderable
 	{
-		protected static int _rendererCount = 1;
-		public int RendererId { get; }
-        public abstract void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g);
+		public string Name { get; set; }
+		public int Id { get; private set; }
 
-        public abstract BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict);
+		public abstract void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g);
+		public abstract BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict);
 
-        public GraphicBase()
-		{
-			RendererId = _rendererCount++;
-		}
-	}
+        protected GraphicBase()
+        {
+	        Player.CurrentRenderables.AddToLibrary(this);
+        }
+
+        public bool AssignIdIfUnset(int id)
+        {
+	        bool result = false;
+	        if (Id == 0 && id > 0)
+	        {
+		        Id = id;
+		        result = true;
+	        }
+	        return result;
+        }
+        public void OnActivate()
+        {
+        }
+
+        public void OnDeactivate()
+        {
+        }
+
+        public void Update(double currentTime, double deltaTime)
+        {
+        }
+    }
 }

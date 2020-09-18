@@ -6,6 +6,7 @@ using System.Timers;
 using System.Windows.Forms;
 using DataArcs.Components;
 using DataArcs.Components.Libraries;
+using DataArcs.Graphic;
 using DataArcs.Samplers;
 using DataArcs.SeriesData;
 using DataArcs.Stores;
@@ -21,6 +22,7 @@ namespace DataArcs.Players
         public static Definitions<Series> CurrentSeries => CurrentPlayer.Series;
         public static Definitions<Sampler> CurrentSamplers => CurrentPlayer.Samplers;
         public static Definitions<IStore> CurrentStores => CurrentPlayer.Stores;
+        public static Definitions<IRenderable> CurrentRenderables => CurrentPlayer.Renderables;
         public static Definitions<IComposite> CurrentComposites => CurrentPlayer.Composites;
 
         private readonly Form _display;
@@ -28,6 +30,7 @@ namespace DataArcs.Players
         public Definitions<Series> Series { get; } = new Definitions<Series>();
         public Definitions<Sampler> Samplers { get; } = new Definitions<Sampler>();
         public Definitions<IStore> Stores { get; } = new Definitions<IStore>();
+        public Definitions<IRenderable> Renderables { get; } = new Definitions<IRenderable>();
         public Definitions<IComposite> Composites { get; } = new Definitions<IComposite>();
 
         private bool _isPaused;
@@ -119,15 +122,11 @@ namespace DataArcs.Players
 		        Composites.ActivateElement(composite.Id);
 	        }
         }
+        public void DeactivateComposite(int id)
+        {
+	        Composites.DeactivateElement(id);
+        }
 
-        public void RemoveActiveElement(IComposite composite)
-        {
-	        Composites.RemoveActiveElement(composite);
-        }
-        public void RemoveActiveElementById(int id)
-        {
-	        Composites.RemoveActiveElementById(id);
-        }
         public void Clear()
         {
 	        Composites.Clear();

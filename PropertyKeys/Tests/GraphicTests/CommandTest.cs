@@ -27,7 +27,7 @@ namespace DataArcs.Tests.GraphicTests
         public void NextVersion()
         {
 
-	        Store loc = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 10, 7 }));
+	        Store loc = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 20, 14 }));
 	        Store fillColor = new Store(new FloatSeries(1, 1, 0.5f));
 
 	        //var composite = new Container(Store.CreateItemStore(70));
@@ -37,7 +37,7 @@ namespace DataArcs.Tests.GraphicTests
          //   _player.ActivateComposite(composite.Id);
 
 			CommandCreateContainer ccc = new CommandCreateContainer(
-				Store.CreateItemStore(70),
+				Store.CreateItemStore(loc.Capacity),
 				null, 
 				new PolyShape(), 
 				new Dictionary<PropertyId, int>(){ {PropertyId.Location, loc.Id}, { PropertyId.FillColor, fillColor.Id} });

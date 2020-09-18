@@ -117,12 +117,8 @@ namespace DataArcs.Components.Libraries
 		        _toAddActive.Add(id, _allItems[id]);
 	        }
         }
-
-        public void RemoveActiveElement(T item)
-        {
-            _toRemoveActive.Add(item.Id);
-        }
-        public void RemoveActiveElementById(int id)
+		
+        public void DeactivateElement(int id)
         {
             _toRemoveActive.Add(id);
         }

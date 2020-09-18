@@ -34,12 +34,18 @@ namespace DataArcs.Components
         }
         public Container(IStore items = null, IContainer parent = null, IRenderable renderer = null) : this(items)
         {
-            Parent = parent;
-            Renderer = renderer;
+	        Parent = parent;
+	        Renderer = renderer;
+        }
+
+        public Container(int items, int parent, int renderer) : this(Player.CurrentStores[items])
+        {
+	        Parent = (IContainer)Player.CurrentPlayer.Composites[parent];
+	        Renderer = Player.CurrentPlayer.Renderables[renderer];
         }
 
         #region Elements
-		
+
         public override IStore GetStore(PropertyId propertyId)
 		{
 			var result = base.GetStore(propertyId);
