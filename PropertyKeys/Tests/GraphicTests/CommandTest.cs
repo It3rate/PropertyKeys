@@ -26,16 +26,22 @@ namespace DataArcs.Tests.GraphicTests
 
         public void NextVersion()
         {
-	        var composite = new Container(Store.CreateItemStore(70));
 
 	        Store loc = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 10, 7 }));
-	        composite.AddProperty(PropertyId.Location, loc);
-	        composite.AddProperty(PropertyId.FillColor, new Store(new FloatSeries(1, 1, 0.5f)));
-            composite.Renderer = new PolyShape();
+	        Store fillColor = new Store(new FloatSeries(1, 1, 0.5f));
 
-			//CommandCreateContainer ccc = new CommandCreateContainer(Store.CreateItemStore(70), null, new PolyShape());
+	        //var composite = new Container(Store.CreateItemStore(70));
+         //   composite.AddProperty(PropertyId.Location, loc);
+	        //composite.AddProperty(PropertyId.FillColor, fillColor);
+         //   composite.Renderer = new PolyShape();
+         //   _player.ActivateComposite(composite.Id);
 
-            _player.ActivateComposite(composite.Id);
+			CommandCreateContainer ccc = new CommandCreateContainer(
+				Store.CreateItemStore(70),
+				null, 
+				new PolyShape(), 
+				new Dictionary<PropertyId, int>(){ {PropertyId.Location, loc.Id}, { PropertyId.FillColor, fillColor.Id} });
+			ccc.Execute();
         }
     }
 }

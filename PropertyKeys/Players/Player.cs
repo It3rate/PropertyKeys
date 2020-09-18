@@ -15,13 +15,13 @@ namespace DataArcs.Players
 {
     public class Player
     {
-        private static Player _currentPlayer;
-        public static Player GetPlayerById(int id) => _currentPlayer;
+        public static Player CurrentPlayer;
+        public static Player GetPlayerById(int id) => CurrentPlayer;
 
-        public static Definitions<Series> CurrentSeries => _currentPlayer.Series;
-        public static Definitions<Sampler> CurrentSamplers => _currentPlayer.Samplers;
-        public static Definitions<IStore> CurrentStores => _currentPlayer.Stores;
-        public static Definitions<IComposite> CurrentComposites => _currentPlayer.Composites;
+        public static Definitions<Series> CurrentSeries => CurrentPlayer.Series;
+        public static Definitions<Sampler> CurrentSamplers => CurrentPlayer.Samplers;
+        public static Definitions<IStore> CurrentStores => CurrentPlayer.Stores;
+        public static Definitions<IComposite> CurrentComposites => CurrentPlayer.Composites;
 
         private readonly Form _display;
 
@@ -45,7 +45,7 @@ namespace DataArcs.Players
 
         public Player(Form display)
 		{
-            _currentPlayer = this;
+            CurrentPlayer = this;
 			_display = display;
 			Initialize();
 		}

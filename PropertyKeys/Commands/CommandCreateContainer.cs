@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Components;
 using DataArcs.Graphic;
+using DataArcs.Players;
 using DataArcs.Stores;
 
 namespace DataArcs.Commands
@@ -33,6 +34,7 @@ namespace DataArcs.Commands
 			{
 				_container.AddProperty(propId, _properties[propId]);
 			}
+			Player.CurrentPlayer.ActivateComposite(_container.Id);
 	    }
 
 	    public override void UnExecute()
