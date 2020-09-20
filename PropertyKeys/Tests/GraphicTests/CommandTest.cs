@@ -27,21 +27,19 @@ namespace DataArcs.Tests.GraphicTests
         public void NextVersion()
         {
 
-	        Store loc = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 20, 14 }));
-	        Store fillColor = new Store(new FloatSeries(1, 1, 0.5f));
+	        Store frame = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 20, 14 }));
 
-	        //var composite = new Container(Store.CreateItemStore(70));
-         //   composite.AddProperty(PropertyId.Location, loc);
-	        //composite.AddProperty(PropertyId.FillColor, fillColor);
-         //   composite.Renderer = new PolyShape();
-         //   _player.ActivateComposite(composite.Id);
+	        var cmdMouseInput = new CommandCreateMouseInput();
+	        cmdMouseInput.Execute();
 
-			CommandCreateContainer ccc = new CommandCreateContainer(
-				Store.CreateItemStore(loc.Capacity),
+            var mouseLink = new CommandCreateLinkSampler(cmdMouseInput.ContainerId, PropertyId.MouseLocationT, SlotUtils.XY);
+            Store fillColor = new Store(new FloatSeries(2, 0,0,1f,1f), mouseLink.Sampler);
+            CommandCreateContainer cmdGrid = new CommandCreateContainer(
+				Store.CreateItemStore(frame.Capacity),
 				null, 
-				new PolyShape(), 
-				new Dictionary<PropertyId, int>(){ {PropertyId.Location, loc.Id}, { PropertyId.FillColor, fillColor.Id} });
-			ccc.Execute();
+				new PolyShape(true, true), 
+				new Dictionary<PropertyId, int>(){ {PropertyId.Location, frame.Id}, { PropertyId.FillColor, fillColor.Id} });
+			cmdGrid.Execute();
         }
     }
 }

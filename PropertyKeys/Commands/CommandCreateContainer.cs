@@ -14,16 +14,11 @@ namespace DataArcs.Commands
     {
 	    private readonly int _containerId;
 
-	    //private readonly int _parentId;
-	    //private readonly int _rendererId;
-	    //private readonly Dictionary<PropertyId, int> _properties;
-	    
         public CommandCreateContainer(IStore items, IContainer parent, IRenderable renderer, Dictionary<PropertyId, int> properties)
         {
 	        var itemStoreId = items?.Id ?? 0;
 	        var parentId = parent?.Id ?? 0;
 	        var rendererId = renderer?.Id ?? 0;
-	        //_properties = properties;
 
 			// May need to create and destroy container each time to allow rewind edits that result in different object counts?
 			// Probably need to recreate the whole command though.
