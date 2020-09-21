@@ -12,7 +12,7 @@ namespace DataArcs.Stores
         //void Update(double currentTime, double deltaTime);
 
         int Capacity { get; }
-        CombineFunction CombineFunction { get; set; }
+        CombineFunction MergeFunction { get; set; }
 		Sampler Sampler { get; set; }
 		bool ShouldInterpolate { get; set; }
 

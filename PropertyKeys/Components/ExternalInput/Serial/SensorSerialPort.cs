@@ -72,35 +72,42 @@ namespace DataArcs.Components.ExternalInput.Serial
 
         public void StartListening(string portName)
         {
-            _readThread = new Thread(Read);
+	        bool portExists = Array.Exists(SerialPort.GetPortNames(), e => e == portName);
+	        if (portExists)
+	        {
+		        _readThread = new Thread(Read);
 
-            // Create a new SerialPort object with default settings.
-            _serialPort = new SerialPort();
+		        // Create a new SerialPort object with default settings.
+		        _serialPort = new SerialPort();
 
 
-            _serialPort.PortName = portName;
+		        _serialPort.PortName = portName;
 
-            _serialPort.BaudRate = 38400; //9600;
-            _serialPort.Parity = Parity.None;
-            _serialPort.DataBits = 8;
-            _serialPort.StopBits = StopBits.One;
-            _serialPort.Handshake = Handshake.None;
+		        _serialPort.BaudRate = 38400; //9600;
+		        _serialPort.Parity = Parity.None;
+		        _serialPort.DataBits = 8;
+		        _serialPort.StopBits = StopBits.One;
+		        _serialPort.Handshake = Handshake.None;
 
-            // Set the read/write timeouts
-            _serialPort.ReadTimeout = 500;
-            _serialPort.WriteTimeout = 500;
-            try
-            {
-	            _serialPort.Open();
-	            _serialPort.DiscardInBuffer();
-	            _readThread.Start();
-	            StartTimedEvent?.Invoke(this, EventArgs.Empty);
+		        // Set the read/write timeouts
+		        _serialPort.ReadTimeout = 500;
+		        _serialPort.WriteTimeout = 500;
+		        try
+		        {
+			        _serialPort.Open();
+			        _serialPort.DiscardInBuffer();
+			        _readThread.Start();
+			        StartTimedEvent?.Invoke(this, EventArgs.Empty);
+		        }
+		        catch (IOException)
+		        {
+			        MainForm.SkipTest();
+		        }
             }
-            catch (IOException)
-            {
-				MainForm.SkipTest();
+	        else
+	        {
+		        MainForm.SkipTest();
             }
-
         }
 
         private bool continueReading = true;

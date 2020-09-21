@@ -35,13 +35,13 @@ namespace DataArcs.Components
 		    if (_properties.ContainsKey(id))
 		    {
 			    IStore curStore = Player.CurrentStores[_properties[id]];
-			    if (curStore is FunctionalStore functionalStore)
+			    if (curStore is MergingStore functionalStore)
 			    {
 				    functionalStore.Add(store);
 			    }
 			    else
 			    {
-                    AddProperty(id, new FunctionalStore(curStore, store) { CombineFunction = curStore.CombineFunction });
+                    AddProperty(id, new MergingStore(curStore, store) { MergeFunction = curStore.MergeFunction });
                 }
 		    }
 		    else
@@ -94,7 +94,7 @@ namespace DataArcs.Components
 		    {
 			    if (result != null)
 			    {
-				    result.CombineInto(parentSeries, store.CombineFunction, t);
+				    result.CombineInto(parentSeries, store.MergeFunction, t);
 			    }
 			    else
 			    {
@@ -111,7 +111,7 @@ namespace DataArcs.Components
 		    {
 			    if (result != null)
 			    {
-				    result.CombineInto(parentSeries, store.CombineFunction);
+				    result.CombineInto(parentSeries, store.MergeFunction);
 			    }
 			    else
 			    {

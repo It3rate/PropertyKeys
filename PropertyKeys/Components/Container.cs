@@ -203,7 +203,7 @@ namespace DataArcs.Components
             {
                 if (result != null)
                 {
-                    result.CombineInto(parentSeries, store.CombineFunction, t);
+                    result.CombineInto(parentSeries, store.MergeFunction, t);
                 }
                 else
                 {
@@ -221,7 +221,7 @@ namespace DataArcs.Components
             {
                 if (result != null)
                 {
-                    result.CombineInto(parentSeries, store.CombineFunction);
+                    result.CombineInto(parentSeries, store.MergeFunction);
                 }
                 else
                 {

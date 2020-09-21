@@ -6,7 +6,7 @@ using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
-	public class FunctionalStore : StoreBase
+	public class MergingStore : StoreBase
 	{
 		private readonly List<IStore> _stores;
 
@@ -20,7 +20,7 @@ namespace DataArcs.Stores
 			set => GetStartDataStore().Sampler = value;
 		}
 
-		public FunctionalStore(params IStore[] stores)
+		public MergingStore(params IStore[] stores)
 		{
 			_stores = new List<IStore>(stores);
 		}
@@ -34,7 +34,7 @@ namespace DataArcs.Stores
 			for (var i = 1; i < _stores.Count; i++)
 			{
 				var b = _stores[i].GetValuesAtIndex(index);
-				series.CombineInto(b, _stores[i].CombineFunction);
+				series.CombineInto(b, _stores[i].MergeFunction);
 			}
 
 			return series;
@@ -48,7 +48,7 @@ namespace DataArcs.Stores
 				if (series != null)
 				{
 					var b = store.GetValuesAtT(t);
-					series.CombineInto(b, store.CombineFunction);
+					series.CombineInto(b, store.MergeFunction);
 				}
 				else
 				{
@@ -68,7 +68,7 @@ namespace DataArcs.Stores
 				if (result != null)
 				{
 					var b = store.GetSampledTs(seriesT);
-					result.CombineInto(b, store.CombineFunction);
+					result.CombineInto(b, store.MergeFunction);
 				}
 				else
 				{
@@ -144,7 +144,7 @@ namespace DataArcs.Stores
 
 		public override IStore Clone()
 		{
-			return new FunctionalStore(_stores.ToArray());
+			return new MergingStore(_stores.ToArray());
 		}
 
 		public override void CopySeriesDataInto(IStore target)

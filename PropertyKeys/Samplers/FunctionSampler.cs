@@ -31,21 +31,21 @@ namespace DataArcs.Samplers
         SignedDistance, // returns xDist, yDist
 	}
 
-    public class ComparisonSampler : Sampler
+    public class FunctionSampler : Sampler
     {
 	    private Sampler _sampleA;
 	    private Sampler _sampleB;
 	    private SeriesEquation _seriesEquation;
 		public ParametricSeries EffectRatio { get; set; }
 
-        public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
+        public FunctionSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
         {
 		    _sampleA = sampleA;
 		    _sampleB = sampleB;
 		    _seriesEquation = seriesEquation;
 		    SampleCount = sampleCount;
 	    }
-	    public ComparisonSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int sampleCount = 1) : 
+	    public FunctionSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int sampleCount = 1) : 
 		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzleMap, sampleCount){ }
 		
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)

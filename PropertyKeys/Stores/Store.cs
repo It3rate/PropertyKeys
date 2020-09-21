@@ -15,14 +15,14 @@ namespace DataArcs.Stores
         //{
         //    _series = store?._series;
         //    Sampler = store?.Sampler ?? new LineSampler();
-        //    CombineFunction = store?.CombineFunction ?? CombineFunction.Add;
+        //    MergeFunction = store?.MergeFunction ?? MergeFunction.Add;
         //    CombineTarget = store?.CombineTarget ?? CombineTarget.Destination;
         //}
 
         public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace) : base(series)
 		{
 			Sampler = sampler ?? new LineSampler(series.Count);
-			CombineFunction = combineFunction;
+			MergeFunction = combineFunction;
         }
 
         public Store(int seriesId, int sampleId, CombineFunction combineFunction) : base(seriesId, sampleId, combineFunction)
@@ -86,7 +86,7 @@ namespace DataArcs.Stores
 
 		public override IStore Clone()
 		{
-			return new Store(Series.Copy(), Sampler, CombineFunction);
+			return new Store(Series.Copy(), Sampler, MergeFunction);
 		}
 		public override void CopySeriesDataInto(IStore target)
 		{

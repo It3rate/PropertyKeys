@@ -12,7 +12,7 @@ namespace DataArcs.Stores
         public int Id { get; private set; }
 
         private CombineFunction _combineFunction;
-        public virtual CombineFunction CombineFunction { get => _combineFunction; set => _combineFunction = value; }
+        public virtual CombineFunction MergeFunction { get => _combineFunction; set => _combineFunction = value; }
 
         protected int _samplerId;
         public virtual Sampler Sampler

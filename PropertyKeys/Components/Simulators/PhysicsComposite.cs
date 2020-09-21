@@ -82,7 +82,7 @@ namespace DataArcs.Components.Simulators
 			    if (result != null)
 			    {
 					// todo: atm physics has no 'store' object, so can't combine functionally. Maybe needs this, or maybe external input is a source only, not an interm step?
-				    //result.CombineInto(parentSeries, store.CombineFunction, t);
+				    //result.CombineInto(parentSeries, store.MergeFunction, t);
 			    }
 			    else
 			    {
