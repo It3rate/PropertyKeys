@@ -11,14 +11,17 @@ using DataArcs.Stores;
 
 namespace DataArcs.Samplers
 {
-	public delegate ParametricSeries SeriesEquation(ParametricSeries a, ParametricSeries b, ParametricSeries c = null);
+	public delegate ParametricSeries SeriesEquation(ParametricSeries a, ParametricSeries b = null, ParametricSeries c = null);
 
 	public enum SeriesEquationType
-	{
-		/// <summary>
+    {
+	    FloatEquation,
+
+        BinaryFloatEquation = 0x100,
+        /// <summary>
         /// Returns two values, first is length, the second is a normalized angle - East 0, North 0.25, West 0.5, South 0.75, and East 1.0.
         /// </summary>
-		Polar,
+        Polar,
         /// <summary>
         /// Returns the length between the two Parametric series in the X slot.
         /// </summary>
@@ -33,27 +36,64 @@ namespace DataArcs.Samplers
 
     public class FunctionSampler : Sampler
     {
-	    private Sampler _sampleA;
-	    private Sampler _sampleB;
-	    private SeriesEquation _seriesEquation;
-		public ParametricSeries EffectRatio { get; set; }
+	    private SeriesEquationType _seriesEquationType;
+        private readonly Sampler _sampleA;
+	    private readonly Sampler _sampleB;
+	    private readonly SeriesEquation _seriesEquation;
+	    private readonly FloatEquation _floatEquation;
+	    private readonly BinaryFloatEquation _binaryFloatEquation;
+        public ParametricSeries EffectRatio { get; set; }
 
+        public FunctionSampler(Sampler sampleA, FloatEquation floatEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
+        {
+	        _sampleA = sampleA;
+	        _seriesEquationType = SeriesEquationType.FloatEquation;
+	        _floatEquation = floatEquation;
+	        SampleCount = sampleCount;
+        }
+        public FunctionSampler(Sampler sampleA, Sampler sampleB, BinaryFloatEquation binaryFloatEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
+        {
+	        _sampleA = sampleA;
+	        _sampleB = sampleB;
+            _seriesEquationType = SeriesEquationType.BinaryFloatEquation;
+	        _binaryFloatEquation = binaryFloatEquation;
+	        SampleCount = sampleCount;
+        }
         public FunctionSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
         {
 		    _sampleA = sampleA;
 		    _sampleB = sampleB;
-		    _seriesEquation = seriesEquation;
+		    _seriesEquationType = SeriesEquationType.BinaryFloatEquation;
+            _seriesEquation = seriesEquation;
 		    SampleCount = sampleCount;
 	    }
-	    public FunctionSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int sampleCount = 1) : 
-		    this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzleMap, sampleCount){ }
+
+        public FunctionSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int sampleCount = 1) :
+	        this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzleMap, sampleCount)
+        {
+	        _seriesEquationType = seriesEquationType;
+        }
 		
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
-	    {
-		    var resultA = _sampleA.GetSampledTs(seriesT);
-		    var resultB = _sampleB.GetSampledTs(seriesT);
-		    var result = _seriesEquation(resultA, resultB, EffectRatio);
-		    return Swizzle(result, seriesT);
+        {
+	        ParametricSeries result;
+
+            var resultA = _sampleA.GetSampledTs(seriesT);
+	        var resultB = _sampleB?.GetSampledTs(seriesT) ?? null;
+            if (_seriesEquation != null)
+            {
+	            result = _seriesEquation(resultA, resultB, EffectRatio);
+            }
+            else if (_binaryFloatEquation != null)
+            {
+	            result = GeneralEquation(resultA, resultB, _binaryFloatEquation);
+            }
+            else// if (_floatEquation != null)
+            {
+	            result = GeneralEquation(resultA, _floatEquation);
+            }
+
+            return Swizzle(result, seriesT);
 	    }
 
         private static SeriesEquation GetSeriesEquationByType(SeriesEquationType seriesEquationType)
@@ -169,38 +209,14 @@ namespace DataArcs.Samplers
 	        return new ParametricSeries(2, x, y);
         }
 
-
-
-
-        private static IntSeries GeneralEquation(IntSeries seriesA, IntEquation intEquation)
+        private static ParametricSeries GeneralEquation(FloatSeries seriesA, FloatEquation floatEquation)
         {
-	        var ints = new int[seriesA.VectorSize];
-	        for (int i = 0; i < ints.Length; i++)
-	        {
-		        ints[i] = intEquation(seriesA.IntDataAt(i));
-	        }
-	        return new IntSeries(ints.Length, ints);
-        }
-        private static FloatSeries GeneralEquation(FloatSeries seriesA, FloatEquation floatEquation)
-        {
-	        var floats = new float[seriesA.VectorSize];
-	        for (int i = 0; i < floats.Length; i++)
-	        {
-		        floats[i] = floatEquation(seriesA.FloatDataAt(i));
-	        }
-	        return new FloatSeries(floats.Length, floats);
-        }
-
-        private static IntSeries GeneralEquation(IntSeries seriesA, IntSeries seriesB, BinaryIntEquation binaryIntEquation)
-        {
-	        int max = Math.Max(seriesA.VectorSize, seriesB.VectorSize);
-
-	        var ints = new int[max];
-	        for (int i = 0; i < max; i++)
-	        {
-		        ints[i] = i >= seriesA.VectorSize ? seriesB.IntDataAt(i) : i >= seriesB.VectorSize ? seriesA.IntDataAt(i) : binaryIntEquation(seriesB.IntDataAt(i), seriesA.IntDataAt(i));
-	        }
-	        return new IntSeries(max, ints);
+            var floats = new float[seriesA.VectorSize];
+            for (int i = 0; i < floats.Length; i++)
+            {
+                floats[i] = floatEquation(seriesA.FloatDataAt(i));
+            }
+            return new ParametricSeries(floats.Length, floats);
         }
 
         private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, BinaryFloatEquation binaryFloatEquation)

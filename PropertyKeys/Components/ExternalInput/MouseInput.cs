@@ -91,7 +91,7 @@ namespace DataArcs.Components.ExternalInput
 				    result = new ParametricSeries(2, _mouseX / MainFrameRect.FloatDataAt(2), _mouseY / MainFrameRect.FloatDataAt(3));
                     break;
 			    case PropertyId.MouseClickCount:
-				    result = new ParametricSeries(1, (ClickCount%16)/16f);
+				    result = new ParametricSeries(1, ClickCount);
 				    break;
                 case PropertyId.Mouse:
 			    case PropertyId.MouseLocation:

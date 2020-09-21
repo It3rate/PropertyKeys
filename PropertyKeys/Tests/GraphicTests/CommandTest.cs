@@ -26,16 +26,19 @@ namespace DataArcs.Tests.GraphicTests
 
         public void NextVersion()
         {
-	        Store frame = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 20, 14 }));
+	        Store frame = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 15, 12 }));
 
 	        var cmdMouseInput = new CommandCreateMouseInput();
 	        cmdMouseInput.Execute();
 
             var mouseLink = new CommandCreateLinkSampler(cmdMouseInput.ContainerId, PropertyId.MouseLocationT, SlotUtils.XY);
-            Store fillColor = new Store(new FloatSeries(2, 0,0,1f,1f), mouseLink.Sampler);
+            Store fillColor = new Store(new FloatSeries(3, 0,0,0.6f,1f,1f,0.6f), mouseLink.Sampler);
 
             var mouseClicks = new CommandCreateLinkSampler(cmdMouseInput.ContainerId, PropertyId.MouseClickCount);
-			Store sides = new Store(new IntSeries(1, 5, 3, 10, 6, 4, 9, 7, 8, 5, 3, 10, 6, 4, 9, 7, 8), mouseClicks.Sampler);
+            var fs = new FunctionSampler(mouseClicks.Sampler, (f) => (f % 16) / 16f);
+            Store pointCount = new Store(new IntSeries(1, 10, 6, 4, 9, 7, 5, 3, 10, 4, 9, 7, 6, 8, 5, 8, 3), fs);
+            Store radius = new Store(new FloatSeries(1, 8f, 18f), fs);
+
             CommandCreateContainer cmdGrid = new CommandCreateContainer(
 				Store.CreateItemStore(frame.Capacity),
 				null, 
@@ -44,8 +47,9 @@ namespace DataArcs.Tests.GraphicTests
 				{
 					{PropertyId.Location, frame.Id},
 					{ PropertyId.FillColor, fillColor.Id},
-					{PropertyId.PointCount, sides.Id}
-				});
+					{PropertyId.Radius, radius.Id},
+					{PropertyId.PointCount, pointCount.Id}
+                });
 			cmdGrid.Execute();
         }
     }

@@ -6,9 +6,7 @@ using System.Xml.Schema;
 namespace DataArcs.SeriesData.Utils
 {
 	public delegate float FloatEquation(float a);
-	public delegate int IntEquation(int a);
 	public delegate float BinaryFloatEquation(float a, float b);
-	public delegate int BinaryIntEquation(int a, int b);
 
     public class SeriesUtils
     {
