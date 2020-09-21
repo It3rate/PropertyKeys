@@ -5,7 +5,10 @@ using System.Xml.Schema;
 
 namespace DataArcs.SeriesData.Utils
 {
-	public delegate float FloatEquation(float a, float b);
+	public delegate float FloatEquation(float a);
+	public delegate int IntEquation(int a);
+	public delegate float BinaryFloatEquation(float a, float b);
+	public delegate int BinaryIntEquation(int a, int b);
 
     public class SeriesUtils
     {
@@ -228,7 +231,7 @@ namespace DataArcs.SeriesData.Utils
         }
 
 
-        private static Series SlotsFunction(FloatEquation equation, float defaultValue, Series source, params Slot[] slots)
+        private static Series SlotsFunction(BinaryFloatEquation equation, float defaultValue, Series source, params Slot[] slots)
         {
 	        bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
 	        var slotSize = useAllSlots ? source.VectorSize : slots.Length;
@@ -340,7 +343,7 @@ namespace DataArcs.SeriesData.Utils
         }
 
         // Note: For simple cases it may be easier to use: float SlotUtils.ComputeOnElement(series, Slot.Sum, index)
-        private static Series PerElementFunction(FloatEquation equation, float defaultValue, Series source, params Slot[] slots)
+        private static Series PerElementFunction(BinaryFloatEquation equation, float defaultValue, Series source, params Slot[] slots)
         {
 	        bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
 	        var slotSize = useAllSlots ? source.VectorSize : slots.Length;

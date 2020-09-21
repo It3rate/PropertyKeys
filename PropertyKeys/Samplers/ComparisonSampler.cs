@@ -172,14 +172,45 @@ namespace DataArcs.Samplers
 
 
 
-        private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, FloatEquation floatEquation)
+        private static IntSeries GeneralEquation(IntSeries seriesA, IntEquation intEquation)
+        {
+	        var ints = new int[seriesA.VectorSize];
+	        for (int i = 0; i < ints.Length; i++)
+	        {
+		        ints[i] = intEquation(seriesA.IntDataAt(i));
+	        }
+	        return new IntSeries(ints.Length, ints);
+        }
+        private static FloatSeries GeneralEquation(FloatSeries seriesA, FloatEquation floatEquation)
+        {
+	        var floats = new float[seriesA.VectorSize];
+	        for (int i = 0; i < floats.Length; i++)
+	        {
+		        floats[i] = floatEquation(seriesA.FloatDataAt(i));
+	        }
+	        return new FloatSeries(floats.Length, floats);
+        }
+
+        private static IntSeries GeneralEquation(IntSeries seriesA, IntSeries seriesB, BinaryIntEquation binaryIntEquation)
+        {
+	        int max = Math.Max(seriesA.VectorSize, seriesB.VectorSize);
+
+	        var ints = new int[max];
+	        for (int i = 0; i < max; i++)
+	        {
+		        ints[i] = i >= seriesA.VectorSize ? seriesB.IntDataAt(i) : i >= seriesB.VectorSize ? seriesA.IntDataAt(i) : binaryIntEquation(seriesB.IntDataAt(i), seriesA.IntDataAt(i));
+	        }
+	        return new IntSeries(max, ints);
+        }
+
+        private static ParametricSeries GeneralEquation(ParametricSeries seriesA, ParametricSeries seriesB, BinaryFloatEquation binaryFloatEquation)
         {
 	        int max = Math.Max(seriesA.VectorSize, seriesB.VectorSize);
 
 	        var floats = new float[max];
 	        for (int i = 0; i < max; i++)
 	        {
-		        floats[i] = i >= seriesA.VectorSize ? seriesB[i] : i >= seriesB.VectorSize ? seriesA[i] : floatEquation(seriesB[i], seriesA[i]);
+		        floats[i] = i >= seriesA.VectorSize ? seriesB[i] : i >= seriesB.VectorSize ? seriesA[i] : binaryFloatEquation(seriesB[i], seriesA[i]);
 	        }
 	        return new ParametricSeries(max, floats);
         }

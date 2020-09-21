@@ -13,6 +13,7 @@ namespace DataArcs.Components.ExternalInput
     public class MouseInput : BaseComposite, ITimeable
     {
 	    public float InterpolationT { get; set; }
+		public int ClickCount { get; private set; }
 	    public double StartTime { get; set; }
 	    public Series Duration { get; } = new FloatSeries(1,0);
 	    public Series Delay { get; } = new FloatSeries(1, 0);
@@ -70,6 +71,7 @@ namespace DataArcs.Components.ExternalInput
         }
         private void OnMouseClick(object sender, MouseEventArgs args)
         {
+	        ClickCount++;
 	        MouseClick?.Invoke();
         }
 
@@ -88,6 +90,9 @@ namespace DataArcs.Components.ExternalInput
 			    case PropertyId.MouseLocationT:
 				    result = new ParametricSeries(2, _mouseX / MainFrameRect.FloatDataAt(2), _mouseY / MainFrameRect.FloatDataAt(3));
                     break;
+			    case PropertyId.MouseClickCount:
+				    result = new ParametricSeries(1, (ClickCount%16)/16f);
+				    break;
                 case PropertyId.Mouse:
 			    case PropertyId.MouseLocation:
                 default:
@@ -115,6 +120,9 @@ namespace DataArcs.Components.ExternalInput
 			    case PropertyId.MouseLocation:
 				    result = new FloatSeries(2, _mouseX, _mouseY);
 				    break;
+                case PropertyId.MouseClickCount:
+	                result = new FloatSeries(1, (float)ClickCount);
+	                break;
 			    case PropertyId.EasedT:
 			    case PropertyId.EasedTCombined:
 			    case PropertyId.SampleAtT:

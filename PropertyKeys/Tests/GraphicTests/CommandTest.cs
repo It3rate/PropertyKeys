@@ -26,7 +26,6 @@ namespace DataArcs.Tests.GraphicTests
 
         public void NextVersion()
         {
-
 	        Store frame = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 20, 14 }));
 
 	        var cmdMouseInput = new CommandCreateMouseInput();
@@ -34,11 +33,19 @@ namespace DataArcs.Tests.GraphicTests
 
             var mouseLink = new CommandCreateLinkSampler(cmdMouseInput.ContainerId, PropertyId.MouseLocationT, SlotUtils.XY);
             Store fillColor = new Store(new FloatSeries(2, 0,0,1f,1f), mouseLink.Sampler);
+
+            var mouseClicks = new CommandCreateLinkSampler(cmdMouseInput.ContainerId, PropertyId.MouseClickCount);
+			Store sides = new Store(new IntSeries(1, 5, 3, 10, 6, 4, 9, 7, 8, 5, 3, 10, 6, 4, 9, 7, 8), mouseClicks.Sampler);
             CommandCreateContainer cmdGrid = new CommandCreateContainer(
 				Store.CreateItemStore(frame.Capacity),
 				null, 
 				new PolyShape(true, true), 
-				new Dictionary<PropertyId, int>(){ {PropertyId.Location, frame.Id}, { PropertyId.FillColor, fillColor.Id} });
+				new Dictionary<PropertyId, int>()
+				{
+					{PropertyId.Location, frame.Id},
+					{ PropertyId.FillColor, fillColor.Id},
+					{PropertyId.PointCount, sides.Id}
+				});
 			cmdGrid.Execute();
         }
     }

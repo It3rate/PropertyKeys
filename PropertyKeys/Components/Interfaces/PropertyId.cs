@@ -48,6 +48,7 @@ namespace DataArcs.Components
 		MouseLocationTCombined, // Mouse X and Y normalized to container size
         MouseWheel,
         MouseButtonStates,
+        MouseClickCount,
         PenPressure,
         PenAngle,
         KeyboardState, // keyboard input events and text on composite
