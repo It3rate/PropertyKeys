@@ -26,7 +26,7 @@ namespace DataArcs.Tests.GraphicTests
 
         public void NextVersion()
         {
-	        Store frame = new Store(new RectFSeries(150f, 50f, 550f, 350f), new HexagonSampler(new int[] { 15, 12 }));
+	        Store frame = new Store(new RectFSeries(250f, 100f, 650f, 400f), new HexagonSampler(new int[] { 15, 12 }));
 
 	        var cmdMouseInput = new CommandCreateMouseInput();
 	        cmdMouseInput.Execute();

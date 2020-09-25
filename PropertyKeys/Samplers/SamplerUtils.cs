@@ -8,9 +8,27 @@ using System.Threading.Tasks;
 
 namespace DataArcs.Samplers
 {
+	public enum ClampType
+	{
+		None = 0, // -1..0..1..2
+		Wrap, // 0..1->0..1..
+		Mirror, // 0..1..0..1..
+		ClampAtZero, // 0..0..1..2
+		ClampAtOne, // -1..0..1..1
+		Clamp, // 0..0..1..1..1..
+		Discard, // x..x<-0..1->x..x
+	}
+	public enum AlignmentType
+	{
+		Left = 0, 
+		Right,
+		Centered,
+		Justified,
+	}
+
     public class SamplerUtils
     {
-	    public const float TOLERANCE = 0.00001f;
+        public const float TOLERANCE = 0.00001f;
 
 		// todo: reconcile indexFromT with TFromIndex -- one returns 0-1 inclusive, the second exclusive.
 	    public static int IndexFromT(int capacity, float t)

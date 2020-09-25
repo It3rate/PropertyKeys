@@ -15,14 +15,18 @@ namespace DataArcs.Samplers
         public int SampleCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
 		public int[] Strides { get; protected set; }
+		public ClampType[] ClampType { get; protected set; }
+		public AlignmentType[] AlignmentType { get; protected set; }
 
-		protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
+        protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
 		{
 			Player.CurrentSamplers.AddToLibrary(this);
 
             SwizzleMap = swizzleMap;
 			SampleCount = sampleCount;
 			Strides = new int[SampleCount];
+			ClampType = new ClampType[SampleCount];
+			AlignmentType = new AlignmentType[SampleCount];
         }
 
 		protected Sampler GetSamplerById(int id) => Player.CurrentSamplers[id];
