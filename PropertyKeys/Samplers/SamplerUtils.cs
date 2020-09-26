@@ -12,11 +12,11 @@ namespace DataArcs.Samplers
 	{
 		None = 0, // -1..0..1..2
 		Wrap, // 0..1->0..1..
-		Mirror, // 0..1..0..1..
+		WrapRight, // 1..0->1..0->1...
+        Mirror, // 0..1..0..1..
 		ClampAtZero, // 0..0..1..2
 		ClampAtOne, // -1..0..1..1
 		Clamp, // 0..0..1..1..1..
-		Discard, // x..x<-0..1->x..x
 	}
 	public enum AlignmentType
 	{
