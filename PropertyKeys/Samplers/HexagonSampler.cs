@@ -11,12 +11,39 @@ namespace DataArcs.Samplers
 {
 	public class HexagonSampler : GridSampler
 	{
-		public HexagonSampler(int[] strides, Slot[] swizzleMap = null) : base(strides, swizzleMap) { }
+		public HexagonSampler(int[] strides, Slot[] swizzleMap = null) : base(strides, swizzleMap)
+		{
+			ClampType = new ClampType[strides.Length];
+			for (int i = 0; i < strides.Length - 1; i++)
+			{
+				ClampType[i] = Samplers.ClampType.Wrap;
+			}
+			ClampType[strides.Length - 1] = Samplers.ClampType.ClampAtZero;
+			AlignmentType = new AlignmentType[strides.Length];
+		}
 
+		private static ParametricSeries GetGridFromT(Sampler sampler, float t, out int[] positions)
+		{
+			var len = sampler.Strides.Length;
+			var result = new float[len];
+			positions = new int[len];
+            float segSize = 1f / (sampler.SampleCount - 1f);
+            float rem = 1f + segSize / 2f;
+            float ct = t;
+            for (int i = sampler.Strides.Length - 1; i >= 0; i--)
+			{
+				rem /= (float)sampler.Strides[i];
+				int pos = (int)Math.Floor(ct / rem);
+				ct -= pos * rem;
+				positions[i] = pos;
+                result[i] = pos / (float)(sampler.Strides[i] + 0f);
+			}
+			return new ParametricSeries(len, result);
+		}
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-            var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, SampleCount, seriesT.X) : seriesT;
-            bool isOddRow = (SamplerUtils.IndexFromT(Strides[1], result.Y) & 1) == 1;
+	        var result = GetGridFromT(this, seriesT.X, out var positions);// seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, SampleCount, seriesT.X) : seriesT;
+	        bool isOddRow = (positions[1] & 1) == 1;// (SamplerUtils.IndexFromT(Strides[1], result.Y) & 1) == 1;
             float hexRowScale = 1f / (Strides[0] - 1f) * 0.5f;
             result[0] *= (1f - hexRowScale);
             result[1] *= (1f - hexRowScale);
