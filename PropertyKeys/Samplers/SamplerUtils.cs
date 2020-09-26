@@ -40,6 +40,52 @@ namespace DataArcs.Samplers
 		    return index / (capacity - 1f);
 	    }
 
+	    public static ParametricSeries DistributeTBySampler(float t, Sampler sampler, out int[] positions)
+	    {
+		    var len = sampler.Strides.Length;
+		    var result = new float[len];
+		    positions = new int[len];
+		    float segSize = 1f / (sampler.SampleCount - 1);
+		    float offsetT = t + segSize / 2f;
+		    for (int i = 0; i < len; i++)
+		    {
+			    int curStride = sampler.Strides[i];
+			    float div = offsetT / segSize;
+			    int pos = (int)Math.Floor(div);
+			    int index = pos % curStride;
+			    if (sampler.ClampType.Length > i)
+			    {
+				    switch (sampler.ClampType[i])
+				    {
+					    case Samplers.ClampType.None:
+						    break;
+					    case Samplers.ClampType.Wrap:
+						    pos = index;
+						    break;
+					    case Samplers.ClampType.WrapRight:
+						    pos = curStride - index;
+						    break;
+					    case Samplers.ClampType.Mirror:
+						    pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
+						    break;
+					    case Samplers.ClampType.ClampAtZero:
+						    pos = (pos < 0) ? 0 : index;
+						    break;
+					    case Samplers.ClampType.ClampAtOne:
+						    pos = (pos > 1) ? 1 : index;
+						    break;
+					    case Samplers.ClampType.Clamp:
+						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
+						    break;
+				    }
+			    }
+			    positions[i] = pos;
+			    result[i] = pos / (float)(curStride - 1);
+			    segSize *= curStride;
+		    }
+		    return new ParametricSeries(len, result);
+	    }
+
         /// <summary>
         /// Returns normalized indexes into segmented array based on index and size. Passed size can be virtual (larger than implied segments total).
         /// </summary>

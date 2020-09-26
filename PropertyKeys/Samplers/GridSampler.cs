@@ -21,6 +21,14 @@ namespace DataArcs.Samplers
                     break;
                 }
             }
+
+            ClampType = new ClampType[strides.Length];
+            for (int i = 0; i < strides.Length - 1; i++)
+            {
+	            ClampType[i] = Samplers.ClampType.Wrap;
+            }
+            ClampType[strides.Length - 1] = Samplers.ClampType.None;
+            AlignmentType = new AlignmentType[strides.Length];
         }
 
 		public override Series GetValueAtIndex(Series series, int index)
@@ -32,7 +40,8 @@ namespace DataArcs.Samplers
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-	        var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, SampleCount, seriesT.X) : seriesT;
+	        var result = SamplerUtils.DistributeTBySampler(seriesT.X, this, out var positions);
+           // var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, SampleCount, seriesT.X) : seriesT;
             return Swizzle(result, seriesT);
         }
         

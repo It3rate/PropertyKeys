@@ -13,84 +13,12 @@ namespace DataArcs.Samplers
 	{
 		public HexagonSampler(int[] strides, Slot[] swizzleMap = null) : base(strides, swizzleMap)
 		{
-			ClampType = new ClampType[strides.Length];
-			for (int i = 0; i < strides.Length - 1; i++)
-			{
-				ClampType[i] = Samplers.ClampType.Wrap;
-			}
-			ClampType[strides.Length - 1] = Samplers.ClampType.None;
-			AlignmentType = new AlignmentType[strides.Length];
 		}
-
-		private static ParametricSeries DistributeTBySamplerX(float t, Sampler sampler, out int[] positions)
-		{
-			var len = sampler.Strides.Length;
-			var result = new float[len];
-			positions = new int[len];
-			float segSize = 1f / sampler.SampleCount;
-			float rem = (t > 1f) ? t : 1f + segSize / 2f;
-			float ct = t;
-			for (int i = len - 1; i >= 0; i--)
-			{
-				rem /= (float)sampler.Strides[i];
-				int pos = (int)Math.Floor(ct / rem);
-				ct -= pos * rem;
-				positions[i] = pos;
-				result[i] = pos / (float)(sampler.Strides[i]);
-			}
-			return new ParametricSeries(len, result);
-		}
-		private static ParametricSeries DistributeTBySampler(float t, Sampler sampler, out int[] positions)
-		{
-			var len = sampler.Strides.Length;
-			var result = new float[len];
-			positions = new int[len];
-			float segSize = 1f / (sampler.SampleCount - 1);
-			float offsetT = t + segSize / 2f;
-			for (int i = 0; i < len; i++)
-			{
-				int curStride = sampler.Strides[i];
-				float div = offsetT / segSize;
-				int pos = (int)Math.Floor(div);
-				int index = pos % curStride;
-				if (sampler.ClampType.Length > i)
-				{
-					switch (sampler.ClampType[i])
-					{
-						case Samplers.ClampType.None:
-							break;
-						case Samplers.ClampType.Wrap:
-							pos = index;
-							break;
-						case Samplers.ClampType.WrapRight:
-							pos = curStride - index;
-                            break;
-						case Samplers.ClampType.Mirror:
-							pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
-                            break;
-						case Samplers.ClampType.ClampAtZero:
-							pos = (pos < 0) ? 0 : index;
-                            break;
-						case Samplers.ClampType.ClampAtOne:
-							pos = (pos > 1) ? 1 : index;
-                            break;
-						case Samplers.ClampType.Clamp:
-							pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
-                            break;
-                    }
-				}
-				positions[i] = pos;
-				result[i] = pos / (float)(curStride - 1);
-				segSize *= curStride;
-			}
-			return new ParametricSeries(len, result);
-		}
+		
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-            var result = DistributeTBySampler(seriesT.X, this, out var positions);
+            var result = SamplerUtils.DistributeTBySampler(seriesT.X, this, out var positions);
             bool isOddRow = (positions[1] & 1) == 1;
-            //var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, SampleCount, seriesT.X) : seriesT;
-            //bool isOddRow = (SamplerUtils.IndexFromT(Strides[1], result.Y) & 1) == 1;
             float hexRowScale = 1f / (Strides[0] - 1f) * 0.5f;
             result[0] *= (1f - hexRowScale);
             result[1] *= (1f - hexRowScale);
