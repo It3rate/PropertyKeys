@@ -14,7 +14,10 @@ namespace DataArcs.Samplers
 
         public int SampleCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
+		
 		public int[] Strides { get; protected set; }
+		
+		public GrowthType GrowthType { get; protected set; }
 		public ClampType[] ClampType { get; protected set; }
 		public AlignmentType[] AlignmentType { get; protected set; }
 
@@ -27,7 +30,8 @@ namespace DataArcs.Samplers
 			Strides = new int[SampleCount];
 			ClampType = new ClampType[SampleCount];
 			AlignmentType = new AlignmentType[SampleCount];
-        }
+			GrowthType = GrowthType.Product;
+		}
 
 		protected Sampler GetSamplerById(int id) => Player.CurrentSamplers[id];
 
@@ -74,12 +78,12 @@ namespace DataArcs.Samplers
 
         /// <summary>
         /// Generate a result with values mapped according the internal SwizzleMap.
-        /// Extra values can be preserved if the extra series is longer than the source, and the swizzle map calls for them.
+        /// Extra values can be preserved if the original series is longer than the source, and the swizzle map calls for them.
         /// </summary>
         /// <param name="source">The series to be mapped using the SwizzleMap.</param>
-        /// <param name="extra">Extra values that could be used if the SwizzleMap asks for slots out of the source range.</param>
+        /// <param name="original">The original unmodified values that could be used if the SwizzleMap asks for slots out of the source range.</param>
         /// <returns></returns>
-        public ParametricSeries Swizzle(ParametricSeries source, ParametricSeries extra)
+        public ParametricSeries Swizzle(ParametricSeries source, ParametricSeries original)
         {
 	        ParametricSeries result = source;
 	        if (SwizzleMap != null)
@@ -89,13 +93,13 @@ namespace DataArcs.Samplers
 		        for (int i = 0; i < len; i++)
 		        {
 			        int index = (int)SwizzleMap[i];
-			        result[i] = index < source.VectorSize ? source[index] : index < extra.VectorSize ? extra[index] : source[len - 1];
+			        result[i] = index < source.VectorSize ? source[index] : index < original.VectorSize ? original[index] : source[len - 1];
 		        }
 	        }
-            else if(source.VectorSize < extra.VectorSize)
+            else if(source.VectorSize < original.VectorSize)
             {
-                // No slots, but don't destroy data in the extra source if it isn't overwritten
-                result = (ParametricSeries)extra.Copy();
+                // No slots, but don't destroy data in the original source if it isn't overwritten
+                result = (ParametricSeries)original.Copy();
                 for (int i = 0; i < source.VectorSize; i++)
                 {
                     result[i] = source[i];
@@ -103,6 +107,11 @@ namespace DataArcs.Samplers
             }
 
 	        return result;
+        }
+
+        protected int StridesToSampleCount(int[] strides)
+        {
+	        return (GrowthType == GrowthType.Sum) ? strides.Sum() : strides.Aggregate(1, (a, b) => b != 0 ? a * b : a);
         }
 
         public IntSeries GetBakedStrideIndexes()

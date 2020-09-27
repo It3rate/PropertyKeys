@@ -9,19 +9,16 @@ namespace DataArcs.Samplers
 {
 	public class RingSampler : Sampler
 	{
-        protected int[] RingCounts { get; }
         protected IStore Orientation { get; }
         public float MinRadius { get; set; }
 
         public RingSampler(int[] ringCounts, IStore orientation = null, Slot[] swizzleMap = null) : base(swizzleMap)
         {
-            RingCounts = ringCounts;
+	        GrowthType = GrowthType.Sum;
+            Strides = ringCounts;
             Orientation = orientation;
-            SampleCount = ringCounts[0];
-            for (int i = 1; i < ringCounts.Length; i++)
-            {
-                SampleCount += ringCounts[i];
-            }
+
+            SampleCount = StridesToSampleCount(Strides);
 
             MinRadius = 0.3f;
         }
@@ -31,9 +28,9 @@ namespace DataArcs.Samplers
 	        ParametricSeries result;
 	        if (seriesT.VectorSize == 1) // assume if there is more than one vectorSize the params are set
 	        {
-		        int max = RingCounts.Sum() - 1;
+		        int max = SampleCount - 1;
 		        int index = (int)Math.Max(0, Math.Min(max, Math.Floor(seriesT.X * max + 0.5f)));
-		        result = SamplerUtils.GetSummedJaggedT(RingCounts, index, true);
+		        result = SamplerUtils.GetSummedJaggedT(Strides, index, true);
 	        }
 	        else
 	        {

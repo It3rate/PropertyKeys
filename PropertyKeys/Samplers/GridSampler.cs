@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using DataArcs.SeriesData;
 using DataArcs.SeriesData.Utils;
 
@@ -8,19 +9,9 @@ namespace DataArcs.Samplers
 	{
         public GridSampler(int[] strides, Slot[] swizzleMap = null) : base(swizzleMap)
         {
+			GrowthType = GrowthType.Product;
 			Strides = strides;
-            SampleCount = strides[0];
-            for (int i = 1; i < strides.Length; i++)
-            {
-                if (strides[i] != 0)
-                {
-                    SampleCount *= strides[i];
-                }
-                else
-                {
-                    break;
-                }
-            }
+			SampleCount = StridesToSampleCount(Strides);
 
             ClampType = new ClampType[strides.Length];
             for (int i = 0; i < strides.Length - 1; i++)
@@ -40,8 +31,7 @@ namespace DataArcs.Samplers
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-	        var result = SamplerUtils.DistributeTBySampler(seriesT.X, this, out var positions);
-           // var result = seriesT.VectorSize == 1 ? SamplerUtils.GetMultipliedJaggedTFromT(Strides, SampleCount, seriesT.X) : seriesT;
+	        var result = SamplerUtils.DistributeTBySampler(seriesT, this, out var positions);
             return Swizzle(result, seriesT);
         }
         

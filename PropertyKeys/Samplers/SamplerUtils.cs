@@ -20,10 +20,15 @@ namespace DataArcs.Samplers
 	}
 	public enum AlignmentType
 	{
-		Left = 0, 
+		Left = 0,
 		Right,
 		Centered,
 		Justified,
+	}
+	public enum GrowthType
+	{
+		Product = 0,
+		Sum,
 	}
 
     public class SamplerUtils
@@ -40,52 +45,110 @@ namespace DataArcs.Samplers
 		    return index / (capacity - 1f);
 	    }
 
-	    public static ParametricSeries DistributeTBySampler(float t, Sampler sampler, out int[] positions)
+	    public static ParametricSeries DistributeTBySampler(ParametricSeries seriesT, Sampler sampler, out int[] positions)
 	    {
 		    var len = sampler.Strides.Length;
 		    var result = new float[len];
 		    positions = new int[len];
-		    float segSize = 1f / (sampler.SampleCount - 1);
-		    float offsetT = t + segSize / 2f;
+			bool hasMultipleT = seriesT.Count > 1;
+            float minSegSize = 1f / (sampler.SampleCount - 1);
+		    float offsetT = seriesT[0] + minSegSize / 2f;
 		    for (int i = 0; i < len; i++)
 		    {
+				// allow input of multiple parameters - use position per stride in this case.
+				// if mismatched lengths, just use last value available (basically error condition).
+			    if (hasMultipleT && seriesT.Count > i)
+			    {
+				    minSegSize = 1f / (sampler.Strides[i] - 1);
+				    offsetT = seriesT[i] + minSegSize / 2f;
+                }
 			    int curStride = sampler.Strides[i];
-			    float div = offsetT / segSize;
+			    float div = offsetT / minSegSize;
 			    int pos = (int)Math.Floor(div);
 			    int index = pos % curStride;
 			    if (sampler.ClampType.Length > i)
 			    {
 				    switch (sampler.ClampType[i])
 				    {
-					    case Samplers.ClampType.None:
+					    case ClampType.None:
 						    break;
-					    case Samplers.ClampType.Wrap:
+					    case ClampType.Wrap:
 						    pos = index;
 						    break;
-					    case Samplers.ClampType.WrapRight:
+					    case ClampType.WrapRight:
 						    pos = curStride - index;
 						    break;
-					    case Samplers.ClampType.Mirror:
+					    case ClampType.Mirror:
 						    pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
 						    break;
-					    case Samplers.ClampType.ClampAtZero:
+					    case ClampType.ClampAtZero:
 						    pos = (pos < 0) ? 0 : index;
 						    break;
-					    case Samplers.ClampType.ClampAtOne:
+					    case ClampType.ClampAtOne:
 						    pos = (pos > 1) ? 1 : index;
 						    break;
-					    case Samplers.ClampType.Clamp:
+					    case ClampType.Clamp:
 						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
 						    break;
 				    }
 			    }
 			    positions[i] = pos;
 			    result[i] = pos / (float)(curStride - 1);
-			    segSize *= curStride;
-		    }
+			    minSegSize *= curStride;
+            }
 		    return new ParametricSeries(len, result);
 	    }
 
+	    public static IntSeries DistributeBySampler(IntSeries series, Sampler sampler, out int[] positions)
+	    {
+		    var len = sampler.Strides.Length;
+		    positions = new int[len];
+		    bool hasMultiple = series.Count > 1;
+		    int minSegSize = sampler.SampleCount - 1;
+		    int offset = series.IntDataAt(0);
+		    for (int i = 0; i < len; i++)
+		    {
+			    // allow input of multiple parameters - use position per stride in this case.
+			    // if mismatched lengths, just use last value available (basically error condition).
+			    if (hasMultiple && series.Count > i)
+			    {
+				    minSegSize = sampler.Strides[i] - 1;
+				    offset = series.IntDataAt(i);
+			    }
+			    int curStride = sampler.Strides[i];
+			    int pos = offset / minSegSize;
+			    int index = pos % curStride;
+			    if (sampler.ClampType.Length > i)
+			    {
+				    switch (sampler.ClampType[i])
+				    {
+					    case ClampType.None:
+						    break;
+					    case ClampType.Wrap:
+						    pos = index;
+						    break;
+					    case ClampType.WrapRight:
+						    pos = curStride - index;
+						    break;
+					    case ClampType.Mirror:
+						    pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
+						    break;
+					    case ClampType.ClampAtZero:
+						    pos = (pos < 0) ? 0 : index;
+						    break;
+					    case ClampType.ClampAtOne:
+						    pos = (pos > 1) ? 1 : index;
+						    break;
+					    case ClampType.Clamp:
+						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
+						    break;
+				    }
+			    }
+			    positions[i] = pos;
+			    minSegSize *= curStride;
+		    }
+		    return new IntSeries(len, positions);
+	    }
         /// <summary>
         /// Returns normalized indexes into segmented array based on index and size. Passed size can be virtual (larger than implied segments total).
         /// </summary>
