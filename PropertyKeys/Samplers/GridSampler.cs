@@ -7,19 +7,19 @@ namespace DataArcs.Samplers
 {
 	public class GridSampler : Sampler
 	{
-        public GridSampler(int[] strides, Slot[] swizzleMap = null) : base(swizzleMap)
+        public GridSampler(int[] strides, Slot[] swizzleMap = null, GrowthType growthType = GrowthType.Product) : base(swizzleMap)
         {
-			GrowthType = GrowthType.Product;
+			GrowthType = growthType;
 			Strides = strides;
 			SampleCount = StridesToSampleCount(Strides);
 
-            ClampType = new ClampType[strides.Length];
+            ClampTypes = new ClampType[strides.Length];
             for (int i = 0; i < strides.Length - 1; i++)
             {
-	            ClampType[i] = Samplers.ClampType.Wrap;
+	            ClampTypes[i] = Samplers.ClampType.Wrap;
             }
-            ClampType[strides.Length - 1] = Samplers.ClampType.None;
-            AlignmentType = new AlignmentType[strides.Length];
+            ClampTypes[strides.Length - 1] = Samplers.ClampType.None;
+            AlignmentTypes = new AlignmentType[strides.Length];
         }
 
 		public override Series GetValueAtIndex(Series series, int index)
@@ -28,10 +28,16 @@ namespace DataArcs.Samplers
             var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, SampleCount, index);
             return GetSeriesSample(series, seriesT);
 		}
-        
+
+		protected ParametricSeries GetSampledTsNoSwizzle(ParametricSeries seriesT, out int[] positions)
+		{
+			return GrowthType == GrowthType.Product ?
+				SamplerUtils.DistributeTBySampler(seriesT, this, out positions) :
+				SamplerUtils.DistributeTBySummedSampler(seriesT, this, out positions);
+        }
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-	        var result = SamplerUtils.DistributeTBySampler(seriesT, this, out var positions);
+	        var result = GetSampledTsNoSwizzle(seriesT, out var positions);
             return Swizzle(result, seriesT);
         }
         

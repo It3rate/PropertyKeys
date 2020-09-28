@@ -11,13 +11,14 @@ namespace DataArcs.Samplers
 {
 	public class HexagonSampler : GridSampler
 	{
-		public HexagonSampler(int[] strides, Slot[] swizzleMap = null) : base(strides, swizzleMap)
+		public HexagonSampler(int[] strides, Slot[] swizzleMap = null, GrowthType growthType = GrowthType.Product) : base(strides, swizzleMap, growthType)
 		{
 		}
 		
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-            var result = SamplerUtils.DistributeTBySampler(seriesT, this, out var positions);
+	        var result = GetSampledTsNoSwizzle(seriesT, out var positions);
+
             bool isOddRow = (positions[1] & 1) == 1;
             float hexRowScale = 1f / (Strides[0] - 1f) * 0.5f;
             result[0] *= (1f - hexRowScale);

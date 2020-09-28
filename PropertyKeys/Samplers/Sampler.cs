@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Xml.XPath;
 using DataArcs.Components.Libraries;
 using DataArcs.Players;
 using DataArcs.SeriesData;
@@ -16,10 +17,20 @@ namespace DataArcs.Samplers
 		public Slot[] SwizzleMap { get; set; }
 		
 		public int[] Strides { get; protected set; }
-		
-		public GrowthType GrowthType { get; protected set; }
-		public ClampType[] ClampType { get; protected set; }
-		public AlignmentType[] AlignmentType { get; protected set; }
+
+		private GrowthType _growthType;
+		public GrowthType GrowthType
+		{
+			get => _growthType;
+			set
+			{
+				_growthType = value;
+				SampleCount = StridesToSampleCount(Strides);
+			}
+		}
+
+		public ClampType[] ClampTypes { get; protected set; }
+		public AlignmentType[] AlignmentTypes { get; protected set; }
 
         protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
 		{
@@ -27,10 +38,10 @@ namespace DataArcs.Samplers
 
             SwizzleMap = swizzleMap;
 			SampleCount = sampleCount;
-			Strides = new int[SampleCount];
-			ClampType = new ClampType[SampleCount];
-			AlignmentType = new AlignmentType[SampleCount];
-			GrowthType = GrowthType.Product;
+			Strides = new []{1};
+			ClampTypes = new []{ClampType.None};
+			AlignmentTypes = new []{AlignmentType.Left};
+			_growthType = GrowthType.Product;
 		}
 
 		protected Sampler GetSamplerById(int id) => Player.CurrentSamplers[id];
@@ -111,7 +122,18 @@ namespace DataArcs.Samplers
 
         protected int StridesToSampleCount(int[] strides)
         {
-	        return (GrowthType == GrowthType.Sum) ? strides.Sum() : strides.Aggregate(1, (a, b) => b != 0 ? a * b : a);
+	        int result;
+	        if (GrowthType == GrowthType.Sum)
+	        {
+		        int maxRow = Strides.Max();
+		        result = maxRow * Strides.Length;
+	        }
+	        else
+	        {
+		        result = strides.Aggregate(1, (a, b) => b != 0 ? a * b : a);
+            }
+
+	        return result;
         }
 
         public IntSeries GetBakedStrideIndexes()

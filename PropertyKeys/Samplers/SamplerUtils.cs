@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DataArcs.Samplers
 {
@@ -45,7 +46,72 @@ namespace DataArcs.Samplers
 		    return index / (capacity - 1f);
 	    }
 
-	    public static ParametricSeries DistributeTBySampler(ParametricSeries seriesT, Sampler sampler, out int[] positions)
+	    public static ParametricSeries DistributeTBySummedSampler(ParametricSeries seriesT, Sampler sampler, out int[] positions)
+	    {
+			// This is inherently 2D because is defines the row sizes.
+		    var result = new float[2];
+		    positions = new int[2];
+		    int maxStride = sampler.Strides.Max();
+		    int strideSum = sampler.Strides.Sum();
+            var rows = sampler.Strides.Length;
+            float minSampleSize = 1f / strideSum;
+            float minSegSize = 1f / (maxStride * rows);// (sampler.SampleCount - 1);
+            var rowLength = 0;
+		    bool hasMultipleT = seriesT.Count > 1;
+		    if (hasMultipleT)
+		    {
+			    positions[1] = (int)Math.Floor(seriesT[1] * rows);
+			    rowLength = sampler.Strides[positions[1]];
+			    positions[0] = (int)Math.Floor(seriesT[0] * rowLength);
+		    }
+		    else
+		    {
+			    float total = 0;
+			    for (int i = 0; i < rows; i++)
+			    {
+				    rowLength = sampler.Strides[i];
+				    if (total + minSampleSize * rowLength < seriesT[0])
+				    {
+					    total += minSampleSize * rowLength;
+				    }
+				    else
+				    {
+					    float rem = seriesT[0] - total;
+
+					    positions[0] = (int)Math.Floor(rem * strideSum);
+					    positions[1] = i;
+					    result[0] = positions[0] / (float)maxStride;
+						result[1] = i / (rows - 1f);
+					    break;
+				    }
+			    }
+		    }
+			// only makes sense to clamp element one when rows are manually defined.
+            if (sampler.ClampTypes?.Length > 0)
+            {
+                switch (sampler.ClampTypes[0])
+                {
+                    case ClampType.WrapRight:
+                        positions[0] = (maxStride - 1) - positions[0];
+                        break;
+                    case ClampType.Mirror:
+                        positions[0] = (positions[1] & 1) == 0 ? positions[0] : (maxStride - 1) - positions[0];
+                        break;
+                    case ClampType.ClampAtZero:
+                        positions[0] = (positions[0] < 0) ? 0 : positions[0];
+                        break;
+                    case ClampType.ClampAtOne:
+                        positions[0] = (positions[0] > 1) ? 1 : positions[0];
+                        break;
+                    case ClampType.Clamp:
+                        positions[0] = (positions[0] < 0) ? 0 : (positions[0] > 1) ? 1 : positions[0];
+                        break;
+                }
+                result[0] = positions[0] / (float)maxStride;
+            }
+            return new ParametricSeries(2, result);
+	    }
+        public static ParametricSeries DistributeTBySampler(ParametricSeries seriesT, Sampler sampler, out int[] positions)
 	    {
 		    var len = sampler.Strides.Length;
 		    var result = new float[len];
@@ -66,9 +132,9 @@ namespace DataArcs.Samplers
 			    float div = offsetT / minSegSize;
 			    int pos = (int)Math.Floor(div);
 			    int index = pos % curStride;
-			    if (sampler.ClampType.Length > i)
+			    if (sampler.ClampTypes.Length > i)
 			    {
-				    switch (sampler.ClampType[i])
+				    switch (sampler.ClampTypes[i])
 				    {
 					    case ClampType.None:
 						    break;
@@ -118,9 +184,9 @@ namespace DataArcs.Samplers
 			    int curStride = sampler.Strides[i];
 			    int pos = offset / minSegSize;
 			    int index = pos % curStride;
-			    if (sampler.ClampType.Length > i)
+			    if (sampler.ClampTypes.Length > i)
 			    {
-				    switch (sampler.ClampType[i])
+				    switch (sampler.ClampTypes[i])
 				    {
 					    case ClampType.None:
 						    break;
