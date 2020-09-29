@@ -55,8 +55,16 @@ namespace DataArcs.SeriesData
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));
 			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, series.VectorSize);
 		}
+		
+		public override void Map(FloatEquation floatEquation)
+		{
+			for (int i = 0; i < _floatValues.Length; i++)
+			{
+				_floatValues[i] = floatEquation.Invoke(_floatValues[i]);
+			}
+		}
 
-		public override void Append(Series series)
+        public override void Append(Series series)
 		{
 			Array.Resize(ref _floatValues, _floatValues.Length + VectorSize);
 			SetRawDataAt(Count - 1, series);

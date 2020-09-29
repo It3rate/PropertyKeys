@@ -53,6 +53,13 @@ namespace DataArcs.SeriesData
             Array.Copy(series.IntDataRef, 0, _intValues, startIndex * VectorSize, VectorSize);
         }
 
+		public override void Map(FloatEquation floatEquation)
+		{
+			for (int i = 0; i < _intValues.Length; i++)
+			{
+				_intValues[i] = (int)floatEquation.Invoke(_intValues[i]);
+			}
+		}
         public override void Append(Series series)
 		{
 			Array.Resize(ref _intValues, _intValues.Length + VectorSize);

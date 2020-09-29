@@ -55,8 +55,7 @@ namespace DataArcs.Samplers
 		    int strideSum = sampler.Strides.Sum();
             var rows = sampler.Strides.Length;
             float minSampleSize = 1f / strideSum;
-            float minSegSize = 1f / (maxStride * rows);// (sampler.SampleCount - 1);
-            var rowLength = 0;
+            int rowLength;
 		    bool hasMultipleT = seriesT.Count > 1;
 		    if (hasMultipleT)
 		    {

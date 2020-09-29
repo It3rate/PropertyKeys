@@ -176,7 +176,9 @@ namespace DataArcs.SeriesData
 	        return SeriesUtils.MinSlots(this, slots);
         }
 
+        public abstract void Map(FloatEquation floatEquation);
         public abstract void Append(Series series);
+
         public List<Series> ToList()
         {
             var result = new List<Series>(Count);

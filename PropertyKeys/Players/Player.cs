@@ -44,6 +44,9 @@ namespace DataArcs.Players
         private TimeSpan _currentTime;
         public double CurrentMs => _currentTime.TotalMilliseconds;
 
+        public FloatSeries ExternalValue0 = new FloatSeries(1, 0);
+        public FloatSeries ExternalValue1 = new FloatSeries(1, 0);
+
         //public IComposite this[int index] => _composites[index];
 
         public Player(Form display)

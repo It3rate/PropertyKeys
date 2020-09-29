@@ -96,7 +96,12 @@ namespace DataArcs.SeriesData
 			_series.SetRawDataAt(index, series);
 		}
 
-		public override void Append(Series series)
+		public override void Map(FloatEquation floatEquation)
+		{
+			_series.Map(floatEquation);
+		}
+
+        public override void Append(Series series)
 		{
 			_series.Append(series);
 		}

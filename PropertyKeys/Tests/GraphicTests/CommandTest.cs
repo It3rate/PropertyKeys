@@ -26,9 +26,9 @@ namespace DataArcs.Tests.GraphicTests
 
         public void NextVersion()
         {
-	        var hexSampler = new HexagonSampler(new int[] { 15, 10, 13, 14, 7, 14 , 15, 10, 13, 14, 7, 4 }, null, GrowthType.Sum);
-	        hexSampler.GrowthType = GrowthType.Sum;
-            Store hexStore = new Store(new RectFSeries(250f, 100f, 650f, 400f), hexSampler);
+	        //var hexSampler = new HexagonSampler(new int[] { 15, 10, 13, 14, 7, 14, 15, 10, 13, 14, 7, 4 }, null, GrowthType.Sum);
+	        var hexSampler = new HexagonSampler(new int[] { 15, 12 }, null, GrowthType.Product);
+	        Store hexStore = new Store(new RectFSeries(250f, 100f, 650f, 400f), hexSampler);
 
 	        var cmdMouseInput = new CommandCreateMouseInput();
 	        cmdMouseInput.Execute();
@@ -38,9 +38,10 @@ namespace DataArcs.Tests.GraphicTests
 
             var mouseClicks = new CommandCreateLinkSampler(cmdMouseInput.ContainerId, PropertyId.MouseClickCount);
             var fs = new FunctionSampler(mouseClicks.Sampler, (f) => (f % 16) / 16f);
-
             Store pointCount = new Store(new IntSeries(1, 10, 6, 4, 9, 7, 5, 3, 10, 4, 9, 7, 6, 8, 5, 8, 3), fs);
-            Store radius = new Store(new FloatSeries(1, 8f, 18f), fs);
+
+            Store radius = new Store(_player.ExternalValue0, new MappingSampler((a) => a * 10 + 8));
+            Store starness = new Store(_player.ExternalValue1, new MappingSampler((a) => a * 2f - .9f));
 
             CommandCreateContainer cmdGrid = new CommandCreateContainer(
 				Store.CreateItemStore(hexStore.Capacity),
@@ -51,7 +52,8 @@ namespace DataArcs.Tests.GraphicTests
 					{PropertyId.Location, hexStore.Id},
 					{PropertyId.FillColor, fillColor.Id},
 					{PropertyId.Radius, radius.Id},
-					{PropertyId.PointCount, pointCount.Id}
+					{PropertyId.PointCount, pointCount.Id},
+					{PropertyId.Starness, starness.Id},
                 });
 			cmdGrid.Execute();
         }

@@ -28,6 +28,8 @@ namespace DataArcs
 	    private ITestScreen _testScreen;
         private Button _b0;
         private Button _bPause;
+        private TrackBar _slider0;
+        private TrackBar _slider1;
 
         private static void Main(string[] args)
 		{
@@ -36,7 +38,7 @@ namespace DataArcs
 			Application.Run(new MainForm());
 		}
 
-		public MainForm()
+        public MainForm()
 		{
 			InitializeComponent();
 			DoubleBuffered = true;
@@ -50,10 +52,28 @@ namespace DataArcs
             _bPause = new Button {Text = "Pause", BackColor = Color.DarkGray, Location = new Point(720, 30)};
             Controls.Add(_bPause);
 
+            _slider0 = new TrackBar { Location = new Point(20, 320), Size = new Size(150, 20), Minimum = 0, Maximum = 100, TickFrequency = 10};
+            _slider0.Scroll += _slider0_Scroll;
+            Controls.Add(_slider0);
+
+            _slider1 = new TrackBar { Location = new Point(20, 370), Size = new Size(150, 20), Minimum = 0, Maximum = 100, TickFrequency = 10 };
+            _slider1.Scroll += _slider1_Scroll;
+            Controls.Add(_slider1);
+
             _ = Execute(null, 50);
         }
-		
-		public async Task Execute(Action action, int timeoutInMilliseconds)
+
+        private void _slider0_Scroll(object sender, EventArgs e)
+        {
+	        _player.ExternalValue0.FloatDataRef[0] = _slider0.Value / 100f;
+        }
+
+        private void _slider1_Scroll(object sender, EventArgs e)
+        {
+	        _player.ExternalValue1.FloatDataRef[0] = _slider1.Value / 100f;
+        }
+
+        public async Task Execute(Action action, int timeoutInMilliseconds)
         {
             await Task.Delay(timeoutInMilliseconds);
             _b0.Invalidate();
@@ -75,7 +95,7 @@ namespace DataArcs
         private int _testIndex = 0;//_testCount;
         private void NextTest()
         {
-	        _testIndex--;
+            _testIndex--;
 	        if (_testIndex < 0)
 	        {
 		        _testIndex = _testCount - 1;
@@ -114,7 +134,9 @@ namespace DataArcs
 			        _testScreen = new BitmapAutomataTest(_player);
 			        break;
 		        case 10:
-			        _testScreen = new CommandTest(_player);
+			        _slider0.Show();
+			        _slider1.Show();
+                    _testScreen = new CommandTest(_player);
 			        break;
             }
             _player.Pause();
@@ -124,6 +146,9 @@ namespace DataArcs
 
         private void B0_Click(object sender, EventArgs e)
         {
+	        _slider0.Hide();
+	        _slider1.Hide();
+
             NextTest();
         }
 
