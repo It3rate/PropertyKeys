@@ -90,7 +90,14 @@ namespace DataArcs.SeriesData
             }
 		}
 
-		public override void ReverseEachElement()
+		public void GetSegmentFromT(float t, out float remainder, out int startIndex, out int endIndex)
+		{
+			int drawableSegments = Moves.Length - 1;
+			startIndex = (int) Math.Floor(t * drawableSegments);
+			remainder = (t - startIndex / (float)drawableSegments) * drawableSegments;
+			endIndex = startIndex + 1;
+		}
+        public override void ReverseEachElement()
 		{
 			base.ReverseEachElement();
 			Array.Reverse(Moves);
@@ -138,7 +145,6 @@ namespace DataArcs.SeriesData
 						posX = _floatValues[index + 4];
 						posY = _floatValues[index + 5];
 						break;
-					case BezierMove.End:
 					default:
 						path.CloseFigure();
 						break;
@@ -157,7 +163,7 @@ namespace DataArcs.SeriesData
     }
 
 	// maybe store all values as quadratic, allowing easier blending?
-	// todo: split into all quadratic beziers and all ploy lines. 
+	// todo: split into all quadratic beziers and all poly lines. 
 	// Use identical first and second coordinate for lines in quadratic, *or use midpoint and Move data determines lines etc.
 	// try blending with len/angle from zero vs interpolate points.
 	public enum BezierMove : int

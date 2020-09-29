@@ -60,6 +60,9 @@ namespace DataArcs
             _slider1.Scroll += _slider1_Scroll;
             Controls.Add(_slider1);
 
+            _slider0.Hide();
+            _slider1.Hide();
+
             _ = Execute(null, 50);
         }
 
@@ -91,7 +94,7 @@ namespace DataArcs
 			//});
 		}
 
-        private static int _testCount = 11;
+        private static int _testCount = 12;
         private int _testIndex = 0;//_testCount;
         private void NextTest()
         {
@@ -136,7 +139,10 @@ namespace DataArcs
 		        case 10:
 			        _slider0.Show();
 			        _slider1.Show();
-                    _testScreen = new CommandTest(_player);
+			        _testScreen = new CommandTest(_player);
+			        break;
+		        case 11:
+			        _testScreen = new BezierTest(_player);
 			        break;
             }
             _player.Pause();

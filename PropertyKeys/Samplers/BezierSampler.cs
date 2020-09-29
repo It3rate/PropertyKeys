@@ -9,9 +9,9 @@ namespace DataArcs.Samplers
 	{
 		private BezierSeries BezierSeries;
 
-		public BezierSampler(BezierSeries bezierSeries)
-		{
-            bezierSeries.Normalize();
+		public BezierSampler(BezierSeries bezierSeries, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
+        {
+            //bezierSeries.Normalize();
 			BezierSeries = bezierSeries;
 		}
 
@@ -21,32 +21,40 @@ namespace DataArcs.Samplers
             return GetValuesAtT(series, t);
         }
 
+		//public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
+		//{
+		//	var t = Math.Max(0, Math.Min(1f, seriesT[0]));
+  //          return base.GetSampledTs(seriesT);
+		//}
+
         public override Series GetValuesAtT(Series series, float t)
         {
             t = Math.Max(0, Math.Min(1f, t));
             return GetSeriesSample(series, t);
         }
-      
+
         private Series GetSeriesSample(Series series, float t)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             var strideTs = GetSeriesAtT(t).FloatDataRef;
 
-            for (var i = 0; i < result.Length; i++)
-            {
-                result[i] = (i < strideTs.Length) ? series.GetVirtualValueAt(strideTs[i]).FloatDataAt(i) : 0;
-            }
+            //for (var i = 0; i < result.Length; i++)
+            //{
+            //    result[i] = (i < strideTs.Length) ? series.GetVirtualValueAt(strideTs[i]).FloatDataAt(i) : 0;
+            //}
 
-            return SeriesUtils.CreateSeriesOfType(series, result);
+            return SeriesUtils.CreateSeriesOfType(series, strideTs);
         }
 
         private Series GetSeriesAtT(float t)
         {
-            SeriesUtils.GetScaledT(t, SampleCount, out var vT, out var startIndex, out var endIndex);
+	        BezierSeries.GetSegmentFromT(t, out var vT, out var startIndex, out var endIndex);
+            //SeriesUtils.GetScaledT(t, SampleCount, out var vT, out var startIndex, out var endIndex);
             var aSeries = BezierSeries.GetRawDataAt(startIndex);
-            var a = aSeries.GetVirtualValueAt(startIndex == endIndex ? 0 : aSeries.Count - 1, aSeries.Count).FloatDataRef;
+            //var a = aSeries.GetVirtualValueAt(startIndex == endIndex ? 0 : aSeries.Count - 1, aSeries.Count).FloatDataRef;
+            var a = new[] { aSeries.FloatDataRef[aSeries.DataSize - 2], aSeries.FloatDataRef[aSeries.DataSize - 1]};
             var b = BezierSeries.GetRawDataAt(endIndex).FloatDataRef; // GetFloatArrayAtIndex(endIndex);
-            var moveType = startIndex < BezierSeries.Moves.Length ? BezierSeries.Moves[startIndex] : BezierMove.LineTo;
+            var moveType = endIndex < BezierSeries.Moves.Length ? BezierSeries.Moves[endIndex] : BezierMove.End;
 
             var p2Index = b.Length - 2;
             float[] result = { 0, 0 };
@@ -63,9 +71,12 @@ namespace DataArcs.Samplers
                     result[1] = it * it * a[1] + 2 * it * vT * b[1] + vT * vT * b[p2Index + 1];
                     break;
                 case BezierMove.CubeTo:
-                    // todo: cubic bezier calc
-                    break;
-                case BezierMove.End:
+	                // todo: cubic bezier calc
+	                break;
+                case BezierMove.End: // special case when t == 1
+	                result[0] = a[a.Length - 2];
+	                result[1] = a[a.Length - 1];
+	                break;
                 default:
                     result = b;
                     break;
