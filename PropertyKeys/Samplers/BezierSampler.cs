@@ -13,6 +13,7 @@ namespace DataArcs.Samplers
         {
             //bezierSeries.Normalize();
 			BezierSeries = bezierSeries;
+			bezierSeries.EvenlySpaced = true;
 		}
 
 		public override Series GetValueAtIndex(Series series, int index)
@@ -48,41 +49,7 @@ namespace DataArcs.Samplers
 
         private Series GetSeriesAtT(float t)
         {
-	        BezierSeries.GetSegmentFromT(t, out var vT, out var startIndex, out var endIndex);
-            //SeriesUtils.GetScaledT(t, SampleCount, out var vT, out var startIndex, out var endIndex);
-            var aSeries = BezierSeries.GetRawDataAt(startIndex);
-            //var a = aSeries.GetVirtualValueAt(startIndex == endIndex ? 0 : aSeries.Count - 1, aSeries.Count).FloatDataRef;
-            var a = new[] { aSeries.FloatDataRef[aSeries.DataSize - 2], aSeries.FloatDataRef[aSeries.DataSize - 1]};
-            var b = BezierSeries.GetRawDataAt(endIndex).FloatDataRef; // GetFloatArrayAtIndex(endIndex);
-            var moveType = endIndex < BezierSeries.Moves.Length ? BezierSeries.Moves[endIndex] : BezierMove.End;
-
-            var p2Index = b.Length - 2;
-            float[] result = { 0, 0 };
-            var it = 1f - vT;
-            switch (moveType)
-            {
-                case BezierMove.MoveTo:
-                case BezierMove.LineTo:
-                    result[0] = a[0] + (b[p2Index] - a[0]) * vT;
-                    result[1] = a[1] + (b[p2Index + 1] - a[1]) * vT;
-                    break;
-                case BezierMove.QuadTo:
-                    result[0] = it * it * a[0] + 2 * it * vT * b[0] + vT * vT * b[p2Index];
-                    result[1] = it * it * a[1] + 2 * it * vT * b[1] + vT * vT * b[p2Index + 1];
-                    break;
-                case BezierMove.CubeTo:
-	                // todo: cubic bezier calc
-	                break;
-                case BezierMove.End: // special case when t == 1
-	                result[0] = a[a.Length - 2];
-	                result[1] = a[a.Length - 1];
-	                break;
-                default:
-                    result = b;
-                    break;
-            }
-
-            return new FloatSeries(2, result);
+	        return BezierSeries.GetSeriesAtT(t);
         }
     }
 }

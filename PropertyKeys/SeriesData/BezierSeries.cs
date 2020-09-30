@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using DataArcs.Stores;
 
@@ -17,7 +19,28 @@ namespace DataArcs.SeriesData
 
         public BezierMove[] Moves { get; }
 
-		public BezierSeries(float[] values, BezierMove[] moves = null) : base(2, values)
+		private int _polyLineCount = 100;
+		private float[] _polylineDistances;
+		private float _polylineLength;
+        private bool _evenlySpaced = false;
+        public bool EvenlySpaced
+        {
+	        get => _evenlySpaced;
+	        set
+	        {
+		        // Use dirty flag if this gets repetitious.
+                if(value)
+                {
+	                // Need to use normal bezier sampling to convert to polylines.
+                    _evenlySpaced = false;
+                    MakeEvenlySpaced();
+                }
+
+		        _evenlySpaced = value;
+	        }
+        }
+
+        public BezierSeries(float[] values, BezierMove[] moves = null) : base(2, values)
 		{
 			// default to polyline if moves is empty
 			if (moves == null)
@@ -33,7 +56,37 @@ namespace DataArcs.SeriesData
 			Moves = moves;
 		}
 
-		public override Series GetVirtualValueAt(float t)
+        private void MakeEvenlySpaced()
+		{
+			MeasureBezier();
+
+		}
+		private void MeasureBezier()
+		{
+			float len = 0;
+			_polylineDistances = new float[_polyLineCount];
+
+            if (Moves.Length > 1)
+			{
+				var pt0 = GetSeriesAtT(0);
+				var x0 = pt0.FloatDataRef[0];
+				var y0 = pt0.FloatDataRef[1];
+                for (int i = 1; i < _polyLineCount; i++)
+                {
+                    var pt1 = GetSeriesAtT(i / (float) _polyLineCount);
+                    var x1 = pt1.FloatDataRef[0];
+                    var y1 = pt1.FloatDataRef[1];
+                    var xDif = x1 - x0;
+					var yDif = y1 - y0;
+					len += (float)Math.Sqrt(xDif * xDif + yDif * yDif);
+                    _polylineDistances[i] = len;
+					x0 = x1;
+					y0 = y1;
+                }
+			}
+            _polylineLength = len;
+		}
+        public override Series GetVirtualValueAt(float t)
 		{
 			var index = (int) (t * Count);
 			return GetRawDataAt(index);
@@ -90,11 +143,83 @@ namespace DataArcs.SeriesData
             }
 		}
 
-		public void GetSegmentFromT(float t, out float remainder, out int startIndex, out int endIndex)
+		public FloatSeries GetSeriesAtT(float t)
+		{
+			float vT;
+			int startIndex, endIndex;
+
+			if (EvenlySpaced)
+			{
+				GetEvenSpacedSegmentFromT(t, out vT, out startIndex, out endIndex);
+			}
+			else
+			{
+				GetSegmentFromT(t, out vT, out startIndex, out endIndex);
+			}
+            
+			var aSeries = GetRawDataAt(startIndex);
+			var a = new[] { aSeries.FloatDataRef[aSeries.DataSize - 2], aSeries.FloatDataRef[aSeries.DataSize - 1] };
+			var b = GetRawDataAt(endIndex).FloatDataRef;
+			var moveType = endIndex < Moves.Length ? Moves[endIndex] : BezierMove.End;
+
+			var p2Index = b.Length - 2;
+			float[] result = { 0, 0 };
+			var it = 1f - vT;
+			switch (moveType)
+			{
+				case BezierMove.MoveTo:
+				case BezierMove.LineTo:
+					result[0] = a[0] + (b[p2Index] - a[0]) * vT;
+					result[1] = a[1] + (b[p2Index + 1] - a[1]) * vT;
+					break;
+				case BezierMove.QuadTo:
+					result[0] = it * it * a[0] + 2 * it * vT * b[0] + vT * vT * b[p2Index];
+					result[1] = it * it * a[1] + 2 * it * vT * b[1] + vT * vT * b[p2Index + 1];
+					break;
+				case BezierMove.CubeTo:
+					// todo: cubic bezier calc
+					break;
+				case BezierMove.End: // special case when t == 1
+					result[0] = a[a.Length - 2];
+					result[1] = a[a.Length - 1];
+					break;
+				default:
+					result = b;
+					break;
+			}
+			return new FloatSeries(2, result);
+		}
+
+        public void GetSegmentFromT(float t, out float remainder, out int startIndex, out int endIndex)
 		{
 			int drawableSegments = Moves.Length - 1;
-			startIndex = (int) Math.Floor(t * drawableSegments);
+			startIndex = (int)Math.Floor(t * drawableSegments);
 			remainder = (t - startIndex / (float)drawableSegments) * drawableSegments;
+			endIndex = startIndex + 1;
+		}
+		public void GetEvenSpacedSegmentFromT(float t, out float remainder, out int startIndex, out int endIndex)
+		{
+			var targetLength = _polylineLength * t;
+			int pos = 0;
+			for (; pos < _polyLineCount - 1; pos++)
+			{
+				if (_polylineDistances[pos + 1] > targetLength)
+				{
+					break;
+				}
+			}
+
+			float newT = 1;
+			if (pos < _polyLineCount - 1)
+			{
+				newT = pos / (float)(_polyLineCount - 1);
+				float rem = (targetLength - _polylineDistances[pos]) / (_polylineDistances[pos + 1] - _polylineDistances[pos]);
+				newT += rem / (_polyLineCount - 1);
+			}
+			
+			int drawableSegments = Moves.Length - 1;
+			startIndex = (int)Math.Floor(newT * drawableSegments);
+			remainder = (newT - startIndex / (float)drawableSegments) * drawableSegments;
 			endIndex = startIndex + 1;
 		}
         public override void ReverseEachElement()

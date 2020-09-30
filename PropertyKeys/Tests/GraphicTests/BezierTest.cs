@@ -24,15 +24,15 @@ namespace DataArcs.Tests.GraphicTests
 
 		public void NextVersion()
 		{
-			var bezSeries = new BezierSeries(new[] { 50f,200f, 100f,50f,300f,200f, 150f,550f,600f,150f },
+			var bezSeries = new BezierSeries(new[] { 50f,200f, 100f,50f,300f,200f, 150f,650f,700f,150f },
 				new BezierMove[] { BezierMove.MoveTo, BezierMove.QuadTo, BezierMove.QuadTo });
             //var bezSeries = new BezierSeries(new []{50f,200f, 100f,50f,700f,400f}, new BezierMove[]{ BezierMove.MoveTo, BezierMove.QuadTo });
-			var bezSampler = new BezierSampler(bezSeries, null, 40);
+			var bezSampler = new BezierSampler(bezSeries, null, 50);
 			var bezStore = new Store(bezSeries, bezSampler);
 
 			IStore fillColor = new FloatSeries(2, 0.1f, 0.5f, 0.8f, 0.9f, 0.4f, 0.1f).Store();
-			IStore radius = new FloatSeries(1, 5, 12).Store();
-            IStore pointCount = new IntSeries(1, 6, 8).Store();
+			IStore radius = new FloatSeries(1, 5, 12, 4, 8).Store();
+            IStore pointCount = new IntSeries(1, 6, 12).Store();
             IStore starness = new FloatSeries(1, -0.5f, 1.2f).Store();
 
             CommandCreateContainer cmdGrid = new CommandCreateContainer(
