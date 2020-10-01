@@ -24,15 +24,15 @@ namespace DataArcs.Tests.GraphicTests
 
 		public void NextVersion()
 		{
-			var bezSeries = new BezierSeries(new[] { 50f,200f, 100f,50f,300f,200f, 150f,650f,700f,150f, 400f,50f, 50f, 200f },
+			var bezSeries = new BezierSeries(new[] { 50f,300f, 100f,0f,400f,200f, 50f,650f,700f,150f, 400f,-110f,50f,300f },
 				new BezierMove[] { BezierMove.MoveTo, BezierMove.QuadTo, BezierMove.QuadTo, BezierMove.QuadTo });
             //var bezSeries = new BezierSeries(new []{50f,200f, 100f,50f,700f,400f}, new BezierMove[]{ BezierMove.MoveTo, BezierMove.QuadTo });
-			var bezSampler = new BezierSampler(bezSeries, null, 50);
+			var bezSampler = new BezierSampler(bezSeries, null, 32);
 			var bezStore = new Store(bezSeries, bezSampler);
 
 			var tModStore = new FunctionalTStore(
-				(t, internalT) => (t / 2f + internalT) % 1f, 
-				(time, it) => it + time/3000f);
+				(t, internalT) => (t * .6f + internalT) % 1f, 
+				(time, it) => it + time/4000f);
 			var locStore = new MergingStore(tModStore, bezStore);
 
 			IStore fillColor = new FloatSeries(3,  0.1f, 0.2f, 1f,  0.8f, 0.2f, 0.6f,  1f, 0.8f, 0.1f).Store();
