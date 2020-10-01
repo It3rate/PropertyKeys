@@ -12,7 +12,7 @@ namespace DataArcs.Stores
         //void Update(double currentTime, double deltaTime);
 
         int Capacity { get; }
-        CombineFunction MergeFunction { get; set; }
+        CombineFunction CombineFunction { get; set; }
 		Sampler Sampler { get; set; }
 		bool ShouldInterpolate { get; set; }
 
@@ -68,13 +68,6 @@ namespace DataArcs.Stores
         ContinuousAdd,
         Final,
 
-        MultiplyT,
+        ModifyT, // special case where the input T is modified, rather than combining with the previous store.
 	}
-
-	public enum CombineTarget
-	{
-		T,
-        Destination,
-        ContinuousSelf,
-    }
 }

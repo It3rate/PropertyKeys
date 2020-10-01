@@ -246,55 +246,6 @@ namespace DataArcs.SeriesData
             }
 		}
 
-		public void CombineWith(float b, CombineFunction combineFunction)
-		{
-			switch (combineFunction)
-			{
-				case CombineFunction.Add:
-					for (var i = 0; i < DataSize; i++)
-					{
-						_floatValues[i] += b;
-					}
-
-					break;
-				case CombineFunction.Subtract:
-					for (var i = 0; i < DataSize; i++)
-					{
-						_floatValues[i] -= b;
-					}
-
-					break;
-				case CombineFunction.Multiply:
-					for (var i = 0; i < DataSize; i++)
-					{
-						_floatValues[i] *= b;
-					}
-
-					break;
-				case CombineFunction.Divide:
-					for (var i = 0; i < DataSize; i++)
-					{
-						_floatValues[i] = b != 0 ? _floatValues[i] / b : _floatValues[i];
-					}
-
-					break;
-				case CombineFunction.Average:
-					for (var i = 0; i < DataSize; i++)
-					{
-						_floatValues[i] = (_floatValues[i] + b) / 2.0f + _floatValues[i];
-					}
-
-					break;
-				case CombineFunction.Replace:
-					for (var i = 0; i < DataSize; i++)
-					{
-						_floatValues[i] = b;
-					}
-
-					break;
-			}
-		}
-
         public override float[] FloatDataRef => _floatValues;
 		public override int[] IntDataRef => _floatValues.ToInt(); //_floatValues.ToInt();
 
@@ -316,5 +267,8 @@ namespace DataArcs.SeriesData
 			FloatSeries result = new FloatSeries(VectorSize, (float[])FloatDataRef.Clone());
 			return result;
 		}
+
+
+		public static FloatSeries NormSeries { get; } = new FloatSeries(1, 0f, 1f);
 	}
 }

@@ -252,7 +252,7 @@ namespace DataArcs.Tests.GraphicTests
 
         public BlendTransition GetBlend(IContainer containerA, IContainer containerB, int ms)
         {
-	        Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3));//, MergeFunction.Multiply, CombineTarget.T);//, new Easing(EasingType.EaseInOut3AndBack), MergeFunction.Multiply, CombineTarget.T);
+	        Store easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3));
             var result = new BlendTransition(containerA, containerB, new Timer(0, ms), easeStore);
             return result;
         }

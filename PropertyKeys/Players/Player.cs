@@ -94,8 +94,8 @@ namespace DataArcs.Players
 		        Composites.CanDestroy = false;
 		        {
 			        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			        var elementIds = Composites.ActiveIdsCopy;
-			        foreach (var id in elementIds)
+			        var activeIds = Composites.ActiveIdsCopy;
+			        foreach (var id in activeIds)
 			        {
 				        if (Composites.ContainsKey(id))
 				        {

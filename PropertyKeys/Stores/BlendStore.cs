@@ -8,6 +8,9 @@ using DataArcs.SeriesData;
 
 namespace DataArcs.Stores
 {
+	/// <summary>
+    /// Get the blended value at T, based on multiple stores of equal weight. No more that two adjacent stores are considered when calculating the value.
+    /// </summary>
 	public class BlendStore : StoreBase
 	{
 		private readonly List<IStore> _stores;
@@ -22,7 +25,7 @@ namespace DataArcs.Stores
 				foreach (var store in _stores)
 				{
 					result = Math.Max(result, store.Capacity);
-				} // todo: use combine function for virtual count, rename to capacity.
+				}
 
 				return result;
 			}

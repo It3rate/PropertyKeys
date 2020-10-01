@@ -21,7 +21,7 @@ namespace DataArcs.Stores
 
         private IStore MixStore => _mixStore;// ?? _player[LinkedCompositeId]?.GetStore(PropertyId);
 		// todo: consider implications of having own samplers and combines here. Or copy masked store into this.
-        public override CombineFunction MergeFunction { get => MixStore.MergeFunction; set => MixStore.MergeFunction = value; }
+        public override CombineFunction CombineFunction { get => MixStore.CombineFunction; set => MixStore.CombineFunction = value; }
         public override Sampler Sampler
         {
 	        get => MixStore?.Sampler ?? Player.CurrentComposites[LinkedCompositeId]?.GetStore(PropertyId)?.Sampler;
@@ -58,7 +58,7 @@ namespace DataArcs.Stores
                     var slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
                     if(PropertyIdSet.IsTCombining(PropertyId))
                     {
-                        slotMapped.CombineInto(new FloatSeries(1, t), MergeFunction, t);
+                        slotMapped.CombineInto(new FloatSeries(1, t), CombineFunction, t);
                     }
 
                     result = _mixStore?.GetValuesAtT(t) ?? SeriesUtils.CreateSeriesOfType(slotMapped.Type, slotMapped.VectorSize, 1, 0f);
@@ -79,7 +79,7 @@ namespace DataArcs.Stores
 					// This is two step in order to use slot mapping, probably can sensibly combine this.
 	                Series link = Player.CurrentComposites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
 	                Series slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
-	                result.CombineInto(slotMapped, MergeFunction, t);
+	                result.CombineInto(slotMapped, CombineFunction, t);
                 }
                 else
                 {
@@ -97,7 +97,7 @@ namespace DataArcs.Stores
             if (link != null)
             {
                 Series mappedValues = SeriesUtils.SwizzleSeries(SlotMapping, link);
-                result.CombineInto(mappedValues, MergeFunction);
+                result.CombineInto(mappedValues, CombineFunction);
             }
             return result;
         }

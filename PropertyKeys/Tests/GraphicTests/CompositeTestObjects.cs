@@ -146,7 +146,7 @@ namespace DataArcs.Tests.GraphicTests
             IStore endLocStore = bt.End.GetStore(PropertyId.Location);
             RectFSeries minMax = new RectFSeries(-8f, -4f, 8f, 4f);
             var randomStore = new RandomSeries(2, SeriesType.Float, endLocStore.Capacity, minMax, 1111, CombineFunction.ContinuousAdd).CreateLinearStore(endLocStore.Capacity);
-            randomStore.MergeFunction = CombineFunction.Add;
+            randomStore.CombineFunction = CombineFunction.Add;
             var fs = new MergingStore(endLocStore, randomStore);
             ((Container)bt.End).AddProperty(PropertyId.Location, fs);
             return bt;

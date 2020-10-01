@@ -41,7 +41,7 @@ namespace DataArcs.Components
 			    }
 			    else
 			    {
-                    AddProperty(id, new MergingStore(curStore, store) { MergeFunction = curStore.MergeFunction });
+                    AddProperty(id, new MergingStore(curStore, store) { CombineFunction = curStore.CombineFunction });
                 }
 		    }
 		    else
@@ -94,7 +94,7 @@ namespace DataArcs.Components
 		    {
 			    if (result != null)
 			    {
-				    result.CombineInto(parentSeries, store.MergeFunction, t);
+				    result.CombineInto(parentSeries, store.CombineFunction, t);
 			    }
 			    else
 			    {
@@ -111,7 +111,7 @@ namespace DataArcs.Components
 		    {
 			    if (result != null)
 			    {
-				    result.CombineInto(parentSeries, store.MergeFunction);
+				    result.CombineInto(parentSeries, store.CombineFunction);
 			    }
 			    else
 			    {

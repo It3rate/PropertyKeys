@@ -6,6 +6,9 @@ using DataArcs.Samplers;
 
 namespace DataArcs.Stores
 {
+	/// <summary>
+    /// Allows multiple stores to be merged into a single property, using the stores merge function.
+    /// </summary>
 	public class MergingStore : StoreBase
 	{
 		private readonly List<IStore> _stores;
@@ -34,7 +37,7 @@ namespace DataArcs.Stores
 			for (var i = 1; i < _stores.Count; i++)
 			{
 				var b = _stores[i].GetValuesAtIndex(index);
-				series.CombineInto(b, _stores[i].MergeFunction);
+				series.CombineInto(b, _stores[i].CombineFunction);
 			}
 
 			return series;
@@ -45,10 +48,14 @@ namespace DataArcs.Stores
 			Series series = null;
 			foreach (var store in _stores)
 			{
-				if (series != null)
+				if (store.CombineFunction == CombineFunction.ModifyT)
+				{
+					t = store.GetValuesAtT(t).X;
+				}
+				else if (series != null)
 				{
 					var b = store.GetValuesAtT(t);
-					series.CombineInto(b, store.MergeFunction);
+					series.CombineInto(b, store.CombineFunction);
 				}
 				else
 				{
@@ -68,7 +75,7 @@ namespace DataArcs.Stores
 				if (result != null)
 				{
 					var b = store.GetSampledTs(seriesT);
-					result.CombineInto(b, store.MergeFunction);
+					result.CombineInto(b, store.CombineFunction);
 				}
 				else
 				{

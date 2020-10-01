@@ -122,7 +122,7 @@ namespace DataArcs.Tests.GraphicTests
 	        // Link a custom property and multiply to generate an animated scaling transform.
 	        _timer.AddProperty(PropertyId.User1, new Store(new FloatSeries(2, .6f, .6f, 1.5f, 1.5f), new Easing(EasingType.EaseInOut3AndBack)));
 	        var locStore = new Store(new FloatSeries(2, -r + os, -r + os, r + os, r + os, -r2 + os, -r2 + os, r2 + os, r2 + os), ringSampler, CombineFunction.Multiply);
-	        var loc = new LinkingStore(_timer.Id, PropertyId.User1, SlotUtils.XY, locStore) {MergeFunction = CombineFunction.Add};
+	        var loc = new LinkingStore(_timer.Id, PropertyId.User1, SlotUtils.XY, locStore) {CombineFunction = CombineFunction.Add};
 	        composite.AddProperty(PropertyId.Location, loc);
 
 	        composite.AddProperty(PropertyId.Radius, new Store(new FloatSeries(2, 11f, 11f)));

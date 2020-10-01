@@ -203,7 +203,7 @@ namespace DataArcs.Components
             {
                 if (result != null)
                 {
-                    result.CombineInto(parentSeries, store.MergeFunction, t);
+                    result.CombineInto(parentSeries, store.CombineFunction, t);
                 }
                 else
                 {
@@ -221,7 +221,7 @@ namespace DataArcs.Components
             {
                 if (result != null)
                 {
-                    result.CombineInto(parentSeries, store.MergeFunction);
+                    result.CombineInto(parentSeries, store.CombineFunction);
                 }
                 else
                 {
@@ -276,9 +276,9 @@ namespace DataArcs.Components
                 {
 	                int itemIndex = items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
 
-                    float indexT = itemIndex / (capacity - 1f);
+                    float t = itemIndex / (capacity - 1f);
                     dict.Clear();
-                    IRenderable renderer = QueryPropertiesAtT(dict, indexT, true);
+                    IRenderable renderer = QueryPropertiesAtT(dict, t, true);
                     renderer?.DrawWithProperties(dict, g);
                 }
             }
