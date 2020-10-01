@@ -340,7 +340,7 @@ namespace DataArcs.SeriesData.Utils
             return CreateSeriesOfType(source, max);
         }
 
-        // Note: For simple cases it may be easier to use: float SlotUtils.ComputeOnElement(series, Slot.Sum, index)
+        // Note: For simple cases it may be easier to use: float SlotUtils.ComputeOnElement(series, Slot.Widest, index)
         private static Series PerElementFunction(BinaryFloatEquation equation, float defaultValue, Series source, params Slot[] slots)
         {
 	        bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;

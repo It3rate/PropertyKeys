@@ -29,6 +29,7 @@ namespace DataArcs.Samplers
 	public enum GrowthType
 	{
 		Product = 0,
+		Widest,
 		Sum,
 	}
 

@@ -122,17 +122,19 @@ namespace DataArcs.Samplers
 
         protected int StridesToSampleCount(int[] strides)
         {
-	        int result;
-	        if (GrowthType == GrowthType.Sum)
+	        int result = 0;
+	        switch (GrowthType)
 	        {
-		        int maxRow = Strides.Max();
-		        result = maxRow * Strides.Length;
+		        case GrowthType.Product:
+			        result = strides.Aggregate(1, (a, b) => b != 0 ? a * b : a);
+			        break;
+		        case GrowthType.Widest:
+			        result = Strides.Max() * Strides.Length;
+			        break;
+		        case GrowthType.Sum:
+			        result = Strides.Sum();
+			        break;
 	        }
-	        else
-	        {
-		        result = strides.Aggregate(1, (a, b) => b != 0 ? a * b : a);
-            }
-
 	        return result;
         }
 
