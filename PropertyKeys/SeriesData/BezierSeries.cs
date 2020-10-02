@@ -19,7 +19,7 @@ namespace DataArcs.SeriesData
 
         public BezierMove[] Moves { get; }
 
-		private int _polyLineCount = 100;
+		private int _polyLineCount = 1000;
 		private float[] _polylineDistances;
 		private float _polylineLength;
         private bool _evenlySpaced = false;
@@ -143,7 +143,7 @@ namespace DataArcs.SeriesData
             }
 		}
 
-		public FloatSeries GetSeriesAtT(float t)
+        public FloatSeries GetSeriesAtT(float t)
 		{
 			float vT;
 			int startIndex, endIndex;
@@ -156,7 +156,7 @@ namespace DataArcs.SeriesData
 			{
 				GetSegmentFromT(t, out vT, out startIndex, out endIndex);
 			}
-            
+
 			var aSeries = GetRawDataAt(startIndex);
 			var a = new[] { aSeries.FloatDataRef[aSeries.DataSize - 2], aSeries.FloatDataRef[aSeries.DataSize - 1] };
 			var b = GetRawDataAt(endIndex).FloatDataRef;

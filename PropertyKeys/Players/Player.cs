@@ -174,7 +174,7 @@ namespace DataArcs.Players
             else
             {
                 _delayTime += DateTime.Now - _pauseTime;
-				_lastTime += DateTime.Now - _pauseTime;
+                _lastTime = DateTime.Now - (StartTime + _delayTime);
                 foreach (var id in Composites.ActiveIds)
                 {
                     if (Composites.ContainsKey(id) && (Composites[id] is ITimeable))

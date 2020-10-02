@@ -276,7 +276,7 @@ namespace DataArcs.Components
                 {
 	                int itemIndex = items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
 
-                    float t = itemIndex / (capacity - 1f);
+                    float t = capacity > 1 ? itemIndex / (capacity - 1f) : 0;
                     dict.Clear();
                     IRenderable renderer = QueryPropertiesAtT(dict, t, true);
                     renderer?.DrawWithProperties(dict, g);

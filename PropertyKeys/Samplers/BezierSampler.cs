@@ -30,8 +30,8 @@ namespace DataArcs.Samplers
 
         public override Series GetValuesAtT(Series series, float t)
         {
-            t = Math.Max(0, Math.Min(1f, t));
-            return GetSeriesSample(series, t);
+            var ct = Math.Max(0, Math.Min(1f, t));
+            return GetSeriesSample(series, ct);
         }
 
         private Series GetSeriesSample(Series series, float t)
