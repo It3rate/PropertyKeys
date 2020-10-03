@@ -17,7 +17,7 @@ namespace DataArcs.Components
 {
 	public class Container : BaseComposite, IContainer
 	{
-		private readonly List<IContainer> _children = new List<IContainer>();
+		private readonly List<int> _children = new List<int>();
 		
         public IContainer Parent { get; set; }
         public IRenderable Renderer { get; set; }
@@ -40,11 +40,13 @@ namespace DataArcs.Components
 
         public Container(int items, int parent, int renderer) : this(Player.CurrentStores[items])
         {
-	        Parent = (IContainer)Player.CurrentPlayer.Composites[parent];
-	        Renderer = Player.CurrentPlayer.Renderables[renderer];
+	        Parent = GetComposite(parent);
+	        Renderer = Player.CurrentRenderables[renderer];
         }
 
         #region Elements
+
+		protected IContainer GetComposite(int index) => (IContainer) Player.CurrentComposites[index];
 
         public override IStore GetStore(PropertyId propertyId)
 		{
@@ -71,8 +73,8 @@ namespace DataArcs.Components
                 {
                     for (int i = 0; i < Capacity; i++)
                     {
-                        int index = Math.Min(_children.Count - 1, i);
-                        result += _children[index].NestedItemCount;
+                        int childIndex = Math.Min(_children.Count - 1, i);
+                        result += GetComposite(_children[childIndex]).NestedItemCount;
                     }
                 }
                 else
@@ -95,8 +97,8 @@ namespace DataArcs.Components
                     result = new int[Capacity];
                     for (int i = 0; i < Capacity; i++)
                     {
-                        int index = Math.Max(0, Math.Min(_children.Count - 1, i));
-                        result[i] = _children[index].NestedItemCount;
+                        int childIndex = Math.Max(0, Math.Min(_children.Count - 1, i));
+                        result[i] = GetComposite(_children[childIndex]).NestedItemCount;
                     }
                 }
                 return result;
@@ -110,11 +112,11 @@ namespace DataArcs.Components
         public void AddChild(IContainer child)
         {
             child.Parent = this;
-            _children.Add(child);
+            _children.Add(child.Id);
         }
         public void RemoveChild(IContainer child)
         {
-            _children.Remove(child);
+            _children.Remove(child.Id);
         }
         public virtual IContainer CreateChild()
         {
@@ -177,7 +179,7 @@ namespace DataArcs.Components
                     data[key] = GetSeriesAtT(key, selfT, data[key]);
                 }
                 childIndex = Math.Max(0, Math.Min(_children.Count - 1, childIndex));
-                result = _children[childIndex].QueryPropertiesAtT(data, segmentT, addLocalProperties) ?? result;
+                result = GetComposite(_children[childIndex]).QueryPropertiesAtT(data, segmentT, addLocalProperties) ?? result;
             }
             else
             {
@@ -254,7 +256,7 @@ namespace DataArcs.Components
 	        else
 	        {
 		        int childIndex = SamplerUtils.IndexFromT(_children.Count, indexT); // Math.MaxSlots(0, Math.MinSlots(_children.Count - 1, (int)Math.Round(indexT * _children.Count)));
-		        IContainer child = _children[childIndex];
+		        IContainer child = GetComposite(_children[childIndex]);
 				
 		        float indexTNorm = indexT * (child.Capacity / (child.Capacity - 1f)); // normalize
 		        Series val = GetSeriesAtT(propertyId, indexTNorm, parentSeries);
@@ -270,7 +272,6 @@ namespace DataArcs.Components
             var capacity = NestedItemCount;// NestedItemCountAtT(InterpolationT);
             if (capacity > 0)// != null)
             {
-				SortedList<int, int> sl = new SortedList<int, int>();
 				var items = GetLocalStore(PropertyId.Items);
                 for (int i = 0; i < capacity; i++)
                 {
@@ -283,7 +284,7 @@ namespace DataArcs.Components
                 }
             }
         }
-        #endregion
+#endregion
         
     }
 }

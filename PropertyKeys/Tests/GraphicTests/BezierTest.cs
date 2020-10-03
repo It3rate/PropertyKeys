@@ -32,7 +32,7 @@ namespace DataArcs.Tests.GraphicTests
 
 			var tModStore = new FunctionalTStore(
 				(t, internalT) => (t * .7f + internalT) % 1,
-				(time, it) => it + 0.001f);//time/16000f);
+				(time, it) => it + 0.01f);//time/16000f);
 			var locStore = new MergingStore(tModStore, bezStore);
 
 			IStore fillColor = new FloatSeries(3,  0.1f, 0.2f, 1f,  0.8f, 0.2f, 0.6f,  1f, 0.8f, 0.1f).Store();
