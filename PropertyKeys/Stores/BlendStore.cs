@@ -82,11 +82,6 @@ namespace DataArcs.Stores
 			}
 		}
 
-		public override Series GetValuesAtIndex(int index)
-		{
-			return GetSeriesAtIndex(index, (float)CurrentT * Capacity);
-		}
-
 		public override Series GetValuesAtT(float t)
 		{
 			return GetSeriesAtT(t, (float)CurrentT);
@@ -146,19 +141,6 @@ namespace DataArcs.Stores
 			{
 				Series endSeries = _stores[startIndex + 1].GetValuesAtT(remainder);
 				result.InterpolateInto(endSeries, storeInterpolation);
-			}
-
-			return result;
-		}
-
-
-		public static Series BlendValueAtIndex(IStore start, IStore end, int index, float t)
-		{
-			var result = start.GetValuesAtIndex(index);
-			if (end != null)
-			{
-				var endAr = end.GetValuesAtIndex(index);
-				result.InterpolateInto(endAr, t);
 			}
 
 			return result;

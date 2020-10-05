@@ -66,8 +66,6 @@ namespace DataArcs.Stores
         public abstract Series GetSeriesRef();
         public abstract void SetFullSeries(Series value);
 
-        public abstract Series GetValuesAtIndex(int index);
-
         public abstract Series GetValuesAtT(float t);
         
         public abstract ParametricSeries GetSampledTs(ParametricSeries seriesT);

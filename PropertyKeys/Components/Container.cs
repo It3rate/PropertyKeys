@@ -257,7 +257,7 @@ namespace DataArcs.Components
 				var items = GetLocalStore(PropertyId.Items);
                 for (int i = 0; i < capacity; i++)
                 {
-	                int itemIndex = items?.GetValuesAtIndex(i).IntDataAt(0) ?? i;
+	                int itemIndex = items?.GetValuesAtT(i / (capacity - 1f)).IntDataAt(0) ?? i;
 
                     float t = capacity > 1 ? itemIndex / (capacity - 1f) : 0;
                     dict.Clear();

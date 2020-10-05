@@ -19,8 +19,6 @@ namespace DataArcs.Stores
         {
         }
 
-		public Series this[int index] => GetValuesAtIndex(index);
-
 		public override Series GetSeriesRef()
 		{
 			return Series;
@@ -28,11 +26,6 @@ namespace DataArcs.Stores
 		public override void SetFullSeries(Series value)
 		{
 			Series = value;
-		}
-
-        public override Series GetValuesAtIndex(int index)
-		{
-			return ShouldInterpolate ? Series.GetRawDataAt(index) : Sampler.GetValueAtIndex(Series, index);
 		}
 
 		public override Series GetValuesAtT(float t)

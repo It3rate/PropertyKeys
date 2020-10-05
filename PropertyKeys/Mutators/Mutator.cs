@@ -13,11 +13,6 @@ namespace DataArcs.Mutators
 			Store.BakeData();
 		}
 
-		public virtual Series GetValueAtIndex(Series series, int index)
-		{
-			return Store.GetValuesAtIndex(index);
-		}
-
 		public virtual Series GetValueAtT(Series series, float t)
 		{
 			return Store.GetValuesAtT(t);

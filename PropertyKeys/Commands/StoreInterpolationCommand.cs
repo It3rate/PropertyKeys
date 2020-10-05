@@ -15,28 +15,7 @@ namespace DataArcs.Commands
 			Stores = stores;
 			EasingType = easingType;
 		}
-
-
-		// todo: return series
-		public float[] GetValuesAtIndex(int index, float t)
-		{
-			float[] result;
-			t = Easing.GetValueAt(new ParametricSeries(1, t), EasingType).X;
-
-			SeriesUtils.GetScaledT(t, Stores.Length, out var vT, out var startIndex, out var endIndex);
-
-			if (startIndex == endIndex)
-			{
-				result = Stores[startIndex].GetValuesAtIndex(index).FloatDataRef; // getValues is a new object, so ref ok
-			}
-			else
-			{
-				result = BlendValueAtIndex(Stores[startIndex], Stores[endIndex], index, vT);
-			}
-
-			return result;
-		}
-
+		
 		public float[] GetValuesAtT(float indexT, float t)
 		{
 			float[] result;
@@ -76,19 +55,6 @@ namespace DataArcs.Commands
 
 			return result;
 		}
-
-		public static float[] BlendValueAtIndex(Store start, Store end, int index, float t)
-		{
-			var result = start.GetValuesAtIndex(index).FloatDataRef;
-			if (end != null)
-			{
-				var endAr = end.GetValuesAtIndex(index).FloatDataRef;
-				ArrayExtension.InterpolateInto(result, endAr, t);
-			}
-
-			return result;
-		}
-
 		public static float[] BlendValueAtT(Store start, Store end, float indexT, float t)
 		{
 			var result = start.GetValuesAtT(indexT).FloatDataRef;

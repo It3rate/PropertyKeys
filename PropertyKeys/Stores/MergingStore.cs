@@ -28,21 +28,6 @@ namespace DataArcs.Stores
 			_stores = new List<IStore>(stores);
 		}
 
-		public Series this[int index] => GetValuesAtIndex(index);
-
-
-		public override Series GetValuesAtIndex(int index)
-		{
-			var series = _stores[0].GetValuesAtIndex(index);
-			for (var i = 1; i < _stores.Count; i++)
-			{
-				var b = _stores[i].GetValuesAtIndex(index);
-				series.CombineInto(b, _stores[i].CombineFunction);
-			}
-
-			return series;
-		}
-
 		public override Series GetValuesAtT(float t)
 		{
 			Series series = null;

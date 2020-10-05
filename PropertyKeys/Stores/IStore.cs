@@ -18,8 +18,7 @@ namespace DataArcs.Stores
 
         Series GetSeriesRef();
         void SetFullSeries(Series value);
-
-        Series GetValuesAtIndex(int index);
+		
 		Series GetValuesAtT(float t);
         ParametricSeries GetSampledTs(ParametricSeries seriesT);
         Series GetNeighbors(int index, bool wrapEdges = true);
@@ -45,7 +44,8 @@ namespace DataArcs.Stores
             return (_position < _instance.Capacity);
         }
 
-        public object Current => _instance.GetValuesAtIndex(_position);
+        //public object Current => _instance.GetValuesAtIndex(_position);
+        public object Current => _instance.GetValuesAtT(_position / (_instance.Capacity - 1f));
 
         public void Reset()
         {

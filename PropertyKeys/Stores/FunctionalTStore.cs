@@ -31,11 +31,6 @@ namespace DataArcs.Stores
 		    Series = value;
 	    }
 
-	    public override Series GetValuesAtIndex(int index)
-	    {
-		    return GetValuesAtT(index);
-	    }
-
 	    public override Series GetValuesAtT(float t)
 	    {
 		    return new FloatSeries(1, _floatEquation.Invoke(t, _internalT));

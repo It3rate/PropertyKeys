@@ -39,13 +39,6 @@ namespace DataArcs.Stores
             _player = Player.GetPlayerById(0);
             _mixStore = store;
         }
-        
-        public override Series GetValuesAtIndex(int index)
-        { 
-            // TODO: can't just pass this in because capacity may mean row capacity.
-            // t needs to be a series always, and can get multi dim t from sampler.
-            return GetValuesAtT(SamplerUtils.TFromIndex(Capacity, index)); //   index / (SampleCount - 1f));
-        }
 
         public override Series GetValuesAtT(float t)
         {
