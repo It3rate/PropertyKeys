@@ -103,6 +103,8 @@ namespace DataArcs.Components
 		    }
 		    return result;
 	    }
+
+		// not needed
 	    public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
 	    {
 		    var store = GetStore(propertyId);

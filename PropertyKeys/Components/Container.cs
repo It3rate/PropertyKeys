@@ -156,47 +156,6 @@ namespace DataArcs.Components
 		        }
 	        }
         }
-        public virtual IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
-        {
-	        IRenderable result = null;
-	        if (addLocalProperties)
-	        {
-				AddLocalPropertiesAtT(data, t);
-	        }
-
-	        int capacity = NestedItemCount;
-	        var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, SamplerUtils.IndexFromT(NestedItemCount, t));// (int)Math.Floor(t * (NestedItemCount - 1f) + 0.5f));
-	        float indexT = sample.X;
-	        float segmentT = sample.Y;
-            if (_children.Count > 0)
-            {
-                int childIndex = (int)Math.Floor(indexT * (ChildCounts.Length - 0f) + 0.5f);
-                float selfT = ChildCounts.Length > 1 ? childIndex / (ChildCounts.Length - 1f) : t;
-
-                var keys = data.Keys.ToList();
-                foreach (var key in keys)
-                {
-                    data[key] = GetSeriesAtT(key, selfT, data[key]);
-                }
-                childIndex = Math.Max(0, Math.Min(_children.Count - 1, childIndex));
-                result = GetComposite(_children[childIndex]).QueryPropertiesAtT(data, segmentT, addLocalProperties) ?? result;
-            }
-            else
-            {
-                var keys = data.Keys.ToList();
-                foreach (var key in keys)
-                {
-                    data[key] = GetSeriesAtT(key, segmentT, data[key]);
-                }
-            }
-
-            if (this is IDrawable drawable && drawable.Renderer != null)
-            {
-                result = drawable.Renderer;
-            }
-            return result;
-        }
-
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             var store = GetStore(propertyId);
@@ -264,9 +223,49 @@ namespace DataArcs.Components
 	        }
 	        return result;
         }
-#endregion
+        #endregion
 
 #region Draw
+		public virtual IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
+		{
+			IRenderable result = null;
+			if (addLocalProperties)
+			{
+				AddLocalPropertiesAtT(data, t);
+			}
+			
+			var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, SamplerUtils.IndexFromT(NestedItemCount, t));// (int)Math.Floor(t * (NestedItemCount - 1f) + 0.5f));
+			float indexT = sample.X;
+			float segmentT = sample.Y;
+			if (_children.Count > 0)
+			{
+				int childIndex = (int)Math.Floor(indexT * (ChildCounts.Length - 0f) + 0.5f);
+				float selfT = ChildCounts.Length > 1 ? childIndex / (ChildCounts.Length - 1f) : t;
+
+				var keys = data.Keys.ToList();
+				foreach (var key in keys)
+				{
+					data[key] = GetSeriesAtT(key, selfT, data[key]);
+				}
+				childIndex = Math.Max(0, Math.Min(_children.Count - 1, childIndex));
+				result = GetComposite(_children[childIndex]).QueryPropertiesAtT(data, segmentT, addLocalProperties) ?? result;
+			}
+			else
+			{
+				var keys = data.Keys.ToList();
+				foreach (var key in keys)
+				{
+					data[key] = GetSeriesAtT(key, segmentT, data[key]);
+				}
+			}
+
+			if (this is IDrawable drawable && drawable.Renderer != null)
+			{
+				result = drawable.Renderer;
+			}
+			return result;
+		}
+
         public virtual void Draw(Graphics g, Dictionary<PropertyId, Series> dict)
         {
             var capacity = NestedItemCount;// NestedItemCountAtT(InterpolationT);
@@ -284,7 +283,7 @@ namespace DataArcs.Components
                 }
             }
         }
-#endregion
+        #endregion
         
     }
 }
