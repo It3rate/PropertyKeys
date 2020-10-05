@@ -44,7 +44,6 @@ namespace DataArcs.Stores
             return (_position < _instance.Capacity);
         }
 
-        //public object Current => _instance.GetValuesAtIndex(_position);
         public object Current => _instance.GetValuesAtT(_position / (_instance.Capacity - 1f));
 
         public void Reset()

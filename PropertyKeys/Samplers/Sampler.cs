@@ -67,13 +67,7 @@ namespace DataArcs.Samplers
 
 		protected Sampler GetSamplerById(int id) => Player.CurrentSamplers[id];
 
-        public virtual Series GetValueAtIndex(Series series, int index)
-        {
-	        var indexT = SamplerUtils.TFromIndex(SampleCount, index); // index / (SampleCount - 1f);
-            return GetValuesAtT(series, indexT);
-        }
-
-        public virtual Series GetValuesAtT(Series series, float t)
+		public virtual Series GetValuesAtT(Series series, float t)
         {	
 	        var seriesT = GetSampledTs(new ParametricSeries(1, t));
 	        return GetSeriesSample(series, seriesT);

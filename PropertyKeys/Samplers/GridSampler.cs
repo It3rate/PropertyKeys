@@ -22,14 +22,7 @@ namespace DataArcs.Samplers
             AlignmentTypes = new AlignmentType[strides.Length];
         }
 
-		public override Series GetValueAtIndex(Series series, int index)
-        {
-            // access special case directly to avoid index>t>index>t conversions
-            var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, SampleCount, index);
-            return GetSeriesSample(series, seriesT);
-		}
-
-		protected ParametricSeries GetSampledTsNoSwizzle(ParametricSeries seriesT, out int[] positions)
+        protected ParametricSeries GetSampledTsNoSwizzle(ParametricSeries seriesT, out int[] positions)
 		{
 			return GrowthType == GrowthType.Product ?
 				SamplerUtils.DistributeTBySampler(seriesT, this, out positions) :

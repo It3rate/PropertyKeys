@@ -6,11 +6,6 @@ namespace DataArcs.Samplers
 	{
 		public LineSampler(int sampleCount = 1) : base(sampleCount: sampleCount) { }
 
-		public override Series GetValueAtIndex(Series series, int index)
-		{
-			return series.GetVirtualValueAt(index, SampleCount);
-		}
-
 		public override Series GetValuesAtT(Series series, float t)
 		{
 			return series.GetVirtualValueAt(t);

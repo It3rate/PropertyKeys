@@ -17,13 +17,6 @@ namespace DataArcs.Samplers
 		    _floatEquation = floatEquation;
 	    }
 
-	    public override Series GetValueAtIndex(Series series, int index)
-	    {
-		    Series result = series.GetVirtualValueAt(index, SampleCount);
-		    result.Map(_floatEquation);
-		    return result;
-        }
-
 	    public override Series GetValuesAtT(Series series, float t)
 	    {
 		    Series result = series.GetVirtualValueAt(t);
