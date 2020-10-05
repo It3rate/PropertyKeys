@@ -35,7 +35,7 @@ namespace DataArcs.Stores
         }
 
         public virtual int Capacity => Sampler.SampleCount;
-        public virtual bool ShouldInterpolate { get; set; } = false; // linear vs nearest
+        public virtual bool IsBaked { get; set; } = false; // linear vs nearest
 
         protected StoreBase(Series series = null)
         {

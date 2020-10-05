@@ -30,8 +30,8 @@ namespace DataArcs.Stores
 
 		public override Series GetValuesAtT(float t)
 		{
-			// GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
-            return ShouldInterpolate ? Series.GetRawDataAt(t) : Sampler.GetValuesAtT(Series, t);
+            // GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
+            return IsBaked ? Series.GetRawDataAt(t) : Sampler.GetValuesAtT(Series, t);
 		}
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -64,7 +64,8 @@ namespace DataArcs.Stores
                 }
                 Series = result;
             }
-            ShouldInterpolate = Series.Type != SeriesType.Int;
+
+            IsBaked = true;//Series.Type != SeriesType.Int;
 		}
 
 		public override IStore Clone()

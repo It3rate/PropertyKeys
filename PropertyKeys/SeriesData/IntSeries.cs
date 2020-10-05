@@ -41,6 +41,7 @@ namespace DataArcs.SeriesData
 			}
 			else
 			{
+				// clamp to last value if overflow
 				Array.Copy(_intValues, DataSize - VectorSize, result, 0, VectorSize);
 			}
 
