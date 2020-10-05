@@ -90,14 +90,7 @@ namespace DataArcs.SeriesData
         public virtual Series GetRawDataAt(float t) => GetRawDataAt(SamplerUtils.IndexFromT(Count, t));
         public abstract Series GetRawDataAt(int index);
         public abstract void SetRawDataAt(int index, Series series);
-        /// <summary>
-        /// Gets data with an assumed count. CurrentSeries do not know about capacities, so needs to be passed.
-        /// </summary>
-        public virtual Series GetVirtualValueAt(int index, int capacity)
-        {
-	        var indexT = SamplerUtils.TFromIndex(capacity, index);// index / (capacity - 1f);
-            return GetVirtualValueAt(indexT);
-        }
+
         public virtual Series GetVirtualValueAt(float t)
         {
             Series result;

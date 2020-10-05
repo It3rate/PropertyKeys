@@ -93,12 +93,13 @@ namespace DataArcs.Samplers
 
         public virtual int NeighborCount => 2;
 		private int WrappedIndex(int index, int capacity) => index >= capacity ? 0 : index < 0 ? capacity - 1 : index;
+		// Neighbors always requires raw data, so no virtual gets.
         public virtual Series GetNeighbors(Series series, int index, bool wrapEdges = true)
         {
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);
-	        result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndex(index - 1, SampleCount), SampleCount));
-	        result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndex(index + 1, SampleCount), SampleCount));
+	        result.SetRawDataAt(0, series.GetRawDataAt(WrappedIndex(index - 1, SampleCount)));
+	        result.SetRawDataAt(1, series.GetRawDataAt(WrappedIndex(index + 1, SampleCount)));
             return result;
         }
 

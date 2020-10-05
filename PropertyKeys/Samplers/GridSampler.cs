@@ -55,10 +55,10 @@ namespace DataArcs.Samplers
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
 
-            result.SetRawDataAt(0, series.GetVirtualValueAt(WrappedIndexes(indexX + 1, indexY), SampleCount));
-            result.SetRawDataAt(1, series.GetVirtualValueAt(WrappedIndexes(indexX, indexY - 1), SampleCount));
-            result.SetRawDataAt(2, series.GetVirtualValueAt(WrappedIndexes(indexX - 1, indexY), SampleCount));;
-            result.SetRawDataAt(3, series.GetVirtualValueAt(WrappedIndexes(indexX, indexY + 1), SampleCount));
+            result.SetRawDataAt(0, series.GetRawDataAt(WrappedIndexes(indexX + 1, indexY)));
+            result.SetRawDataAt(1, series.GetRawDataAt(WrappedIndexes(indexX, indexY - 1)));
+            result.SetRawDataAt(2, series.GetRawDataAt(WrappedIndexes(indexX - 1, indexY)));;
+            result.SetRawDataAt(3, series.GetRawDataAt(WrappedIndexes(indexX, indexY + 1)));
 
             return result;
         }

@@ -162,7 +162,6 @@ namespace DataArcs.Tests
 		public void IndexVectorSize1()
 		{
 			float sample;
-            int count = 31;
 
             sample = series_1_31.GetRawDataAt(-10).X;
 			Assert.AreEqual(1f, sample, delta);
@@ -173,30 +172,6 @@ namespace DataArcs.Tests
 			sample = series_1_31.GetRawDataAt(lastIndex).X;
 			Assert.AreEqual(22f, sample, delta);
 			sample = series_1_31.GetRawDataAt(99).X;
-			Assert.AreEqual(22f, sample, delta);
-
-			sample = series_1_31.GetVirtualValueAt(-10, count).X;
-			Assert.AreEqual(1f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(0, count).X;
-			Assert.AreEqual(1f, sample, delta);
-
-			sample = series_1_31.GetVirtualValueAt(1, count).X;
-			Assert.AreEqual(1.1f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(2, count).X;
-			Assert.AreEqual(1.2f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(3, count).X;
-			Assert.AreEqual(1.3f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(4, count).X;
-			Assert.AreEqual(1.4f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(5, count).X;
-			Assert.AreEqual(1.5f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(10, count).X;
-			Assert.AreEqual(2f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(15, count).X;
-			Assert.AreEqual(6.5f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(20, count).X;
-			Assert.AreEqual(11f, sample, delta);
-			sample = series_1_31.GetVirtualValueAt(30, count).X;
 			Assert.AreEqual(22f, sample, delta);
 		}
 

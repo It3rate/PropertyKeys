@@ -105,7 +105,7 @@ namespace DataArcs.Components.Simulators.Automata
 
 		        for (int i = 0; i < capacity; i++)
 		        {
-			        var currentValue = workingStore.GetSeriesRef().GetVirtualValueAt(i, capacity);
+			        var currentValue = workingStore.GetSeriesRef().GetVirtualValueAt(i / (capacity - 1f));
 			        var neighbors = workingStore.GetNeighbors(i);
 			        var result = InvokeRuleSet(currentValue, neighbors, i);
 			        Automata.GetSeriesRef().SetRawDataAt(i, result);
