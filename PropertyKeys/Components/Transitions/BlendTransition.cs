@@ -117,12 +117,7 @@ namespace DataArcs.Components.Transitions
 	        Start?.GetDefinedStores(ids);
 	        End?.GetDefinedStores(ids);
         }
-
-        public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
-        {
-			// Uses total item count, but may want to look up separate counts? Or put blend counts on a delegate function.
-	        return GetSeriesAtT(propertyId, index / (float)NestedItemCount, parentSeries);
-        }
+		
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             var startDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };

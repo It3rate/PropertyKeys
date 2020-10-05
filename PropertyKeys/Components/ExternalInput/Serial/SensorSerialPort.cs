@@ -281,10 +281,6 @@ namespace DataArcs.Components.ExternalInput.Serial
             return result;
         }
 
-        public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
-        {
-            return GetSeriesAtT(propertyId, 1f, null);
-        }
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
             FloatSeries result; // return current mouse atm, eventually will be able to scrub history if saved.

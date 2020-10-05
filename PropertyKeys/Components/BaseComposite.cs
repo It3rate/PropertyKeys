@@ -103,25 +103,7 @@ namespace DataArcs.Components
 		    }
 		    return result;
 	    }
-
-		// not needed
-	    public virtual Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
-	    {
-		    var store = GetStore(propertyId);
-		    var result = store?.GetValuesAtIndex(index);
-		    if (parentSeries != null)
-		    {
-			    if (result != null)
-			    {
-				    result.CombineInto(parentSeries, store.CombineFunction);
-			    }
-			    else
-			    {
-				    result = parentSeries;
-			    }
-		    }
-		    return result;
-	    }
+		
 	    public virtual ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
 	    {
 		    var store = GetStore(propertyId);

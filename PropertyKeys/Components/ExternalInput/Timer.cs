@@ -98,10 +98,6 @@ namespace DataArcs.Components.Transitions
 	        return result;
         }
 
-        public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
-        {
-            return GetSeriesAtT(propertyId, index / Duration.X, parentSeries);
-        }
         public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
 	        Series result;

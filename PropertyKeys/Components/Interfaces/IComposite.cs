@@ -30,7 +30,6 @@ namespace DataArcs.Components
 
         ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT);
         Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
-		Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries);
 
     }
 }

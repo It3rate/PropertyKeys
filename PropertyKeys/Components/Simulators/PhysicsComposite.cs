@@ -57,45 +57,41 @@ namespace DataArcs.Components.Simulators
 		    int positionIterations = 1;
 		    _world.Step((float)(deltaTime/1000.0), velocityIterations, positionIterations);
 	    }
-		
-	    public override Series GetSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
-	    {
-		    Series result = null;
-            Body body = GetBodyAtIndex(index);
-            if (body != null)
-            {
-	            switch (propertyId)
-	            {
-		            case PropertyId.Location:
-			            Vec2 pos = body.GetPosition();
-			            result = MetersToGlobalPixels(pos.X, pos.Y);
-			            break;
-		            case PropertyId.Orientation:
-			            float normAngle = body.GetAngle() / (float)(Math.PI * 2.0f);
-			            result = new FloatSeries(1, 1f - normAngle);
-			            break;
-                }
-            }
 
-            if (parentSeries != null)
-		    {
-			    if (result != null)
-			    {
-					// todo: atm physics has no 'store' object, so can't combine functionally. Maybe needs this, or maybe external input is a source only, not an interm step?
-				    //result.CombineInto(parentSeries, store.CombineFunction, t);
-			    }
-			    else
-			    {
-				    result = parentSeries;
-			    }
-		    }
-
-		    return result;
-	    }
-	    public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
+			Series result = null;
 			int index = SamplerUtils.IndexFromT(Capacity, t);
-			return GetSeriesAtIndex(propertyId, index, parentSeries);
+			Body body = GetBodyAtIndex(index);
+			if (body != null)
+			{
+				switch (propertyId)
+				{
+					case PropertyId.Location:
+						Vec2 pos = body.GetPosition();
+						result = MetersToGlobalPixels(pos.X, pos.Y);
+						break;
+					case PropertyId.Orientation:
+						float normAngle = body.GetAngle() / (float)(Math.PI * 2.0f);
+						result = new FloatSeries(1, 1f - normAngle);
+						break;
+				}
+			}
+
+			if (parentSeries != null)
+			{
+				if (result != null)
+				{
+					// todo: atm physics has no 'store' object, so can't combine functionally. Maybe needs this, or maybe external input is a source only, not an interm step?
+					//result.CombineInto(parentSeries, store.CombineFunction, t);
+				}
+				else
+				{
+					result = parentSeries;
+				}
+			}
+
+			return result;
 	    }
         public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
 	    {
