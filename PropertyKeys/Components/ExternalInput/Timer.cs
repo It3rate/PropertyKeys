@@ -83,7 +83,7 @@ namespace DataArcs.Components.Transitions
             }
         }
 
-        public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
+        public override ParametricSeries GetNormalizedPropertyAtT(PropertyId propertyId, ParametricSeries seriesT)
         {
 	        ParametricSeries result;
 	        if (propertyId == PropertyId.InterpolationT)
@@ -92,7 +92,7 @@ namespace DataArcs.Components.Transitions
 	        }
 	        else
 	        {
-		        result = base.GetSampledTs(propertyId, new ParametricSeries(1, InterpolationT)); // todo: include seriesT, probably needed when scrubbing.
+		        result = base.GetNormalizedPropertyAtT(propertyId, new ParametricSeries(1, InterpolationT)); // todo: include seriesT, probably needed when scrubbing.
 	        }
 
 	        return result;
@@ -107,7 +107,7 @@ namespace DataArcs.Components.Transitions
 	        }
 	        else
 	        {
-		        result = base.GetSampledTs(propertyId, new ParametricSeries(1, InterpolationT));
+		        result = base.GetNormalizedPropertyAtT(propertyId, new ParametricSeries(1, InterpolationT));
             }
 	        return result;
         }

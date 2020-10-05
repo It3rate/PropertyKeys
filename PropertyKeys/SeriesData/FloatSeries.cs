@@ -48,8 +48,7 @@ namespace DataArcs.SeriesData
 
 			return new FloatSeries(VectorSize, result);
 		}
-
-		public override void SetRawDataAt(int index, Series series)
+        public override void SetRawDataAt(int index, Series series)
 		{
 			var len = DataSize / VectorSize;
 			var startIndex = Math.Min(len - 1, Math.Max(0, index));

@@ -104,7 +104,7 @@ namespace DataArcs.Components
 		    return result;
 	    }
 		
-	    public virtual ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
+	    public virtual ParametricSeries GetNormalizedPropertyAtT(PropertyId propertyId, ParametricSeries seriesT)
 	    {
 		    var store = GetStore(propertyId);
 		    return store != null ? store.GetSampledTs(seriesT) :seriesT;

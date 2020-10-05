@@ -174,7 +174,7 @@ namespace DataArcs.Components
             return result;
         }
 
-        public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
+        public override ParametricSeries GetNormalizedPropertyAtT(PropertyId propertyId, ParametricSeries seriesT)
         {
             var store = GetStore(propertyId);
             return store != null ? store.GetSampledTs(seriesT) : seriesT;
@@ -182,12 +182,9 @@ namespace DataArcs.Components
 
         public virtual Series GetNestedSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
         {
-	        return GetNestedSeriesAtIndex(propertyId, SamplerUtils.IndexFromT(NestedItemCount, t), parentSeries); // int)(t * (NestedItemCount - 1f)), parentSeries);
-        }
-        public virtual Series GetNestedSeriesAtIndex(PropertyId propertyId, int index, Series parentSeries)
-        {
 	        // this uses t because many interpolations have no specific capacity information (eg a shared color store)
 	        Series result;
+	        int index = SamplerUtils.IndexFromT(NestedItemCount, t);
 	        var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, index);
 	        float indexT = sample.X;
 	        float segmentT = sample.Y;

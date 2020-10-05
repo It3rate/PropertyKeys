@@ -86,7 +86,7 @@ namespace DataArcs.Stores
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
             ParametricSeries result = _mixStore.GetSampledTs(seriesT);
-            ParametricSeries link = Player.CurrentComposites[LinkedCompositeId]?.GetSampledTs(PropertyId, seriesT);
+            ParametricSeries link = Player.CurrentComposites[LinkedCompositeId]?.GetNormalizedPropertyAtT(PropertyId, seriesT);
             if (link != null)
             {
                 Series mappedValues = SeriesUtils.SwizzleSeries(SlotMapping, link);

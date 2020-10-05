@@ -215,7 +215,7 @@ namespace DataArcs.Components.ExternalInput.Serial
 
 
 
-        public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
+        public override ParametricSeries GetNormalizedPropertyAtT(PropertyId propertyId, ParametricSeries seriesT)
         {
             //todo: accomodate seriesT, maybe?
             ParametricSeries result;

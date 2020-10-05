@@ -93,7 +93,7 @@ namespace DataArcs.Components.Simulators
 
 			return result;
 	    }
-        public override ParametricSeries GetSampledTs(PropertyId propertyId, ParametricSeries seriesT)
+        public override ParametricSeries GetNormalizedPropertyAtT(PropertyId propertyId, ParametricSeries seriesT)
 	    {
             ParametricSeries result = seriesT;
             switch (propertyId)
