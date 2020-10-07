@@ -94,7 +94,7 @@ namespace DataArcs
 			//});
 		}
 
-        private static int _testCount = 12;
+        private static int _testCount = 13;
         private int _testIndex = 0;//_testCount;
         private void NextTest()
         {
@@ -143,6 +143,9 @@ namespace DataArcs
 			        break;
 		        case 11:
 			        _testScreen = new BezierTest(_player);
+			        break;
+		        case 12:
+			        _testScreen = new LayoutTest(_player);
 			        break;
             }
             _player.Pause();

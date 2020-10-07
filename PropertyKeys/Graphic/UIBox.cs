@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataArcs.Adapters.Color;
+using DataArcs.Adapters.Geometry;
 using DataArcs.Components;
 using DataArcs.SeriesData;
 
@@ -14,23 +15,45 @@ namespace DataArcs.Graphic
     public class UIBox : GraphicBase
     {
 	    private float _defaultRoundness = 0f;
-	    private float _defaultRadius = 10f;
+	    private float _defaultSize = 10f;
 
         public UIBox()
-	    {
-	    }
+        {
+        }
 
 	    public BezierSeries GenerateUIBox(float width, float height, float roundedCorners)
 	    {
-		    throw new NotImplementedException();
+		    int count = 4;
+		    var values = new float[count * 2 + 2];
+		    var moves = new BezierMove[count + 1];
+		    float x = 0;
+		    float y = 0;
+            values[0] = x;
+		    values[1] = y;
+		    values[2] = width;
+		    values[3] = y;
+		    values[4] = width;
+		    values[5] = height;
+		    values[6] = x;
+		    values[7] = height;
+		    values[8] = x;
+		    values[9] = y;
+		    moves[0] = BezierMove.MoveTo;
+		    moves[1] = BezierMove.LineTo;
+		    moves[2] = BezierMove.LineTo;
+		    moves[3] = BezierMove.LineTo;
+		    moves[4] = BezierMove.LineTo;
+
+		    return new BezierSeries(values, moves);
         }
         public override BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict)
         {
             var roundness = dict.ContainsKey(PropertyId.Roundness) ? dict[PropertyId.Roundness].X : _defaultRoundness;
-            var radiusX = dict.ContainsKey(PropertyId.Radius) ? dict[PropertyId.Radius].X : _defaultRadius;
-            var radiusY = dict.ContainsKey(PropertyId.Radius) ? dict[PropertyId.Radius].Y : _defaultRadius;
 
-            return GenerateUIBox(radiusX * 2, radiusY * 2, roundness);
+            var szX = dict.ContainsKey(PropertyId.Size) ? dict[PropertyId.Size].X : _defaultSize;
+            var szY = dict.ContainsKey(PropertyId.Size) ? dict[PropertyId.Size].Y : _defaultSize;
+
+            return GenerateUIBox(szX * 2, szY * 2, roundness);
         }
 
         public override void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g)
@@ -40,11 +63,13 @@ namespace DataArcs.Graphic
             {
                 GraphicsPath gp = bezier.Path();
 
-                var v = dict[PropertyId.Location];
+                var loc = dict[PropertyId.Location];
+                var scaleSeries = dict[PropertyId.Scale]?.GetVirtualValueAt(0) ?? new FloatSeries(1,1f,1f);
                 var state = g.Save();
-                var scale = 1f;
-                g.ScaleTransform(scale, scale);
-                g.TranslateTransform(v.X / scale, v.Y / scale);
+                var scaleX = scaleSeries.X;
+                var scaleY = scaleSeries.Y;
+                g.ScaleTransform(scaleX, scaleY);
+                g.TranslateTransform(loc.X, loc.Y);
 
                 if (dict.ContainsKey(PropertyId.FillColor))
                 {

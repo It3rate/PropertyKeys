@@ -17,7 +17,7 @@ namespace DataArcs.Components
 {
 	public class Container : BaseComposite, IContainer
 	{
-		private readonly List<int> _children = new List<int>();
+		protected readonly List<int> _children = new List<int>();
 		
         public IContainer Parent { get; set; }
         public IRenderable Renderer { get; set; }
