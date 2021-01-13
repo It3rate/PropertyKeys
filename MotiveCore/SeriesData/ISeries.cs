@@ -4,12 +4,70 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MotiveCore.Components.Libraries;
 using MotiveCore.Samplers;
 using MotiveCore.SeriesData.Utils;
 using MotiveCore.Stores;
 
 namespace MotiveCore.SeriesData
 {
+	public interface ISeries : IEnumerable, IDefinition
+	{
+		string Name { get; set; }
+		int Id { get; }
+		int VectorSize { get; set; }
+		int Count { get; }
+		SeriesType Type { get; }
+		int DataSize { get; }
+
+		RectFSeries Frame { get; }
+		Series Size { get; }
+		float X { get; }
+		float Y { get; }
+		float Z { get; }
+		float W { get; }
+
+		void Update(double time);
+		void Update(double currentTime, double deltaTime);
+		void OnActivate();
+		void OnDeactivate();
+
+		Series GetRawDataAt(float t);
+		Series GetRawDataAt(int index);
+		void SetRawDataAt(int index, Series series);
+		Series GetVirtualValueAt(float t);
+		float FloatDataAt(int index);
+		int IntDataAt(int index);
+		float[] FloatDataRef { get; }
+		int[] IntDataRef { get; }
+
+		void ResetData();
+		void ReverseEachElement();
+		bool AssignIdIfUnset(int id);
+		void Append(Series series);
+		void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
+		void InterpolateInto(Series b, float t);
+		void InterpolateInto(Series b, ParametricSeries seriesT);
+
+		Store CreateLinearStore(int capacity);
+		IStore Store(Sampler sampler = null);
+		List<Series> ToList();
+		void SetByList(List<Series> items);
+		Series Copy();
+
+		Series SumSlots(params Slot[] slots);
+		Series MultiplySlots(params Slot[] slots);
+		Series AverageSlots(params Slot[] slots);
+		Series MaxSlots(params Slot[] slots);
+		Series MinSlots(params Slot[] slots);
+		void Map(FloatEquation floatEquation);
+		void MapValuesToItemPositions(IntSeries items);
+		void MapOrderToItemPositions(IntSeries items);
+	}
+
+
+    // experimental
+
     public interface ISeriesBase : IEnumerable
     {
         SeriesType Type { get; }
@@ -61,40 +119,12 @@ namespace MotiveCore.SeriesData
 	    Series GetZeroSeries(int elements);
     }
 
-    public interface ISeriesTODO : ISeriesBase
-    {
-        int Count { get; }
-        bool CanInterpolate { get; }
-        int DataSize { get; }
 
-        ISeriesElement GetRawDataAt(int index);
-        void SetRawDataAt(int index, ISeriesElement series);
-        ISeriesElement GetVirtualValueAt(int index, int capacity);
-        ISeriesElement GetVirtualValueAt(float t);
-
-        ISeriesTODO SeriesSum();
-        ISeriesTODO SeriesAverage();
-        ISeriesTODO SeriesMax();
-        ISeriesTODO SeriesMin();
-
-        //void ResetData();
-        //void Update(double time);
-
-
-        //Store CreateLinearStore(int capacity);
-        //Store Store { get; }
-        //Store BakedStore { get; }
-        //Store ToStore(Sampler sampler);
-
-        //CurrentSeries GetZeroSeries(int elements);
-
-    }
-
-    public interface IDimensionedSeries : ISeriesTODO
+    public interface IDimensionedSeries : ISeries
     {
         int Dimensions { get; }
-        ISeriesTODO GetRawSeriesAt(int index);
-        void SetRawSeriesAt(int index, ISeriesTODO series);
+        ISeries GetRawSeriesAt(int index);
+        void SetRawSeriesAt(int index, ISeries series);
         //List<CurrentSeries> SeriesList { get; }
 
         RectFSeries Frame { get; }
