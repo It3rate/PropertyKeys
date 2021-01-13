@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components.Libraries;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Components.Libraries;
+using Motive.Samplers;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
 
-namespace MotiveCore.SeriesData
+namespace Motive.SeriesData
 {
 	public interface ISeries : IEnumerable, IDefinition
 	{

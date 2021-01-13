@@ -5,7 +5,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MotiveCore.Components.Libraries
+namespace Motive.Components.Libraries
 {
     public class Definitions<T> where T : class, IDefinition
     {

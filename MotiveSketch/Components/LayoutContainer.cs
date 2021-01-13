@@ -4,12 +4,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components;
-using MotiveCore.Stores;
-using MotiveCore.Graphic;
-using MotiveCore.SeriesData;
+using Motive.Graphic;
+using Motive.SeriesData;
+using Motive.Components;
+using Motive.Stores;
 
-namespace MotiveCore.Components
+namespace Motive.Components
 {
 	public struct LayoutElementProperties
 	{

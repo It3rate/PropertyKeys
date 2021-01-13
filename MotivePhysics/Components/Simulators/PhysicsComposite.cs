@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Box2DX.Collision;
 using Box2DX.Common;
 using Box2DX.Dynamics;
-using MotiveCore.Components.ExternalInput;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.Components.ExternalInput;
 using Math = System.Math;
 
-namespace MotiveCore.Components.Simulators
+namespace Motive.Components.Simulators
 {
     public class PhysicsComposite : BaseComposite, IDisposable
     {

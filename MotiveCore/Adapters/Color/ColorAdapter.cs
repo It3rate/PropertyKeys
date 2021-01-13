@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Adapters.Color
+namespace Motive.Adapters.Color
 {
 	public static class Colors
 	{

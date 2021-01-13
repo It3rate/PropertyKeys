@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Graphic;
-using MotiveCore.SeriesData;
+using Motive.Graphic;
+using Motive.SeriesData;
 
-namespace MotiveCore.Components.Interfaces
+namespace Motive.Components.Interfaces
 {
     public class QueryResult
     {

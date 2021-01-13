@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
     public class CommandCreateSeries : CommandBase
     {

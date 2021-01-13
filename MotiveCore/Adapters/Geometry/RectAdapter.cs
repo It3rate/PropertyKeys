@@ -1,7 +1,7 @@
 ﻿using System;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
 
-namespace MotiveCore.Adapters.Geometry
+namespace Motive.Adapters.Geometry
 {
 	public static class RectAdapter
     {

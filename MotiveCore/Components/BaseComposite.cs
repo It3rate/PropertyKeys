@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive.SeriesData;
+using Motive.Stores;
 
-namespace MotiveCore.Components
+namespace Motive.Components
 {
     public abstract class BaseComposite : IComposite
     {

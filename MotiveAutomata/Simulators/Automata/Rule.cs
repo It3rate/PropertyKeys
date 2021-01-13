@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Adapters.Color;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Adapters.Color;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
 
-namespace MotiveCore.Components.Simulators.Automata
+namespace Motive.Components.Simulators.Automata
 {
 	public delegate bool Condition(Series currentValue, Series neighbors, Runner runner);
 	public delegate Series ParameterizedFunction(Series currentValue, Series neighbors);

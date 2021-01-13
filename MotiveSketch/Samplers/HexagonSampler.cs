@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using MotiveCore.Components;
-using MotiveCore.Graphic;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Components;
+using Motive.Graphic;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
 
-namespace MotiveCore.Samplers
+namespace Motive.Samplers
 {
 	public class HexagonSampler : GridSampler
 	{

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
 	public abstract class CommandBase : ICommand
 	{

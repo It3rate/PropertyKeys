@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
 
-namespace MotiveCore.Components.ExternalInput
+namespace Motive.Components.ExternalInput
 {
     public class MouseInput : BaseComposite, ITimeable
     {

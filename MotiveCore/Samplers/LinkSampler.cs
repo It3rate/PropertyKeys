@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
+using Motive.Components;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Samplers
+namespace Motive.Samplers
 {
     public class LinkSampler : Sampler
     {

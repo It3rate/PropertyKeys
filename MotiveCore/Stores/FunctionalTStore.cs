@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Stores
+namespace Motive.Stores
 {
     public class FunctionalTStore : StoreBase
     {

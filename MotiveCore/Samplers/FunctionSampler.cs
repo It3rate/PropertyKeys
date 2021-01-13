@@ -5,11 +5,11 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Stores;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
 
-namespace MotiveCore.Samplers
+namespace Motive.Samplers
 {
 	public delegate ParametricSeries SeriesEquation(ParametricSeries a, ParametricSeries b = null, ParametricSeries c = null);
 

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Tests
+namespace Motive.Tests
 {
     [TestClass]
     public class SamplerUtilsTests

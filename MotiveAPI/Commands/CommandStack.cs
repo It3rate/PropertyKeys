@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
 	public class CommandStack
 	{

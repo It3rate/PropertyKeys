@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components.Transitions;
-using MotiveCore.Commands;
-using MotiveCore.Components;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Commands;
+using Motive.Components;
+using Motive.Graphic;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
+using Motive.Components.Transitions;
 
-namespace MotiveCore.Tests.GraphicTests
+namespace Motive.Tests.GraphicTests
 {
     public class CommandTest : ITestScreen
     {

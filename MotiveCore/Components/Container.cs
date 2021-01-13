@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using MotiveCore.Adapters;
-using MotiveCore.Adapters.Color;
-using MotiveCore.Adapters.Geometry;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Graphic;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
+using Motive.Adapters;
+using Motive.Adapters.Color;
+using Motive.Adapters.Geometry;
 
-namespace MotiveCore.Components
+namespace Motive.Components
 {
 	public class Container : BaseComposite, IContainer
 	{

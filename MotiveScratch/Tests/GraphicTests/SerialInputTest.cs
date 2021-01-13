@@ -1,15 +1,15 @@
 ﻿using System;
-using MotiveCore.Components;
-using MotiveCore.Components.ExternalInput;
-using MotiveCore.Components.ExternalInput.Serial;
-using MotiveCore.Components.Transitions;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Components;
+using Motive.Components.ExternalInput.Serial;
+using Motive.Components.Transitions;
+using Motive.Graphic;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
+using Motive.Components.ExternalInput;
 
-namespace MotiveCore.Tests.GraphicTests
+namespace Motive.Tests.GraphicTests
 {
     class SerialInputTest : ITestScreen
     {

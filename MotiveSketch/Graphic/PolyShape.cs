@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.Remoting.Messaging;
-using MotiveCore.Adapters.Color;
-using MotiveCore.Samplers;
-using MotiveCore.Stores;
-using MotiveCore.Components;
-using MotiveCore.SeriesData;
+using Motive.Components;
+using Motive.SeriesData;
+using Motive.Adapters.Color;
+using Motive.Samplers;
+using Motive.Stores;
 
-namespace MotiveCore.Graphic
+namespace Motive.Graphic
 {
 	public class PolyShape : GraphicBase
 	{

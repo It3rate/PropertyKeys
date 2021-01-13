@@ -1,9 +1,9 @@
 ﻿using System;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
+using Motive.Samplers;
 
-namespace MotiveCore.SeriesData
+namespace Motive.SeriesData
 {
 	public class RandomSeries : Series
 	{

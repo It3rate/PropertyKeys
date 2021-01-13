@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.SeriesData.Utils;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.SeriesData
+namespace Motive.SeriesData
 {
     public class ParametricSeries : FloatSeries
     {

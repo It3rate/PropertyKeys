@@ -4,9 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components.ExternalInput;
+using Motive.Components.ExternalInput;
 
-namespace MotiveCore.SeriesData.Utils
+namespace Motive.SeriesData.Utils
 {
    public static class BitmapExtension
     {

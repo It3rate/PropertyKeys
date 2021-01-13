@@ -1,9 +1,9 @@
-﻿using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+﻿using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
 	public class StoreInterpolationCommand : CommandBase
 	{

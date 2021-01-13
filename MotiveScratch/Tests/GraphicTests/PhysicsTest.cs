@@ -5,17 +5,17 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components;
-using MotiveCore.Components.ExternalInput;
-using MotiveCore.Components.Simulators;
-using MotiveCore.Components.Transitions;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Components;
+using Motive.Components.Simulators;
+using Motive.Components.Transitions;
+using Motive.Graphic;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
+using Motive.Components.ExternalInput;
 
-namespace MotiveCore.Tests.GraphicTests
+namespace Motive.Tests.GraphicTests
 {
 	public class PhysicsTest : ITestScreen
 	{

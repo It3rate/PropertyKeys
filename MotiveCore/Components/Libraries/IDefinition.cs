@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MotiveCore.Components.Libraries
+namespace Motive.Components.Libraries
 {
     public interface IDefinition
     {

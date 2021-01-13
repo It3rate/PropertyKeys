@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing.Drawing2D;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
+using Motive.Graphic;
+using Motive.Samplers;
 
-namespace MotiveCore.Components
+namespace Motive.Components
 {
 	public class Hexgrid
 	{

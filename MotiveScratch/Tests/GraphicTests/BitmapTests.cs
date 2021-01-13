@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Components.ExternalInput;
-using MotiveCore.Components;
-using MotiveCore.Components.Transitions;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive.Components;
+using Motive.Components.Transitions;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.Stores;
+using Motive.SeriesData.Utils;
+using Motive.Components.ExternalInput;
 using MotiveScratch.Properties;
-using Timer = MotiveCore.Components.Transitions.Timer;
+using Timer = Motive.Components.Transitions.Timer;
 
-namespace MotiveCore.Tests.GraphicTests
+namespace Motive.Tests.GraphicTests
 {
     public class BitmapTests : ITestScreen
     {

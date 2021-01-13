@@ -1,4 +1,4 @@
-﻿namespace MotiveCore.Commands
+﻿namespace Motive.Commands
 {
 	public interface ISaveableCommand : ICommand
 	{

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using MotiveCore.Components.Libraries;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Samplers;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
+using Motive.Components.Libraries;
 
-namespace MotiveCore.SeriesData
+namespace Motive.SeriesData
 {
 	public enum SeriesType
 	{

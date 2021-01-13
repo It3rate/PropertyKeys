@@ -1,7 +1,7 @@
-﻿using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+﻿using Motive.Stores;
+using Motive.SeriesData;
 
-namespace MotiveCore.Components.Simulators.Automata
+namespace Motive.Components.Simulators.Automata
 {
     public class AutomataComposite : Container
     {

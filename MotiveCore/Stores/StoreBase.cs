@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
+using Motive.Samplers;
+using Motive.SeriesData;
 
-namespace MotiveCore.Stores
+namespace Motive.Stores
 {
     public abstract class StoreBase : IStore
     {

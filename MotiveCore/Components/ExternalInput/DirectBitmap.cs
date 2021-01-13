@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
+using Motive.Samplers;
 
-namespace MotiveCore.Components.ExternalInput
+namespace Motive.Components.ExternalInput
 {
 	public class DirectBitmap : IDisposable
 	{

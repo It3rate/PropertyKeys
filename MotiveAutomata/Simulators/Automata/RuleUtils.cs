@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Adapters.Color;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
+using Motive.Adapters.Color;
 
-namespace MotiveCore.Components.Simulators.Automata
+namespace Motive.Components.Simulators.Automata
 {
     public static class RuleUtils
     {

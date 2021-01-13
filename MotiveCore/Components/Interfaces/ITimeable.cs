@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components.Transitions;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
+using Motive.Components.Transitions;
 
-namespace MotiveCore.Components
+namespace Motive.Components
 {
 	public delegate void TimedEventHandler(object sender, EventArgs e);
 

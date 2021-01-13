@@ -4,11 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.SeriesData;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData.Utils;
+using Motive.Samplers;
+using Motive.SeriesData.Utils;
+using Motive.SeriesData;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
     public class CommandCreateEasing : CommandBase
     {

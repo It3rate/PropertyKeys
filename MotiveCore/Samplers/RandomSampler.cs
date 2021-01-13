@@ -1,8 +1,8 @@
 ﻿using System;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Samplers
+namespace Motive.Samplers
 {
 	public class RandomSampler : Sampler
 	{

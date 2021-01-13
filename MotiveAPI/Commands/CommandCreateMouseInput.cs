@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Samplers;
-using MotiveCore.Components.ExternalInput;
+using Motive.Components.ExternalInput;
+using Motive.Samplers;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
     public class CommandCreateMouseInput : CommandBase
     {

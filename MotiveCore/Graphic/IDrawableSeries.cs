@@ -4,9 +4,9 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
 
-namespace MotiveCore.Graphic
+namespace Motive.Graphic
 {
     public interface IDrawableSeries : ISeries
     {

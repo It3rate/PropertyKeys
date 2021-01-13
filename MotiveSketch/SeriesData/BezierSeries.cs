@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
-using MotiveCore.Graphic;
-using MotiveCore.Stores;
+using Motive.Graphic;
+using Motive.Stores;
 
-namespace MotiveCore.SeriesData
+namespace Motive.SeriesData
 {
 	/// <summary>
 	/// Specialized series for 2D Beziers, holds the extra move data. Use a BezierSampler to render and interpolate.

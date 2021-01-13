@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
 	// Needed to store commands by start time, as multiple commands may have the same start time.
     public class CommandList

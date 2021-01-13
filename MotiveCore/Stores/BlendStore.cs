@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
+using Motive.Samplers;
+using Motive.SeriesData;
 
-namespace MotiveCore.Stores
+namespace Motive.Stores
 {
 	/// <summary>
     /// Get the blended value at T, based on multiple stores of equal weight. No more that two adjacent stores are considered when calculating the value.

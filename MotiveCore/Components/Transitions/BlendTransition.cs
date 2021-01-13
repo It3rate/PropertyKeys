@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using MotiveCore.Graphic;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Graphic;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
 
-namespace MotiveCore.Components.Transitions
+namespace Motive.Components.Transitions
 {
     public class BlendTransition : Container
     {
@@ -22,7 +22,7 @@ namespace MotiveCore.Components.Transitions
         public BlendTransition(IContainer start, IContainer end, ITimeable runner, Store easing = null)
         {
 			Runner = runner;
-            MotiveCore.Runner.GetRunnerById(0).ActivateComposite(Runner.Id);
+            Motive.Runner.GetRunnerById(0).ActivateComposite(Runner.Id);
 
 			Easing = easing;
             Start = start;

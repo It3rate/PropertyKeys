@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using MotiveCore.Stores;
-using MotiveCore.Components;
-using MotiveCore.SeriesData;
+using Motive.Components;
+using Motive.SeriesData;
+using Motive.Stores;
 
-namespace MotiveCore.Graphic
+namespace Motive.Graphic
 {
 	public abstract class GraphicBase : IRenderable
 	{

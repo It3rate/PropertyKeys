@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Stores
+namespace Motive.Stores
 {
 	public class Store : StoreBase
     {

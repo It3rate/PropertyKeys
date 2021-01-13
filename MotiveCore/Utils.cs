@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MotiveCore
+namespace Motive
 {
 	public class Utils
 	{

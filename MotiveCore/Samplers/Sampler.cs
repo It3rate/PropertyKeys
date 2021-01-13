@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.XPath;
-using MotiveCore.Components.Libraries;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
+using Motive.Components.Libraries;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Samplers
+namespace Motive.Samplers
 {
 	// Sampler needs refactoring. Currently inputs can be int index, float t, Parametric t mods t, and Parametric gets result.
 	// Instead, this can probably just be a t modifier, and t is *always* a floatSeries (no parametric needed).

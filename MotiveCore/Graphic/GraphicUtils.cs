@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
 
-namespace MotiveCore.Graphic
+namespace Motive.Graphic
 {
 	public class GraphicUtils
 	{

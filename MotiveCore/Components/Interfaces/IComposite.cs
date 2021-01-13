@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using MotiveCore.Components.Libraries;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive.Components.Libraries;
+using Motive.SeriesData;
+using Motive.Stores;
 
 /*
  Notes for refactor:
@@ -49,7 +49,7 @@ Parent hierarchy is based on containment, not definition - so property lookup ca
 Experiment: Drag and object from one container to another to see it change based on parent settings (animation speed, color etc).
 	
  */
-namespace MotiveCore.Components
+namespace Motive.Components
 {
 	public interface IComposite : IDefinition
     {

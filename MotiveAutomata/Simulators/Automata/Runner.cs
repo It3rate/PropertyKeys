@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using MotiveCore.Adapters.Color;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive.SeriesData;
+using Motive.Stores;
+using Motive.Adapters.Color;
 
-namespace MotiveCore.Components.Simulators.Automata
+namespace Motive.Components.Simulators.Automata
 {
 	public class Runner
     {

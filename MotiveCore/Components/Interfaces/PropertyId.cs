@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MotiveCore.Components
+namespace Motive.Components
 {
 	public enum PropertyId : int // will change to local render defined, combo of type and property
 	{

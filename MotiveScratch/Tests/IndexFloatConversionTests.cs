@@ -1,8 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
+using Motive.Samplers;
+using Motive.SeriesData;
 
-namespace MotiveCore.Tests
+namespace Motive.Tests
 {
 	[TestClass]
 	public class IndexFloatConversionTests

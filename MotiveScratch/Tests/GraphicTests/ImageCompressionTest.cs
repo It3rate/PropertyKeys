@@ -7,16 +7,16 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components.Transitions;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Components;
-using MotiveCore.Components.ExternalInput;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive.Components;
+using Motive.Components.ExternalInput;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.Stores;
+using Motive.Components.Transitions;
+using Motive.SeriesData.Utils;
 using MotiveScratch.Properties;
 
-namespace MotiveCore.Tests.GraphicTests
+namespace Motive.Tests.GraphicTests
 {
     public class ImageCompressionTest : ITestScreen
     {

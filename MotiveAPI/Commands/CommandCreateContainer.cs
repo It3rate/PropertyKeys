@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components;
-using MotiveCore.Graphic;
-using MotiveCore.Stores;
+using Motive.Components;
+using Motive.Graphic;
+using Motive.Stores;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
     public class CommandCreateContainer : CommandBase
     {

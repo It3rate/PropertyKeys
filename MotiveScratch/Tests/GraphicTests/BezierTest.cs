@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Commands;
-using MotiveCore.Components;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive.Commands;
+using Motive.Components;
+using Motive.Graphic;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.Stores;
 
-namespace MotiveCore.Tests.GraphicTests
+namespace Motive.Tests.GraphicTests
 {
 	class BezierTest : ITestScreen
 	{

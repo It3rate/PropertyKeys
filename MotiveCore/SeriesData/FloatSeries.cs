@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
 
-namespace MotiveCore.SeriesData
+namespace Motive.SeriesData
 {
 	public class FloatSeries : Series
 	{

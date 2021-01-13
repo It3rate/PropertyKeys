@@ -4,19 +4,19 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Components.Simulators;
-using MotiveCore.Components.Transitions;
-using MotiveCore.Adapters.Color;
-using MotiveCore.Components;
-using MotiveCore.Components.ExternalInput;
-using MotiveCore.Components.Simulators.Automata;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Adapters.Color;
+using Motive.Components;
+using Motive.Components.ExternalInput;
+using Motive.Components.Simulators.Automata;
+using Motive.Graphic;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
+using Motive.Components.Simulators;
+using Motive.Components.Transitions;
 
-namespace MotiveCore.Tests.GraphicTests
+namespace Motive.Tests.GraphicTests
 {
     public class AutomataTest : ITestScreen
     {

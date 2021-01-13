@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive.SeriesData;
+using Motive.Stores;
 
-namespace MotiveCore.Components.Transitions
+namespace Motive.Components.Transitions
 {
     public class Timer : BaseComposite, ITimeable
     {

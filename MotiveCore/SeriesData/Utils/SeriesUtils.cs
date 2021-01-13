@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Schema;
 
-namespace MotiveCore.SeriesData.Utils
+namespace Motive.SeriesData.Utils
 {
 	public delegate float FloatEquation(float a);
 	public delegate float BinaryFloatEquation(float a, float b);

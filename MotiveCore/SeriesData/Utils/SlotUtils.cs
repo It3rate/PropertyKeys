@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MotiveCore.SeriesData.Utils
+namespace Motive.SeriesData.Utils
 {
 	public enum Slot
 	{

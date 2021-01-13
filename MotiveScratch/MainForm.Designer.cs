@@ -1,4 +1,4 @@
-﻿namespace MotiveCore
+﻿namespace Motive
 {
 	sealed partial class MainForm
     {

@@ -4,12 +4,12 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.Stores;
+using Motive.SeriesData.Utils;
 
-namespace MotiveCore.Commands
+namespace Motive.Commands
 {
     public class CommandCreateStore : CommandBase
     {

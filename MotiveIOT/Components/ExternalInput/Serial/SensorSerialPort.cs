@@ -4,9 +4,9 @@ using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
-using MotiveCore.SeriesData;
+using Motive.SeriesData;
 
-namespace MotiveCore.Components.ExternalInput.Serial
+namespace Motive.Components.ExternalInput.Serial
 {
 	/// <summary>
     /// Detects X/Y touches on a resistive touch screen. More generally can be hooked up to any serial input from sensors.

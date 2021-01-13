@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using MotiveCore.Components;
-using MotiveCore.Components.Libraries;
-using MotiveCore.SeriesData;
+using Motive.Components;
+using Motive.Components.Libraries;
+using Motive.SeriesData;
 
-namespace MotiveCore.Graphic
+namespace Motive.Graphic
 {
     public interface IRenderable : IDefinition
     {

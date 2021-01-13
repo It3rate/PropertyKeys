@@ -1,7 +1,7 @@
-﻿using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+﻿using Motive.SeriesData;
+using Motive.Stores;
 
-namespace MotiveCore.Mutators
+namespace Motive.Mutators
 {
 	public abstract class Mutator
 	{

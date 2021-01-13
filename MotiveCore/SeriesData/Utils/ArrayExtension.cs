@@ -1,7 +1,7 @@
 ﻿using System;
-using MotiveCore.Stores;
+using Motive.Stores;
 
-namespace MotiveCore.SeriesData.Utils
+namespace Motive.SeriesData.Utils
 {
 	public static class ArrayExtension
 	{

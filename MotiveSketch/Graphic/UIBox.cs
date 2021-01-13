@@ -5,12 +5,12 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Adapters.Color;
-using MotiveCore.Adapters.Geometry;
-using MotiveCore.Components;
-using MotiveCore.SeriesData;
+using Motive.Components;
+using Motive.SeriesData;
+using Motive.Adapters.Color;
+using Motive.Adapters.Geometry;
 
-namespace MotiveCore.Graphic
+namespace Motive.Graphic
 {
     public class UIBox : GraphicBase
     {

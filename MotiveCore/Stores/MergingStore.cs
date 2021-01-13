@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
+using Motive.Samplers;
+using Motive.SeriesData;
 
-namespace MotiveCore.Stores
+namespace Motive.Stores
 {
 	/// <summary>
     /// Allows multiple stores to be merged into a single property, using the stores merge function.

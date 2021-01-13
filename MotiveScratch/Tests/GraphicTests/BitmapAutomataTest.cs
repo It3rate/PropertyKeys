@@ -5,19 +5,19 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MotiveCore.Adapters.Color;
-using MotiveCore.Components.Transitions;
-using MotiveCore.Components;
-using MotiveCore.Components.ExternalInput;
-using MotiveCore.Components.Simulators.Automata;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.SeriesData.Utils;
-using MotiveCore.Stores;
+using Motive.Components;
+using Motive.Components.ExternalInput;
+using Motive.Components.Simulators.Automata;
+using Motive.Graphic;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.SeriesData.Utils;
+using Motive.Stores;
+using Motive.Adapters.Color;
+using Motive.Components.Transitions;
 using MotiveScratch.Properties;
 
-namespace MotiveCore.Tests.GraphicTests
+namespace Motive.Tests.GraphicTests
 {
     public class BitmapAutomataTest : ITestScreen
     {

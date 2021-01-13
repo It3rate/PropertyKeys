@@ -4,16 +4,16 @@ using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Timers;
 using System.Windows.Forms;
+using Motive.Components;
+using Motive.Components.Libraries;
+using Motive.Graphic;
+using Motive.Samplers;
+using Motive.SeriesData;
+using Motive.Stores;
 using Timer = System.Timers.Timer;
-using MotiveCore;
-using MotiveCore.Components;
-using MotiveCore.Components.Libraries;
-using MotiveCore.Graphic;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
-using MotiveCore.Stores;
+using Motive;
 
-namespace MotiveCore
+namespace Motive
 {
     public class Runner
     {

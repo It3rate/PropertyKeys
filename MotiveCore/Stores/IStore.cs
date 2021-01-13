@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
-using MotiveCore.Components.Libraries;
-using MotiveCore.Samplers;
-using MotiveCore.SeriesData;
+using Motive.Components.Libraries;
+using Motive.Samplers;
+using Motive.SeriesData;
 
-namespace MotiveCore.Stores
+namespace Motive.Stores
 {
 	public interface IStore : IEnumerable, IDefinition
     {
