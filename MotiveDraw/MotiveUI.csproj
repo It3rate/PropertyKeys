@@ -58,11 +58,11 @@
     <Compile Include="Controls\ToolsControl.Designer.cs">
       <DependentUpon>ToolsControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="MotiveDraw.cs">
+    <Compile Include="MotiveUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MotiveDraw.Designer.cs">
-      <DependentUpon>MotiveDraw.cs</DependentUpon>
+    <Compile Include="MotiveUI.Designer.cs">
+      <DependentUpon>MotiveUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,8 +72,8 @@
     <EmbeddedResource Include="Controls\ToolsControl.resx">
       <DependentUpon>ToolsControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MotiveDraw.resx">
-      <DependentUpon>MotiveDraw.cs</DependentUpon>
+    <EmbeddedResource Include="MotiveUI.resx">
+      <DependentUpon>MotiveUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

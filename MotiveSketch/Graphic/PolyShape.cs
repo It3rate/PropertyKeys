@@ -64,7 +64,7 @@ namespace MotiveCore.Graphic
 			return new BezierSeries(values, moves);
 		}
 		
-        public override BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict)
+        public override IDrawableSeries GetDrawable(Dictionary<PropertyId, Series> dict)
         {
             var orientation = dict.ContainsKey(PropertyId.Orientation) ? dict[PropertyId.Orientation].X : _defaultOrientation;
             var pointCount = dict.ContainsKey(PropertyId.PointCount) ? (int)dict[PropertyId.PointCount].X : _defaultPointCount;
@@ -78,7 +78,7 @@ namespace MotiveCore.Graphic
 
         public override void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g)
         {
-            BezierSeries bezier = GetDrawable(dict);
+            BezierSeries bezier = (BezierSeries)GetDrawable(dict);
             if (bezier != null)
             {
                 GraphicsPath gp = bezier.Path();

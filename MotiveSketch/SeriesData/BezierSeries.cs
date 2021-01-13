@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using MotiveCore.Graphic;
 using MotiveCore.Stores;
 
 namespace MotiveCore.SeriesData
@@ -9,7 +10,7 @@ namespace MotiveCore.SeriesData
 	/// <summary>
 	/// Specialized series for 2D Beziers, holds the extra move data. Use a BezierSampler to render and interpolate.
 	/// </summary>
-	public class BezierSeries : FloatSeries
+	public class BezierSeries : FloatSeries, IDrawableSeries
 	{
 		public override SeriesType Type => SeriesType.Float; // todo: accommodate bezier here
 

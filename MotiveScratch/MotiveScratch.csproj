@@ -49,6 +49,7 @@
     <ProjectReference Include="..\MotiveCore\MotiveCore.csproj" />
     <ProjectReference Include="..\MotiveIOT\MotiveIOT.csproj" />
     <ProjectReference Include="..\MotivePhysics\MotivePhysics.csproj" />
+    <ProjectReference Include="..\MotiveSketch\MotiveSketch.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -61,7 +61,7 @@ namespace MotiveCore.SeriesData
 	    Series GetZeroSeries(int elements);
     }
 
-    public interface ISeries : ISeriesBase
+    public interface ISeriesTODO : ISeriesBase
     {
         int Count { get; }
         bool CanInterpolate { get; }
@@ -72,10 +72,10 @@ namespace MotiveCore.SeriesData
         ISeriesElement GetVirtualValueAt(int index, int capacity);
         ISeriesElement GetVirtualValueAt(float t);
 
-        ISeries SeriesSum();
-        ISeries SeriesAverage();
-        ISeries SeriesMax();
-        ISeries SeriesMin();
+        ISeriesTODO SeriesSum();
+        ISeriesTODO SeriesAverage();
+        ISeriesTODO SeriesMax();
+        ISeriesTODO SeriesMin();
 
         //void ResetData();
         //void Update(double time);
@@ -90,11 +90,11 @@ namespace MotiveCore.SeriesData
 
     }
 
-    public interface IDimensionedSeries : ISeries
+    public interface IDimensionedSeries : ISeriesTODO
     {
         int Dimensions { get; }
-        ISeries GetRawSeriesAt(int index);
-        void SetRawSeriesAt(int index, ISeries series);
+        ISeriesTODO GetRawSeriesAt(int index);
+        void SetRawSeriesAt(int index, ISeriesTODO series);
         //List<CurrentSeries> SeriesList { get; }
 
         RectFSeries Frame { get; }

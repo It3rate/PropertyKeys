@@ -1,6 +1,6 @@
 ﻿namespace MotiveDraw
 {
-    partial class MotiveDraw
+    partial class MotiveUI
     {
         /// <summary>
         /// Required designer variable.

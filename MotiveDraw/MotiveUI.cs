@@ -11,12 +11,12 @@ using MotiveDraw.Controls;
 
 namespace MotiveDraw
 {
-    public partial class MotiveDraw : Form
+    public partial class MotiveUI : Form
     {
 	    private ToolsControl _toolControl;
 	    private ProjectControl _projectControl;
 
-        public MotiveDraw()
+        public MotiveUI()
         {
             InitializeComponent();
 

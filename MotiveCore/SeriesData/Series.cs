@@ -17,7 +17,58 @@ namespace MotiveCore.SeriesData
 		Bezier,
     }
 
-    public abstract class Series : IEnumerable, IDefinition
+    // working without full interfaces while experimenting with structure, use ISeriesTODO style eventually
+    public interface ISeries : IEnumerable, IDefinition
+    {
+	    string Name { get; set; }
+	    int Id { get;}
+	    int VectorSize { get; set; }
+	    int Count { get; }
+	    SeriesType Type { get; }
+	    int DataSize { get; }
+
+	    RectFSeries Frame { get; }
+        Series Size { get; }
+        float X { get; }
+        float Y { get; }
+        float Z { get; }
+        float W { get; }
+
+        void ResetData();
+	    void Update(double time);
+	    void ReverseEachElement();
+	    Series GetRawDataAt(float t);
+	    Series GetRawDataAt(int index);
+	    void SetRawDataAt(int index, Series series);
+	    Series GetVirtualValueAt(float t);
+	    float FloatDataAt(int index);
+	    int IntDataAt(int index);
+	    float[] FloatDataRef { get; }
+	    int[] IntDataRef { get; }
+	    void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
+	    void InterpolateInto(Series b, float t);
+	    void InterpolateInto(Series b, ParametricSeries seriesT);
+	    Store CreateLinearStore(int capacity);
+	    IStore Store(Sampler sampler = null);
+	    Series Copy();
+	    Series SumSlots(params Slot[] slots);
+	    Series MultiplySlots(params Slot[] slots);
+	    Series AverageSlots(params Slot[] slots);
+	    Series MaxSlots(params Slot[] slots);
+	    Series MinSlots(params Slot[] slots);
+	    void Map(FloatEquation floatEquation);
+	    void Append(Series series);
+	    List<Series> ToList();
+	    void SetByList(List<Series> items);
+	    void MapValuesToItemPositions(IntSeries items);
+	    void MapOrderToItemPositions(IntSeries items);
+	    bool AssignIdIfUnset(int id);
+	    void OnActivate();
+	    void OnDeactivate();
+	    void Update(double currentTime, double deltaTime);
+    }
+
+    public abstract class Series : ISeries
     {
 	    public string Name { get; set; }
 	    public int Id { get; private set; }

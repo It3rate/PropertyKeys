@@ -9,7 +9,7 @@ namespace MotiveCore.Graphic
 {
     public interface IRenderable : IDefinition
     {
-	    BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict);
+	    IDrawableSeries GetDrawable(Dictionary<PropertyId, Series> dict);
         void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g);
     }
 }

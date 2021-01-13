@@ -12,7 +12,7 @@ namespace MotiveCore.Graphic
 		public int Id { get; private set; }
 
 		public abstract void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g);
-		public abstract BezierSeries GetDrawable(Dictionary<PropertyId, Series> dict);
+		public abstract IDrawableSeries GetDrawable(Dictionary<PropertyId, Series> dict);
 
         protected GraphicBase()
         {

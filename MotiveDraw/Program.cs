@@ -16,7 +16,7 @@ namespace MotiveDraw
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MotiveDraw());
+            Application.Run(new MotiveUI());
         }
     }
 }
