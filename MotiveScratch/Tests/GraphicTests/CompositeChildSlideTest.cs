@@ -59,7 +59,7 @@ namespace Motive.Tests.GraphicTests
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply);
             var result = new BlendTransition(compositeStart, compositeEnd, new Timer(0, 3000), easeStore);
 
-            var radStore = new Store(new FloatSeries(1, 20f, 20f, 24f, 24f), new LineSampler(), CombineFunction.Multiply);
+            var radStore = new Store(new FloatSeries(12, 35f, 15f), new LineSampler(), CombineFunction.Multiply);
             var radiusLink = new LinkingStore(result.Id, PropertyId.FillColor, SlotUtils.X, radStore);
             compositeStart.AddProperty(PropertyId.Radius, radiusLink);
 
@@ -72,9 +72,10 @@ namespace Motive.Tests.GraphicTests
 
         private static void AddGraphic(Container container)
         {
-	        container.AddProperty(PropertyId.Radius, new FloatSeries(2, 10f, 10f).Store());
+	        container.AddProperty(PropertyId.Radius, new FloatSeries(1, 30f).Store());
 	        container.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 8).Store());
-	        container.AddProperty(PropertyId.PenColor, new FloatSeries(3, .2f, .1f, .2f, 0.3f, 0f, 0f).Store());
+	        //container.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store());
+            container.AddProperty(PropertyId.PenColor, new FloatSeries(3, .2f, .1f, .2f, 0.3f, 0f, 0f).Store());
 
 	        var lineStore = new Store(new FloatSeries(1, .05f, .18f), new LineSampler(), CombineFunction.Multiply);
 	        var lineLink = new LinkingStore(container.Id, PropertyId.Radius, SlotUtils.X, lineStore);

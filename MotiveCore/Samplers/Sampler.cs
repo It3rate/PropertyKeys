@@ -49,7 +49,7 @@ namespace Motive.Samplers
 			}
 		}
 
-		public ClampType[] ClampTypes { get; protected set; }
+		public ClampType[] ClampTypes { get; set; }
 		public AlignmentType[] AlignmentTypes { get; protected set; }
 
         protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)

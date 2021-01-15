@@ -269,6 +269,40 @@ namespace Motive.Samplers
             return result;
         }
 
+        public static int GetClampedValue(int index, int count, ClampType clampType)
+        {
+	        int result = index;
+	        if (index < 0 || index >= count)
+	        {
+		        int mod = index % count;
+		        switch (clampType)
+		        {
+			        case ClampType.None:
+				        break;
+			        case ClampType.Wrap:
+				        result = mod;
+				        break;
+			        case ClampType.WrapRight:
+				        result = count - mod;
+				        break;
+			        case ClampType.Mirror:
+				        result = ((index / count) & 1) == 0 ? mod : (count - 1) - mod;
+				        break;
+			        case ClampType.ClampAtZero:
+				        result = (result < 0) ? 0 : index;
+				        break;
+			        case ClampType.ClampAtOne:
+				        result = (result > 1) ? 1 : index;
+				        break;
+			        case ClampType.Clamp:
+				        result = (index < 0) ? 0 : (index > 1) ? 1 : index;
+				        break;
+		        }
+	        }
+
+	        return result;
+        }
+
 		/// <summary>
         /// Returns normalized indexes into a jagged set of elements at the passed index.
         /// Normally the last parameter will be 0-1 in order to pass to children,

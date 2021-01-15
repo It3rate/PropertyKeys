@@ -13,24 +13,27 @@ namespace Motive.SeriesData
 {
 	public interface ISeries : IEnumerable, IDefinition
 	{
-		string Name { get; set; }
-		int Id { get; }
+        // From IDefinition:
+        //string Name { get; set; }
+		//int Id { get; }
+		//RectFSeries Frame { get; }
+		//Series Size { get; }
+		//void Update(double currentTime, double deltaTime);
+		//void OnActivate();
+		//void OnDeactivate();
+		//bool AssignIdIfUnset(int id);
+
 		int VectorSize { get; set; }
 		int Count { get; }
 		SeriesType Type { get; }
 		int DataSize { get; }
 
-		RectFSeries Frame { get; }
-		Series Size { get; }
 		float X { get; }
 		float Y { get; }
 		float Z { get; }
 		float W { get; }
 
 		void Update(double time);
-		void Update(double currentTime, double deltaTime);
-		void OnActivate();
-		void OnDeactivate();
 
 		Series GetRawDataAt(float t);
 		Series GetRawDataAt(int index);
@@ -43,7 +46,6 @@ namespace Motive.SeriesData
 
 		void ResetData();
 		void ReverseEachElement();
-		bool AssignIdIfUnset(int id);
 		void Append(Series series);
 		void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
 		void InterpolateInto(Series b, float t);

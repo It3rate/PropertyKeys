@@ -51,6 +51,8 @@
     <Compile Include="Samplers\BezierSampler.cs" />
     <Compile Include="Samplers\HexagonSampler.cs" />
     <Compile Include="SeriesData\BezierSeries.cs" />
+    <Compile Include="SeriesData\QuadSeries.cs" />
+    <Compile Include="Vis\Quad.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MotiveCore\MotiveCore.csproj">
