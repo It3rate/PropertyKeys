@@ -60,6 +60,7 @@ namespace Motive.Tests.GraphicTests
             var result = new BlendTransition(compositeStart, compositeEnd, new Timer(0, 3000), easeStore);
 
             var radStore = new Store(new FloatSeries(12, 35f, 15f), new LineSampler(), CombineFunction.Multiply);
+            radStore.Series.IndexClampMode = DiscreteClampMode.Mirror;
             var radiusLink = new LinkingStore(result.Id, PropertyId.FillColor, SlotUtils.X, radStore);
             compositeStart.AddProperty(PropertyId.Radius, radiusLink);
 

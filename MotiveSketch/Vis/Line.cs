@@ -76,7 +76,7 @@ namespace Motive.Vis
         public Node EndNode => new Node(this, 1f);
 
         public Point IntersectionPoint(Line line) => null;
-        public Ellipse CircleFrom() => new Ellipse(this, EndPoint);
+        public Circle CircleFrom() => new Circle(this, EndPoint);
         public Quad RectangleFrom() => new Quad(this, EndPoint);
 
 

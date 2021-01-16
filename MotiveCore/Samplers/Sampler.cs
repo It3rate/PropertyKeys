@@ -49,7 +49,7 @@ namespace Motive.Samplers
 			}
 		}
 
-		public ClampType[] ClampTypes { get; set; }
+		public ClampMode[] ClampTypes { get; set; }
 		public AlignmentType[] AlignmentTypes { get; protected set; }
 
         protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
@@ -59,7 +59,7 @@ namespace Motive.Samplers
             SwizzleMap = swizzleMap;
 			SampleCount = sampleCount;
 			Strides = new []{1};
-			ClampTypes = new []{ClampType.None};
+			ClampTypes = new []{ClampMode.None};
 			AlignmentTypes = new []{AlignmentType.Left};
 			_growthType = GrowthType.Product;
 		}

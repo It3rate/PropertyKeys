@@ -23,6 +23,8 @@ namespace Motive.SeriesData
 	    public int Id { get; private set; }
 
         public int VectorSize { get; set; }
+        public DiscreteClampMode IndexClampMode { get; set; } = DiscreteClampMode.Clamp;
+
         public abstract int Count { get; }
         public abstract SeriesType Type { get; }
 

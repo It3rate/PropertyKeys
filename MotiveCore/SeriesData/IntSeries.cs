@@ -32,8 +32,8 @@ namespace Motive.SeriesData
 		//public int[] this[int index] => GetRawDataAt(index).IntDataRef;
 
         public override Series GetRawDataAt(int index)
-		{
-			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
+        {
+	        var startIndex = IndexClampMode.GetClampedValue(index, Count);// Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
 			if (startIndex * VectorSize + VectorSize - 1 <= DataSize)
 			{
@@ -45,12 +45,12 @@ namespace Motive.SeriesData
 				Array.Copy(_intValues, DataSize - VectorSize, result, 0, VectorSize);
 			}
 
-			return new IntSeries(VectorSize, result);
+			return new IntSeries(VectorSize, result) { IndexClampMode = this.IndexClampMode };
 		}
 
 		public override void SetRawDataAt(int index, Series series)
         {
-            var startIndex = Math.Min(Count - 1, Math.Max(0, index));
+            var startIndex = IndexClampMode.GetClampedValue(index, Count);//Math.Min(Count - 1, Math.Max(0, index));
             Array.Copy(series.IntDataRef, 0, _intValues, startIndex * VectorSize, VectorSize);
         }
 
@@ -190,20 +190,19 @@ namespace Motive.SeriesData
 
 		public override float FloatDataAt(int index)
         {
-            index = Math.Max(0, Math.Min(_intValues.Length - 1, index));
+            index = IndexClampMode.GetClampedValue(index, _intValues.Length);// Math.Max(0, Math.Min(_intValues.Length - 1, index));
             return (float)_intValues[index];
 		}
 
 		public override int IntDataAt(int index)
         {
-            index = Math.Max(0, Math.Min(_intValues.Length - 1, index));
+            index = IndexClampMode.GetClampedValue(index, _intValues.Length);// Math.Max(0, Math.Min(_intValues.Length - 1, index));
             return _intValues[index];
 		}
 
 		public override Series Copy()
 		{
-			IntSeries result = new IntSeries(VectorSize, (int[])_intValues.Clone());
-			return result;
+			return new IntSeries(VectorSize, (int[])_intValues.Clone()) { IndexClampMode = this.IndexClampMode };
 		}
 
         private static readonly IntSeries _empty = new IntSeries(1,0);

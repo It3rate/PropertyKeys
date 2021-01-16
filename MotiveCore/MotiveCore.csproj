@@ -107,6 +107,7 @@
     <Compile Include="SeriesData\Series.cs" />
     <Compile Include="SeriesData\Utils\ArrayExtension.cs" />
     <Compile Include="SeriesData\Utils\BitmapExtension.cs" />
+    <Compile Include="SeriesData\Utils\ClampMode.cs" />
     <Compile Include="SeriesData\Utils\SeriesUtils.cs" />
     <Compile Include="SeriesData\Utils\SlotUtils.cs" />
     <Compile Include="Stores\BlendStore.cs" />

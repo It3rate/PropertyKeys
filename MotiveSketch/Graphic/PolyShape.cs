@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Runtime.Remoting.Messaging;
 using Motive.Components;
 using Motive.SeriesData;
 using Motive.Adapters.Color;
-using Motive.Samplers;
-using Motive.Stores;
+using Motive.SeriesData.Utils;
 
 namespace Motive.Graphic
 {
@@ -38,9 +36,9 @@ namespace Motive.Graphic
             return result;
 		}
 
-		private ClampType _radiusClampType = ClampType.Mirror;
+		//private DiscreteClampMode _radiusClampType = DiscreteClampMode.Mirror;
         public BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, Series radii, float starness)
-		{
+        {
 			var hasStarness = Math.Abs(starness) > 0.001f;
 			var count = hasStarness ? pointCount * 2 : pointCount;
 			var pointsPerStep = hasStarness ? 4 : 2;
@@ -56,15 +54,15 @@ namespace Motive.Graphic
 			{
 				var theta = step * i + orientation * Utils.M_PIx2;
 				var segmentIndex = hasStarness ? i * 2 : i;
-                var radIndex = SamplerUtils.GetClampedValue(segmentIndex, radii.VectorSize, _radiusClampType);
-				radIndex = hasStarness ? radIndex / 2 * 2 : radIndex;
-                var radius = radii.FloatDataAt(radIndex);
+                //var radIndex = _radiusClampType.GetClampedValue(segmentIndex, radii.VectorSize);
+				//radIndex = hasStarness ? radIndex / 2 * 2 : radIndex;
+                var radius = radii.FloatDataAt(segmentIndex);
                 values[i * pointsPerStep + 0] = (float) Math.Sin(theta) * radius;
 				values[i * pointsPerStep + 1] = (float) Math.Cos(theta) * radius;
 				moves[i * pointsPerStep / 2] = i == 0 ? BezierMove.MoveTo : BezierMove.LineTo;
 				if (hasStarness)
 				{
-					var radius2 = radii.FloatDataAt(radIndex + 1);
+					var radius2 = radii.FloatDataAt(segmentIndex + 1);
                     theta = step * i + step / 2.0f + orientation * Utils.M_PIx2;
 					var mpRadiusX = (float) Math.Cos(step / 2.0) * radius2;
 					var mpRadiusY = (float) Math.Cos(step / 2.0) * radius2;

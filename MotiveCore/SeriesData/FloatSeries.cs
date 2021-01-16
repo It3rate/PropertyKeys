@@ -35,8 +35,8 @@ namespace Motive.SeriesData
 
         public override Series GetRawDataAt(int index)
 		{
-			var startIndex = Math.Min(Count - 1, Math.Max(0, index));
-			var result = new float[VectorSize];
+			var startIndex = IndexClampMode.GetClampedValue(index, Count);//Math.Min(Count - 1, Math.Max(0, index));
+            var result = new float[VectorSize];
 			if (startIndex * VectorSize + VectorSize - 1 <= DataSize)
 			{
 				Array.Copy(_floatValues, startIndex * VectorSize, result, 0, VectorSize);
@@ -46,13 +46,12 @@ namespace Motive.SeriesData
 				Array.Copy(_floatValues, DataSize - VectorSize, result, 0, VectorSize);
 			}
 
-			return new FloatSeries(VectorSize, result);
+			return new FloatSeries(VectorSize, result){IndexClampMode = this.IndexClampMode};
 		}
         public override void SetRawDataAt(int index, Series series)
 		{
-			var len = DataSize / VectorSize;
-			var startIndex = Math.Min(len - 1, Math.Max(0, index));
-			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, series.VectorSize);
+			var startIndex = IndexClampMode.GetClampedValue(index, Count);//Math.Min(len - 1, Math.Max(0, index));
+            Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, series.VectorSize);
 		}
 		
 		public override void Map(FloatEquation floatEquation)
@@ -251,19 +250,19 @@ namespace Motive.SeriesData
 		//public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
 		public override float FloatDataAt(int index)
 		{
-            index = Math.Max(0, Math.Min(_floatValues.Length - 1, index));
-			return _floatValues[index];
+            index = IndexClampMode.GetClampedValue(index, _floatValues.Length);//Math.Max(0, Math.Min(_floatValues.Length - 1, index));
+            return _floatValues[index];
 		}
 
 		public override int IntDataAt(int index)
         {
-            index = Math.Max(0, Math.Min(_floatValues.Length - 1, index));
+            index = IndexClampMode.GetClampedValue(index, _floatValues.Length);//Math.Max(0, Math.Min(_floatValues.Length - 1, index));
             return (int)_floatValues[index];
 		}
 		
 		public override Series Copy()
 		{
-			FloatSeries result = new FloatSeries(VectorSize, (float[])FloatDataRef.Clone());
+			FloatSeries result = new FloatSeries(VectorSize, (float[])FloatDataRef.Clone()) { IndexClampMode = this.IndexClampMode };
 			return result;
 		}
 

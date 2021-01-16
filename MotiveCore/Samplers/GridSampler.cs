@@ -13,12 +13,12 @@ namespace Motive.Samplers
 			Strides = strides;
 			SampleCount = StridesToSampleCount(Strides);
 
-            ClampTypes = new ClampType[strides.Length];
+            ClampTypes = new ClampMode[strides.Length];
             for (int i = 0; i < strides.Length - 1; i++)
             {
-	            ClampTypes[i] = Samplers.ClampType.Wrap;
+	            ClampTypes[i] = ClampMode.Wrap;
             }
-            ClampTypes[strides.Length - 1] = Samplers.ClampType.None;
+            ClampTypes[strides.Length - 1] = ClampMode.None;
             AlignmentTypes = new AlignmentType[strides.Length];
         }
 

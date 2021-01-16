@@ -27,10 +27,12 @@ namespace Motive.Vis
     /// </summary>
     public class Quad : Point
     {
-        public Point TopLeft { get; private set; }
-        public Point Dimensions => HalfSize.Multiply(2f);
-        public Point HalfSize { get; private set; }
+        // fusion: 2 point or center point,wh
         public Point Center => this;
+        public Point TopLeft { get; private set; }
+
+        public Point HalfSize { get; private set; }
+        public Point Dimensions => HalfSize.Multiply(2f);
 
         public Quad(Point center, Point corner) : base(center.X, center.Y)
         {

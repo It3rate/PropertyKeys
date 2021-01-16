@@ -13,6 +13,7 @@ Series - input always comes in as a series (time, signal, t), output is always a
 	vectorSize (variables)
 	count (samples) - actual sample count, can't be virtual
 	query element or t
+	ClampMode (Wrap, Mirror, clamp)
 	
 Sampler
 	SampleCount (capacity) - create by sampler growth type or virtual count (or maybe step size)

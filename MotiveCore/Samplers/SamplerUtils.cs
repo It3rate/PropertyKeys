@@ -6,20 +6,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Motive.SeriesData;
+using Motive.SeriesData.Utils;
 
 namespace Motive.Samplers
 {
-	public enum ClampType
+	public enum ClampMode
 	{
 		None = 0, // -1..0..1..2
-		Wrap, // 0..1->0..1..
-		WrapRight, // 1..0->1..0->1...
-        Mirror, // 0..1..0..1..
-		ClampAtZero, // 0..0..1..2
-		ClampAtOne, // -1..0..1..1
-		Clamp, // 0..0..1..1..1..
+		Wrap, // 0..1->0..1.. 012012012012
+		Mirror, // 0..1,1..0,0..1,1.. 012210012210
+		ClampAtZero, // 0..0..1..2 000123..
+		ClampAtOne, // -1..0..1..1 ..-101111
+		Clamp, // 0..0..1..1..1.. 0001222
+		WrapRight, // 1..0->1..0->1... 210210210..
 	}
-	public enum AlignmentType
+
+    public enum AlignmentType
 	{
 		Left = 0,
 		Right,
@@ -91,19 +93,19 @@ namespace Motive.Samplers
             {
                 switch (sampler.ClampTypes[0])
                 {
-                    case ClampType.WrapRight:
+                    case ClampMode.WrapRight:
                         positions[0] = (maxStride - 1) - positions[0];
                         break;
-                    case ClampType.Mirror:
+                    case ClampMode.Mirror:
                         positions[0] = (positions[1] & 1) == 0 ? positions[0] : (maxStride - 1) - positions[0];
                         break;
-                    case ClampType.ClampAtZero:
+                    case ClampMode.ClampAtZero:
                         positions[0] = (positions[0] < 0) ? 0 : positions[0];
                         break;
-                    case ClampType.ClampAtOne:
+                    case ClampMode.ClampAtOne:
                         positions[0] = (positions[0] > 1) ? 1 : positions[0];
                         break;
-                    case ClampType.Clamp:
+                    case ClampMode.Clamp:
                         positions[0] = (positions[0] < 0) ? 0 : (positions[0] > 1) ? 1 : positions[0];
                         break;
                 }
@@ -136,24 +138,24 @@ namespace Motive.Samplers
 			    {
 				    switch (sampler.ClampTypes[i])
 				    {
-					    case ClampType.None:
+					    case ClampMode.None:
 						    break;
-					    case ClampType.Wrap:
+					    case ClampMode.Wrap:
 						    pos = index;
 						    break;
-					    case ClampType.WrapRight:
+					    case ClampMode.WrapRight:
 						    pos = curStride - index;
 						    break;
-					    case ClampType.Mirror:
+					    case ClampMode.Mirror:
 						    pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
 						    break;
-					    case ClampType.ClampAtZero:
+					    case ClampMode.ClampAtZero:
 						    pos = (pos < 0) ? 0 : index;
 						    break;
-					    case ClampType.ClampAtOne:
+					    case ClampMode.ClampAtOne:
 						    pos = (pos > 1) ? 1 : index;
 						    break;
-					    case ClampType.Clamp:
+					    case ClampMode.Clamp:
 						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
 						    break;
 				    }
@@ -188,24 +190,24 @@ namespace Motive.Samplers
 			    {
 				    switch (sampler.ClampTypes[i])
 				    {
-					    case ClampType.None:
+					    case ClampMode.None:
 						    break;
-					    case ClampType.Wrap:
+					    case ClampMode.Wrap:
 						    pos = index;
 						    break;
-					    case ClampType.WrapRight:
+					    case ClampMode.WrapRight:
 						    pos = curStride - index;
 						    break;
-					    case ClampType.Mirror:
+					    case ClampMode.Mirror:
 						    pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
 						    break;
-					    case ClampType.ClampAtZero:
+					    case ClampMode.ClampAtZero:
 						    pos = (pos < 0) ? 0 : index;
 						    break;
-					    case ClampType.ClampAtOne:
+					    case ClampMode.ClampAtOne:
 						    pos = (pos > 1) ? 1 : index;
 						    break;
-					    case ClampType.Clamp:
+					    case ClampMode.Clamp:
 						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
 						    break;
 				    }
@@ -267,40 +269,6 @@ namespace Motive.Samplers
                 count -= result[i] * dimSize;
             }
             return result;
-        }
-
-        public static int GetClampedValue(int index, int count, ClampType clampType)
-        {
-	        int result = index;
-	        if (index < 0 || index >= count)
-	        {
-		        int mod = index % count;
-		        switch (clampType)
-		        {
-			        case ClampType.None:
-				        break;
-			        case ClampType.Wrap:
-				        result = mod;
-				        break;
-			        case ClampType.WrapRight:
-				        result = count - mod;
-				        break;
-			        case ClampType.Mirror:
-				        result = ((index / count) & 1) == 0 ? mod : (count - 1) - mod;
-				        break;
-			        case ClampType.ClampAtZero:
-				        result = (result < 0) ? 0 : index;
-				        break;
-			        case ClampType.ClampAtOne:
-				        result = (result > 1) ? 1 : index;
-				        break;
-			        case ClampType.Clamp:
-				        result = (index < 0) ? 0 : (index > 1) ? 1 : index;
-				        break;
-		        }
-	        }
-
-	        return result;
         }
 
 		/// <summary>

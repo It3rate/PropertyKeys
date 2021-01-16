@@ -26,8 +26,10 @@ namespace Motive.SeriesData
 		int Count { get; }
 		SeriesType Type { get; }
 		int VectorSize { get; set; }
+		DiscreteClampMode IndexClampMode { get; set; }
 
-		float FloatDataAt(int index);
+
+        float FloatDataAt(int index);
 		IStore Store(Sampler sampler = null);
 		Series Copy();
 

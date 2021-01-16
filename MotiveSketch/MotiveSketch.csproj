@@ -53,7 +53,7 @@
     <Compile Include="SeriesData\BezierSeries.cs" />
     <Compile Include="SeriesData\QuadSeries.cs" />
     <Compile Include="Vis\Arc.cs" />
-    <Compile Include="Vis\Ellipse.cs" />
+    <Compile Include="Vis\Circle.cs" />
     <Compile Include="Vis\Joint.cs" />
     <Compile Include="Vis\Line.cs" />
     <Compile Include="Vis\Node.cs" />

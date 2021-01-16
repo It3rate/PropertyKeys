@@ -58,18 +58,18 @@ namespace Motive.SeriesData.Utils
 			switch (series.Type)
 			{
 				case SeriesType.Int:
-					result = new IntSeries(vectorSize, values.ToInt());
+					result = new IntSeries(vectorSize, values.ToInt()) { IndexClampMode = series.IndexClampMode };
 					break;
 				// don't use RectF here as a sample of a rect should mean a float array. Probably RectF should not be so special to have it's own series type.
 				//case SeriesType.RectF:
 				//	result = new RectFSeries(values);
 				//	break;
 				case SeriesType.Parametric:
-					result = new ParametricSeries(vectorSize, values);
+					result = new ParametricSeries(vectorSize, values) { IndexClampMode = series.IndexClampMode };
                     break;
 				case SeriesType.Float:
 				default:
-					result = new FloatSeries(vectorSize, values);
+					result = new FloatSeries(vectorSize, values) { IndexClampMode = series.IndexClampMode };
                     break;
 			}
 			return result;
@@ -104,7 +104,7 @@ namespace Motive.SeriesData.Utils
         public static bool IsEqual(Series a, Series b)
 		{
 			var result = true;
-			if (a.GetType() == b.GetType() && a.Count == b.Count && a.VectorSize == b.VectorSize)
+			if (a.GetType() == b.GetType() && a.Count == b.Count && a.VectorSize == b.VectorSize && a.IndexClampMode == b.IndexClampMode)
 			{
                 if (a.Type == SeriesType.Int)
                 {

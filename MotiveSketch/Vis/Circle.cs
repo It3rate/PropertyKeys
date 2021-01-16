@@ -9,12 +9,17 @@ namespace Motive.Vis
     /// The perimeter is 0-1 as it has a start and end from angle zero around (default is clockwise).
     /// It will be used as tangent targets to and from other points (it arrives and leaves, doesn't care about orientation), unless it is a point starting or ending on the circle.
     /// </summary>
-    public class Ellipse : Point, IPath
+    public class Circle : Point, IPath
     {
+	    // fusion: center/perimeter pt, 2 tangent/radius, center/radius, 2 points, 3 tangents, 3 points
         public ClockDirection Direction { get; }
+        public Point Center => this;
         public Point PerimeterOrigin { get; }
-        public float Radius { get; private set; }
 
+        public float AspectRatio { get; } = 1f; // only needed for ellipse
+
+        // calculated
+        public float Radius { get; private set; }
         public float OriginAngle { get; private set; }
         public float Length => (float)(2f * Radius * Math.PI);
 
@@ -22,38 +27,37 @@ namespace Motive.Vis
         public Point MidPoint => GetPoint(0.5f, 0);
         public Point EndPoint => PerimeterOrigin;
 
-        public Point Center => this;
 
         //public CircleRef(Point center, float radius) : base(center.X, center.Y)
         //{
         //	Radius = radius;
         //	PerimeterOrigin = new Point(X, Y - radius); // default north
         //}
-        public Ellipse(Point center, Point perimeterOrigin, ClockDirection direction = ClockDirection.CW) : base(center.X, center.Y)
+        public Circle(Point center, Point perimeterOrigin, ClockDirection direction = ClockDirection.CW) : base(center.X, center.Y)
         {
             PerimeterOrigin = perimeterOrigin;
             Direction = direction;
             Initialize();
         }
-        public Ellipse(float cx, float cy, float perimeterX, float perimeterY, ClockDirection direction = ClockDirection.CW) : base(cx, cy)
+        public Circle(float cx, float cy, float perimeterX, float perimeterY, ClockDirection direction = ClockDirection.CW) : base(cx, cy)
         {
             PerimeterOrigin = new Point(perimeterX, perimeterY);
             Direction = direction;
             Initialize();
         }
-        public Ellipse(Node center, Node perimeterOrigin, ClockDirection direction = ClockDirection.CW) : this(center.Anchor, perimeterOrigin.Anchor, direction) { }
+        public Circle(Node center, Node perimeterOrigin, ClockDirection direction = ClockDirection.CW) : this(center.Anchor, perimeterOrigin.Anchor, direction) { }
 
         /// <summary>
         /// Radius is origin to line, CW or CCW determines if it winds right or left to the line.
         /// </summary>
-        public static Ellipse CircleFromLineAndPoint(Line line, Node perimeterOrigin, ClockDirection direction = ClockDirection.CW)
+        public static Circle CircleFromLineAndPoint(Line line, Node perimeterOrigin, ClockDirection direction = ClockDirection.CW)
         {
             var p0 = perimeterOrigin.Anchor;
             var onLine = p0.ProjectedOntoLine(line);
             var diff = p0.Subtract(onLine);
             var radius = diff.VectorLength();
             var center = direction == ClockDirection.CW ? p0.Add(diff.Transpose()) : p0.Subtract(diff.Transpose());
-            Ellipse result = new Ellipse(center, p0, direction);
+            Circle result = new Circle(center, p0, direction);
             return result;
         }
         private void Initialize()
@@ -102,7 +106,7 @@ namespace Motive.Vis
         }
 
         public ClockDirection CounterDirection => Direction.Counter();
-        public Ellipse CounterEllipse => new Ellipse(Center, PerimeterOrigin, CounterDirection);
+        public Circle CounterCircle => new Circle(Center, PerimeterOrigin, CounterDirection);
 
         public Point FindTangentInDirection(Point p, ClockDirection direction)
         {
@@ -125,7 +129,7 @@ namespace Motive.Vis
             return numberOfSolutions;
         }
 
-        public int IntersectCircle(Ellipse c1, out Point intersect0, out Point intersect1) => IntersectCircle(c1.Center, c1.Radius, out intersect0, out intersect1);
+        public int IntersectCircle(Circle c1, out Point intersect0, out Point intersect1) => IntersectCircle(c1.Center, c1.Radius, out intersect0, out intersect1);
         public int IntersectCircle(Point c1, float r1, out Point intersect0, out Point intersect1)
         {
             var dist = Center.DistanceTo(c1);
