@@ -18,7 +18,7 @@ namespace Motive.Mutators
 			return Store.GetValuesAtT(t);
 		}
 
-		public abstract void Update(double t);
+		public abstract void Update(double currentTime, double deltaTime);
 		public abstract void ResetData();
 	}
 }

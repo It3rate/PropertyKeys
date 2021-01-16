@@ -77,10 +77,6 @@ namespace Motive.SeriesData
         {
         }
 
-        public virtual void Update(double time)
-        {
-        }
-
         public abstract void ReverseEachElement();
 
         protected abstract void CalculateFrame();
@@ -253,7 +249,7 @@ namespace Motive.SeriesData
 	    {
 	    }
 
-	    public void Update(double currentTime, double deltaTime)
+	    public virtual void Update(double currentTime, double deltaTime)
 	    {
 	    }
     }

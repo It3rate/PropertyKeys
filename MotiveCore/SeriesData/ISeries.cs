@@ -23,48 +23,50 @@ namespace Motive.SeriesData
 		//void OnDeactivate();
 		//bool AssignIdIfUnset(int id);
 
-		int VectorSize { get; set; }
 		int Count { get; }
 		SeriesType Type { get; }
-		int DataSize { get; }
+		int VectorSize { get; set; }
+
+		float FloatDataAt(int index);
+		IStore Store(Sampler sampler = null);
+		Series Copy();
 
 		float X { get; }
 		float Y { get; }
 		float Z { get; }
 		float W { get; }
 
-		void Update(double time);
+		//int DataSize { get; }
+		//Series GetRawDataAt(float t);
+		//Series GetRawDataAt(int index);
+		//void SetRawDataAt(int index, Series series);
+		//Series GetVirtualValueAt(float t);
+		//float FloatDataAt(int index);
+		//int IntDataAt(int index);
+		//float[] FloatDataRef { get; }
+		//int[] IntDataRef { get; }
 
-		Series GetRawDataAt(float t);
-		Series GetRawDataAt(int index);
-		void SetRawDataAt(int index, Series series);
-		Series GetVirtualValueAt(float t);
-		float FloatDataAt(int index);
-		int IntDataAt(int index);
-		float[] FloatDataRef { get; }
-		int[] IntDataRef { get; }
+		//void ResetData();
+		//void ReverseEachElement();
+		//void Append(Series series);
+		//void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
+		//void InterpolateInto(Series b, float t);
+		//void InterpolateInto(Series b, ParametricSeries seriesT);
 
-		void ResetData();
-		void ReverseEachElement();
-		void Append(Series series);
-		void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
-		void InterpolateInto(Series b, float t);
-		void InterpolateInto(Series b, ParametricSeries seriesT);
+		//Store CreateLinearStore(int capacity);
+		//IStore Store(Sampler sampler = null);
+		//List<Series> ToList();
+		//void SetByList(List<Series> items);
+		//Series Copy();
 
-		Store CreateLinearStore(int capacity);
-		IStore Store(Sampler sampler = null);
-		List<Series> ToList();
-		void SetByList(List<Series> items);
-		Series Copy();
-
-		Series SumSlots(params Slot[] slots);
-		Series MultiplySlots(params Slot[] slots);
-		Series AverageSlots(params Slot[] slots);
-		Series MaxSlots(params Slot[] slots);
-		Series MinSlots(params Slot[] slots);
-		void Map(FloatEquation floatEquation);
-		void MapValuesToItemPositions(IntSeries items);
-		void MapOrderToItemPositions(IntSeries items);
+		//Series SumSlots(params Slot[] slots);
+		//Series MultiplySlots(params Slot[] slots);
+		//Series AverageSlots(params Slot[] slots);
+		//Series MaxSlots(params Slot[] slots);
+		//Series MinSlots(params Slot[] slots);
+		//void Map(FloatEquation floatEquation);
+		//void MapValuesToItemPositions(IntSeries items);
+		//void MapOrderToItemPositions(IntSeries items);
 	}
 
 

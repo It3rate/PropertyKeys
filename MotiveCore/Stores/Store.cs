@@ -42,7 +42,7 @@ namespace Motive.Stores
 
         public override void Update(double currentTime, double deltaTime)
 		{
-			Series.Update(deltaTime);
+			Series.Update(currentTime, deltaTime);
 		}
 
         public override void ResetData()

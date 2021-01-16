@@ -117,13 +117,13 @@ namespace Motive.SeriesData
 			GenerateDataSeries();
 		}
 
-		public override void Update(double time)
+		public override void Update(double currentTime, double deltaTime)
 		{
             if(_combineFunction == CombineFunction.ContinuousAdd)
             {
 	            _seed = SeriesUtils.Random.Next();
                 var b = GenerateDataSeries();
-                float tSec = (float)(time / 1000.0);
+                float tSec = (float)(currentTime / 1000.0);
                 var scaled = new FloatSeries(VectorSize, ArrayExtension.GetSizedFloatArray(VectorSize, tSec));
 				b.CombineInto(scaled, CombineFunction.Multiply);
                 _series.CombineInto(b, CombineFunction.Add);

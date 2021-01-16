@@ -13,9 +13,9 @@ namespace Motive.Mutators
 			RandomSeries = (RandomSeries) Store.GetSeriesRef();
 		}
 
-		public override void Update(double time)
+		public override void Update(double currentTime, double deltaTime)
 		{
-			RandomSeries.Update(time);
+			RandomSeries.Update(currentTime, deltaTime);
 		}
 
 		public override void ResetData()

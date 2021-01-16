@@ -15,21 +15,21 @@ namespace Motive.SeriesData
         
 		public FloatSeries(int vectorSize, params float[] values) : base(vectorSize)
 		{
-			// insure at least vectorSize elements in values array.
-			if (values.Length < vectorSize)
-			{
-				_floatValues = new float[vectorSize];
-				for (int i = 0; i < vectorSize; i++)
-				{
-					_floatValues[i] = i < values.Length ? values[i] : values[values.Length - 1];
-				}
-			}
-			else
-			{
-				_floatValues = values;
-			}
-			
-		}
+            // insure at least vectorSize elements in values array.
+            // This can be eliminated if moving to a clamping system for series (shouldn't be needed anyway, but currently copy etc relies on it).
+            if (values.Length < vectorSize)
+            {
+                _floatValues = new float[vectorSize];
+                for (int i = 0; i < vectorSize; i++)
+                {
+                    _floatValues[i] = i < values.Length ? values[i] : values[values.Length - 1];
+                }
+            }
+            else
+            {
+                _floatValues = values;
+            }
+        }
 
 		//public float[] this[int index] => GetRawDataAt(index).FloatDataRef;
 
