@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Motive.Graphic;
 
 namespace Motive.Vis
 {
-    public class Stroke : IPath
+    public class Stroke : IPath //, IDrawableSeries
     {
         private List<Node> Nodes { get; } = new List<Node>();
 

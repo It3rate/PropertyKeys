@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Motive.Graphic;
 
 namespace Motive.Vis
 {
 	public enum PadType { Rectangle, Oval, Hexagon }
 
-    public class VisPad<T> //where T : IPath
+    public class VisPad<T>// : IRenderable //where T : IPath
     {
 	    public PadType Type { get; }
 

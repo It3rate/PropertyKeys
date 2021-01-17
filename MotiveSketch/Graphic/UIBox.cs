@@ -61,7 +61,8 @@ namespace Motive.Graphic
             BezierSeries bezier = (BezierSeries)GetDrawable(dict);
             if (bezier != null)
             {
-                GraphicsPath gp = bezier.Path();
+	            var gp = new GraphicsPath();
+	            bezier.AppendToGraphicsPath(gp);
 
                 var loc = dict[PropertyId.Location];
                 var originSeries = dict[PropertyId.Origin]?.GetVirtualValueAt(0) ?? new FloatSeries(1, 0f, 0f);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace Motive.Vis
 {
@@ -98,6 +99,11 @@ namespace Motive.Vis
         {
             var result = new List<Point>() { StartPoint, EndPoint };
             return result.ToArray();
+        }
+
+        public override void AppendToGraphicsPath(GraphicsPath path)
+        {
+	        path.AddLine(X, Y, Z, W); // this may be a polyline..? Probably need start and end indexes into the series.
         }
 
         public override string ToString()

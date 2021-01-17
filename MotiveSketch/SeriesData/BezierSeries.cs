@@ -229,9 +229,8 @@ namespace Motive.SeriesData
 			Array.Reverse(Moves);
 		}
 
-        public GraphicsPath Path()
+        public void AppendToGraphicsPath(GraphicsPath path)
 		{
-			var path = new GraphicsPath();
 			path.FillMode = FillMode.Alternate;
 			float posX = 0;
 			float posY = 0;
@@ -278,8 +277,6 @@ namespace Motive.SeriesData
 
 				index += MoveSize[(int) moveType];
 			}
-
-			return path;
 		}
 		public override Series Copy()
 		{

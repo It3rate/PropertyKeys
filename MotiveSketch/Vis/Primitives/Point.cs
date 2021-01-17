@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using Motive.Graphic;
 using Motive.Samplers;
 using Motive.SeriesData;
 using Motive.Stores;
 
 namespace Motive.Vis
 {
-	public class Point : FloatSeries, IPrimitive
-	{
+	public class Point : FloatSeries, IPrimitive, IDrawableSeries
+    {
 		protected const float pi2 = (float)(Math.PI * 2.0);
 
         public Point(float x, float y) : base(2, new []{x,y})
@@ -139,6 +141,11 @@ namespace Motive.Vis
         public override string ToString()
         {
             return String.Format("Pt:{0:0.##},{1:0.##}", X, Y);
+        }
+
+        public virtual void AppendToGraphicsPath(GraphicsPath path)
+        {
+            path.AddEllipse(X, Y, 0.0001f, 0.0001f); // a point doesn't actually exist, but this is for scaffolding so rely on the line width.
         }
     }
 }

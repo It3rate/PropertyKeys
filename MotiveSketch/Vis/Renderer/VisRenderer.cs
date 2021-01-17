@@ -6,10 +6,11 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Motive.Graphic;
 
 namespace Motive.Vis
 {
-    public class VisRenderer
+    public class VisRenderer// : IRenderable
     {
         public int Width { get; set; }
         public int Height { get; set; }

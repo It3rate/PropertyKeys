@@ -95,7 +95,8 @@ namespace Motive.Graphic
             BezierSeries bezier = (BezierSeries)GetDrawable(dict);
             if (bezier != null)
             {
-                GraphicsPath gp = bezier.Path();
+	            var gp = new GraphicsPath();
+                bezier.AppendToGraphicsPath(gp);
 
                 var v = dict[PropertyId.Location];
                 var state = g.Save();
