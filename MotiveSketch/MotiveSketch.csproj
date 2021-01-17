@@ -52,17 +52,21 @@
     <Compile Include="Samplers\HexagonSampler.cs" />
     <Compile Include="SeriesData\BezierSeries.cs" />
     <Compile Include="SeriesData\QuadSeries.cs" />
-    <Compile Include="Vis\Arc.cs" />
-    <Compile Include="Vis\Circle.cs" />
-    <Compile Include="Vis\Joint.cs" />
-    <Compile Include="Vis\Line.cs" />
-    <Compile Include="Vis\Node.cs" />
-    <Compile Include="Vis\Shape.cs" />
-    <Compile Include="Vis\Stroke.cs" />
+    <Compile Include="Vis\Cognition\VisAgent.cs" />
+    <Compile Include="Vis\Cognition\VisPad.cs" />
+    <Compile Include="Vis\Cognition\VisSkills.cs" />
+    <Compile Include="Vis\Primitives\Arc.cs" />
+    <Compile Include="Vis\Primitives\Circle.cs" />
+    <Compile Include="Vis\Primitives\Joint.cs" />
+    <Compile Include="Vis\Primitives\Line.cs" />
+    <Compile Include="Vis\Primitives\Node.cs" />
+    <Compile Include="Vis\Primitives\Shape.cs" />
+    <Compile Include="Vis\Primitives\Stroke.cs" />
+    <Compile Include="Vis\Renderer\VisRenderer.cs" />
     <Compile Include="Vis\VisEnums.cs" />
     <Compile Include="Vis\VisInterfaces.cs" />
-    <Compile Include="Vis\Point.cs" />
-    <Compile Include="Vis\Quad.cs" />
+    <Compile Include="Vis\Primitives\Point.cs" />
+    <Compile Include="Vis\Primitives\Quad.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MotiveCore\MotiveCore.csproj">

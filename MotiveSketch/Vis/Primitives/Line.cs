@@ -4,12 +4,12 @@ using System.Drawing;
 
 namespace Motive.Vis
 {
-	public class Line : Point, IPath, IPrimitive
+	public class Line : Point, IPath, IPrimitivePath
 	{
 		public Point StartPoint => this;
-        public Point MidPoint => GetPoint(0.5f, 0);
         public Point EndPoint { get; private set; }
 
+        public Point MidPoint => GetPoint(0.5f, 0);
         public Point Center => GetPoint(0.5f, 0);
 
         private float _length;
