@@ -26,8 +26,8 @@ namespace Motive.Tests
 	    [TestMethod]
 	    public void TestRingSampler1()
 	    {
-		    Series sample;
-		    Series expected;
+		    ISeries sample;
+		    ISeries expected;
 
 		    RingSampler sampler = sampler1;
 		    int expectedCapacity = 7;
@@ -67,8 +67,8 @@ namespace Motive.Tests
 	    [TestMethod]
 	    public void TestRingSampler2()
 	    {
-		    Series sample;
-		    Series expected;
+		    ISeries sample;
+		    ISeries expected;
 
 		    RingSampler sampler = sampler2;
 		    float ringCount = 2f;

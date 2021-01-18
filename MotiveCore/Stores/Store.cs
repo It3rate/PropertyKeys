@@ -19,16 +19,16 @@ namespace Motive.Stores
         {
         }
 
-		public override Series GetSeriesRef()
+		public override ISeries GetSeriesRef()
 		{
 			return Series;
         }
-		public override void SetFullSeries(Series value)
+		public override void SetFullSeries(ISeries value)
 		{
 			Series = value;
 		}
 
-		public override Series GetValuesAtT(float t)
+		public override ISeries GetValuesAtT(float t)
 		{
             // GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
             return IsBaked ? Series.GetSeriesAt(t) : Sampler.GetValuesAtT(Series, t);
@@ -55,7 +55,7 @@ namespace Motive.Stores
             var len = Capacity * Series.VectorSize;
             if (Series.DataSize != len)
             {
-	            Series result = SeriesUtils.CreateSeriesOfType(Series.Type, Series.VectorSize, Capacity, 0f);
+	            ISeries result = SeriesUtils.CreateSeriesOfType(Series.Type, Series.VectorSize, Capacity, 0f);
 	            
                 for (var i = 0; i < Capacity; i++)
                 {
@@ -70,11 +70,11 @@ namespace Motive.Stores
 
 		public override IStore Clone()
 		{
-			return new Store((Series)Series.Copy(), Sampler, CombineFunction);
+			return new Store((ISeries)Series.Copy(), Sampler, CombineFunction);
 		}
 		public override void CopySeriesDataInto(IStore target)
 		{
-			Series targetSeries = target.GetSeriesRef();
+			ISeries targetSeries = target.GetSeriesRef();
 			
             if (Series.Type == targetSeries.Type && Series.DataSize == targetSeries.DataSize)
 			{
@@ -89,7 +89,7 @@ namespace Motive.Stores
 			}
             else
             {
-				target.SetFullSeries((Series)Series.Copy());
+				target.SetFullSeries((ISeries)Series.Copy());
             }
 		}
 

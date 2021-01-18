@@ -21,17 +21,17 @@ namespace Motive.Stores
             _updateEquation = updateEquation;
         }
 
-	    public override Series GetSeriesRef()
+	    public override ISeries GetSeriesRef()
 	    {
 		    return Series;
 	    }
 
-	    public override void SetFullSeries(Series value)
+	    public override void SetFullSeries(ISeries value)
 	    {
 		    Series = value;
 	    }
 
-	    public override Series GetValuesAtT(float t)
+	    public override ISeries GetValuesAtT(float t)
 	    {
 		    return new FloatSeries(1, _floatEquation.Invoke(t, _internalT));
 	    }

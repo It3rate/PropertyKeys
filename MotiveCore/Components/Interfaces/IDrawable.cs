@@ -14,6 +14,6 @@ namespace Motive.Components
     {
         IRenderable Renderer { get; set; }
 
-        void Draw(Graphics g, Dictionary<PropertyId, Series> dict);
+        void Draw(Graphics g, Dictionary<PropertyId, ISeries> dict);
     }
 }

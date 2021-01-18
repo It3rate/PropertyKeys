@@ -19,7 +19,7 @@ namespace Motive.Commands
         private readonly int _samplerId;
         private readonly CombineFunction _combineFunction;
 
-        public CommandCreateStore(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace)
+        public CommandCreateStore(ISeries series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace)
         {
 	        _seriesId = series.Id;
 	        sampler = sampler ?? new LineSampler(series.Count);

@@ -39,12 +39,12 @@ namespace Motive.Stores
             _mixStore = store;
         }
 
-        public override Series GetValuesAtT(float t)
+        public override ISeries GetValuesAtT(float t)
         {
-            Series result = null;
+            ISeries result = null;
             if (PropertyIdSet.IsTSampling(PropertyId))
             {
-                Series link = Runner.CurrentComposites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
+                ISeries link = Runner.CurrentComposites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
                 if (link != null)
                 {
                     var slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
@@ -69,8 +69,8 @@ namespace Motive.Stores
                 if (result != null)
                 {
 					// This is two step in order to use slot mapping, probably can sensibly combine this.
-	                Series link = Runner.CurrentComposites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
-	                Series slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
+	                ISeries link = Runner.CurrentComposites[LinkedCompositeId]?.GetSeriesAtT(PropertyId, t, null);
+	                ISeries slotMapped = SeriesUtils.SwizzleSeries(SlotMapping, link);
 	                result.CombineInto(slotMapped, CombineFunction, t);
                 }
                 else
@@ -88,7 +88,7 @@ namespace Motive.Stores
             ParametricSeries link = Runner.CurrentComposites[LinkedCompositeId]?.GetNormalizedPropertyAtT(PropertyId, seriesT);
             if (link != null)
             {
-                Series mappedValues = SeriesUtils.SwizzleSeries(SlotMapping, link);
+                ISeries mappedValues = SeriesUtils.SwizzleSeries(SlotMapping, link);
                 result.CombineInto(mappedValues, CombineFunction);
             }
             return result;

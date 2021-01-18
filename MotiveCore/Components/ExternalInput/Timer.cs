@@ -20,8 +20,8 @@ namespace Motive.Components.Transitions
         private DateTime _pauseTime;
         private bool _isPaused;
         private float _delayTime = 0;
-        public Series Delay { get; }
-        public Series Duration { get; }
+        public ISeries Delay { get; }
+        public ISeries Duration { get; }
         protected bool IsReverse { get; set; } = false;
 
         public event TimedEventHandler StartTimedEvent;
@@ -97,7 +97,7 @@ namespace Motive.Components.Transitions
 	        return result;
         }
 
-        public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        public override ISeries GetSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
         {
 	        Series result;
 	        if (propertyId == PropertyId.InterpolationT)//PropertyIdSet.IsTSampling(propertyId))

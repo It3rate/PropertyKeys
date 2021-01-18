@@ -18,8 +18,8 @@ namespace Motive.Components
         //double PreviousTime { get; }
 
         double StartTime { get; set; }
-        Series Duration { get; }
-        Series Delay { get; }
+        ISeries Duration { get; }
+        ISeries Delay { get; }
 
         //bool IsReverse { get; }
         //bool IsComplete { get; }

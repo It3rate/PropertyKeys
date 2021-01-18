@@ -27,7 +27,7 @@ namespace Motive.SeriesData
 		DiscreteClampMode IndexClampMode { get; set; }
 
         RectFSeries Frame { get; }
-        Series Size { get; }
+        ISeries Size { get; }
 
 		float X { get; }
 		float Y { get; }
@@ -35,9 +35,9 @@ namespace Motive.SeriesData
 		float W { get; }
 
         int DataSize { get; }
-        Series GetSeriesAt(float t);
+        ISeries GetSeriesAt(float t);
         Series GetSeriesAt(int index);
-        void SetSeriesAt(int index, Series series);
+        void SetSeriesAt(int index, ISeries series);
         Series GetVirtualValueAt(float t);
         float FloatValueAt(int index);
         int IntValueAt(int index);
@@ -46,14 +46,14 @@ namespace Motive.SeriesData
 
         void ReverseEachElement();
         void Append(Series series);
-        void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
-        void InterpolateInto(Series b, float t);
-        void InterpolateInto(Series b, ParametricSeries seriesT);
+        void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0);
+        void InterpolateInto(ISeries b, float t);
+        void InterpolateInto(ISeries b, ParametricSeries seriesT);
 
         Store CreateLinearStore(int capacity);
         IStore Store(Sampler sampler = null);
-        List<Series> ToList();
-        void SetByList(List<Series> items);
+        List<ISeries> ToList();
+        void SetByList(List<ISeries> items);
         ISeries Copy();
 
         void ResetData();
@@ -134,7 +134,7 @@ namespace Motive.SeriesData
 	    ISeriesElement GetZeroSeries();
 	    ISeriesElement GetMinSeries();
 	    ISeriesElement GetMaxSeries();
-	    Series GetZeroSeries(int elements);
+	    ISeries GetZeroSeries(int elements);
     }
 
 
@@ -146,7 +146,7 @@ namespace Motive.SeriesData
         //List<CurrentSeries> SeriesList { get; }
 
         RectFSeries Frame { get; }
-        Series Size { get; }
+        ISeries Size { get; }
 
     }
 }

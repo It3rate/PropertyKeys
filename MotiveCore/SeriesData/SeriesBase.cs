@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Windows.Forms;
 using Motive.Samplers;
 using Motive.SeriesData.Utils;
@@ -74,13 +75,13 @@ namespace Motive.SeriesData
 	        _valuesRef = _intValues;
         }
 
-        public Series this[int i]
+        public ISeries this[int i]
         {
 	        get => GetSeriesAt(i);
 	        set => SetSeriesAt(i, value);
         }
 
-        private Series _cachedSize;
+        private ISeries _cachedSize;
         private RectFSeries _cachedFrame;
 
         public string Name { get; set; }
@@ -124,7 +125,7 @@ namespace Motive.SeriesData
         /// <summary>
         /// Cached size in two vectorSize data points, width and height of current data.
         /// </summary>
-        public Series Size
+        public ISeries Size
         {
             get
             {
@@ -145,11 +146,26 @@ namespace Motive.SeriesData
 		        _valuesRef.Add(series._valuesRef[i]);
             }
         }
+
+        private float[] GetFloatArray()
+        {
+            float[] result;
+            if (_floatValues != null)
+            {
+	            result = _floatValues;
+            }
+            else
+            {
+	            result = _intValues.ToFloat();
+            }
+
+            return result;
+        }
         protected void CalculateFrame()
         {
             // TODO: move this down, or generally find a better way to do this.
-	        var min = GetSeriesAt(0)._floatValues;
-	        var max = GetSeriesAt(0)._floatValues;
+	        var min = GetSeriesAt(0).GetFloatArray();
+	        var max = GetSeriesAt(0).GetFloatArray();
 
 	        for (var i = 0; i < DataSize; i += VectorSize)
 	        {
@@ -189,9 +205,9 @@ namespace Motive.SeriesData
 	        }
         }
 
-        public abstract void InterpolateValue(Series a, Series b, int index, float t);
+        public abstract void InterpolateValue(ISeries a, ISeries b, int index, float t);
 
-        public void InterpolateInto(Series b, float t)
+        public void InterpolateInto(ISeries b, float t)
         {
 	        for (var i = 0; i < DataSize; i++)
 	        {
@@ -207,7 +223,7 @@ namespace Motive.SeriesData
 	        }
         }
 
-        public void InterpolateInto(Series b, ParametricSeries seriesT)
+        public void InterpolateInto(ISeries b, ParametricSeries seriesT)
         {
 	        for (var i = 0; i < DataSize; i++)
 	        {
@@ -228,21 +244,21 @@ namespace Motive.SeriesData
 
         //protected abstract T Add<T>(T a, T b, float t);
 
-        public static Series operator +(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Add);
-        public static Series operator -(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Subtract);
-        public static Series operator *(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Multiply);
-        public static Series operator /(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Divide);
-        private static Series ApplyFunction(Series a, Series b, CombineFunction combineFunction, float t = 0)
+        public static ISeries operator +(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Add);
+        public static ISeries operator -(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Subtract);
+        public static ISeries operator *(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Multiply);
+        public static ISeries operator /(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Divide);
+        private static ISeries ApplyFunction(ISeries a, ISeries b, CombineFunction combineFunction, float t = 0)
         {
 	        var result = (Series)a.Copy();
 	        result.CombineInto(b, combineFunction, t);
 	        return result;
         }
 
-        public abstract void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
+        public abstract void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0);
 
         public abstract Series GetSeriesAt(int index);
-        public abstract void SetSeriesAt(int index, Series series);
+        public abstract void SetSeriesAt(int index, ISeries series);
         public abstract float FloatValueAt(int index);
         public abstract int IntValueAt(int index);
         public abstract float[] FloatDataRef { get; }
@@ -250,7 +266,7 @@ namespace Motive.SeriesData
         public abstract ISeries Copy();
 
 
-        public virtual Series GetSeriesAt(float t) => GetSeriesAt(SamplerUtils.IndexFromT(Count, t));
+        public virtual ISeries GetSeriesAt(float t) => GetSeriesAt(SamplerUtils.IndexFromT(Count, t));
         public virtual Series GetVirtualValueAt(float t)
         {
 	        Series result;
@@ -297,16 +313,16 @@ namespace Motive.SeriesData
         }
 
 
-        public List<Series> ToList()
+        public List<ISeries> ToList()
         {
-            var result = new List<Series>(Count);
+            var result = new List<ISeries>(Count);
             for (int i = 0; i < Count; i++)
             {
                 result.Add(GetSeriesAt(i));
             }
             return result;
         }
-        public void SetByList(List<Series> items)
+        public void SetByList(List<ISeries> items)
         {
             for (int i = 0; i < items.Count; i++)
             {
@@ -319,7 +335,7 @@ namespace Motive.SeriesData
             for (int i = 0; i < items.Count; i++)
             {
                 int index = items.IntValueAt(i);
-                Series second = selfCopy.GetSeriesAt(i);
+                ISeries second = selfCopy.GetSeriesAt(i);
                 SetSeriesAt(index, second);
             }
         }
@@ -329,7 +345,7 @@ namespace Motive.SeriesData
             for (int i = 0; i < items.Count; i++)
             {
                 int index = items.IntValueAt(i);
-                Series second = selfCopy.GetSeriesAt(index);
+                ISeries second = selfCopy.GetSeriesAt(index);
                 SetSeriesAt(i, second);
             }
         }

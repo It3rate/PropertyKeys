@@ -110,14 +110,14 @@ namespace Motive.Components.Transitions
 	        End?.GetDefinedStores(ids);
         }
 		
-        public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        public override ISeries GetSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
         {
-            var startDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
+            var startDict = new Dictionary<PropertyId, ISeries>() { { propertyId, null } };
             Start?.QueryPropertiesAtT(startDict, t, false);
-            Series result = startDict[propertyId];
+            ISeries result = startDict[propertyId];
             if (_blends.ContainsKey(propertyId))
             {
-                var endDict = new Dictionary<PropertyId, Series>() { { propertyId, null } };
+                var endDict = new Dictionary<PropertyId, ISeries>() { { propertyId, null } };
                 End?.QueryPropertiesAtT(endDict, t, false);
 
                 float indexT = t + Runner.InterpolationT; // delay per element.
@@ -131,9 +131,9 @@ namespace Motive.Components.Transitions
             }
             return result;
         }
-        public override IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
+        public override IRenderable QueryPropertiesAtT(Dictionary<PropertyId, ISeries> data, float t, bool addLocalProperties)
         {
-            var endDict = new Dictionary<PropertyId, Series>(data);
+            var endDict = new Dictionary<PropertyId, ISeries>(data);
             IRenderable result = Start?.QueryPropertiesAtT(data, t, true);
             result = End?.QueryPropertiesAtT(endDict, t, true) ?? result;
 
@@ -141,7 +141,7 @@ namespace Motive.Components.Transitions
             float easedT = Easing?.GetValuesAtT(Runner.InterpolationT * indexT).X ?? Runner.InterpolationT;
             foreach (var key in endDict.Keys)
             {
-                if (data.TryGetValue(key, out Series value))
+                if (data.TryGetValue(key, out ISeries value))
                 {
                     value.InterpolateInto(endDict[key], easedT);
                 }

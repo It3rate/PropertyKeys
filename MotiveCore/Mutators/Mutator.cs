@@ -13,7 +13,7 @@ namespace Motive.Mutators
 			Store.BakeData();
 		}
 
-		public virtual Series GetValueAtT(Series series, float t)
+		public virtual ISeries GetValueAtT(ISeries series, float t)
 		{
 			return Store.GetValuesAtT(t);
 		}

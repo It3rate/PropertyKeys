@@ -52,14 +52,14 @@ namespace Motive.SeriesData
 	    public float CX => X + Width / 2f;
 	    public float CY => Y + Height / 2f;
 
-        public Series LocationF => new FloatSeries(2, X, Y);
-        public Series SizeF => new FloatSeries(2, Width, Height);
-        public Series CenterF => new FloatSeries(2, CX, CY);
+        public ISeries LocationF => new FloatSeries(2, X, Y);
+        public ISeries SizeF => new FloatSeries(2, Width, Height);
+        public ISeries CenterF => new FloatSeries(2, CX, CY);
 
-        public Series LeftTop => new FloatSeries(2, Left, Top);
-	    public Series RightTop => new FloatSeries(2, Right, Top);
-	    public Series LeftBottom => new FloatSeries(2, Left, Bottom);
-	    public Series RightBottom => new FloatSeries(2, Right, Bottom);
+        public ISeries LeftTop => new FloatSeries(2, Left, Top);
+	    public ISeries RightTop => new FloatSeries(2, Right, Top);
+	    public ISeries LeftBottom => new FloatSeries(2, Left, Bottom);
+	    public ISeries RightBottom => new FloatSeries(2, Right, Bottom);
 
 	    public RectFSeries Outset(float outset)
 	    {

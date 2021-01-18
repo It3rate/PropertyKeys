@@ -18,9 +18,9 @@ namespace Motive.SeriesData
         public int DataSize => Count * Dimensions;
 
         public RectFSeries Frame => throw new NotImplementedException();
-        public Series Size => throw new NotImplementedException();
+        public ISeries Size => throw new NotImplementedException();
 
-        private readonly List<Series> _seriesList = new List<Series>();
+        private readonly List<ISeries> _seriesList = new List<ISeries>();
 
         public DimensionedSeries(int dimensions, int vectorSize, params float[][] values)
         {
@@ -34,7 +34,7 @@ namespace Motive.SeriesData
 		        _seriesList.Add(new FloatSeries(VectorSize, values[i]));
 	        }
         }
-        public DimensionedSeries(int dimensions, int vectorSize, params Series[] seriesArray)
+        public DimensionedSeries(int dimensions, int vectorSize, params ISeries[] seriesArray)
         {
 	        Assert.IsTrue(seriesArray.Length > 0);
 	        Assert.IsTrue(seriesArray.Length == Dimensions);
@@ -47,9 +47,9 @@ namespace Motive.SeriesData
 	        }
         }
 
-        public Series GetSample(ParametricSeries seriesT)
+        public ISeries GetSample(ParametricSeries seriesT)
         {
-	        Series result;
+	        ISeries result;
 	        if (Type == SeriesType.Int)
 	        {
 		        var values = new int[VectorSize];
@@ -73,25 +73,25 @@ namespace Motive.SeriesData
 	        return result;
         }
         
-        public Series GetRawDataAt(int index)
+        public ISeries GetRawDataAt(int index)
         {
             throw new NotImplementedException();
         }
-        public void SetRawDataAt(int index, Series series)
+        public void SetRawDataAt(int index, ISeries series)
         {
             throw new NotImplementedException();
         }
-        public Series GetVirtualValueAt(float t)
+        public ISeries GetVirtualValueAt(float t)
         {
             throw new NotImplementedException();
         }
-        public Series GetVirtualValueAt(int index, int capacity)
+        public ISeries GetVirtualValueAt(int index, int capacity)
         {
             throw new NotImplementedException();
         }
 
 
-        public Series Copy()
+        public ISeries Copy()
         {
             throw new NotImplementedException();
         }

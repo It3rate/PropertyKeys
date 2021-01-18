@@ -15,8 +15,8 @@ namespace Motive.Components
 	    int NestedItemCount { get; }
 	    int NestedItemCountAtT(float t);
 
-        IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties);
-	    Series GetNestedSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
+        IRenderable QueryPropertiesAtT(Dictionary<PropertyId, ISeries> data, float t, bool addLocalProperties);
+	    ISeries GetNestedSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries);
 
         /// <summary>
         /// CurrentComposites can be composed by merging with parent CurrentComposites. First match wins, though this could change to merge/add/interpolate with parents.

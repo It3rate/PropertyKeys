@@ -16,10 +16,10 @@ namespace Motive.Stores
 		Sampler Sampler { get; set; }
 		bool IsBaked { get; set; }
 
-        Series GetSeriesRef();
-        void SetFullSeries(Series value);
+        ISeries GetSeriesRef();
+        void SetFullSeries(ISeries value);
 		
-		Series GetValuesAtT(float t);
+		ISeries GetValuesAtT(float t);
         ParametricSeries GetSampledTs(ParametricSeries seriesT);
         Series GetNeighbors(int index, bool wrapEdges = true);
 

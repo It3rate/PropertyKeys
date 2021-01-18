@@ -52,8 +52,8 @@ namespace Motive.Tests
 		{
 			var startStore = new Store(series_1, sampler);
 
-			Series sample;
-			Series expected;
+			ISeries sample;
+			ISeries expected;
             int virtualCount = 100;
             var len = virtualCount - 1f;
 
@@ -81,8 +81,8 @@ namespace Motive.Tests
 		public void HexagonSamplerByT_1()
 		{
 			int[] strides = {10, 10};
-			Series sample;
-			Series expected;
+			ISeries sample;
+			ISeries expected;
             int virtualCount = 100;
             var len = virtualCount - 1f;
 			var sampler = new HexagonSampler(strides);

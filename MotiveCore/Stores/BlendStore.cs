@@ -46,12 +46,12 @@ namespace Motive.Stores
 			_stores.Reverse();
 		}
 
-		public override Series GetSeriesRef()
+		public override ISeries GetSeriesRef()
 		{
 			throw new NotImplementedException();
         }
 
-		public override void SetFullSeries(Series value)
+		public override void SetFullSeries(ISeries value)
 		{
 			throw new NotImplementedException();
 		}
@@ -81,7 +81,7 @@ namespace Motive.Stores
 			}
 		}
 
-		public override Series GetValuesAtT(float t)
+		public override ISeries GetValuesAtT(float t)
 		{
 			return GetSeriesAtT(t, (float)CurrentT);
 		}
@@ -118,12 +118,12 @@ namespace Motive.Stores
 			return result;
 		}
 
-		public Series GetSeriesAtIndex(int index, float t)
+		public ISeries GetSeriesAtIndex(int index, float t)
 		{
 			return GetSeriesAtT(SamplerUtils.TFromIndex(_stores.Count, index), t); // index / (_properties.Count - 1f), t);
 		}
 
-		public Series GetSeriesAtT(float indexT, float t)
+		public ISeries GetSeriesAtT(float indexT, float t)
 		{
 			SamplerUtils.InterpolatedIndexAndRemainder(_stores.Count, indexT, out var startIndex, out var remainder);
 			remainder = _easing?.GetValuesAtT(remainder).X ?? remainder;
@@ -135,17 +135,17 @@ namespace Motive.Stores
 				storeInterpolation = sample[sample.VectorSize - 1];
 			}
 
-			Series result = _stores[startIndex].GetValuesAtT(remainder);
+			ISeries result = _stores[startIndex].GetValuesAtT(remainder);
 			if (startIndex < _stores.Count - 1)
 			{
-				Series endSeries = _stores[startIndex + 1].GetValuesAtT(remainder);
+				ISeries endSeries = _stores[startIndex + 1].GetValuesAtT(remainder);
 				result.InterpolateInto(endSeries, storeInterpolation);
 			}
 
 			return result;
 		}
 
-		public static Series BlendValueAtT(IStore start, IStore end, float indexT, float t)
+		public static ISeries BlendValueAtT(IStore start, IStore end, float indexT, float t)
 		{
 			var result = start.GetValuesAtT(indexT);
 			if (end != null)

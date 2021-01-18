@@ -70,7 +70,7 @@ namespace Motive.Components
         void GetDefinedStores(HashSet<PropertyId> ids);
 
         ParametricSeries GetNormalizedPropertyAtT(PropertyId propertyId, ParametricSeries seriesT);
-        Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries);
+        ISeries GetSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries);
 
     }
 }

@@ -85,7 +85,7 @@ namespace Motive.Components
 	    }
 	    public virtual void EndUpdate(double currentTime, double deltaTime) { }
 
-	    public virtual Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+	    public virtual ISeries GetSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
 	    {
 		    var store = GetStore(propertyId);
 		    var result = store?.GetValuesAtT(t);

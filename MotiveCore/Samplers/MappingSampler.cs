@@ -17,9 +17,9 @@ namespace Motive.Samplers
 		    _floatEquation = floatEquation;
 	    }
 
-	    public override Series GetValuesAtT(Series series, float t)
+	    public override ISeries GetValuesAtT(ISeries series, float t)
 	    {
-		    Series result = series.GetVirtualValueAt(t);
+		    ISeries result = series.GetVirtualValueAt(t);
 		    result.Map(_floatEquation);
 		    return result;
 	    }

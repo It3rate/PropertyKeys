@@ -11,8 +11,8 @@ namespace Motive.Graphic
 		public string Name { get; set; }
 		public int Id { get; private set; }
 
-		public abstract void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g);
-		public abstract IDrawableSeries GetDrawable(Dictionary<PropertyId, Series> dict);
+		public abstract void DrawWithProperties(Dictionary<PropertyId, ISeries> dict, Graphics g);
+		public abstract IDrawableSeries GetDrawable(Dictionary<PropertyId, ISeries> dict);
 
         protected GraphicBase()
         {

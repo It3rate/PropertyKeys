@@ -88,8 +88,8 @@ namespace Motive.Tests.GraphicTests
             NextVersion();
         }
 
-        public static int ColorSortRev(Series a, Series b) => (int)((RGBXYDistance1(b) - RGBXYDistance1(a)) * 10000);
-        public static int ColorSort(Series a, Series b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000);
+        public static int ColorSortRev(ISeries a, ISeries b) => (int)((RGBXYDistance1(b) - RGBXYDistance1(a)) * 10000);
+        public static int ColorSort(ISeries a, ISeries b) => (int)((RGBXYDistance1(a) - RGBXYDistance1(b)) * 10000);
 
         private int cl;
         private int rw;
@@ -130,7 +130,7 @@ namespace Motive.Tests.GraphicTests
             return blend;
         }
 
-        private List<Series> AppendLocationToColors(IStore colorStore, IntSeries itemSeries)
+        private List<ISeries> AppendLocationToColors(IStore colorStore, IntSeries itemSeries)
         {
             float cap = itemSeries.Count - 1f;
             var colors = colorStore.GetSeriesRef().ToList();
@@ -169,7 +169,7 @@ namespace Motive.Tests.GraphicTests
         }
 
 
-        private List<Series> AppendLocationToColors(IStore colorStore, int columns, int rows)
+        private List<ISeries> AppendLocationToColors(IStore colorStore, int columns, int rows)
         {
 	        var colors = colorStore.GetSeriesRef().ToList();
 	        float countCapacity = columns * rows - 1f;
@@ -185,7 +185,7 @@ namespace Motive.Tests.GraphicTests
 	        return colors;
         }
 
-        private IntSeries SetItemsFromAttributedColorOrder(List<Series> attributedColors)
+        private IntSeries SetItemsFromAttributedColorOrder(List<ISeries> attributedColors)
         {
 	        int len = attributedColors.Count;
             var result = new IntSeries(1, new int[len]);
@@ -256,7 +256,7 @@ namespace Motive.Tests.GraphicTests
             return result;
         }
 
-        public static float RGBXYDistance1(Series series)
+        public static float RGBXYDistance1(ISeries series)
         {
 	        float[] input = series.GetSeriesAt(0).FloatDataRef;
 	        float[] location = series.GetSeriesAt(1).FloatDataRef;

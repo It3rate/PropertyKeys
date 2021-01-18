@@ -107,8 +107,8 @@ namespace Motive.SeriesData
 			Array.Copy(_floatValues, start, result, 0, size);
 			return new BezierSeries(result, new[] {Moves[index]});
 		}
-        // todo: need an insertDataAtIndex
-		public override void SetSeriesAt(int index, Series series)
+
+		public override void SetSeriesAt(int index, ISeries series)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 			var start = 0;

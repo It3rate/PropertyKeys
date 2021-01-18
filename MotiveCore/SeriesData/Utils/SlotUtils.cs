@@ -67,7 +67,7 @@ namespace Motive.SeriesData.Utils
 		public static readonly Slot[] Clamp01 = new Slot[] { Slot.MaxOr1 };
 		public static readonly Slot[] All = new Slot[] { Slot.All };
 
-		public static float ComputeOnElement(Series series, Slot slot, int index = 0)
+		public static float ComputeOnElement(ISeries series, Slot slot, int index = 0)
 		{
 			float result;
 			if (slot < Slot.Combinatorial)
@@ -108,7 +108,7 @@ namespace Motive.SeriesData.Utils
 			return result;
 		}
 
-		public static int GetIntAt(Series series, Slot slot)
+		public static int GetIntAt(ISeries series, Slot slot)
 		{
 			int result;
 			if (slot < Slot.Combinatorial)

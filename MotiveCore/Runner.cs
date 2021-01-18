@@ -20,7 +20,7 @@ namespace Motive
 	    public static Runner CurrentRunner;
         public static Runner GetRunnerById(int id) => CurrentRunner;
 
-        public static Definitions<Series> CurrentSeries => CurrentRunner.Series;
+        public static Definitions<ISeries> CurrentSeries => CurrentRunner.Series;
         public static Definitions<Sampler> CurrentSamplers => CurrentRunner.Samplers;
         public static Definitions<IStore> CurrentStores => CurrentRunner.Stores;
         public static Definitions<IRenderable> CurrentRenderables => CurrentRunner.Renderables;
@@ -28,7 +28,7 @@ namespace Motive
 
         private readonly Form _display;
 
-        public Definitions<Series> Series { get; } = new Definitions<Series>();
+        public Definitions<ISeries> Series { get; } = new Definitions<ISeries>();
         public Definitions<Sampler> Samplers { get; } = new Definitions<Sampler>();
         public Definitions<IStore> Stores { get; } = new Definitions<IStore>();
         public Definitions<IRenderable> Renderables { get; } = new Definitions<IRenderable>();
@@ -103,7 +103,7 @@ namespace Motive
 					        var element = Composites[id];
 					        if (element is IDrawable drawable)
 					        {
-						        drawable.Draw(e.Graphics, new Dictionary<PropertyId, SeriesData.Series>());
+						        drawable.Draw(e.Graphics, new Dictionary<PropertyId, ISeries>());
 					        }
 				        }
 			        }

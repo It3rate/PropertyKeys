@@ -66,7 +66,7 @@ namespace Motive.Samplers
 
 		protected Sampler GetSamplerById(int id) => Runner.CurrentSamplers[id];
 
-		public virtual Series GetValuesAtT(Series series, float t)
+		public virtual ISeries GetValuesAtT(ISeries series, float t)
         {	
 	        var seriesT = GetSampledTs(new ParametricSeries(1, t));
 	        return GetSeriesSample(series, seriesT);
@@ -76,7 +76,7 @@ namespace Motive.Samplers
 		// counter: only samplers know about sampleCount. CurrentSeries only knows it's own count, not the virtual count it represents.
 		// counter counter: Why do samplers care about sampleCount? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
 		// ans: A grid knows it's max size by strides. Need an infinite scroll mode where sampleCount is read from series, but also want (more common) option to set size from sampler.
-        public virtual Series GetSeriesSample(Series series, ParametricSeries seriesT)
+        public virtual ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)
@@ -93,7 +93,7 @@ namespace Motive.Samplers
         public virtual int NeighborCount => 2;
 		private int WrappedIndex(int index, int capacity) => index >= capacity ? 0 : index < 0 ? capacity - 1 : index;
 		// Neighbors always requires raw data, so no virtual gets.
-        public virtual Series GetNeighbors(Series series, int index, bool wrapEdges = true)
+        public virtual Series GetNeighbors(ISeries series, int index, bool wrapEdges = true)
         {
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);

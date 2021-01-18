@@ -34,7 +34,7 @@ namespace Motive.Samplers
             return Swizzle(result, seriesT);
         }
         
-        public override Series GetSeriesSample(Series series, ParametricSeries seriesT)
+        public override ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)
@@ -47,7 +47,7 @@ namespace Motive.Samplers
 
         public override int NeighborCount => 4;
         private int WrappedIndexes(int x, int y) => (x >= Strides[0] ? 0 : x < 0 ? Strides[0] - 1 : x) +  Strides[0] * (y >= Strides[1] ? 0 : y < 0 ? Strides[1] - 1 : y);
-        public override Series GetNeighbors(Series series, int index, bool wrapEdges = true)
+        public override Series GetNeighbors(ISeries series, int index, bool wrapEdges = true)
         {
 	        var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, SampleCount, index);
 	        int indexX = SamplerUtils.IndexFromT(Strides[0], seriesT[0]);

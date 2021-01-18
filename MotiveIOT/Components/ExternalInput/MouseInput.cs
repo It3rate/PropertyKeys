@@ -9,8 +9,8 @@ namespace Motive.Components.ExternalInput
 	    public float InterpolationT { get; set; }
 		public int ClickCount { get; private set; }
 	    public double StartTime { get; set; }
-	    public Series Duration { get; } = new FloatSeries(1,0);
-	    public Series Delay { get; } = new FloatSeries(1, 0);
+	    public ISeries Duration { get; } = new FloatSeries(1,0);
+	    public ISeries Delay { get; } = new FloatSeries(1, 0);
         public event TimedEventHandler StartTimedEvent;
 	    public event TimedEventHandler StepTimedEvent;
 	    public event TimedEventHandler EndTimedEvent;
@@ -80,7 +80,7 @@ namespace Motive.Components.ExternalInput
 		    return result;
 	    }
 
-	    public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+	    public override ISeries GetSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
 	    {
 		    FloatSeries result; // return current mouse atm, eventually will be able to scrub history if saved.
 		    switch (propertyId)

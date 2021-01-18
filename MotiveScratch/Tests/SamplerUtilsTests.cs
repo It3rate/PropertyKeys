@@ -97,8 +97,8 @@ namespace Motive.Tests
         [TestMethod]
         public void TestGetSummedJaggedT()
         {
-            Series sample;
-            Series expected;
+            ISeries sample;
+            ISeries expected;
 
             sample = SamplerUtils.GetSummedJaggedT(new[] { 7, 7, 7, 7 }, 0);
             expected = new ParametricSeries(2, new[] { 0f, 0f });
@@ -135,8 +135,8 @@ namespace Motive.Tests
         [TestMethod]
         public void TestGetSummedJaggedTDiscrete()
         {
-            Series sample;
-            Series expected;
+            ISeries sample;
+            ISeries expected;
 
             sample = SamplerUtils.GetSummedJaggedT(new[] { 7, 7, 7, 7 }, 0, true);
             expected = new ParametricSeries(2, new[] { 0f, 0f });

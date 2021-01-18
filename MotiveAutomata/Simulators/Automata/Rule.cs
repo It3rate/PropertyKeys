@@ -10,9 +10,9 @@ using Motive.Stores;
 
 namespace Motive.Components.Simulators.Automata
 {
-	public delegate bool Condition(Series currentValue, Series neighbors, Runner runner);
-	public delegate Series ParameterizedFunction(Series currentValue, Series neighbors);
-	public delegate Series SeriesModifier(Series elements, params Slot[] slots);
+	public delegate bool Condition(ISeries currentValue, ISeries neighbors, Runner runner);
+	public delegate ISeries ParameterizedFunction(ISeries currentValue, ISeries neighbors);
+	public delegate ISeries SeriesModifier(ISeries elements, params Slot[] slots);
 
     public class Rule
 	{
@@ -34,7 +34,7 @@ namespace Motive.Components.Simulators.Automata
         /// <param name="currentValue">Value to adjust.</param>
         /// <param name="neighbors">Parameters used in the potiential adjustment.</param>
         /// <returns>Returns true if not a final compareValue.</returns>
-        public bool Invoke(Series currentValue, Series neighbors, Runner runner)
+        public bool Invoke(ISeries currentValue, ISeries neighbors, Runner runner)
         {
 	        bool canContinue = true;
 	        if (Condition(currentValue, neighbors, runner))
@@ -167,12 +167,12 @@ namespace Motive.Components.Simulators.Automata
             return (currentValue, target) => SeriesUtils.InterpolateInto(currentValue, target, interpolationAmount);
         }
 
-        public static ParameterizedFunction ConstInterpFn(Series constant, float amount)
+        public static ParameterizedFunction ConstInterpFn(ISeries constant, float amount)
         {
             return (currentValue, neighbors) => SeriesUtils.InterpolateInto(currentValue, constant, amount);// ignore neighbors
         }
 
-        public static ParameterizedFunction SetSeriesAtIndexFn(int index, Series value)
+        public static ParameterizedFunction SetSeriesAtIndexFn(int index, ISeries value)
         {
             return (currentValue, target) => SeriesUtils.SetSeriesAtIndex(currentValue, index, value);
         }

@@ -58,9 +58,9 @@ namespace Motive.Components.Simulators
 		    _world.Step((float)(deltaTime/1000.0), velocityIterations, positionIterations);
 	    }
 
-        public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        public override ISeries GetSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
         {
-			Series result = null;
+			ISeries result = null;
 			int index = SamplerUtils.IndexFromT(Capacity, t);
 			Body body = GetBodyAtIndex(index);
 			if (body != null)
@@ -99,11 +99,11 @@ namespace Motive.Components.Simulators
             switch (propertyId)
             {
 	            case PropertyId.Location:
-		            Series loc = GetSeriesAtT(PropertyId.Location, seriesT[0], null);
+		            ISeries loc = GetSeriesAtT(PropertyId.Location, seriesT[0], null);
 		            result = new ParametricSeries(2, loc.X / _simBounds.Width, (_simBounds.Y - loc.Y) / _simBounds.Height);
 		            break;
 	            case PropertyId.Orientation:
-		            Series angle = GetSeriesAtT(PropertyId.Orientation, seriesT[0], null);
+		            ISeries angle = GetSeriesAtT(PropertyId.Orientation, seriesT[0], null);
 		            result = new ParametricSeries(1, angle.X);
 		            break;
 	            default:
@@ -137,7 +137,7 @@ namespace Motive.Components.Simulators
         public void CreateBezierBody(int index, IContainer composite, bool isStatic = false)
         {
 	        float tIndex = index / (composite.Capacity - 1f);
-	        var dict = new Dictionary<PropertyId, Series>
+	        var dict = new Dictionary<PropertyId, ISeries>
 	        {
 		        { PropertyId.PointCount, null },
 		        { PropertyId.Radius, null },

@@ -10,7 +10,6 @@ namespace Motive.Graphic
 {
     public interface IDrawableSeries : ISeries
     {
-        // todo: look at passing around the GraphicsPath rather than generating a new one each time.
 	    void AppendToGraphicsPath(GraphicsPath path);
     }
 }

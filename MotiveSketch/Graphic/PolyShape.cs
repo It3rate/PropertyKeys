@@ -37,7 +37,7 @@ namespace Motive.Graphic
 		}
 
 		//private DiscreteClampMode _radiusClampType = DiscreteClampMode.Mirror;
-        public BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, Series radii, float starness)
+        public BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, ISeries radii, float starness)
         {
 			var hasStarness = Math.Abs(starness) > 0.001f;
 			var count = hasStarness ? pointCount * 2 : pointCount;
@@ -79,7 +79,7 @@ namespace Motive.Graphic
 			return new BezierSeries(values, moves);
 		}
 		
-        public override IDrawableSeries GetDrawable(Dictionary<PropertyId, Series> dict)
+        public override IDrawableSeries GetDrawable(Dictionary<PropertyId, ISeries> dict)
         {
             var orientation = dict.ContainsKey(PropertyId.Orientation) ? dict[PropertyId.Orientation].X : _defaultOrientation;
             var pointCount = dict.ContainsKey(PropertyId.PointCount) ? (int)dict[PropertyId.PointCount].X : _defaultPointCount;
@@ -90,7 +90,7 @@ namespace Motive.Graphic
             return GeneratePolyShape(orientation, pointCount, roundness, radii, starness);
         }
 
-        public override void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g)
+        public override void DrawWithProperties(Dictionary<PropertyId, ISeries> dict, Graphics g)
         {
             BezierSeries bezier = (BezierSeries)GetDrawable(dict);
             if (bezier != null)

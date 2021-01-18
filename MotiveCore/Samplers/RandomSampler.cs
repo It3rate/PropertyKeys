@@ -15,7 +15,7 @@ namespace Motive.Samplers
 	        _random = new Random(seed);
         }
 
-        public override Series GetValuesAtT(Series series, float t)
+        public override ISeries GetValuesAtT(ISeries series, float t)
 		{
 			t = (float) _random.NextDouble() * t;
 			return series.GetVirtualValueAt(t);

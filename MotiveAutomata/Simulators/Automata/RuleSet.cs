@@ -19,7 +19,7 @@ namespace Motive.Components.Simulators.Automata
         public void AddRule(Condition condition, ParameterizedFunction fn) => Rules.Add(new Rule(condition, fn));
 		public Action BeginPass { get; set; }
 
-        public Series InvokeRules(Series currentValue, Series neighbors, Runner runner)
+        public ISeries InvokeRules(ISeries currentValue, ISeries neighbors, Runner runner)
         {
             InvokedRule = -1;
 			for (int i = 0; i < Rules.Count; i++)

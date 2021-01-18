@@ -16,20 +16,20 @@ namespace Motive.Samplers
 			bezierSeries.EvenlySpaced = true;
 		}
 		
-        public override Series GetValuesAtT(Series series, float t)
+        public override ISeries GetValuesAtT(ISeries series, float t)
         {
             var ct = Math.Max(0, Math.Min(1f, t));
             return GetSeriesSample(series, ct);
         }
 
-        private Series GetSeriesSample(Series series, float t)
+        private ISeries GetSeriesSample(ISeries series, float t)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             var strideTs = GetSeriesAtT(t).FloatDataRef;
             return SeriesUtils.CreateSeriesOfType(series, strideTs);
         }
 
-        private Series GetSeriesAtT(float t)
+        private ISeries GetSeriesAtT(float t)
         {
 	        return BezierSeries.GetSeriesAtT(t);
         }

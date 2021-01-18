@@ -19,7 +19,7 @@ namespace Motive.SeriesData
 
 		//public float[] this[int index] => GetSeriesAt(index).FloatDataRef;
 
-		public override void InterpolateValue(Series a, Series b, int i, float t)
+		public override void InterpolateValue(ISeries a, ISeries b, int i, float t)
 		{
 			_floatValues[i] = Interpolate(_floatValues[i], b.FloatValueAt(i), t);
         }
@@ -113,7 +113,7 @@ namespace Motive.SeriesData
         //       }
         //      }
 
-        public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
+        public override void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0)
         {
 	        int minSize = Math.Min(DataSize, b.DataSize);
 			switch (combineFunction)
@@ -198,7 +198,7 @@ namespace Motive.SeriesData
 
 			return new FloatSeries(VectorSize, result) { IndexClampMode = this.IndexClampMode };
 		}
-		public override void SetSeriesAt(int index, Series series)
+		public override void SetSeriesAt(int index, ISeries series)
 		{
 			var startIndex = IndexClampMode.GetClampedValue(index, Count);//Math.Min(len - 1, Math.Max(0, index));
 			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, series.VectorSize);
@@ -248,11 +248,11 @@ namespace Motive.SeriesData
 		}
 
 		// FitInto distorts the shape to fit into the passed series frame. Ignores any overhang in VectorSize.
-		public void FitInto(Series bounds)
+		public void FitInto(ISeries bounds)
 		{
 			Normalize();
 
-			Series frame = bounds.Frame;
+			ISeries frame = bounds.Frame;
 			float[] boundsMin = frame.GetVirtualValueAt(0).FloatDataRef;
 			float[] boundsDif = (float[])frame.GetVirtualValueAt(1).FloatDataRef.Clone();
 			for (int i = 0; i < boundsDif.Length; i++)
@@ -271,23 +271,23 @@ namespace Motive.SeriesData
 			}
 		}
 
-		public Series SumSlots(params Slot[] slots)
+		public ISeries SumSlots(params Slot[] slots)
 		{
 			return SeriesUtils.SumSlots(this, slots);
 		}
-		public Series MultiplySlots(params Slot[] slots)
+		public ISeries MultiplySlots(params Slot[] slots)
 		{
 			return SeriesUtils.MultiplySlots(this, slots);
 		}
-		public Series AverageSlots(params Slot[] slots)
+		public ISeries AverageSlots(params Slot[] slots)
 		{
 			return SeriesUtils.AverageSlots(this, slots);
 		}
-		public Series MaxSlots(params Slot[] slots)
+		public ISeries MaxSlots(params Slot[] slots)
 		{
 			return SeriesUtils.MaxSlots(this, slots);
 		}
-		public Series MinSlots(params Slot[] slots)
+		public ISeries MinSlots(params Slot[] slots)
 		{
 			return SeriesUtils.MinSlots(this, slots);
 		}

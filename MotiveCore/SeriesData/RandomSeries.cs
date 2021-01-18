@@ -7,6 +7,8 @@ using Motive.Samplers;
 
 namespace Motive.SeriesData
 {
+    // todo: Random needs to be rewritten to reflect new approach to ISeries.
+    // todo: split off Series wrapper base class
 	public class RandomSeries : ISeries
 	{
 		private ISeries _series;
@@ -14,23 +16,58 @@ namespace Motive.SeriesData
 		private Random _random;
 		private RectFSeries _minMax;
 
-	    public SeriesType Type { get; }
-	    public int Count { get; }
-	    public int VectorSize { get; set; }
-	    public float W { get; }
+		public string Name { get; set; }
+		public int Id { get; private set; }
+        public SeriesType Type { get; }
+        public int Count => _series.Count;
+		public int VectorSize
+	    {
+		    get => _series.VectorSize;
+		    set { _series.VectorSize = value; }
+	    }
 	    public int DataSize => _series.DataSize;
         public DiscreteClampMode IndexClampMode { get; set; } = DiscreteClampMode.Clamp;
-        public RectFSeries Frame { get; private set; }
-        public Series Size { get; private set; }
         public float X { get; }
         public float Y { get; }
         public float Z { get; }
+	    public float W { get; }
+
+	    private ISeries _cachedSize;
+	    private RectFSeries _cachedFrame;
+        public RectFSeries Frame
+	    {
+		    get
+		    {
+			    if (_cachedFrame == null)
+			    {
+				    CalculateFrame();
+			    }
+
+			    return _cachedFrame;
+		    }
+		    protected set => _cachedFrame = value;
+	    }
+
+	    public ISeries Size
+	    {
+		    get
+		    {
+			    if (_cachedSize == null)
+			    {
+				    CalculateFrame();
+			    }
+
+			    return _cachedSize;
+		    }
+		    protected set => _cachedSize = value;
+	    }
+
 
         private int _seed;
         public int Seed
         {
             get => _seed;
-            set { _seed = value; GenerateDataSeries(); }
+            set { _seed = value; GenerateDataSeries(VectorSize, Count); }
         }
 
 		/// <summary>
@@ -40,14 +77,13 @@ namespace Motive.SeriesData
 			CombineFunction combineFunction = CombineFunction.Replace)
 		{
 			Type = type;
-            Count = count;
 			seed = seed == 0 ? SeriesUtils.Random.Next() : seed;
 			_seed = seed;
             _minMax = minMax ?? new RectFSeries(0,0,1f,1f);
 			_combineFunction = combineFunction;
 			_series = combineFunction == CombineFunction.ContinuousAdd ?
-				SeriesUtils.CreateSeriesOfType(Type, vectorSize, Count, 0f) :
-				GenerateDataSeries();
+				SeriesUtils.CreateSeriesOfType(Type, vectorSize, count, 0f) :
+				GenerateDataSeries(vectorSize, count);
 		}
 		
 		public float[] this[int index] => _series.GetSeriesAt(index).FloatDataRef;
@@ -57,37 +93,37 @@ namespace Motive.SeriesData
 			_series.ReverseEachElement();
 		}
 
-		public Series GenerateDataSeries()
+		public Series GenerateDataSeries(int vectorSize, int count)
 		{
 			Series result;
             _random = new Random(_seed);
-            var len = Count * VectorSize;
+            var len = count * vectorSize;
 			if (Type == SeriesType.Int)
 			{
 				var data = new int[len];
-				for (var i = 0; i < Count; i++)
+				for (var i = 0; i < count; i++)
 				{
-                    for (int j = 0; j < VectorSize; j++)
+                    for (int j = 0; j < vectorSize; j++)
                     {
-                        data[i * VectorSize + j] = _random.Next(_minMax.GetSeriesAt(0).IntValueAt(j), _minMax.GetSeriesAt(1).IntValueAt(j));
+                        data[i * vectorSize + j] = _random.Next(_minMax.GetSeriesAt(0).IntValueAt(j), _minMax.GetSeriesAt(1).IntValueAt(j));
                     }
 				}
 
-				result = new IntSeries(VectorSize, data);
+				result = new IntSeries(vectorSize, data);
 			}
 			else
 			{
 				var data = new float[len];
-                for (var i = 0; i < Count; i++)
+                for (var i = 0; i < count; i++)
                 {
-                    for (int j = 0; j < VectorSize; j++)
+                    for (int j = 0; j < vectorSize; j++)
                     {
                         float min = _minMax.GetSeriesAt(0).FloatValueAt(j);
                         float max = _minMax.GetSeriesAt(1).FloatValueAt(j);
-                        data[i * VectorSize + j] = (float)(_random.NextDouble() * (max - min) + min);
+                        data[i * vectorSize + j] = (float)(_random.NextDouble() * (max - min) + min);
                     }
                 }
-				result = new FloatSeries(VectorSize, data);
+				result = new FloatSeries(vectorSize, data);
 			}
 
 			return result;
@@ -122,24 +158,26 @@ namespace Motive.SeriesData
 		public void ResetData()
 		{
 			_random = new Random(_seed);
-			GenerateDataSeries();
+			GenerateDataSeries(VectorSize, Count);
 		}
 
-		public string Name { get; set; }
-		public int Id { get; }
-		public bool AssignIdIfUnset(int id)
+        public bool AssignIdIfUnset(int id)
 		{
-			throw new NotImplementedException();
-		}
+			bool result = false;
+			if (Id == 0 && id > 0)
+			{
+				Id = id;
+				result = true;
+			}
+			return result;
+        }
 
 		public void OnActivate()
 		{
-			throw new NotImplementedException();
 		}
 
 		public void OnDeactivate()
 		{
-			throw new NotImplementedException();
 		}
 
 		public void Update(double currentTime, double deltaTime)
@@ -147,7 +185,7 @@ namespace Motive.SeriesData
             if(_combineFunction == CombineFunction.ContinuousAdd)
             {
 	            _seed = SeriesUtils.Random.Next();
-                var b = GenerateDataSeries();
+                var b = GenerateDataSeries(VectorSize, Count);
                 float tSec = (float)(currentTime / 1000.0);
                 var scaled = new FloatSeries(VectorSize, ArrayExtension.GetSizedFloatArray(VectorSize, tSec));
 				b.CombineInto(scaled, CombineFunction.Multiply);
@@ -168,7 +206,7 @@ namespace Motive.SeriesData
             Size = new FloatSeries(VectorSize, max);
         }
 
-		public void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
+		public void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0)
 		{
 			_series.CombineInto(b, combineFunction, t);
 		}
@@ -176,7 +214,7 @@ namespace Motive.SeriesData
 		public float[] FloatDataRef => _series.FloatDataRef;
 		public int[] IntDataRef => _series.IntDataRef;
 
-		public Series GetSeriesAt(float t)
+		public ISeries GetSeriesAt(float t)
 		{
 			return _series.GetSeriesAt(t);
 		}
@@ -186,7 +224,7 @@ namespace Motive.SeriesData
 			return _series.GetSeriesAt(index);
 		}
 
-		public void SetSeriesAt(int index, Series series)
+		public void SetSeriesAt(int index, ISeries series)
 		{
 			_series.SetSeriesAt(index, series);
 		}
@@ -201,31 +239,31 @@ namespace Motive.SeriesData
 			return _series.IntValueAt(index);
 		}
 		
-		public void InterpolateInto(Series b, float t)
+		public void InterpolateInto(ISeries b, float t)
 		{
 			_series.InterpolateInto(b, t);
 		}
 
-		public void InterpolateInto(Series b, ParametricSeries seriesT)
+		public void InterpolateInto(ISeries b, ParametricSeries seriesT)
 		{
 			_series.InterpolateInto(b, seriesT);
         }
 
 
-        // TODO: Need to convert everything to ISeries
-		public Store CreateLinearStore(int capacity) => new Store((Series)_series, new LineSampler(capacity));
+        // TODO: This may not be right for random, should be random sampler?
+		public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
 		public IStore Store(Sampler sampler = null)
 		{
 			sampler = sampler ?? new LineSampler(this.Count);
-			return new Store((Series)_series, sampler);
+			return new Store(this, sampler);
 		}
 
-		public List<Series> ToList()
+		public List<ISeries> ToList()
 		{
 			return _series.ToList();
 		}
 
-		public void SetByList(List<Series> items)
+		public void SetByList(List<ISeries> items)
 		{
 			_series.SetByList(items);
 		}

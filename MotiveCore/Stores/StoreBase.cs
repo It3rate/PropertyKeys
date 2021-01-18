@@ -21,7 +21,7 @@ namespace Motive.Stores
         }
 
         protected int _seriesId;
-        public Series Series
+        public ISeries Series
         {
 	        get => _seriesId > 0 ? Runner.CurrentSeries[_seriesId] : null;
 	        set
@@ -38,7 +38,7 @@ namespace Motive.Stores
 
         protected StoreBase(ISeries series = null)
         {
-	        Series = (Series)series;
+	        Series = (ISeries)series;
 	        Runner.CurrentStores.AddToLibrary(this);
         }
         protected StoreBase(int seriesId, int sampleId, CombineFunction combineFunction)
@@ -62,10 +62,10 @@ namespace Motive.Stores
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
 
-        public abstract Series GetSeriesRef();
-        public abstract void SetFullSeries(Series value);
+        public abstract ISeries GetSeriesRef();
+        public abstract void SetFullSeries(ISeries value);
 
-        public abstract Series GetValuesAtT(float t);
+        public abstract ISeries GetValuesAtT(float t);
         
         public abstract ParametricSeries GetSampledTs(ParametricSeries seriesT);
         public virtual Series GetNeighbors(int index, bool wrapEdges = true)

@@ -28,24 +28,24 @@ namespace Motive.Adapters.Color
     public static class ColorAdapter
     {
 
-        public static float RedComponent(this Series series)
+        public static float RedComponent(this ISeries series)
         {
             return series.X;
         }
-        public static float GreenComponent(this Series series)
+        public static float GreenComponent(this ISeries series)
         {
             return series.Y;
         }
-        public static float BlueComponent(this Series series)
+        public static float BlueComponent(this ISeries series)
         {
             return series.FloatValueAt(2);
         }
-        public static float AlphaComponent(this Series series)
+        public static float AlphaComponent(this ISeries series)
         {
 	        return series.FloatValueAt(3);
         }
 
-        public static ParametricSeries RgbToHsl(this Series series)
+        public static ParametricSeries RgbToHsl(this ISeries series)
         {
 	        float[] input = series.GetSeriesAt(0).FloatDataRef;
 			float[] result = new float[3];
@@ -92,7 +92,7 @@ namespace Motive.Adapters.Color
             return new ParametricSeries(3, result);
         }
 
-        public static System.Drawing.Color RGB(this Series a)
+        public static System.Drawing.Color RGB(this ISeries a)
 	    {
 		    System.Drawing.Color result;
             float r = Math.Max(0, Math.Min(1, a.RedComponent()));
@@ -118,7 +118,7 @@ namespace Motive.Adapters.Color
 		    return result;
 	    }
 
-        public static Series RandomColor(float minR, float maxR, float minG, float maxG, float minB, float maxB)
+        public static ISeries RandomColor(float minR, float maxR, float minG, float maxG, float minB, float maxB)
         {
 		        return new FloatSeries(3,
 			        (float)SeriesUtils.Random.NextDouble() * maxR + minR,

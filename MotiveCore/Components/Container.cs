@@ -145,7 +145,7 @@ namespace Motive.Components
 #endregion
 
 #region Sampling
-        public void AddLocalPropertiesAtT(Dictionary<PropertyId, Series> data, float t)
+        public void AddLocalPropertiesAtT(Dictionary<PropertyId, ISeries> data, float t)
         {
 	        foreach (var store in _properties)
 	        {
@@ -155,7 +155,7 @@ namespace Motive.Components
 		        }
 	        }
         }
-        public override Series GetSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        public override ISeries GetSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
         {
             var store = GetStore(propertyId);
             var result = store?.GetValuesAtT(t);
@@ -179,10 +179,10 @@ namespace Motive.Components
             return store != null ? store.GetSampledTs(seriesT) : seriesT;
         }
 
-        public virtual Series GetNestedSeriesAtT(PropertyId propertyId, float t, Series parentSeries)
+        public virtual ISeries GetNestedSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
         {
 	        // this uses t because many interpolations have no specific capacity information (eg a shared color store)
-	        Series result;
+	        ISeries result;
 	        int index = SamplerUtils.IndexFromT(NestedItemCount, t);
 	        var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, index);
 	        float indexT = sample.X;
@@ -197,7 +197,7 @@ namespace Motive.Components
 		        IContainer child = GetComposite(_children[childIndex]);
 				
 		        float indexTNorm = indexT * (child.Capacity / (child.Capacity - 1f)); // normalize
-		        Series val = GetSeriesAtT(propertyId, indexTNorm, parentSeries);
+		        ISeries val = GetSeriesAtT(propertyId, indexTNorm, parentSeries);
 		        result = child.GetNestedSeriesAtT(propertyId, segmentT, val);
 	        }
 	        return result;
@@ -205,7 +205,7 @@ namespace Motive.Components
         #endregion
 
 #region Draw
-		public virtual IRenderable QueryPropertiesAtT(Dictionary<PropertyId, Series> data, float t, bool addLocalProperties)
+		public virtual IRenderable QueryPropertiesAtT(Dictionary<PropertyId, ISeries> data, float t, bool addLocalProperties)
 		{
 			IRenderable result = null;
 			if (addLocalProperties)
@@ -245,7 +245,7 @@ namespace Motive.Components
 			return result;
 		}
 
-        public virtual void Draw(Graphics g, Dictionary<PropertyId, Series> dict)
+        public virtual void Draw(Graphics g, Dictionary<PropertyId, ISeries> dict)
         {
             var capacity = NestedItemCount;// NestedItemCountAtT(InterpolationT);
             if (capacity > 0)// != null)

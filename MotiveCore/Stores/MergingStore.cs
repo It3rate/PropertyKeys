@@ -13,9 +13,9 @@ namespace Motive.Stores
 	{
 		private readonly List<IStore> _stores;
 
-		public override int Capacity => GetStartDataStore().Capacity; // todo: use combine math to get functional store virtual count. Rename to capacity.
-		public override Series GetSeriesRef() => GetStartDataStore().GetSeriesRef();
-		public override void SetFullSeries(Series value) => GetStartDataStore().SetFullSeries(value);
+		public override int Capacity => GetStartDataStore().Capacity; // todo: use combine math to get functional store virtual count.
+		public override ISeries GetSeriesRef() => GetStartDataStore().GetSeriesRef();
+		public override void SetFullSeries(ISeries value) => GetStartDataStore().SetFullSeries(value);
 
 		public override Sampler Sampler
 		{
@@ -28,9 +28,9 @@ namespace Motive.Stores
 			_stores = new List<IStore>(stores);
 		}
 
-		public override Series GetValuesAtT(float t)
+		public override ISeries GetValuesAtT(float t)
 		{
-			Series series = null;
+			ISeries series = null;
 			foreach (var store in _stores)
 			{
 				if (store.CombineFunction == CombineFunction.ModifyT)

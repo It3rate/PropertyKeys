@@ -9,7 +9,7 @@ namespace Motive.SeriesData.Utils
 		{
 			return Array.ConvertAll(values, x => (float) x);
 		}
-		public static Series ToSeries(this int[] values)
+		public static ISeries ToSeries(this int[] values)
 		{
 			return new IntSeries(1, values);
 		}
@@ -23,7 +23,7 @@ namespace Motive.SeriesData.Utils
 			return Array.ConvertAll(values, x => (int) x);
 		}
 
-		public static Series ToSeries(this float[] values)
+		public static ISeries ToSeries(this float[] values)
 		{
 			return new FloatSeries(1, values);
 		}

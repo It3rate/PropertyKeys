@@ -56,10 +56,10 @@ namespace Motive.Components.Simulators.Automata
             return RuleSets[currentIndex];
         }
 
-        public virtual Series InvokeRuleSet(Series currentValue, Series neighbors, int elementIndex)
+        public virtual ISeries InvokeRuleSet(ISeries currentValue, ISeries neighbors, int elementIndex)
         {
             var ruleSet = GetRuleSet(elementIndex);
-            Series result = ruleSet.InvokeRules(currentValue, neighbors, this);
+            ISeries result = ruleSet.InvokeRules(currentValue, neighbors, this);
             LastInvokedRule = ruleSet.InvokedRule;
             return result;
         }

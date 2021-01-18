@@ -9,7 +9,7 @@ namespace Motive.Graphic
 {
     public interface IRenderable : IDefinition
     {
-	    IDrawableSeries GetDrawable(Dictionary<PropertyId, Series> dict);
-        void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g);
+	    IDrawableSeries GetDrawable(Dictionary<PropertyId, ISeries> dict);
+        void DrawWithProperties(Dictionary<PropertyId, ISeries> dict, Graphics g);
     }
 }

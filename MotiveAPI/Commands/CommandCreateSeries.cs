@@ -7,7 +7,7 @@ namespace Motive.Commands
 {
     public class CommandCreateSeries : CommandBase
     {
-	    private Series _series;
+	    private ISeries _series;
 	    private readonly SeriesType _type;
 	    private readonly int _vectorSize;
 	    private readonly float[] _floatValues;

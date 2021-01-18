@@ -100,7 +100,7 @@ namespace Motive.Components
             }
 	    }
 
-	    public override void Draw(Graphics g, Dictionary<PropertyId, Series> dict)
+	    public override void Draw(Graphics g, Dictionary<PropertyId, ISeries> dict)
 	    {
 		    var selfLoc = GetStore(PropertyId.Location).GetSeriesRef().FloatDataRef;
             g.DrawRectangle(new Pen(Brushes.Beige, 1), new Rectangle((int)selfLoc[0], (int)selfLoc[1], 
@@ -110,7 +110,7 @@ namespace Motive.Components
 			    var child = Runner.CurrentComposites[_children[i]];
 			    if (child is IDrawable drawable)
 			    {
-				    drawable.Draw(g, new Dictionary<PropertyId, SeriesData.Series>());
+				    drawable.Draw(g, new Dictionary<PropertyId, ISeries>());
 			    }
             }
 			

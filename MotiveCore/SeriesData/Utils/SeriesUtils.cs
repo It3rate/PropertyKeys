@@ -10,13 +10,13 @@ namespace Motive.SeriesData.Utils
 
     public class SeriesUtils
     {
-	    public static Series SwizzleSeries(Slot[] swizzleMap, Series series)
+	    public static ISeries SwizzleSeries(Slot[] swizzleMap, ISeries series)
 	    {
-		    Series result;
+		    ISeries result;
 	        if (swizzleMap != null)
 	        {
 		        float[] floats = new float[swizzleMap.Length];
-		        Series value = series.GetSeriesAt(0);
+		        ISeries value = series.GetSeriesAt(0);
 		        for (int i = 0; i < swizzleMap.Length; i++)
 		        {
                     floats[i] = SlotUtils.ComputeOnElement(value, swizzleMap[i]);
@@ -30,9 +30,9 @@ namespace Motive.SeriesData.Utils
 
 	        return result;
 	    }
-		public static Series CreateSeriesOfType(Series series, int[] values, int vectorSize = -1)
+		public static ISeries CreateSeriesOfType(ISeries series, int[] values, int vectorSize = -1)
 		{
-			Series result;
+			ISeries result;
 			vectorSize = (vectorSize == -1) ? series.VectorSize : vectorSize;
             if (series.Type == SeriesType.Int)
 			{
@@ -50,7 +50,7 @@ namespace Motive.SeriesData.Utils
 			return result;
 		}
 
-		public static Series CreateSeriesOfType(Series series, float[] values, int vectorSize = -1)
+		public static Series CreateSeriesOfType(ISeries series, float[] values, int vectorSize = -1)
 		{
 			Series result;
 			vectorSize = (vectorSize == -1) ? series.VectorSize : vectorSize;
@@ -75,9 +75,9 @@ namespace Motive.SeriesData.Utils
 			return result;
 		}
 
-		public static Series CreateSeriesOfType(SeriesType seriesType, int vectorSize, int elementCount, float defaultValue = 0)
+		public static ISeries CreateSeriesOfType(SeriesType seriesType, int vectorSize, int elementCount, float defaultValue = 0)
 		{
-			Series result;
+			ISeries result;
 			int arraySize = elementCount * vectorSize;
 			switch (seriesType)
 			{
@@ -101,7 +101,7 @@ namespace Motive.SeriesData.Utils
 			return result;
 		}
 
-        public static bool IsEqual(Series a, Series b)
+        public static bool IsEqual(ISeries a, ISeries b)
 		{
 			var result = true;
 			if (a.GetType() == b.GetType() && a.Count == b.Count && a.VectorSize == b.VectorSize && a.IndexClampMode == b.IndexClampMode)
@@ -186,23 +186,23 @@ namespace Motive.SeriesData.Utils
 			}
 		}
 
-        public static Series InterpolateInto(Series source, Series target, float t)
+        public static ISeries InterpolateInto(ISeries source, ISeries target, float t)
         {
 	        source.InterpolateInto(target, t);
 	        return source;
         }
-        public static Series InterpolateInto(Series source, Series target, ParametricSeries seriesT)
+        public static ISeries InterpolateInto(ISeries source, ISeries target, ParametricSeries seriesT)
         {
 	        source.InterpolateInto(target, seriesT);
 	        return source;
         }
-        public static Series SetSeriesAtIndex(Series destination, int index, Series value)
+        public static ISeries SetSeriesAtIndex(ISeries destination, int index, ISeries value)
         {
 	        destination.SetSeriesAt(index, value);
 	        return destination;
         }
 
-        public static Series MergeSeriesElements(params Series[] seriesArray)
+        public static ISeries MergeSeriesElements(params Series[] seriesArray)
         {
 			Debug.Assert(seriesArray.Length > 0);
 	        var totalElements = 0;
@@ -215,7 +215,7 @@ namespace Motive.SeriesData.Utils
 			int len = 0;
 			for (int seriesIndex = 0; seriesIndex < seriesArray.Length; seriesIndex++)
 			{
-				Series series = seriesArray[seriesIndex];
+				ISeries series = seriesArray[seriesIndex];
                 for (int index = 0; index < series.Count; index++)
                 {
 	                var svals = series.GetSeriesAt(index).FloatDataRef;
@@ -229,7 +229,7 @@ namespace Motive.SeriesData.Utils
         }
 
 
-        private static Series SlotsFunction(BinaryFloatEquation equation, float defaultValue, Series source, params Slot[] slots)
+        private static Series SlotsFunction(BinaryFloatEquation equation, float defaultValue, ISeries source, params Slot[] slots)
         {
 	        bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
 	        var slotSize = useAllSlots ? source.VectorSize : slots.Length;
@@ -261,31 +261,31 @@ namespace Motive.SeriesData.Utils
 	        }
 	        return CreateSeriesOfType(source, result);
         }
-        public static Series SumSlots(Series source, params Slot[] slots)
+        public static Series SumSlots(ISeries source, params Slot[] slots)
         {
             return SlotsFunction((a, b) => a + b, 0, source, slots);
         }
-        public static Series MultiplySlots(Series source, params Slot[] slots)
+        public static ISeries MultiplySlots(ISeries source, params Slot[] slots)
         {
             return SlotsFunction((a, b) => a * b, 1, source, slots);
         }
-        public static Series ScaleSlots(Series source, params Slot[] slots)
+        public static ISeries ScaleSlots(ISeries source, params Slot[] slots)
         {
 	        return SlotsFunction((a, b) => a * b, 0, source, slots);
         }
-        public static Series MaxSlots(Series source, params Slot[] slots)
+        public static Series MaxSlots(ISeries source, params Slot[] slots)
         {
 	        return SlotsFunction((a, b) => b > a ? b : a, float.MinValue, source, slots);
         }
-        public static Series MinSlots(Series source, params Slot[] slots)
+        public static Series MinSlots(ISeries source, params Slot[] slots)
         {
 	        return SlotsFunction((a, b) => b < a ? b : a, float.MaxValue, source, slots);
         }
-        public static Series ClampTo01Slots(Series source, params Slot[] slots)
+        public static Series ClampTo01Slots(ISeries source, params Slot[] slots)
         {
 	        return SlotsFunction((a, b) => Math.Max(0, Math.Min(1, b)), 0, source, slots);
         }
-        public static Series AverageSlots(Series source, params Slot[] slots)
+        public static Series AverageSlots(ISeries source, params Slot[] slots)
         {
             var result = SumSlots(source, slots).FloatDataRef; // now a copy due to SumSlots
 	        float len = source.Count;
@@ -295,7 +295,7 @@ namespace Motive.SeriesData.Utils
 	        }
 	        return CreateSeriesOfType(source, result);
         }
-        public static Series MaxDiffSlots(Series source, params Slot[] slots)
+        public static Series MaxDiffSlots(ISeries source, params Slot[] slots)
         {
             bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
             var slotSize = useAllSlots ? source.VectorSize : slots.Length;
@@ -341,7 +341,7 @@ namespace Motive.SeriesData.Utils
         }
 
         // Note: For simple cases it may be easier to use: float SlotUtils.ComputeOnElement(series, Slot.Widest, index)
-        private static Series PerElementFunction(BinaryFloatEquation equation, float defaultValue, Series source, params Slot[] slots)
+        private static ISeries PerElementFunction(BinaryFloatEquation equation, float defaultValue, ISeries source, params Slot[] slots)
         {
 	        bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
 	        var slotSize = useAllSlots ? source.VectorSize : slots.Length;
@@ -373,29 +373,29 @@ namespace Motive.SeriesData.Utils
 	        }
 	        return CreateSeriesOfType(source, result, 1);
         }
-        public static Series SumPerElement(Series source, params Slot[] slots)
+        public static ISeries SumPerElement(ISeries source, params Slot[] slots)
         {
             return PerElementFunction((a, b) => a + b, 0, source, slots);
         }
-        public static Series MultiplyPerElement(Series source, params Slot[] slots)
+        public static ISeries MultiplyPerElement(ISeries source, params Slot[] slots)
         {
             return PerElementFunction((a, b) => a * b, 1, source, slots);
         }
-        public static Series ScalePerElement(Series source, params Slot[] slots)
+        public static ISeries ScalePerElement(ISeries source, params Slot[] slots)
         {
 	        return PerElementFunction((a, b) => a * b, 0, source, slots);
         }
-        public static Series MaxPerElement(Series source, params Slot[] slots)
+        public static ISeries MaxPerElement(ISeries source, params Slot[] slots)
         {
 	        return PerElementFunction((a, b) => b > a ? b : a, float.MinValue, source, slots);
         }
-        public static Series MinPerElement(Series source, params Slot[] slots)
+        public static ISeries MinPerElement(ISeries source, params Slot[] slots)
         {
 	        return PerElementFunction((a, b) => b < a ? b : a, float.MaxValue, source, slots);
         }
 
 
-        public static void ShuffleElements(Series series)
+        public static void ShuffleElements(ISeries series)
         {
 	        var len = series.Count;
 	        for (var i = 0; i < len; i++)

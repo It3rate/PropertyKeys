@@ -95,7 +95,7 @@ namespace Motive.SeriesData
         // }
         //}
 
-        public override void InterpolateValue(Series a, Series b, int i, float t)
+        public override void InterpolateValue(ISeries a, ISeries b, int i, float t)
         {
 	        _intValues[i] = Interpolate(_intValues[i], b.IntValueAt(i), t);
         }
@@ -104,7 +104,7 @@ namespace Motive.SeriesData
 	        return (int)Math.Round((b - a) * t) + a;
         }
 
-        public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
+        public override void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0)
 		{
 			int minSize = Math.Min(DataSize, b.DataSize);
             switch (combineFunction)
@@ -195,7 +195,7 @@ namespace Motive.SeriesData
 			return new IntSeries(VectorSize, result) { IndexClampMode = this.IndexClampMode };
 		}
 
-		public override void SetSeriesAt(int index, Series series)
+		public override void SetSeriesAt(int index, ISeries series)
 		{
 			var startIndex = IndexClampMode.GetClampedValue(index, Count);//Math.Min(Count - 1, Math.Max(0, index));
 			Array.Copy(series.IntDataRef, 0, _intValues, startIndex * VectorSize, VectorSize);

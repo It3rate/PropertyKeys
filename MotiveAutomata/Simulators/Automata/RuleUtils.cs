@@ -10,7 +10,7 @@ namespace Motive.Components.Simulators.Automata
 {
     public static class RuleUtils
     {
-	    public static Series Mix(Series source, Series target, ParametricSeries mix)
+	    public static ISeries Mix(ISeries source, ISeries target, ParametricSeries mix)
         {
             return new FloatSeries(source.VectorSize,
                 source.X + (target.X - 0.5f) * mix.X,

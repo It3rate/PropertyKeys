@@ -23,7 +23,7 @@ namespace Motive.Tests
 		[TestMethod]
 		public void TestGetDimsForIndex()
 		{
-			Series series = new FloatSeries(1, new[] {0f, 1f});
+			ISeries series = new FloatSeries(1, new[] {0f, 1f});
             int virtualCount = 100;
 			int[] strides = {10,10};
 			int[] sample;
@@ -50,7 +50,7 @@ namespace Motive.Tests
 		[TestMethod]
 		public void TestGetStrideTsForIndex()
 		{
-			Series series = new FloatSeries(1, new[] {0f, 1f});
+			ISeries series = new FloatSeries(1, new[] {0f, 1f});
             int virtualCount = 100;
             int[] strides = {10, 10};
 			var cl = strides[0] - 1f;
@@ -80,7 +80,7 @@ namespace Motive.Tests
 		[TestMethod]
 		public void TestGetStrideTsForT()
 		{
-			Series series = new FloatSeries(1, new[] {0f, 1f});
+			ISeries series = new FloatSeries(1, new[] {0f, 1f});
             int virtualCount = 100;
             int[] strides = {10, 10};
 			var cl = strides[0] - 1f;

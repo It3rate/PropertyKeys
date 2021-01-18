@@ -46,7 +46,7 @@ namespace Motive.Graphic
 
 		    return new BezierSeries(values, moves);
         }
-        public override IDrawableSeries GetDrawable(Dictionary<PropertyId, Series> dict)
+        public override IDrawableSeries GetDrawable(Dictionary<PropertyId, ISeries> dict)
         {
             var roundness = dict.ContainsKey(PropertyId.Roundness) ? dict[PropertyId.Roundness].X : _defaultRoundness;
 
@@ -56,7 +56,7 @@ namespace Motive.Graphic
             return GenerateUIBox(szX * 0.8f + 0.2f , szY * 0.8f + 0.2f, roundness);
         }
 
-        public override void DrawWithProperties(Dictionary<PropertyId, Series> dict, Graphics g)
+        public override void DrawWithProperties(Dictionary<PropertyId, ISeries> dict, Graphics g)
         {
             BezierSeries bezier = (BezierSeries)GetDrawable(dict);
             if (bezier != null)
