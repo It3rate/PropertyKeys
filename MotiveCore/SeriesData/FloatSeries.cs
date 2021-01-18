@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Motive.SeriesData.Utils;
@@ -6,18 +7,13 @@ using Motive.Stores;
 
 namespace Motive.SeriesData
 {
-	public class FloatSeries : Series
+	public class FloatSeries : SeriesBase
 	{
 		public override SeriesType Type => SeriesType.Float;
 
-        //public override int Count => (int)(_floatValues.Length / VectorSize);
-        //public override int DataSize => _floatValues.Length;
-        
 		public FloatSeries(int vectorSize, params float[] values) : base(vectorSize, values)
 		{
         }
-
-		//public float[] this[int index] => GetSeriesAt(index).FloatDataRef;
 
 		public override void InterpolateValue(ISeries a, ISeries b, int i, float t)
 		{
@@ -28,7 +24,6 @@ namespace Motive.SeriesData
 			return (b - a) * t + a;
 		}
 
-
         public override void Map(FloatEquation floatEquation)
 		{
 			for (int i = 0; i < _floatValues.Length; i++)
@@ -36,82 +31,6 @@ namespace Motive.SeriesData
 				_floatValues[i] = floatEquation.Invoke(_floatValues[i]);
 			}
 		}
-		//protected float Add(float a, float b, float t) 
-		//{
-		//	return (b - a) * t + a;
-		//}
-
-        //public override void Append(Series series)
-        //{
-        //	Array.Resize(ref _floatValues, _floatValues.Length + VectorSize);
-        //	SetSeriesAt(Count - 1, series);
-        //}
-        //protected override void CalculateFrame()
-        //{
-        //	var min = ArrayExtension.GetFloatMaxArray(VectorSize);
-        //	var max = ArrayExtension.GetFloatMinArray(VectorSize);
-
-        //	for (var i = 0; i < DataSize; i += VectorSize)
-        //	{
-        //		for (var j = 0; j < VectorSize; j++)
-        //		{
-        //			if (_floatValues[i + j] < min[j])
-        //			{
-        //				min[j] = _floatValues[i + j];
-        //			}
-
-        //			if (_floatValues[i + j] > max[j])
-        //			{
-        //				max[j] = _floatValues[i + j];
-        //			}
-        //		}
-        //	}
-
-        //	Frame = new RectFSeries(ArrayExtension.CombineFloatArrays(min, max));
-        //	ArrayExtension.SubtractFloatArrayFrom(max, min);
-        //	Size = new FloatSeries(VectorSize, max);
-        //}
-
-        //// todo: should reverse based on slots, e.g. a grid sample may have more than xy in vectorSize
-        //public override void ReverseEachElement()
-        //{
-        //	for (int i = 0; i < Count; i++)
-        //	{
-        //		var org = GetSeriesAt(i).FloatDataRef;
-        //		Array.Reverse(org);
-        //		SetSeriesAt(i, new FloatSeries(VectorSize, org));
-        //          }
-        //      }
-
-        //      public override void InterpolateInto(Series b, float t)
-        //      {
-        //       for (var i = 0; i < DataSize; i++)
-        //       {
-        //        if (i < b.DataSize)
-        //        {
-        //	        _floatValues[i] += (b.FloatValueAt(i) - _floatValues[i]) * t;
-        //        }
-        //        else
-        //        {
-        //	        break;
-        //        }
-        //       }
-        //      }
-        //      public override void InterpolateInto(Series b, ParametricSeries seriesT)
-        //      {
-        //       for (var i = 0; i < DataSize; i++)
-        //       {
-        //        if (i < b.DataSize)
-        //        {
-        //	        var t = i < seriesT.DataSize ? seriesT[i] : seriesT[seriesT.DataSize - 1];
-        //	        _floatValues[i] += (b.FloatValueAt(i) - _floatValues[i]) * t;
-        //        }
-        //        else
-        //        {
-        //	        break;
-        //        }
-        //       }
-        //      }
 
         public override void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0)
         {
@@ -183,7 +102,7 @@ namespace Motive.SeriesData
         public override float[] FloatDataRef => _floatValues;
 		public override int[] IntDataRef => _floatValues.ToInt(); //_floatValues.ToInt();
 
-		public override Series GetSeriesAt(int index)
+		public override SeriesBase GetSeriesAt(int index)
 		{
 			var startIndex = IndexClampMode.GetClampedValue(index, Count);//Math.Min(Count - 1, Math.Max(0, index));
 			var result = new float[VectorSize];
@@ -204,8 +123,20 @@ namespace Motive.SeriesData
 			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, series.VectorSize);
 		}
 
-        //public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
-        public override float FloatValueAt(int index)
+		public override IList AppendBase(SeriesBase series)
+		{
+            var len = _floatValues.Length;
+            float[] newArray = new float[len + series.DataSize];
+            _floatValues.CopyTo(newArray, 0);
+			for (int i = 0; i < series.DataSize; i++)
+			{
+				newArray[len + i] = series.FloatValueAt(i);
+			}
+			_floatValues = newArray;
+			return _floatValues;
+		}
+//public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
+public override float FloatValueAt(int index)
 		{
             index = IndexClampMode.GetClampedValue(index, _floatValues.Length);//Math.Max(0, Math.Min(_floatValues.Length - 1, index));
             return _floatValues[index];

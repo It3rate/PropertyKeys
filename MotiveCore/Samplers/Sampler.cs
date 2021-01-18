@@ -93,7 +93,7 @@ namespace Motive.Samplers
         public virtual int NeighborCount => 2;
 		private int WrappedIndex(int index, int capacity) => index >= capacity ? 0 : index < 0 ? capacity - 1 : index;
 		// Neighbors always requires raw data, so no virtual gets.
-        public virtual Series GetNeighbors(ISeries series, int index, bool wrapEdges = true)
+        public virtual SeriesBase GetNeighbors(ISeries series, int index, bool wrapEdges = true)
         {
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);

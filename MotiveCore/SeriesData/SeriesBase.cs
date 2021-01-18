@@ -10,32 +10,14 @@ using Motive.Components.Libraries;
 
 namespace Motive.SeriesData
 {
-	//public interface ISeriesBaseX
-	//{
-	//	int Count { get; }
-	//	SeriesType Type { get; }
-	//	int VectorSize { get; set; }
-	//	DiscreteClampMode IndexClampMode { get; set; }
-
-	//	float FloatValueAt(int index);
-	//	IStore Store(Sampler sampler = null);
-	//	ISeriesBaseX Copy();
-
- //       void ResetData();
- //       void ReverseEachElement();
- //       void Append(Series series);
- //       void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
- //       void InterpolateInto(Series b, float t);
- //       void InterpolateInto(Series b, ParametricSeries seriesT);
- //   }
-    public abstract class Series : ISeries
+    public abstract class SeriesBase : ISeries
     {
-	    protected readonly IList _valuesRef;
+	    protected IList _valuesRef;
 
 	    protected float[] _floatValues;
 	    protected int[] _intValues;
 
-        protected Series(int vectorSize, float[] values)
+        protected SeriesBase(int vectorSize, float[] values)
         {
 	        // insure at least vectorSize elements in values array.
 	        // This can be eliminated if moving to a clamping system for series (shouldn't be needed anyway, but currently copy etc relies on it).
@@ -55,7 +37,7 @@ namespace Motive.SeriesData
             VectorSize = vectorSize;
 	        _valuesRef = _floatValues;
         }
-        protected Series(int vectorSize, int[] values)
+        protected SeriesBase(int vectorSize, int[] values)
         {
 	        // insure at least vectorSize elements in values array.
 	        if (values.Length < vectorSize)
@@ -92,11 +74,6 @@ namespace Motive.SeriesData
         public int DataSize => _valuesRef.Count;
         public virtual int Count => (int)(_valuesRef.Count / VectorSize);
         public abstract SeriesType Type { get; }
-
-
-        /// <summary>
-        /// The raw size of the stored data array, ignores SampleCount and VectorSize.
-        /// </summary>
 
         protected int StartIndex = 0;
         protected int EndIndex = 0;
@@ -139,12 +116,10 @@ namespace Motive.SeriesData
             protected set => _cachedSize = value;
         }
 
-        public void Append(Series series)
+        public abstract IList AppendBase(SeriesBase series);
+        public virtual void Append(SeriesBase series)
         {
-	        for (int i = 0; i < series.DataSize; i++)
-	        {
-		        _valuesRef.Add(series._valuesRef[i]);
-            }
+	        _valuesRef = AppendBase(series);
         }
 
         private float[] GetFloatArray()
@@ -214,7 +189,6 @@ namespace Motive.SeriesData
 		        if (i < b.DataSize)
 		        {
                     InterpolateValue(this, b, i, t);
-			        //_valuesRef[i] = Interpolate(_valuesRef[i], b._valuesRef[i], t);
 		        }
 		        else
 		        {
@@ -231,7 +205,6 @@ namespace Motive.SeriesData
 		        {
 			        var t = i < seriesT.DataSize ? seriesT[i] : seriesT[seriesT.DataSize - 1];
 			        InterpolateValue(this, b, i, t);
-                    //_valuesRef[i] = Interpolate(_valuesRef[i], b._valuesRef[i], t);
 		        }
 		        else
 		        {
@@ -242,22 +215,20 @@ namespace Motive.SeriesData
 
         public abstract void Map(FloatEquation floatEquation);
 
-        //protected abstract T Add<T>(T a, T b, float t);
-
-        public static ISeries operator +(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Add);
-        public static ISeries operator -(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Subtract);
-        public static ISeries operator *(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Multiply);
-        public static ISeries operator /(Series a, Series b) => ApplyFunction(a, b, CombineFunction.Divide);
+        public static ISeries operator +(SeriesBase a, SeriesBase b) => ApplyFunction(a, b, CombineFunction.Add);
+        public static ISeries operator -(SeriesBase a, SeriesBase b) => ApplyFunction(a, b, CombineFunction.Subtract);
+        public static ISeries operator *(SeriesBase a, SeriesBase b) => ApplyFunction(a, b, CombineFunction.Multiply);
+        public static ISeries operator /(SeriesBase a, SeriesBase b) => ApplyFunction(a, b, CombineFunction.Divide);
         private static ISeries ApplyFunction(ISeries a, ISeries b, CombineFunction combineFunction, float t = 0)
         {
-	        var result = (Series)a.Copy();
+	        var result = (SeriesBase)a.Copy();
 	        result.CombineInto(b, combineFunction, t);
 	        return result;
         }
 
         public abstract void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0);
 
-        public abstract Series GetSeriesAt(int index);
+        public abstract SeriesBase GetSeriesAt(int index);
         public abstract void SetSeriesAt(int index, ISeries series);
         public abstract float FloatValueAt(int index);
         public abstract int IntValueAt(int index);
@@ -265,11 +236,10 @@ namespace Motive.SeriesData
         public abstract int[] IntDataRef { get; }
         public abstract ISeries Copy();
 
-
         public virtual ISeries GetSeriesAt(float t) => GetSeriesAt(SamplerUtils.IndexFromT(Count, t));
-        public virtual Series GetVirtualValueAt(float t)
+        public virtual SeriesBase GetVirtualValueAt(float t)
         {
-	        Series result;
+	        SeriesBase result;
             if (t >= 1)
             {
                 result = GetSeriesAt(Count - 1);
@@ -301,17 +271,12 @@ namespace Motive.SeriesData
             return result;
         }
 
-
-
-
-
         public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
         public IStore Store(Sampler sampler = null)
         {
             sampler = sampler ?? new LineSampler(this.Count);
             return new Store(this, sampler);
         }
-
 
         public List<ISeries> ToList()
         {
@@ -352,7 +317,7 @@ namespace Motive.SeriesData
 
         public IEnumerator GetEnumerator()
         {
-            return new ISeriesEnumerator(this);
+            return new SeriesEnumerator(this);
         }
 
         public bool AssignIdIfUnset(int id)

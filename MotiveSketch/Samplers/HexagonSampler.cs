@@ -30,7 +30,7 @@ namespace Motive.Samplers
         }
         public override int NeighborCount => 6;
         private int WrappedIndexes(int x, int y) => (x >= Strides[0] ? 0 : x < 0 ? Strides[0] - 1 : x) + Strides[0] * (y >= Strides[1] ? 0 : y < 0 ? Strides[1] - 1 : y);
-        public override Series GetNeighbors(ISeries series, int index, bool wrapEdges = true)
+        public override SeriesBase GetNeighbors(ISeries series, int index, bool wrapEdges = true)
         {
 	        var seriesT = SamplerUtils.GetMultipliedJaggedT(Strides, SampleCount, index);
 	        int indexX = SamplerUtils.IndexFromT(Strides[0], seriesT[0]);

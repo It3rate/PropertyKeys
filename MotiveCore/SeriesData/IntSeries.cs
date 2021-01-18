@@ -1,22 +1,16 @@
 ﻿using System;
+using System.Collections;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
 
 namespace Motive.SeriesData
 {
-	public class IntSeries : Series
+	public class IntSeries : SeriesBase
 	{
 		public override SeriesType Type => SeriesType.Int;
-
-        //public override int Count => (int)(_intValues.Length / VectorSize);
-        //public override int DataSize => _intValues.Length;
-
-        public IntSeries(int vectorSize, params int[] values) : base(vectorSize, values)
+		public IntSeries(int vectorSize, params int[] values) : base(vectorSize, values)
 		{
 		}
-
-		//public int[] this[int index] => GetSeriesAt(index).IntDataRef;
-
 		public override void Map(FloatEquation floatEquation)
 		{
 			for (int i = 0; i < _intValues.Length; i++)
@@ -24,77 +18,6 @@ namespace Motive.SeriesData
 				_intValues[i] = (int)floatEquation.Invoke(_intValues[i]);
 			}
 		}
-        //      public override void Append(Series series)
-        //{
-        //	Array.Resize(ref _intValues, _intValues.Length + VectorSize);
-        //	SetSeriesAt(Count - 1, series);
-        //}
-        //      protected override void CalculateFrame()
-        //      {
-        //       var min = ArrayExtension.GetIntMinArray(VectorSize);
-        //       var max = ArrayExtension.GetIntMaxArray(VectorSize);
-
-        //       for (var i = 0; i < DataSize; i += VectorSize)
-        //       {
-        //        for (var j = 0; j < VectorSize; j++)
-        //        {
-        //	        if (_intValues[i + j] < min[j])
-        //	        {
-        //		        min[j] = _intValues[i + j];
-        //	        }
-
-        //	        if (_intValues[i + j] > max[j])
-        //	        {
-        //		        max[j] = _intValues[i + j];
-        //	        }
-        //        }
-        //       }
-
-        //       Frame = new RectFSeries(ArrayExtension.CombineIntArrays(min, max).ToFloat());
-        //       ArrayExtension.SubtractIntArrayFrom(max, min);
-        //       Size = new IntSeries(VectorSize, max);
-        //      }
-
-        //      public override void ReverseEachElement()
-        //{
-        //	for (int i = 0; i < Count; i++)
-        //	{
-        //		var org = GetSeriesAt(i).IntDataRef;
-        //		Array.Reverse(org);
-        //		SetSeriesAt(i, new IntSeries(VectorSize, org));
-        //	}
-        //}
-
-        //      public override void InterpolateInto(Series b, float t)
-        //{
-        //	for (var i = 0; i < DataSize; i++)
-        //	{
-        //		if (i < b.DataSize)
-        //              {
-        //                  _intValues[i] += (int)Math.Round((b.IntValueAt(i) - _intValues[i]) * t);
-        //		}
-        //		else
-        //		{
-        //			break;
-        //		}
-        //	}
-        //      }
-        //      public override void InterpolateInto(Series b, ParametricSeries seriesT)
-        //{
-        // for (var i = 0; i < DataSize; i++)
-        // {
-        //  if (i < b.DataSize)
-        //  {
-        //   var t = i < seriesT.DataSize ? seriesT[i] : seriesT[seriesT.DataSize - 1];
-        //   _intValues[i] += (int)Math.Round((b.IntValueAt(i) - _intValues[i]) * t);
-        //        }
-        //  else
-        //  {
-        //   break;
-        //  }
-        // }
-        //}
-
         public override void InterpolateValue(ISeries a, ISeries b, int i, float t)
         {
 	        _intValues[i] = Interpolate(_intValues[i], b.IntValueAt(i), t);
@@ -178,7 +101,7 @@ namespace Motive.SeriesData
 		public override float[] FloatDataRef => _intValues.ToFloat(); //_intValues.ToFloat();
 		public override int[] IntDataRef => (int[]) _intValues;
 
-		public override Series GetSeriesAt(int index)
+		public override SeriesBase GetSeriesAt(int index)
 		{
 			var startIndex = IndexClampMode.GetClampedValue(index, Count);// Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
@@ -200,6 +123,19 @@ namespace Motive.SeriesData
 			var startIndex = IndexClampMode.GetClampedValue(index, Count);//Math.Min(Count - 1, Math.Max(0, index));
 			Array.Copy(series.IntDataRef, 0, _intValues, startIndex * VectorSize, VectorSize);
 		}
+
+		public override IList AppendBase(SeriesBase series)
+		{
+			var len = _intValues.Length;
+			int[] newArray = new int[len + series.DataSize];
+			_intValues.CopyTo(newArray, 0);
+			for (int i = 0; i < series.DataSize; i++)
+			{
+				newArray[len + i] = series.IntValueAt(i);
+			}
+			_intValues = newArray;
+			return _floatValues;
+        }
 
         public override float FloatValueAt(int index)
         {

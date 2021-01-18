@@ -21,7 +21,7 @@ namespace Motive.Stores
 		
 		ISeries GetValuesAtT(float t);
         ParametricSeries GetSampledTs(ParametricSeries seriesT);
-        Series GetNeighbors(int index, bool wrapEdges = true);
+        SeriesBase GetNeighbors(int index, bool wrapEdges = true);
 
 		void ResetData();
 		void BakeData();

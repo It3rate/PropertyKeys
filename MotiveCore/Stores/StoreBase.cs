@@ -68,7 +68,7 @@ namespace Motive.Stores
         public abstract ISeries GetValuesAtT(float t);
         
         public abstract ParametricSeries GetSampledTs(ParametricSeries seriesT);
-        public virtual Series GetNeighbors(int index, bool wrapEdges = true)
+        public virtual SeriesBase GetNeighbors(int index, bool wrapEdges = true)
         {
 	        return Sampler.GetNeighbors(GetSeriesRef(), index, wrapEdges);
         }

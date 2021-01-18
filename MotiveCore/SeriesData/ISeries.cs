@@ -11,7 +11,16 @@ using Motive.Stores;
 
 namespace Motive.SeriesData
 {
-	public interface ISeries : IEnumerable, IDefinition
+	public enum SeriesType
+	{
+		Int,
+		Float,
+		Parametric,
+		RectF,
+		Bezier,
+	}
+
+    public interface ISeries : IEnumerable, IDefinition
 	{
         // From IDefinition:
         //string Name { get; set; }
@@ -26,6 +35,7 @@ namespace Motive.SeriesData
 		int VectorSize { get; set; }
 		DiscreteClampMode IndexClampMode { get; set; }
 
+        // todo: this frame and size implementation is weak and temporary
         RectFSeries Frame { get; }
         ISeries Size { get; }
 
@@ -36,16 +46,16 @@ namespace Motive.SeriesData
 
         int DataSize { get; }
         ISeries GetSeriesAt(float t);
-        Series GetSeriesAt(int index);
+        SeriesBase GetSeriesAt(int index);
         void SetSeriesAt(int index, ISeries series);
-        Series GetVirtualValueAt(float t);
+        SeriesBase GetVirtualValueAt(float t);
         float FloatValueAt(int index);
         int IntValueAt(int index);
         float[] FloatDataRef { get; }
         int[] IntDataRef { get; }
 
         void ReverseEachElement();
-        void Append(Series series);
+        void Append(SeriesBase series);
         void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0);
         void InterpolateInto(ISeries b, float t);
         void InterpolateInto(ISeries b, ParametricSeries seriesT);
@@ -62,11 +72,11 @@ namespace Motive.SeriesData
         void MapOrderToItemPositions(IntSeries items);
     }
 
-	public class ISeriesEnumerator : IEnumerator
+	public class SeriesEnumerator : IEnumerator
 	{
 		private ISeries _instance;
 		private int _position = -1;
-		public ISeriesEnumerator(ISeries instance)
+		public SeriesEnumerator(ISeries instance)
 		{
 			_instance = instance;
 		}
