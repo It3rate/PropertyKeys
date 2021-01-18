@@ -136,7 +136,7 @@ namespace Motive.Tests.GraphicTests
             var colors = colorStore.GetSeriesRef().ToList();
             for (int i = 0; i < itemSeries.Count; i++)
             {
-                colors[i].Append(new FloatSeries(3, 0, 0, itemSeries.FloatDataAt(i)/ cap));
+                colors[i].Append(new FloatSeries(3, 0, 0, itemSeries.FloatValueAt(i)/ cap));
             }
             return colors;
         }
@@ -191,8 +191,8 @@ namespace Motive.Tests.GraphicTests
             var result = new IntSeries(1, new int[len]);
 	        for (int i = 0; i < len; i++)
 	        {
-		        int idx = (int)(Math.Round(attributedColors[i].GetRawDataAt(1).Z * (attributedColors.Count - 1f)));
-		        result.SetRawDataAt(i, new IntSeries(1, idx));
+		        int idx = (int)(Math.Round(attributedColors[i].GetSeriesAt(1).Z * (attributedColors.Count - 1f)));
+		        result.SetSeriesAt(i, new IntSeries(1, idx));
 	        }
 	        return result;
         }
@@ -258,8 +258,8 @@ namespace Motive.Tests.GraphicTests
 
         public static float RGBXYDistance1(Series series)
         {
-	        float[] input = series.GetRawDataAt(0).FloatDataRef;
-	        float[] location = series.GetRawDataAt(1).FloatDataRef;
+	        float[] input = series.GetSeriesAt(0).FloatDataRef;
+	        float[] location = series.GetSeriesAt(1).FloatDataRef;
 	        var max = input.Max();
 	        var min = input.Min();
 	        var dif = max - min;

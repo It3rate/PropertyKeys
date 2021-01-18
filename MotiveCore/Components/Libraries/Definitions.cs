@@ -1,12 +1,24 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
+using Motive.Samplers;
 
 namespace Motive.Components.Libraries
 {
+	class Cbase<T> where T:IComparable
+	{
+
+	}
+
+	class Sub2 : Cbase<int>
+	{
+
+	}
+
     public class Definitions<T> where T : class, IDefinition
     {
 	    private int _idCounter = 1;

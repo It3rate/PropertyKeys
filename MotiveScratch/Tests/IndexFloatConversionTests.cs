@@ -163,15 +163,15 @@ namespace Motive.Tests
 		{
 			float sample;
 
-            sample = series_1_31.GetRawDataAt(-10).X;
+            sample = series_1_31.GetSeriesAt(-10).X;
 			Assert.AreEqual(1f, sample, delta);
-			sample = series_1_31.GetRawDataAt(0).X;
+			sample = series_1_31.GetSeriesAt(0).X;
 			Assert.AreEqual(1f, sample, delta);
 
 			int lastIndex = series_1_31.DataSize > 4 ? 60 : 3;
-			sample = series_1_31.GetRawDataAt(lastIndex).X;
+			sample = series_1_31.GetSeriesAt(lastIndex).X;
 			Assert.AreEqual(22f, sample, delta);
-			sample = series_1_31.GetRawDataAt(99).X;
+			sample = series_1_31.GetSeriesAt(99).X;
 			Assert.AreEqual(22f, sample, delta);
 		}
 

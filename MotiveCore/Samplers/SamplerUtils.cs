@@ -173,7 +173,7 @@ namespace Motive.Samplers
 		    positions = new int[len];
 		    bool hasMultiple = series.Count > 1;
 		    int minSegSize = sampler.SampleCount - 1;
-		    int offset = series.IntDataAt(0);
+		    int offset = series.IntValueAt(0);
 		    for (int i = 0; i < len; i++)
 		    {
 			    // allow input of multiple parameters - use position per stride in this case.
@@ -181,7 +181,7 @@ namespace Motive.Samplers
 			    if (hasMultiple && series.Count > i)
 			    {
 				    minSegSize = sampler.Strides[i] - 1;
-				    offset = series.IntDataAt(i);
+				    offset = series.IntValueAt(i);
 			    }
 			    int curStride = sampler.Strides[i];
 			    int pos = offset / minSegSize;

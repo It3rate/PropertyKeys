@@ -55,7 +55,7 @@ namespace Motive.SeriesData
 		        var values = new int[VectorSize];
 		        for (var i = 0; i < values.Length; i++)
 		        {
-			        values[i] = _seriesList[i].GetVirtualValueAt(seriesT[i]).IntDataAt(0);
+			        values[i] = _seriesList[i].GetVirtualValueAt(seriesT[i]).IntValueAt(0);
 		        }
 
 		        result = new IntSeries(VectorSize, values);

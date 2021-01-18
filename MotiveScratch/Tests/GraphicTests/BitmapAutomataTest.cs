@@ -121,7 +121,7 @@ namespace Motive.Tests.GraphicTests
             };
             ParameterizedFunction grow = (currentValue, neighbors) =>
             {
-                float minR = neighbors.MinSlots(Slot.S3).X;
+                float minR = ((FloatSeries)neighbors).MinSlots(Slot.S3).X;
                 return SeriesUtils.InterpolateInto(currentValue,
                     new FloatSeries(4, 0, 0, 0, Math.Min(3f, 1.5f / minR)),
                     new ParametricSeries(4, 0, 0, 0, 0.01f));

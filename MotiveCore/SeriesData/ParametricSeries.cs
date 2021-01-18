@@ -13,17 +13,17 @@ namespace Motive.SeriesData
 
         public ParametricSeries(int vectorSize, params float[] values) : base(vectorSize, values)
         {
-	        if (_floatValues.Length > VectorSize)
-	        {
-		        var old = _floatValues;
-				_floatValues = new float[VectorSize];
-				Array.Copy(old, _floatValues, VectorSize);
-	        }
+            //if (_floatValues.Length > VectorSize)
+            //{
+            //    var old = _floatValues;
+            //    _floatValues = new float[VectorSize];
+            //    Array.Copy(old, _floatValues, VectorSize);
+            //}
         }
 
         public float this[int index]
         {
-	        get => index < _floatValues.Length ? _floatValues[index] : _floatValues[_floatValues.Length - 1];
+	        get => FloatValueAt(index);// index < _floatValues.Length ? _floatValues[index] : _floatValues[_floatValues.Length - 1];
 	        set => _floatValues[index < _floatValues.Length ? index : _floatValues.Length - 1] = value;
         }
 
@@ -32,7 +32,7 @@ namespace Motive.SeriesData
         public float AverageValue => _floatValues.Average();
         public float SumValue => _floatValues.Sum();
 
-        public override Series Copy()
+        public override ISeries Copy()
         {
 	        ParametricSeries result = new ParametricSeries(VectorSize, (float[])FloatDataRef.Clone());
 	        return result;

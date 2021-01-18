@@ -26,6 +26,7 @@ namespace Motive.Vis
             //g.DrawLine(Pens[(int)PenTypes.LightGray], new PointF(-1f, 0), new PointF(1f, 0));
             //g.DrawLine(Pens[(int)PenTypes.LightGray], new PointF(0, -1f), new PointF(0, 1f));
 
+            // could also generate a complex bezier curve here, to line up with other visual classes.
             foreach (var prim in agent.FocusPad.Paths)
             {
                 DrawPrimitive(g, prim, 0);

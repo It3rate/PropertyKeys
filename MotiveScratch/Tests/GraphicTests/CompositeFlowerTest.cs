@@ -74,7 +74,7 @@ namespace Motive.Tests.GraphicTests
 	        Store radiusStore = new Store(new FloatSeries(2, 8f, 8f), new LineSampler(70));
 	        composite.AddProperty(PropertyId.Radius, radiusStore);
 	        radiusStore.BakeData();
-	        radiusStore.GetSeriesRef().SetRawDataAt(standOutStar, new FloatSeries(2, 16f,16f));
+	        radiusStore.GetSeriesRef().SetSeriesAt(standOutStar, new FloatSeries(2, 16f,16f));
 	        composite.Renderer = new PolyShape();
 
             IStore blendColors = GetBlendColor(2);
@@ -163,7 +163,7 @@ namespace Motive.Tests.GraphicTests
             var colorEndStore2 = new Store(new FloatSeries(3, end2), hexSampler);
 
             colorEndStore1.BakeData();
-            colorEndStore1.GetSeriesRef().SetRawDataAt(standOutStar, new FloatSeries(3, 1f,0f,0f)); // Red star
+            colorEndStore1.GetSeriesRef().SetSeriesAt(standOutStar, new FloatSeries(3, 1f,0f,0f)); // Red star
 
             if (index == 0) return colorStartStore;
             else if (index == 1) return colorEndStore1;

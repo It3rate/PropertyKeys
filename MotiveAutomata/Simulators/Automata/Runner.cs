@@ -108,7 +108,7 @@ namespace Motive.Components.Simulators.Automata
 			        var currentValue = workingStore.GetSeriesRef().GetVirtualValueAt(i / (capacity - 1f));
 			        var neighbors = workingStore.GetNeighbors(i);
 			        var result = InvokeRuleSet(currentValue, neighbors, i);
-			        Automata.GetSeriesRef().SetRawDataAt(i, result);
+			        Automata.GetSeriesRef().SetSeriesAt(i, result);
 		        }
 
 		        PassCount++;

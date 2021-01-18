@@ -214,7 +214,7 @@ namespace Motive.Samplers
             var floats = new float[seriesA.VectorSize];
             for (int i = 0; i < floats.Length; i++)
             {
-                floats[i] = floatEquation(seriesA.FloatDataAt(i));
+                floats[i] = floatEquation(seriesA.FloatValueAt(i));
             }
             return new ParametricSeries(floats.Length, floats);
         }

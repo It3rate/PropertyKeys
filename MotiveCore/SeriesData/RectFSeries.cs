@@ -70,7 +70,7 @@ namespace Motive.SeriesData
 		    return new RectFSeries(X - outsetX, Y - outsetY, Right + outsetX * 2f, Bottom + outsetY * 2f);
 	    }
 
-	    public override Series Copy()
+	    public override ISeries Copy()
 	    {
 		    return new RectFSeries(_floatValues);
 	    }

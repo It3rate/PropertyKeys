@@ -57,9 +57,9 @@ namespace Motive.Stores
                     float[] resultArray = new float[result.VectorSize];
                     for (int i = 0; i < result.VectorSize; i++)
                     {
-	                    resultArray[i] = _mixStore?.GetValuesAtT(slotMapped.FloatDataAt(i)).FloatDataAt(i) ?? result.FloatDataAt(i);
+	                    resultArray[i] = _mixStore?.GetValuesAtT(slotMapped.FloatValueAt(i)).FloatValueAt(i) ?? result.FloatValueAt(i);
                     }
-					result.SetRawDataAt(0, new FloatSeries(slotMapped.VectorSize, resultArray));
+					result.SetSeriesAt(0, new FloatSeries(slotMapped.VectorSize, resultArray));
                     //result = _mixStore?.GetValuesAtT(slotMapped.X);
                 }
             }

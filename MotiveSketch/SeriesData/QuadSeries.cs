@@ -73,10 +73,10 @@
 //        public override Series GetVirtualValueAt(float t)
 //        {
 //            var index = (int)(t * Count);
-//            return GetRawDataAt(index);
+//            return GetSeriesAt(index);
 //        }
 
-//        public override Series GetRawDataAt(int index)
+//        public override Series GetSeriesAt(int index)
 //        {
 //            index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 //            var start = 0;
@@ -92,7 +92,7 @@
 //        }
 
 //        // todo: need an insertDataAtIndex
-//        public override void SetRawDataAt(int index, Series series)
+//        public override void SetSeriesAt(int index, Series series)
 //        {
 //            index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 //            var start = 0;
@@ -142,9 +142,9 @@
 //                GetSegmentFromT(t, out vT, out startIndex, out endIndex);
 //            }
 
-//            var aSeries = GetRawDataAt(startIndex);
+//            var aSeries = GetSeriesAt(startIndex);
 //            var a = new[] { aSeries.FloatDataRef[aSeries.DataSize - 2], aSeries.FloatDataRef[aSeries.DataSize - 1] };
-//            var b = GetRawDataAt(endIndex).FloatDataRef;
+//            var b = GetSeriesAt(endIndex).FloatDataRef;
 //            var moveType = endIndex < Moves.Length ? Moves[endIndex] : BezierMove.End;
 
 //            var p2Index = b.Length - 2;

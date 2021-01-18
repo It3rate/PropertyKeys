@@ -143,9 +143,10 @@ namespace Motive.Vis
             return String.Format("Pt:{0:0.##},{1:0.##}", X, Y);
         }
 
+        public static float DotSize { get; set; } = 0.0001f;
         public virtual void AppendToGraphicsPath(GraphicsPath path)
         {
-            path.AddEllipse(X, Y, 0.0001f, 0.0001f); // a point doesn't actually exist, but this is for scaffolding so rely on the line width.
+	        path.AddEllipse(X, Y, DotSize, DotSize); // a point doesn't actually exist, but this is for scaffolding so rely on the line width.
         }
     }
 }

@@ -81,7 +81,7 @@ namespace Motive.Samplers
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)
             {
-                result[i] = series.GetVirtualValueAt(seriesT[i]).FloatDataAt(i);
+                result[i] = series.GetVirtualValueAt(seriesT[i]).FloatValueAt(i);
             }
             return SeriesUtils.CreateSeriesOfType(series, result);
         }
@@ -97,8 +97,8 @@ namespace Motive.Samplers
         {
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);
-	        result.SetRawDataAt(0, series.GetRawDataAt(WrappedIndex(index - 1, SampleCount)));
-	        result.SetRawDataAt(1, series.GetRawDataAt(WrappedIndex(index + 1, SampleCount)));
+	        result.SetSeriesAt(0, series.GetSeriesAt(WrappedIndex(index - 1, SampleCount)));
+	        result.SetSeriesAt(1, series.GetSeriesAt(WrappedIndex(index + 1, SampleCount)));
             return result;
         }
 
@@ -166,7 +166,7 @@ namespace Motive.Samplers
                 var ts = GetSampledTs(t);
                 for (int j = 0; j < ts.VectorSize; j++)
                 {
-                    result.IntDataRef[i * strideLen + j] = (int)(ts.FloatDataAt(j) * Strides[j]);
+                    result.IntDataRef[i * strideLen + j] = (int)(ts.FloatValueAt(j) * Strides[j]);
                 }
             }
 

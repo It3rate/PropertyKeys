@@ -222,13 +222,13 @@ namespace Motive.Components.ExternalInput.Serial
             switch (propertyId)
             {
                 case PropertyId.MouseX:
-                    result = new ParametricSeries(1, _x / MainFrameRect.FloatDataAt(2));
+                    result = new ParametricSeries(1, _x / MainFrameRect.FloatValueAt(2));
                     break;
                 case PropertyId.MouseY:
-                    result = new ParametricSeries(1, _y / MainFrameRect.FloatDataAt(3));
+                    result = new ParametricSeries(1, _y / MainFrameRect.FloatValueAt(3));
                     break;
                 case PropertyId.MouseLocationT:
-                    result = new ParametricSeries(2, _x / MainFrameRect.FloatDataAt(2), _y / MainFrameRect.FloatDataAt(3));
+                    result = new ParametricSeries(2, _x / MainFrameRect.FloatValueAt(2), _y / MainFrameRect.FloatValueAt(3));
                     break;
                 case PropertyId.PenPressure:
 	                result = new ParametricSeries(1, _penPressure);
@@ -275,7 +275,7 @@ namespace Motive.Components.ExternalInput.Serial
                 case PropertyId.Mouse:
                 case PropertyId.MouseLocation:
                 default:
-                    result = new ParametricSeries(2, _x / MainFrameRect.FloatDataAt(2), _y / MainFrameRect.FloatDataAt(3));
+                    result = new ParametricSeries(2, _x / MainFrameRect.FloatValueAt(2), _y / MainFrameRect.FloatValueAt(3));
                     break;
             }
             return result;
@@ -300,7 +300,7 @@ namespace Motive.Components.ExternalInput.Serial
                 case PropertyId.SampleAtT:
                 case PropertyId.SampleAtTCombined:
                 case PropertyId.MouseLocationT:
-                    result = new ParametricSeries(2, _x / MainFrameRect.FloatDataAt(2), _y / MainFrameRect.FloatDataAt(3));
+                    result = new ParametricSeries(2, _x / MainFrameRect.FloatValueAt(2), _y / MainFrameRect.FloatValueAt(3));
                     break;
                 case PropertyId.Mouse:
                 default:

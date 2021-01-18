@@ -72,11 +72,11 @@ namespace Motive.SeriesData.Utils
 			float result;
 			if (slot < Slot.Combinatorial)
 			{
-				result = series.FloatDataAt((int)slot);
+				result = series.FloatValueAt((int)slot);
 			}
 			else
 			{
-				var floats = series.GetRawDataAt(index).FloatDataRef;
+				var floats = series.GetSeriesAt(index).FloatDataRef;
 				switch (slot)
 				{
 					case Slot.Sum:
@@ -114,11 +114,11 @@ namespace Motive.SeriesData.Utils
 			if (slot < Slot.Combinatorial)
 			{
 				int index = Math.Max(0, Math.Min(series.Count, (int)slot));
-				result = series.IntDataAt(index);
+				result = series.IntValueAt(index);
 			}
 			else
 			{
-				var ints = series.GetRawDataAt(0).IntDataRef;
+				var ints = series.GetSeriesAt(0).IntDataRef;
 				switch (slot)
 				{
 					case Slot.Sum:

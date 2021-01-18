@@ -60,13 +60,13 @@ namespace Motive.Components.ExternalInput
             switch (propertyId)
 		    {
 			    case PropertyId.MouseX:
-				    result = new ParametricSeries(1, _mouseX / rect.FloatDataAt(2));
+				    result = new ParametricSeries(1, _mouseX / rect.FloatValueAt(2));
 				    break;
 			    case PropertyId.MouseY:
-				    result = new ParametricSeries(1, _mouseY / rect.FloatDataAt(3));
+				    result = new ParametricSeries(1, _mouseY / rect.FloatValueAt(3));
 				    break;
 			    case PropertyId.MouseLocationT:
-				    result = new ParametricSeries(2, _mouseX / rect.FloatDataAt(2), _mouseY / rect.FloatDataAt(3));
+				    result = new ParametricSeries(2, _mouseX / rect.FloatValueAt(2), _mouseY / rect.FloatValueAt(3));
                     break;
 			    case PropertyId.MouseClickCount:
 				    result = new ParametricSeries(1, ClickCount);
@@ -74,7 +74,7 @@ namespace Motive.Components.ExternalInput
                 case PropertyId.Mouse:
 			    case PropertyId.MouseLocation:
                 default:
-				    result = new ParametricSeries(2, _mouseX / rect.FloatDataAt(2), _mouseY/ rect.FloatDataAt(3));
+				    result = new ParametricSeries(2, _mouseX / rect.FloatValueAt(2), _mouseY/ rect.FloatValueAt(3));
 				    break;
             }
 		    return result;
@@ -102,7 +102,7 @@ namespace Motive.Components.ExternalInput
 			    case PropertyId.SampleAtT:
                 case PropertyId.SampleAtTCombined:
                 case PropertyId.MouseLocationT:
-                    result = new ParametricSeries(2, _mouseX / Runner.MainFrameRect.FloatDataAt(2), _mouseY / Runner.MainFrameRect.FloatDataAt(3));
+                    result = new ParametricSeries(2, _mouseX / Runner.MainFrameRect.FloatValueAt(2), _mouseY / Runner.MainFrameRect.FloatValueAt(3));
 				    break;
                 case PropertyId.Mouse:
 			    default:

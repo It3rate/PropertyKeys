@@ -39,7 +39,7 @@ namespace Motive.Samplers
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)
 			{
-				result[i] = (i < Strides.Length) ? series.GetVirtualValueAt(seriesT[i]).FloatDataAt(i) : 0;
+				result[i] = (i < Strides.Length) ? series.GetVirtualValueAt(seriesT[i]).FloatValueAt(i) : 0;
 			}
 
 			return SeriesUtils.CreateSeriesOfType(series, result);
@@ -55,10 +55,10 @@ namespace Motive.Samplers
 	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
             var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
 
-            result.SetRawDataAt(0, series.GetRawDataAt(WrappedIndexes(indexX + 1, indexY)));
-            result.SetRawDataAt(1, series.GetRawDataAt(WrappedIndexes(indexX, indexY - 1)));
-            result.SetRawDataAt(2, series.GetRawDataAt(WrappedIndexes(indexX - 1, indexY)));;
-            result.SetRawDataAt(3, series.GetRawDataAt(WrappedIndexes(indexX, indexY + 1)));
+            result.SetSeriesAt(0, series.GetSeriesAt(WrappedIndexes(indexX + 1, indexY)));
+            result.SetSeriesAt(1, series.GetSeriesAt(WrappedIndexes(indexX, indexY - 1)));
+            result.SetSeriesAt(2, series.GetSeriesAt(WrappedIndexes(indexX - 1, indexY)));;
+            result.SetSeriesAt(3, series.GetSeriesAt(WrappedIndexes(indexX, indexY + 1)));
 
             return result;
         }

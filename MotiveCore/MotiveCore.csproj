@@ -105,6 +105,7 @@
     <Compile Include="SeriesData\RandomSeries.cs" />
     <Compile Include="SeriesData\RectFSeries.cs" />
     <Compile Include="SeriesData\Series.cs" />
+    <Compile Include="SeriesData\SeriesBase.cs" />
     <Compile Include="SeriesData\Utils\ArrayExtension.cs" />
     <Compile Include="SeriesData\Utils\BitmapExtension.cs" />
     <Compile Include="SeriesData\Utils\ClampMode.cs" />

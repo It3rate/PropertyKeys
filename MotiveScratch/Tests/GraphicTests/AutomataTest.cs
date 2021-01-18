@@ -85,7 +85,7 @@ namespace Motive.Tests.GraphicTests
 			
             var automataStore = new Store(new FloatSeries(3, 0f,0f,0f), sampler);
 			automataStore.BakeData();
-            //automataStore.GetSeriesRef().SetRawDataAt(575, new FloatSeries(3, 0f,0f,.7f));
+            //automataStore.GetSeriesRef().SetSeriesAt(575, new FloatSeries(3, 0f,0f,.7f));
 
 		    var runner = new Components.Simulators.Automata.Runner(automataStore);
 		    CreateHealingCrystal(runner);
@@ -128,7 +128,7 @@ namespace Motive.Tests.GraphicTests
             {
 	            runnerParam.UpdateValuesAfterPass = false;
                 int index = (int)(runner.Automata.Capacity / 2.13f);
-                runner.Automata.GetSeriesRef().SetRawDataAt(index, new FloatSeries(3, 1f, 1f, 1f));
+                runner.Automata.GetSeriesRef().SetSeriesAt(index, new FloatSeries(3, 1f, 1f, 1f));
             };
 
             rules.AddRule(RuleCondition.PassCountIsUnder(30), RuleProduction.ConstInterpFn(Colors.Black, 0.8f));
@@ -158,7 +158,7 @@ namespace Motive.Tests.GraphicTests
             rules.BeginPass = () => {};
             rules.ResetFn = (Components.Simulators.Automata.Runner runner) => {
 	            int index = (int)(runner.Automata.Capacity / 2.13f);
-	            runner.Automata.GetSeriesRef().SetRawDataAt(index, new FloatSeries(3, 1f, 1f, 1f));
+	            runner.Automata.GetSeriesRef().SetSeriesAt(index, new FloatSeries(3, 1f, 1f, 1f));
             };
 
             rules.AddRule(RuleCondition.PassCountIsUnder(30), RuleProduction.ConstInterpFn(Colors.Black, 0.8f));
@@ -251,7 +251,7 @@ namespace Motive.Tests.GraphicTests
             rules.ResetFn = (Components.Simulators.Automata.Runner runner) =>
             {
                 int index = (int)(runner.Automata.Capacity / 2.13f);
-                runner.Automata.GetSeriesRef().SetRawDataAt(index, new FloatSeries(3, 0.1f, 0.1f, .7f));
+                runner.Automata.GetSeriesRef().SetSeriesAt(index, new FloatSeries(3, 0.1f, 0.1f, .7f));
             };
             rules.AddRule(RuleCondition.PassCountIsUnder(40), DarkenSmall);
             rules.AddRule(RuleCondition.AllConditionsTrue(RuleCondition.PassCountIsUnder(42), RuleCondition.RandomChance(0.003f)), 

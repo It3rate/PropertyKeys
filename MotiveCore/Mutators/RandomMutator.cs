@@ -10,7 +10,7 @@ namespace Motive.Mutators
 		public RandomMutator(int vectorSize, SeriesType type, int virtualCount, RectFSeries minMax, int seed = 0) :
 			base(new Store(new RandomSeries(vectorSize, type, virtualCount, minMax, seed)))
 		{
-			RandomSeries = (RandomSeries) Store.GetSeriesRef();
+			//RandomSeries = (RandomSeries) Store.GetSeriesRef();
 		}
 
 		public override void Update(double currentTime, double deltaTime)

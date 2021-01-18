@@ -15,60 +15,72 @@ namespace Motive.SeriesData
 	{
         // From IDefinition:
         //string Name { get; set; }
-		//int Id { get; }
-		//RectFSeries Frame { get; }
-		//Series Size { get; }
-		//void Update(double currentTime, double deltaTime);
-		//void OnActivate();
-		//void OnDeactivate();
-		//bool AssignIdIfUnset(int id);
+        //int Id { get; }
+        //void Update(double currentTime, double deltaTime);
+        //void OnActivate();
+        //void OnDeactivate();
+        //bool AssignIdIfUnset(int id);
 
-		int Count { get; }
+        int Count { get; }
 		SeriesType Type { get; }
 		int VectorSize { get; set; }
 		DiscreteClampMode IndexClampMode { get; set; }
 
-
-        float FloatDataAt(int index);
-		IStore Store(Sampler sampler = null);
-		Series Copy();
+        RectFSeries Frame { get; }
+        Series Size { get; }
 
 		float X { get; }
 		float Y { get; }
 		float Z { get; }
 		float W { get; }
 
-		//int DataSize { get; }
-		//Series GetRawDataAt(float t);
-		//Series GetRawDataAt(int index);
-		//void SetRawDataAt(int index, Series series);
-		//Series GetVirtualValueAt(float t);
-		//float FloatDataAt(int index);
-		//int IntDataAt(int index);
-		//float[] FloatDataRef { get; }
-		//int[] IntDataRef { get; }
+        int DataSize { get; }
+        Series GetSeriesAt(float t);
+        Series GetSeriesAt(int index);
+        void SetSeriesAt(int index, Series series);
+        Series GetVirtualValueAt(float t);
+        float FloatValueAt(int index);
+        int IntValueAt(int index);
+        float[] FloatDataRef { get; }
+        int[] IntDataRef { get; }
 
-		//void ResetData();
-		//void ReverseEachElement();
-		//void Append(Series series);
-		//void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
-		//void InterpolateInto(Series b, float t);
-		//void InterpolateInto(Series b, ParametricSeries seriesT);
+        void ReverseEachElement();
+        void Append(Series series);
+        void CombineInto(Series b, CombineFunction combineFunction, float t = 0);
+        void InterpolateInto(Series b, float t);
+        void InterpolateInto(Series b, ParametricSeries seriesT);
 
-		//Store CreateLinearStore(int capacity);
-		//IStore Store(Sampler sampler = null);
-		//List<Series> ToList();
-		//void SetByList(List<Series> items);
-		//Series Copy();
+        Store CreateLinearStore(int capacity);
+        IStore Store(Sampler sampler = null);
+        List<Series> ToList();
+        void SetByList(List<Series> items);
+        ISeries Copy();
 
-		//Series SumSlots(params Slot[] slots);
-		//Series MultiplySlots(params Slot[] slots);
-		//Series AverageSlots(params Slot[] slots);
-		//Series MaxSlots(params Slot[] slots);
-		//Series MinSlots(params Slot[] slots);
-		//void Map(FloatEquation floatEquation);
-		//void MapValuesToItemPositions(IntSeries items);
-		//void MapOrderToItemPositions(IntSeries items);
+        void ResetData();
+        void Map(FloatEquation floatEquation);
+        void MapValuesToItemPositions(IntSeries items);
+        void MapOrderToItemPositions(IntSeries items);
+    }
+
+	public class ISeriesEnumerator : IEnumerator
+	{
+		private ISeries _instance;
+		private int _position = -1;
+		public ISeriesEnumerator(ISeries instance)
+		{
+			_instance = instance;
+		}
+		public bool MoveNext()
+		{
+			_position++;
+			return (_position < (int)(_instance.DataSize / _instance.VectorSize));
+		}
+		public object Current => _instance.GetSeriesAt(_position);
+
+		public void Reset()
+		{
+			_position = 0;
+		}
 	}
 
 

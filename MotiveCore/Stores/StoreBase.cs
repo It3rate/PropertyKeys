@@ -36,9 +36,9 @@ namespace Motive.Stores
         public virtual int Capacity => Sampler.SampleCount;
         public virtual bool IsBaked { get; set; } = false; // linear vs nearest
 
-        protected StoreBase(Series series = null)
+        protected StoreBase(ISeries series = null)
         {
-	        Series = series;
+	        Series = (Series)series;
 	        Runner.CurrentStores.AddToLibrary(this);
         }
         protected StoreBase(int seriesId, int sampleId, CombineFunction combineFunction)

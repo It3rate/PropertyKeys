@@ -16,7 +16,7 @@ namespace Motive.SeriesData.Utils
 	        if (swizzleMap != null)
 	        {
 		        float[] floats = new float[swizzleMap.Length];
-		        Series value = series.GetRawDataAt(0);
+		        Series value = series.GetSeriesAt(0);
 		        for (int i = 0; i < swizzleMap.Length; i++)
 		        {
                     floats[i] = SlotUtils.ComputeOnElement(value, swizzleMap[i]);
@@ -110,8 +110,8 @@ namespace Motive.SeriesData.Utils
                 {
                     for (var i = 0; i < a.DataSize; i++)
                     {
-                        var ar = a.GetRawDataAt(i).IntDataRef;
-                        var br = b.GetRawDataAt(i).IntDataRef;
+                        var ar = a.GetSeriesAt(i).IntDataRef;
+                        var br = b.GetSeriesAt(i).IntDataRef;
                         for (var j = 0; j < ar.Length; j++)
                         {
                             if (ar[j] != br[j])
@@ -127,8 +127,8 @@ namespace Motive.SeriesData.Utils
                     for (var i = 0; i < a.DataSize; i++)
                     {
                         var delta = 0.0001f;
-                        var ar = a.GetRawDataAt(i).FloatDataRef;
-                        var br = b.GetRawDataAt(i).FloatDataRef;
+                        var ar = a.GetSeriesAt(i).FloatDataRef;
+                        var br = b.GetSeriesAt(i).FloatDataRef;
                         for (var j = 0; j < ar.Length; j++)
                         {
                             if (Math.Abs(ar[j] - br[j]) > delta)
@@ -198,7 +198,7 @@ namespace Motive.SeriesData.Utils
         }
         public static Series SetSeriesAtIndex(Series destination, int index, Series value)
         {
-	        destination.SetRawDataAt(index, value);
+	        destination.SetSeriesAt(index, value);
 	        return destination;
         }
 
@@ -218,7 +218,7 @@ namespace Motive.SeriesData.Utils
 				Series series = seriesArray[seriesIndex];
                 for (int index = 0; index < series.Count; index++)
                 {
-	                var svals = series.GetRawDataAt(index).FloatDataRef;
+	                var svals = series.GetSeriesAt(index).FloatDataRef;
 	                Array.Copy(svals, 0, values, index * totalElements + len, series.VectorSize);
 				}
                 len += series.VectorSize;
@@ -236,7 +236,7 @@ namespace Motive.SeriesData.Utils
 	        var result = ArrayExtension.GetSizedFloatArray(slotSize, defaultValue);
 	        for (int i = 0; i < source.Count; i++)
 	        {
-		        var svals = source.GetRawDataAt(i).FloatDataRef;
+		        var svals = source.GetSeriesAt(i).FloatDataRef;
 		        if (useAllSlots)
 		        {
 			        for (int j = 0; j < svals.Length; j++)
@@ -303,7 +303,7 @@ namespace Motive.SeriesData.Utils
             var min = ArrayExtension.GetFloatMaxArray(slotSize);
             for (int i = 0; i < source.Count; i++)
             {
-                var svals = source.GetRawDataAt(i).FloatDataRef;
+                var svals = source.GetSeriesAt(i).FloatDataRef;
                 if (useAllSlots)
                 {
 	                for (int j = 0; j < svals.Length; j++)
@@ -348,7 +348,7 @@ namespace Motive.SeriesData.Utils
 	        var result = ArrayExtension.GetSizedFloatArray(source.Count, defaultValue);
 	        for (int i = 0; i < source.Count; i++)
 	        {
-		        var svals = source.GetRawDataAt(i).FloatDataRef;
+		        var svals = source.GetSeriesAt(i).FloatDataRef;
 		        if (useAllSlots)
 		        {
 			        for (int j = 0; j < svals.Length; j++)
@@ -402,9 +402,9 @@ namespace Motive.SeriesData.Utils
 	        {
 		        var a = Random.Next(len);
 		        var b = Random.Next(len);
-		        var sa = series.GetRawDataAt(a);
-		        series.SetRawDataAt(a, series.GetRawDataAt(b));
-		        series.SetRawDataAt(b, sa);
+		        var sa = series.GetSeriesAt(a);
+		        series.SetSeriesAt(a, series.GetSeriesAt(b));
+		        series.SetSeriesAt(b, sa);
 	        }
         }
 

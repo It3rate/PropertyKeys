@@ -165,8 +165,8 @@ namespace Motive.Components.Simulators
 		        polyDef.Vertices = new Vec2[count];
 		        for (int i = count - 1; i >= 0; i--)
 		        {
-			        float xp = bezier.FloatDataAt(i * 2); // skip the midpoints
-			        float yp = bezier.FloatDataAt(i * 2 + 1);
+			        float xp = bezier.FloatValueAt(i * 2); // skip the midpoints
+			        float yp = bezier.FloatValueAt(i * 2 + 1);
 			        polyDef.Vertices[i] = new Vec2(PixelToMeter(xp), -PixelToMeter(yp));
 		        }
 		        shapeDef = polyDef;
@@ -175,8 +175,8 @@ namespace Motive.Components.Simulators
 	        {
 				var circDef = new CircleDef();
 				int midX = (int)(count / 2f);
-				float difX = bezier.FloatDataAt(midX * 2) - bezier.FloatDataAt(0);
-				float difY = bezier.FloatDataAt(midX * 2 + 1) - bezier.FloatDataAt(1);
+				float difX = bezier.FloatValueAt(midX * 2) - bezier.FloatValueAt(0);
+				float difY = bezier.FloatValueAt(midX * 2 + 1) - bezier.FloatValueAt(1);
 				circDef.Radius = PixelToMeter((float)Math.Sqrt(difX * difX + difY * difY) / 2.0f);
 				shapeDef = circDef;
 	        }

@@ -38,16 +38,16 @@ namespace Motive.Adapters.Color
         }
         public static float BlueComponent(this Series series)
         {
-            return series.FloatDataAt(2);
+            return series.FloatValueAt(2);
         }
         public static float AlphaComponent(this Series series)
         {
-	        return series.FloatDataAt(3);
+	        return series.FloatValueAt(3);
         }
 
         public static ParametricSeries RgbToHsl(this Series series)
         {
-	        float[] input = series.GetRawDataAt(0).FloatDataRef;
+	        float[] input = series.GetSeriesAt(0).FloatDataRef;
 			float[] result = new float[3];
 	        var max = input.Max();
 	        var min = input.Min();

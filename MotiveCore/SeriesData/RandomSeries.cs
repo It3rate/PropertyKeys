@@ -1,23 +1,32 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
 using Motive.Samplers;
 
 namespace Motive.SeriesData
 {
-	public class RandomSeries : Series
+	public class RandomSeries : ISeries
 	{
-		private SeriesType _type;
-	    public override SeriesType Type => _type;
-
-        public override int Count => _count;
-        private int _count;
-        private CombineFunction _combineFunction;
+		private ISeries _series;
+        private readonly CombineFunction _combineFunction;
 		private Random _random;
-		private int _seed;
 		private RectFSeries _minMax;
-		private Series _series;
 
+	    public SeriesType Type { get; }
+	    public int Count { get; }
+	    public int VectorSize { get; set; }
+	    public float W { get; }
+	    public int DataSize => _series.DataSize;
+        public DiscreteClampMode IndexClampMode { get; set; } = DiscreteClampMode.Clamp;
+        public RectFSeries Frame { get; private set; }
+        public Series Size { get; private set; }
+        public float X { get; }
+        public float Y { get; }
+        public float Z { get; }
+
+        private int _seed;
         public int Seed
         {
             get => _seed;
@@ -28,22 +37,22 @@ namespace Motive.SeriesData
         /// RandomSeries always has an actual store in order to be consistent on repeated queries.
         /// </summary>
         public RandomSeries(int vectorSize, SeriesType type, int count, RectFSeries minMax = null, int seed = 0,
-			CombineFunction combineFunction = CombineFunction.Replace) : base(vectorSize)
+			CombineFunction combineFunction = CombineFunction.Replace)
 		{
-			_type = type;
-            _count = count;
+			Type = type;
+            Count = count;
 			seed = seed == 0 ? SeriesUtils.Random.Next() : seed;
 			_seed = seed;
             _minMax = minMax ?? new RectFSeries(0,0,1f,1f);
 			_combineFunction = combineFunction;
 			_series = combineFunction == CombineFunction.ContinuousAdd ?
-				SeriesUtils.CreateSeriesOfType(_type, VectorSize, _count, 0f) :
+				SeriesUtils.CreateSeriesOfType(Type, vectorSize, Count, 0f) :
 				GenerateDataSeries();
 		}
 		
-		public float[] this[int index] => _series.GetRawDataAt(index).FloatDataRef;
+		public float[] this[int index] => _series.GetSeriesAt(index).FloatDataRef;
 		
-        public override void ReverseEachElement()
+        public void ReverseEachElement()
 		{
 			_series.ReverseEachElement();
 		}
@@ -60,7 +69,7 @@ namespace Motive.SeriesData
 				{
                     for (int j = 0; j < VectorSize; j++)
                     {
-                        data[i * VectorSize + j] = _random.Next(_minMax.GetRawDataAt(0).IntDataAt(j), _minMax.GetRawDataAt(1).IntDataAt(j));
+                        data[i * VectorSize + j] = _random.Next(_minMax.GetSeriesAt(0).IntValueAt(j), _minMax.GetSeriesAt(1).IntValueAt(j));
                     }
 				}
 
@@ -73,8 +82,8 @@ namespace Motive.SeriesData
                 {
                     for (int j = 0; j < VectorSize; j++)
                     {
-                        float min = _minMax.GetRawDataAt(0).FloatDataAt(j);
-                        float max = _minMax.GetRawDataAt(1).FloatDataAt(j);
+                        float min = _minMax.GetSeriesAt(0).FloatValueAt(j);
+                        float max = _minMax.GetSeriesAt(1).FloatValueAt(j);
                         data[i * VectorSize + j] = (float)(_random.NextDouble() * (max - min) + min);
                     }
                 }
@@ -84,40 +93,56 @@ namespace Motive.SeriesData
 			return result;
 		}
 
-		public override int DataSize => _series.DataSize;
 
-		public override Series GetRawDataAt(int index)
-		{
-			return _series.GetRawDataAt(index);
-		}
-
-		public override void SetRawDataAt(int index, Series series)
-		{
-			_series.SetRawDataAt(index, series);
-		}
-
-		public override void Map(FloatEquation floatEquation)
+		public void Map(FloatEquation floatEquation)
 		{
 			_series.Map(floatEquation);
 		}
 
-        public override void Append(Series series)
+		public void MapValuesToItemPositions(IntSeries items)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void MapOrderToItemPositions(IntSeries items)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Append(Series series)
 		{
 			_series.Append(series);
 		}
 
-		public override Series GetVirtualValueAt(float t)
+		public Series GetVirtualValueAt(float t)
 		{
 			return _series.GetVirtualValueAt(t);
 		}
 
-		public override void ResetData()
+		public void ResetData()
 		{
 			_random = new Random(_seed);
 			GenerateDataSeries();
 		}
 
-		public override void Update(double currentTime, double deltaTime)
+		public string Name { get; set; }
+		public int Id { get; }
+		public bool AssignIdIfUnset(int id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OnActivate()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OnDeactivate()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Update(double currentTime, double deltaTime)
 		{
             if(_combineFunction == CombineFunction.ContinuousAdd)
             {
@@ -135,7 +160,7 @@ namespace Motive.SeriesData
 			_minMax = minMax;
 		}
 
-		protected override void CalculateFrame()
+		protected void CalculateFrame()
 		{
             Frame = (RectFSeries)_minMax.Copy();
             float[] max = _minMax.GetVirtualValueAt(1f).FloatDataRef;
@@ -143,40 +168,78 @@ namespace Motive.SeriesData
             Size = new FloatSeries(VectorSize, max);
         }
 
-		public override void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
+		public void CombineInto(Series b, CombineFunction combineFunction, float t = 0)
 		{
 			_series.CombineInto(b, combineFunction, t);
 		}
 
-		public override float FloatDataAt(int index)
+		public float[] FloatDataRef => _series.FloatDataRef;
+		public int[] IntDataRef => _series.IntDataRef;
+
+		public Series GetSeriesAt(float t)
 		{
-			return _series.FloatDataAt(index);
+			return _series.GetSeriesAt(t);
 		}
 
-		public override int IntDataAt(int index)
+		public Series GetSeriesAt(int index)
 		{
-			return _series.IntDataAt(index);
+			return _series.GetSeriesAt(index);
+		}
+
+		public void SetSeriesAt(int index, Series series)
+		{
+			_series.SetSeriesAt(index, series);
+		}
+
+        public float FloatValueAt(int index)
+		{
+			return _series.FloatValueAt(index);
+		}
+
+		public int IntValueAt(int index)
+		{
+			return _series.IntValueAt(index);
 		}
 		
-
-		public override float[] FloatDataRef => _series.FloatDataRef;
-		public override int[] IntDataRef => _series.IntDataRef;
-
-		public override void InterpolateInto(Series b, float t)
+		public void InterpolateInto(Series b, float t)
 		{
 			_series.InterpolateInto(b, t);
 		}
 
-		public override void InterpolateInto(Series b, ParametricSeries seriesT)
+		public void InterpolateInto(Series b, ParametricSeries seriesT)
 		{
 			_series.InterpolateInto(b, seriesT);
         }
 
-		public override Series Copy()
+
+        // TODO: Need to convert everything to ISeries
+		public Store CreateLinearStore(int capacity) => new Store((Series)_series, new LineSampler(capacity));
+		public IStore Store(Sampler sampler = null)
+		{
+			sampler = sampler ?? new LineSampler(this.Count);
+			return new Store((Series)_series, sampler);
+		}
+
+		public List<Series> ToList()
+		{
+			return _series.ToList();
+		}
+
+		public void SetByList(List<Series> items)
+		{
+			_series.SetByList(items);
+		}
+
+		public ISeries Copy()
 		{
 			RandomSeries result = new RandomSeries(VectorSize, Type, Count, (RectFSeries)_minMax.Copy(), _seed);
 			result._series = _series.Copy();
 			return result;
 		}
-    }
+
+		public IEnumerator GetEnumerator()
+		{
+			return new ISeriesEnumerator(this);
+		}
+	}
 }

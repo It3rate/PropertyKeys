@@ -39,12 +39,12 @@ namespace Motive.Samplers
 	        var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount]);
             int offset = (indexY & 1) == 1 ? 0 : -1;
             
-            result.SetRawDataAt(0, series.GetRawDataAt(WrappedIndexes(indexX + 1, indexY))); // right
-	        result.SetRawDataAt(1, series.GetRawDataAt(WrappedIndexes(indexX + 1 + offset, indexY - 1))); // top right
-	        result.SetRawDataAt(2, series.GetRawDataAt(WrappedIndexes(indexX + 0 + offset, indexY - 1))); // top Left
-            result.SetRawDataAt(3, series.GetRawDataAt(WrappedIndexes(indexX - 1, indexY))); // left
-            result.SetRawDataAt(4, series.GetRawDataAt(WrappedIndexes(indexX + 0 + offset, indexY + 1))); // bottom left
-            result.SetRawDataAt(5, series.GetRawDataAt(WrappedIndexes(indexX + 1 + offset, indexY + 1))); // bottom right
+            result.SetSeriesAt(0, series.GetSeriesAt(WrappedIndexes(indexX + 1, indexY))); // right
+	        result.SetSeriesAt(1, series.GetSeriesAt(WrappedIndexes(indexX + 1 + offset, indexY - 1))); // top right
+	        result.SetSeriesAt(2, series.GetSeriesAt(WrappedIndexes(indexX + 0 + offset, indexY - 1))); // top Left
+            result.SetSeriesAt(3, series.GetSeriesAt(WrappedIndexes(indexX - 1, indexY))); // left
+            result.SetSeriesAt(4, series.GetSeriesAt(WrappedIndexes(indexX + 0 + offset, indexY + 1))); // bottom left
+            result.SetSeriesAt(5, series.GetSeriesAt(WrappedIndexes(indexX + 1 + offset, indexY + 1))); // bottom right
             return result;
         }
 

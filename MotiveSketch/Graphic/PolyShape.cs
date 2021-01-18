@@ -56,13 +56,13 @@ namespace Motive.Graphic
 				var segmentIndex = hasStarness ? i * 2 : i;
                 //var radIndex = _radiusClampType.GetClampedValue(segmentIndex, radii.VectorSize);
 				//radIndex = hasStarness ? radIndex / 2 * 2 : radIndex;
-                var radius = radii.FloatDataAt(segmentIndex);
+                var radius = radii.FloatValueAt(segmentIndex);
                 values[i * pointsPerStep + 0] = (float) Math.Sin(theta) * radius;
 				values[i * pointsPerStep + 1] = (float) Math.Cos(theta) * radius;
 				moves[i * pointsPerStep / 2] = i == 0 ? BezierMove.MoveTo : BezierMove.LineTo;
 				if (hasStarness)
 				{
-					var radius2 = radii.FloatDataAt(segmentIndex + 1);
+					var radius2 = radii.FloatValueAt(segmentIndex + 1);
                     theta = step * i + step / 2.0f + orientation * Utils.M_PIx2;
 					var mpRadiusX = (float) Math.Cos(step / 2.0) * radius2;
 					var mpRadiusY = (float) Math.Cos(step / 2.0) * radius2;

@@ -9,7 +9,7 @@ namespace Motive.Stores
 	public class Store : StoreBase
     {
 	    protected Store() { }
-        public Store(Series series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace) : base(series)
+        public Store(ISeries series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace) : base(series)
 		{
 			Sampler = sampler ?? new LineSampler(series.Count);
 			CombineFunction = combineFunction;
@@ -31,7 +31,7 @@ namespace Motive.Stores
 		public override Series GetValuesAtT(float t)
 		{
             // GetValuesAtT checks if it was baked, this implies the 't' maps to the baked series.
-            return IsBaked ? Series.GetRawDataAt(t) : Sampler.GetValuesAtT(Series, t);
+            return IsBaked ? Series.GetSeriesAt(t) : Sampler.GetValuesAtT(Series, t);
 		}
         
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
@@ -60,7 +60,7 @@ namespace Motive.Stores
                 for (var i = 0; i < Capacity; i++)
                 {
 	                float t = i / (float) (Capacity - 1);
-                    result.SetRawDataAt(i, GetValuesAtT(t));
+                    result.SetSeriesAt(i, GetValuesAtT(t));
                 }
                 Series = result;
             }
@@ -70,7 +70,7 @@ namespace Motive.Stores
 
 		public override IStore Clone()
 		{
-			return new Store(Series.Copy(), Sampler, CombineFunction);
+			return new Store((Series)Series.Copy(), Sampler, CombineFunction);
 		}
 		public override void CopySeriesDataInto(IStore target)
 		{
@@ -89,7 +89,7 @@ namespace Motive.Stores
 			}
             else
             {
-				target.SetFullSeries(Series.Copy());
+				target.SetFullSeries((Series)Series.Copy());
             }
 		}
 
