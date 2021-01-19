@@ -36,7 +36,7 @@ namespace Motive.Samplers
             return Swizzle(result, seriesT);
         }
         
-        public override ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
+        protected override ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
         {
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)

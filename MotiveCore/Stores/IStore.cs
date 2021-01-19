@@ -11,6 +11,9 @@ namespace Motive.Stores
 	    //int Id { get; }
         //void Update(double currentTime, double deltaTime);
 
+        /// <summary>
+        /// Capacity is normally just the Sampler's capacity, but may need adjustment eg when merging or blending two stores.
+        /// </summary>
         int Capacity { get; }
         CombineFunction CombineFunction { get; set; }
 		Sampler Sampler { get; set; }

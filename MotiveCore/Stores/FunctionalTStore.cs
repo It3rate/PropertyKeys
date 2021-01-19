@@ -26,11 +26,6 @@ namespace Motive.Stores
 		    return Series;
 	    }
 
-	    public override void SetFullSeries(ISeries value)
-	    {
-		    Series = value;
-	    }
-
 	    public override ISeries GetValuesAtT(float t)
 	    {
 		    return new FloatSeries(1, _floatEquation.Invoke(t, _internalT));

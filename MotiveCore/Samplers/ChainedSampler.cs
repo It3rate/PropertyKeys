@@ -35,7 +35,7 @@ namespace Motive.Samplers
             ParametricSeries result = seriesT;
             foreach (var samplerId in _samplers)
             {
-                result = GetSamplerById(samplerId).GetSampledTs(result);
+                result = SamplerUtils.GetSamplerById(samplerId).GetSampledTs(result);
             }
 
             return Swizzle(result, seriesT);

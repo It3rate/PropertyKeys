@@ -51,11 +51,6 @@ namespace Motive.Stores
 			throw new NotImplementedException();
         }
 
-		public override void SetFullSeries(ISeries value)
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void Update(double currentTime, double deltaTime)
 		{
 			CurrentT = deltaTime;

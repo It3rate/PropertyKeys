@@ -69,7 +69,10 @@ namespace Motive
 			_timer.Interval = 8;
 			_timer.Enabled = true;
 
-			_display.Paint += OnDraw;
+			if (_display != null)
+			{
+				_display.Paint += OnDraw;
+			}
         }
 
         //private float t = 0;
@@ -84,7 +87,10 @@ namespace Motive
 		        double deltaTime = (_currentTime - _lastTime).TotalMilliseconds;
 		        Composites.Update(CurrentMs, deltaTime);
 
-		        _display.Invalidate();
+		        if (_display != null)
+		        {
+			        _display.Invalidate();
+		        }
 		        _lastTime = _currentTime;
 	        }
 	        _isBusy = false;

@@ -40,7 +40,7 @@ namespace Motive.Samplers
 	        return Swizzle(result, seriesT);
         }
 
-        public override ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
+        protected override ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
         {
 			float ringIndexT = seriesT.X;
 			float ringT = seriesT.Y;

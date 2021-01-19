@@ -15,6 +15,7 @@ namespace Motive.Tests
 		[TestInitialize]
 		public void TestInitializer()
 		{
+            Runner r = new Runner(null);
 			//series_1 = new FloatSeries(2, new[] { 0f, 0f, 100f, 200f }, virtualCount: 100);
 		}
 
@@ -89,7 +90,7 @@ namespace Motive.Tests
 
 			// odd rows are offset to make hex grid, by 5.555 in this case.
 			sample = sampler.GetValuesAtT(series_1, -10 / len);
-			expected = new FloatSeries(2, new[] {0f, 0f});
+			expected = new FloatSeries(2, new[] {5.5555f, 0f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
 			sample = sampler.GetValuesAtT(series_1, 0);
@@ -97,7 +98,7 @@ namespace Motive.Tests
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
 			sample = sampler.GetValuesAtT(series_1, 1 / len);
-			expected = new FloatSeries(2, new[] {11.11111f, 0f});
+			expected = new FloatSeries(2, new[] {10.4938f, 0f});
 			Assert.IsTrue(SeriesUtils.IsEqual(sample, expected));
 
 			sample = sampler.GetValuesAtT(series_1, 9 / len);

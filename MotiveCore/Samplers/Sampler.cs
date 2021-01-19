@@ -63,20 +63,6 @@ namespace Motive.Samplers
 	        var seriesT = GetSampledTs(new ParametricSeries(1, t));
 	        return GetSeriesSample(series, seriesT);
         }
-
-		// todo: Why is this in sample? Needs to move to series, and a rect vs grid series can use different algorithms to generate values (needed).
-		// counter: only samplers know about sampleCount. CurrentSeries only knows it's own count, not the virtual count it represents.
-		// counter counter: Why do samplers care about sampleCount? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
-		// ans: A grid knows it's max size by strides. Need an infinite scroll mode where sampleCount is read from series, but also want (more common) option to set size from sampler.
-        public virtual ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
-        {
-            var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
-            for (var i = 0; i < result.Length; i++)
-            {
-                result[i] = series.GetVirtualValueAt(seriesT[i]).FloatValueAt(i);
-            }
-            return SeriesUtils.CreateSeriesOfType(series, result);
-        }
         public virtual ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
             return Swizzle(seriesT, seriesT);
@@ -88,6 +74,7 @@ namespace Motive.Samplers
         /// <param name="source">The series to be mapped using the SwizzleMap.</param>
         /// <param name="original">The original unmodified values that could be used if the SwizzleMap asks for slots out of the source range.</param>
         /// <returns></returns>
+        
         public ParametricSeries Swizzle(ParametricSeries source, ParametricSeries original)
         {
 	        ParametricSeries result = source;
@@ -130,10 +117,22 @@ namespace Motive.Samplers
                     result.IntDataRef[i * strideLen + j] = (int)(ts.FloatValueAt(j) * Strides[j]);
                 }
             }
-
             return result;
         }
 
+        // todo: Why is this in sample? Needs to move to series, and a rect vs grid series can use different algorithms to generate values (needed).
+        // counter: only samplers know about sampleCount. CurrentSeries only knows it's own count, not the virtual count it represents.
+        // counter counter: Why do samplers care about sampleCount? A 10x20 sampler should be able to handle a series with 1000 elements, or [200,400]/1000 elements on a page.
+        // ans: A grid knows it's max size by strides. Need an infinite scroll mode where sampleCount is read from series, but also want (more common) option to set size from sampler.
+        protected virtual ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
+        {
+	        var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
+	        for (var i = 0; i < result.Length; i++)
+	        {
+		        result[i] = series.GetVirtualValueAt(seriesT[i]).FloatValueAt(i);
+	        }
+	        return SeriesUtils.CreateSeriesOfType(series, result);
+        }
         public void Update(double currentTime, double deltaTime)
         {
         }
@@ -157,8 +156,5 @@ namespace Motive.Samplers
 			return result;
 		}
 		#endregion
-
-		protected static Sampler GetSamplerById(int id) => Runner.CurrentSamplers[id];
-
-    }
+	}
 }

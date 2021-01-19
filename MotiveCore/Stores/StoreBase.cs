@@ -52,7 +52,10 @@ namespace Motive.Stores
         public virtual void OnDeactivate() { }
 
         public abstract ISeries GetSeriesRef();
-        public abstract void SetFullSeries(ISeries value);
+        public virtual void SetFullSeries(ISeries value)
+        {
+	        Series = value;
+        }
 
         public abstract ISeries GetValuesAtT(float t);
         
