@@ -9,13 +9,8 @@ namespace Motive.SeriesData
 	public abstract class WrappedSeries : ISeries
 	{
 		protected ISeries _series;
-		public string Name { get => _series.Name; set => _series.Name = value; }
-		public virtual int Id => _series.Id;
-
-		public virtual bool AssignIdIfUnset(int id)
-		{
-			return _series.AssignIdIfUnset(id);
-		}
+		public string Name { get; set; }
+		public int Id { get; set; }
 
 		public virtual void OnActivate()
 		{

@@ -9,7 +9,7 @@ namespace Motive.Samplers
 {
 	// Sampler needs refactoring. Currently inputs can be int index, float t, Parametric t mods t, and Parametric gets result.
 	// Instead, this can probably just be a t modifier, and t is *always* a floatSeries (no parametric needed).
-	// A grid would be two samplers, on to split t into two values, and one just a linear scalar to the frame size.
+	// A grid would be two samplers, one to split t into two values, and one just a linear scalar to the frame size.
 	// (or maybe even the frame size scalar is just done on the renderer?).
 	// Strides become 'dimensions', essentially just a way to express capacity (product, sum or continuous (0-1) style).
 	// Continuous style requires an item list (or assumes no items), as there can't be virtual items.
@@ -31,26 +31,21 @@ namespace Motive.Samplers
 	public abstract class Sampler : IDefinition
 	{
         public string Name { get; set; }
-		public int Id { get; private set; }
-
-        public int SampleCount { get; protected set; } = 1;
+		public int Id { get; set; }
+		public int SampleCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
-		
 		public int[] Strides { get; protected set; }
-
-		private GrowthType _growthType;
+		private GrowthType _growthType; // Product, Widest, Sum
 		public GrowthType GrowthType
 		{
 			get => _growthType;
 			set
 			{
 				_growthType = value;
-				SampleCount = StridesToSampleCount(Strides);
-			}
+				SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthType);
+            }
 		}
-
-		public ClampMode[] ClampTypes { get; set; }
-		public AlignmentType[] AlignmentTypes { get; protected set; }
+		public ClampMode[] ClampTypes { get; set; } // Wrap, Mirror, Clamp...
 
         protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
 		{
@@ -60,11 +55,8 @@ namespace Motive.Samplers
 			SampleCount = sampleCount;
 			Strides = new []{1};
 			ClampTypes = new []{ClampMode.None};
-			AlignmentTypes = new []{AlignmentType.Left};
 			_growthType = GrowthType.Product;
 		}
-
-		protected Sampler GetSamplerById(int id) => Runner.CurrentSamplers[id];
 
 		public virtual ISeries GetValuesAtT(ISeries series, float t)
         {	
@@ -89,19 +81,6 @@ namespace Motive.Samplers
         {
             return Swizzle(seriesT, seriesT);
         }
-
-        public virtual int NeighborCount => 2;
-		private int WrappedIndex(int index, int capacity) => index >= capacity ? 0 : index < 0 ? capacity - 1 : index;
-		// Neighbors always requires raw data, so no virtual gets.
-        public virtual SeriesBase GetNeighbors(ISeries series, int index, bool wrapEdges = true)
-        {
-	        var outLen = SwizzleMap?.Length ?? series.VectorSize;
-            var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);
-	        result.SetSeriesAt(0, series.GetSeriesAt(WrappedIndex(index - 1, SampleCount)));
-	        result.SetSeriesAt(1, series.GetSeriesAt(WrappedIndex(index + 1, SampleCount)));
-            return result;
-        }
-
         /// <summary>
         /// Generate a result with values mapped according the internal SwizzleMap.
         /// Extra values can be preserved if the original series is longer than the source, and the swizzle map calls for them.
@@ -112,6 +91,7 @@ namespace Motive.Samplers
         public ParametricSeries Swizzle(ParametricSeries source, ParametricSeries original)
         {
 	        ParametricSeries result = source;
+
 	        if (SwizzleMap != null)
             {
                 int len = SwizzleMap.Length;
@@ -134,25 +114,6 @@ namespace Motive.Samplers
 
 	        return result;
         }
-
-        protected int StridesToSampleCount(int[] strides)
-        {
-	        int result = 0;
-	        switch (GrowthType)
-	        {
-		        case GrowthType.Product:
-			        result = strides.Aggregate(1, (a, b) => b != 0 ? a * b : a);
-			        break;
-		        case GrowthType.Widest:
-			        result = Strides.Max() * Strides.Length;
-			        break;
-		        case GrowthType.Sum:
-			        result = Strides.Sum();
-			        break;
-	        }
-	        return result;
-        }
-
         public IntSeries GetBakedStrideIndexes()
         {
             int strideLen = Strides.Length;
@@ -173,16 +134,6 @@ namespace Motive.Samplers
             return result;
         }
 
-        public bool AssignIdIfUnset(int id)
-        {
-	        bool result = false;
-	        if (Id == 0 && id > 0)
-	        {
-		        Id = id;
-		        result = true;
-	        }
-	        return result;
-        }
         public void Update(double currentTime, double deltaTime)
         {
         }
@@ -192,5 +143,22 @@ namespace Motive.Samplers
         public void OnDeactivate()
         {
         }
-	}
+
+        #region Neighbor Methods
+		public virtual int NeighborCount => 2;
+        private int WrappedIndex(int index, int capacity) => index >= capacity ? 0 : index < 0 ? capacity - 1 : index;
+		// Neighbors always requires raw data, so no virtual gets.
+		public virtual ISeries GetNeighbors(ISeries series, int index, bool wrapEdges = true)
+		{
+			var outLen = SwizzleMap?.Length ?? series.VectorSize;
+			var result = SeriesUtils.CreateSeriesOfType(series, new float[outLen * NeighborCount], outLen);
+			result.SetSeriesAt(0, series.GetSeriesAt(WrappedIndex(index - 1, SampleCount)));
+			result.SetSeriesAt(1, series.GetSeriesAt(WrappedIndex(index + 1, SampleCount)));
+			return result;
+		}
+		#endregion
+
+		protected static Sampler GetSamplerById(int id) => Runner.CurrentSamplers[id];
+
+    }
 }

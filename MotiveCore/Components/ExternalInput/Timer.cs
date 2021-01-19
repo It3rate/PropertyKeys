@@ -99,7 +99,7 @@ namespace Motive.Components.Transitions
 
         public override ISeries GetSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
         {
-	        SeriesBase result;
+	        ParametricSeries result;
 	        if (propertyId == PropertyId.InterpolationT)//PropertyIdSet.IsTSampling(propertyId))
 	        {
 				result = new ParametricSeries(1, InterpolationT); // this is straight timer lookup, so no ref to input t needed.

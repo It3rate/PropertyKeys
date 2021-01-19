@@ -18,7 +18,7 @@ namespace Motive.Samplers
             Strides = ringCounts;
             Orientation = orientation;
 
-            SampleCount = StridesToSampleCount(Strides);
+            SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthType);
 
             MinRadius = 0.3f;
         }

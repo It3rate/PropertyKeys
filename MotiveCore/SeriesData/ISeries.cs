@@ -28,7 +28,6 @@ namespace Motive.SeriesData
         //void Update(double currentTime, double deltaTime);
         //void OnActivate();
         //void OnDeactivate();
-        //bool AssignIdIfUnset(int id);
 
         int Count { get; }
 		SeriesType Type { get; }

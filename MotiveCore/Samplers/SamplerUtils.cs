@@ -49,7 +49,25 @@ namespace Motive.Samplers
 		    return index / (capacity - 1f);
 	    }
 
-	    public static ParametricSeries DistributeTBySummedSampler(ParametricSeries seriesT, Sampler sampler, out int[] positions)
+	    public static int StridesToSampleCount(int[] strides, GrowthType growthType)
+	    {
+		    int result = 0;
+		    switch (growthType)
+		    {
+			    case GrowthType.Product:
+				    result = strides.Aggregate(1, (a, b) => b != 0 ? a * b : a);
+				    break;
+			    case GrowthType.Widest:
+				    result = strides.Max() * strides.Length;
+				    break;
+			    case GrowthType.Sum:
+				    result = strides.Sum();
+				    break;
+		    }
+		    return result;
+	    }
+
+        public static ParametricSeries DistributeTBySummedSampler(ParametricSeries seriesT, Sampler sampler, out int[] positions)
 	    {
 			// This is inherently 2D because is defines the row sizes.
 		    var result = new float[2];

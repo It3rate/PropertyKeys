@@ -108,7 +108,8 @@ namespace Motive.Components.Libraries
         {
 	        if (item.Id == 0)
 	        {
-		       _idCounter += item.AssignIdIfUnset(_idCounter + 1) ? 1 : 0;
+		        item.Id = _idCounter + 1;
+		        _idCounter++;
 	        }
 
             if (_allItems.ContainsKey(item.Id))

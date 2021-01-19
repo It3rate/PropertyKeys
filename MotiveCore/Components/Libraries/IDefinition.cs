@@ -9,9 +9,7 @@ namespace Motive.Components.Libraries
     public interface IDefinition
     {
 	    string Name { get; set; }
-	    int Id { get; }
-
-	    bool AssignIdIfUnset(int id);
+	    int Id { get; set; }
 
 	    void OnActivate();
 	    void OnDeactivate();

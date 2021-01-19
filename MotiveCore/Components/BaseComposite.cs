@@ -11,7 +11,7 @@ namespace Motive.Components
     public abstract class BaseComposite : IComposite
     {
 	    public string Name { get; set; }
-	    public int Id { get; private set; }
+	    public int Id { get; set; }
 		public virtual int Capacity { get; set; }
 
         protected readonly Dictionary<PropertyId, int> _properties = new Dictionary<PropertyId, int>();
@@ -109,16 +109,6 @@ namespace Motive.Components
 		    return store != null ? store.GetSampledTs(seriesT) :seriesT;
         }
 
-	    public bool AssignIdIfUnset(int id)
-	    {
-		    bool result = false;
-		    if (Id == 0 && id > 0)
-		    {
-			    Id = id;
-			    result = true;
-		    }
-		    return result;
-	    }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
     }

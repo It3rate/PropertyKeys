@@ -50,9 +50,9 @@ namespace Motive.SeriesData.Utils
 			return result;
 		}
 
-		public static SeriesBase CreateSeriesOfType(ISeries series, float[] values, int vectorSize = -1)
+		public static ISeries CreateSeriesOfType(ISeries series, float[] values, int vectorSize = -1)
 		{
-			SeriesBase result;
+			ISeries result;
 			vectorSize = (vectorSize == -1) ? series.VectorSize : vectorSize;
 
 			switch (series.Type)
@@ -202,7 +202,7 @@ namespace Motive.SeriesData.Utils
 	        return destination;
         }
 
-        public static ISeries MergeSeriesElements(params SeriesBase[] seriesArray)
+        public static ISeries MergeSeriesElements(params ISeries[] seriesArray)
         {
 			Debug.Assert(seriesArray.Length > 0);
 	        var totalElements = 0;
@@ -229,7 +229,7 @@ namespace Motive.SeriesData.Utils
         }
 
 
-        private static SeriesBase SlotsFunction(BinaryFloatEquation equation, float defaultValue, ISeries source, params Slot[] slots)
+        private static ISeries SlotsFunction(BinaryFloatEquation equation, float defaultValue, ISeries source, params Slot[] slots)
         {
 	        bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
 	        var slotSize = useAllSlots ? source.VectorSize : slots.Length;
@@ -261,7 +261,7 @@ namespace Motive.SeriesData.Utils
 	        }
 	        return CreateSeriesOfType(source, result);
         }
-        public static SeriesBase SumSlots(ISeries source, params Slot[] slots)
+        public static ISeries SumSlots(ISeries source, params Slot[] slots)
         {
             return SlotsFunction((a, b) => a + b, 0, source, slots);
         }
@@ -273,19 +273,19 @@ namespace Motive.SeriesData.Utils
         {
 	        return SlotsFunction((a, b) => a * b, 0, source, slots);
         }
-        public static SeriesBase MaxSlots(ISeries source, params Slot[] slots)
+        public static ISeries MaxSlots(ISeries source, params Slot[] slots)
         {
 	        return SlotsFunction((a, b) => b > a ? b : a, float.MinValue, source, slots);
         }
-        public static SeriesBase MinSlots(ISeries source, params Slot[] slots)
+        public static ISeries MinSlots(ISeries source, params Slot[] slots)
         {
 	        return SlotsFunction((a, b) => b < a ? b : a, float.MaxValue, source, slots);
         }
-        public static SeriesBase ClampTo01Slots(ISeries source, params Slot[] slots)
+        public static ISeries ClampTo01Slots(ISeries source, params Slot[] slots)
         {
 	        return SlotsFunction((a, b) => Math.Max(0, Math.Min(1, b)), 0, source, slots);
         }
-        public static SeriesBase AverageSlots(ISeries source, params Slot[] slots)
+        public static ISeries AverageSlots(ISeries source, params Slot[] slots)
         {
             var result = SumSlots(source, slots).FloatDataRef; // now a copy due to SumSlots
 	        float len = source.Count;
@@ -295,7 +295,7 @@ namespace Motive.SeriesData.Utils
 	        }
 	        return CreateSeriesOfType(source, result);
         }
-        public static SeriesBase MaxDiffSlots(ISeries source, params Slot[] slots)
+        public static ISeries MaxDiffSlots(ISeries source, params Slot[] slots)
         {
             bool useAllSlots = slots.Length == 0 || slots[0] == Slot.All;
             var slotSize = useAllSlots ? source.VectorSize : slots.Length;

@@ -67,7 +67,7 @@ namespace Motive.SeriesData
         private RectFSeries _cachedFrame;
 
         public string Name { get; set; }
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
         public int VectorSize { get; set; }
         public DiscreteClampMode IndexClampMode { get; set; } = DiscreteClampMode.Clamp;
@@ -233,7 +233,7 @@ namespace Motive.SeriesData
         public static ISeries operator /(SeriesBase a, SeriesBase b) => ApplyFunction(a, b, CombineFunction.Divide);
         private static ISeries ApplyFunction(ISeries a, ISeries b, CombineFunction combineFunction, float t = 0)
         {
-	        var result = (SeriesBase)a.Copy();
+	        var result = a.Copy();
 	        result.CombineInto(b, combineFunction, t);
 	        return result;
         }
@@ -278,7 +278,7 @@ namespace Motive.SeriesData
 	        ISeries result;
             if (t >= 1)
             {
-                result = GetSeriesAt(Count - 1);
+                result = GetSeriesAt(Count - 1); // todo: GetVirtualValueAt should probably respect clampType
             }
             else if (Count > 1)
             {
@@ -305,13 +305,6 @@ namespace Motive.SeriesData
             }
 
             return result;
-        }
-
-        public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
-        public IStore Store(Sampler sampler = null)
-        {
-            sampler = sampler ?? new LineSampler(this.Count);
-            return new Store(this, sampler);
         }
 
         public List<ISeries> ToList()
@@ -356,20 +349,9 @@ namespace Motive.SeriesData
             return new SeriesEnumerator(this);
         }
 
-        public bool AssignIdIfUnset(int id)
-        {
-            bool result = false;
-            if (Id == 0 && id > 0)
-            {
-                Id = id;
-                result = true;
-            }
-            return result;
-        }
         public void OnActivate()
         {
         }
-
         public void OnDeactivate()
         {
         }
@@ -380,6 +362,15 @@ namespace Motive.SeriesData
         public virtual void Update(double currentTime, double deltaTime)
         {
         }
+
+        #region Convinience methods
+        public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
+        public IStore Store(Sampler sampler = null)
+        {
+            sampler = sampler ?? new LineSampler(this.Count);
+            return new Store(this, sampler);
+        }
+		#endregion
 
     }
 }

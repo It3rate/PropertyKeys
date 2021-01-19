@@ -8,7 +8,7 @@ namespace Motive.Stores
     public abstract class StoreBase : IStore
     {
 	    public string Name { get; set; }
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
         private CombineFunction _combineFunction;
         public virtual CombineFunction CombineFunction { get => _combineFunction; set => _combineFunction = value; }
@@ -48,17 +48,6 @@ namespace Motive.Stores
 	        _combineFunction = combineFunction;
 	        Runner.CurrentStores.AddToLibrary(this);
         }
-
-        public bool AssignIdIfUnset(int id)
-        {
-	        bool result = false;
-	        if (Id == 0 && id > 0)
-	        {
-		        Id = id;
-		        result = true;
-	        }
-	        return result;
-        }
         public virtual void OnActivate() { }
         public virtual void OnDeactivate() { }
 
@@ -68,7 +57,7 @@ namespace Motive.Stores
         public abstract ISeries GetValuesAtT(float t);
         
         public abstract ParametricSeries GetSampledTs(ParametricSeries seriesT);
-        public virtual SeriesBase GetNeighbors(int index, bool wrapEdges = true)
+        public virtual ISeries GetNeighbors(int index, bool wrapEdges = true)
         {
 	        return Sampler.GetNeighbors(GetSeriesRef(), index, wrapEdges);
         }
