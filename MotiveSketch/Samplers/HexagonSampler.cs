@@ -56,27 +56,26 @@ namespace Motive.Samplers
         /// <returns>A fitted composite hex grid.</returns>
         public static Container CreateBestFit(RectFSeries bounds, int columns, out int rows, out float radius, out HexagonSampler sampler)
 		{
-			float totalWidth = bounds.Width;
-            float w = bounds.Width / (columns - 1f); // calculating spacing, from centers, so subtract 1
-            float h = w * (float)(2.0 / Math.Sqrt(3));
-			float vSpacing = h * .75f;
+			var totalWidth = bounds.Width;
+			var w = bounds.Width / (columns - 1f); // calculating spacing, from centers, so subtract 1
+            var h = w * (float)(2.0 / Math.Sqrt(3));
+            var vSpacing = h * .75f;
 	        rows = (int)(bounds.Height / vSpacing);
-	        float totalHeight = vSpacing * (rows - 1f); // calculating spacing, from centers, so subtract 1
+	        var totalHeight = vSpacing * (rows - 1f); // calculating spacing, from centers, so subtract 1
 
-	        bounds[0] += w / 2f;
-	        bounds[1] += vSpacing * 0.25f;
-			
-	        bounds[2] = bounds.Left + totalWidth;
-            bounds[3] = bounds.Top + totalHeight;
+	        bounds.Left += w / 2f;
+	        bounds.Top += vSpacing * 0.25f;
+	        bounds.Right = bounds.Left + totalWidth;
+            bounds.Bottom = bounds.Top + totalHeight;
 
             sampler = new HexagonSampler(new int[] { columns, rows });
 	        var composite = new Container(Store.CreateItemStore(sampler.SampleCount));
-	        float overdraw = 1.00f;
-            float radiusScale = 1f - 1f / (columns - 1f) * 0.5f; // rows are offset, and thus compressed when drawn by this much.
+	        const float overdraw = 1.00f;
+	        var radiusScale = 1f - 1f / (columns - 1f) * 0.5f; // rows are offset, and thus compressed when drawn by this much.
             radius = h / 2f * radiusScale * overdraw;
             composite.AddProperty(PropertyId.Radius, new FloatSeries(1, radius).Store());
 
-            Store loc = new Store(bounds, sampler);
+            var loc = new Store(bounds, sampler);
 	        composite.AddProperty(PropertyId.Location, loc);
 
 	        composite.Renderer = new PolyShape(packHorizontal:true);

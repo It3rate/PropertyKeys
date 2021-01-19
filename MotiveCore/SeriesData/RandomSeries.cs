@@ -118,15 +118,7 @@ namespace Motive.SeriesData
             _cachedSize = new FloatSeries(VectorSize, max);
         }
 
-        // TODO: This may not be right for random, should be random sampler?
-		public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
-		public IStore Store(Sampler sampler = null)
-		{
-			sampler = sampler ?? new LineSampler(this.Count);
-			return new Store(this, sampler);
-		}
-
-		public ISeries Copy()
+		public override ISeries Copy()
 		{
 			RandomSeries result = new RandomSeries(VectorSize, Type, Count, (RectFSeries)MinMax.Copy(), _seed);
 			result._series = _series.Copy();

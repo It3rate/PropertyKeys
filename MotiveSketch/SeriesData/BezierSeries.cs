@@ -87,13 +87,13 @@ namespace Motive.SeriesData
 			}
             _polylineLength = len;
 		}
-        public override SeriesBase GetVirtualValueAt(float t)
+        public override ISeries GetVirtualValueAt(float t)
 		{
 			var index = (int) (t * Count);
 			return GetSeriesAt(index);
 		}
 
-		public override SeriesBase GetSeriesAt(int index)
+		public override ISeries GetSeriesAt(int index)
 		{
 			index = Math.Max(0, Math.Min(Moves.Length - 1, index));
 			var start = 0;

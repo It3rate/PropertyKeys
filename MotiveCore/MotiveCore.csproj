@@ -97,7 +97,6 @@
     <Compile Include="Samplers\RingSampler.cs" />
     <Compile Include="Samplers\Sampler.cs" />
     <Compile Include="Samplers\SamplerUtils.cs" />
-    <Compile Include="SeriesData\DimensionedSeries.cs" />
     <Compile Include="SeriesData\FloatSeries.cs" />
     <Compile Include="SeriesData\IntSeries.cs" />
     <Compile Include="SeriesData\ISeries.cs" />

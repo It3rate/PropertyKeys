@@ -102,7 +102,7 @@ namespace Motive.SeriesData
         public override float[] FloatDataRef => _floatValues;
 		public override int[] IntDataRef => _floatValues.ToInt(); //_floatValues.ToInt();
 
-		public override SeriesBase GetSeriesAt(int index)
+		public override ISeries GetSeriesAt(int index)
 		{
 			var startIndex = IndexClampMode.GetClampedValue(index, Count);//Math.Min(Count - 1, Math.Max(0, index));
 			var result = new float[VectorSize];
@@ -123,32 +123,52 @@ namespace Motive.SeriesData
 			Array.Copy(series.FloatDataRef, 0, _floatValues, startIndex * VectorSize, series.VectorSize);
 		}
 
-		public override IList AppendBase(SeriesBase series)
+		public override void Append(ISeries series)
 		{
-            var len = _floatValues.Length;
-            float[] newArray = new float[len + series.DataSize];
-            _floatValues.CopyTo(newArray, 0);
-			for (int i = 0; i < series.DataSize; i++)
-			{
-				newArray[len + i] = series.FloatValueAt(i);
-			}
-			_floatValues = newArray;
-			return _floatValues;
-		}
-//public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
-public override float FloatValueAt(int index)
-		{
-            index = IndexClampMode.GetClampedValue(index, _floatValues.Length);//Math.Max(0, Math.Min(_floatValues.Length - 1, index));
-            return _floatValues[index];
+            var orgLen = _floatValues.Length;
+            EnsureCount(orgLen + series.DataSize);
+            for (int i = 0; i < series.DataSize; i++)
+            {
+	            _floatValues[orgLen + i] = series.FloatValueAt(i);
+            }
 		}
 
-		public override int IntValueAt(int index)
-        {
-            index = IndexClampMode.GetClampedValue(index, _floatValues.Length);//Math.Max(0, Math.Min(_floatValues.Length - 1, index));
-            return (int)_floatValues[index];
+		public override IList CloneArrayOfSize(int size, bool assignAsInternalArray)
+		{
+			float[] result = new float[size];
+			var len = Math.Min(_floatValues.Length, result.Length);
+			Array.Copy(_floatValues, result, len);
+			if (assignAsInternalArray)
+			{
+				_floatValues = result;
+			}
+			return result;
 		}
-		
-		public override ISeries Copy()
+
+        //public new float this[int index] => _floatValues[index]; // uncomment for direct special case access to float value
+        public override float FloatValueAt(int index)
+        {
+	        index = IndexClampMode.GetClampedValue(index, _floatValues.Length);
+	        return _floatValues[index];
+        }
+        public override void SetFloatValueAt(int index, float value)
+        {
+	        index = IndexClampMode.GetClampedValue(index, _floatValues.Length);
+	        _floatValues[index] = value;
+        }
+
+        public override int IntValueAt(int index)
+        {
+            index = IndexClampMode.GetClampedValue(index, _floatValues.Length);
+            return (int)_floatValues[index];
+        }
+        public override void SetIntValueAt(int index, int value)
+        {
+	        index = IndexClampMode.GetClampedValue(index, _floatValues.Length);
+	        _floatValues[index] = (float)value;
+        }
+
+        public override ISeries Copy()
 		{
 			FloatSeries result = new FloatSeries(VectorSize, (float[])FloatDataRef.Clone()) { IndexClampMode = this.IndexClampMode };
 			return result;

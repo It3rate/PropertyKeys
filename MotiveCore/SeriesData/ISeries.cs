@@ -39,23 +39,25 @@ namespace Motive.SeriesData
         RectFSeries Frame { get; }
         ISeries Size { get; }
 
-		float X { get; }
-		float Y { get; }
-		float Z { get; }
-		float W { get; }
+		float X { get; set; }
+		float Y { get; set; }
+		float Z { get; set; }
+		float W { get; set; }
 
         int DataSize { get; }
         ISeries GetSeriesAt(float t);
-        SeriesBase GetSeriesAt(int index);
+        ISeries GetSeriesAt(int index);
         void SetSeriesAt(int index, ISeries series);
-        SeriesBase GetVirtualValueAt(float t);
+        ISeries GetVirtualValueAt(float t);
         float FloatValueAt(int index);
+        void SetFloatValueAt(int index, float value);
         int IntValueAt(int index);
+        void SetIntValueAt(int index, int value);
         float[] FloatDataRef { get; }
         int[] IntDataRef { get; }
 
         void ReverseEachElement();
-        void Append(SeriesBase series);
+        void Append(ISeries series);
         void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0);
         void InterpolateInto(ISeries b, float t);
         void InterpolateInto(ISeries b, ParametricSeries seriesT);

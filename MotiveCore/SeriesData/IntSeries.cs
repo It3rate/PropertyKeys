@@ -101,7 +101,7 @@ namespace Motive.SeriesData
 		public override float[] FloatDataRef => _intValues.ToFloat(); //_intValues.ToFloat();
 		public override int[] IntDataRef => (int[]) _intValues;
 
-		public override SeriesBase GetSeriesAt(int index)
+		public override ISeries GetSeriesAt(int index)
 		{
 			var startIndex = IndexClampMode.GetClampedValue(index, Count);// Math.Min(Count - 1, Math.Max(0, index));
 			var result = new int[VectorSize];
@@ -124,32 +124,64 @@ namespace Motive.SeriesData
 			Array.Copy(series.IntDataRef, 0, _intValues, startIndex * VectorSize, VectorSize);
 		}
 
-		public override IList AppendBase(SeriesBase series)
+		public override void Append(ISeries series)
 		{
-			var len = _intValues.Length;
-			int[] newArray = new int[len + series.DataSize];
-			_intValues.CopyTo(newArray, 0);
+			var orgLen = _floatValues.Length;
+			EnsureCount(orgLen + series.DataSize);
 			for (int i = 0; i < series.DataSize; i++)
 			{
-				newArray[len + i] = series.IntValueAt(i);
+				_intValues[orgLen + i] = series.IntValueAt(i);
 			}
-			_intValues = newArray;
-			return _floatValues;
-        }
+		}
+
+		//public override void EnsureCount(int count, bool makeExact = false)
+		//{
+		//	int targetCount = Count < count ? count : Count;
+		//	targetCount = makeExact ? count : targetCount;
+		//	if (targetCount != Count)
+		//	{
+		//		int[] newArray = new int[targetCount * VectorSize];
+		//		var len = Math.Min(_intValues.Length, newArray.Length);
+		//		Array.Copy(_intValues, newArray, len);
+		//		_intValues = newArray;
+		//		_valuesRef = _intValues;
+		//	}
+		//}
+		public override IList CloneArrayOfSize(int size, bool assignAsInternalArray)
+		{
+			int[] result = new int[size];
+			var len = Math.Min(_intValues.Length, result.Length);
+			Array.Copy(_intValues, result, len);
+			if (assignAsInternalArray)
+			{
+				_intValues = result;
+			}
+			return result;
+		}
 
         public override float FloatValueAt(int index)
         {
-            index = IndexClampMode.GetClampedValue(index, _intValues.Length);// Math.Max(0, Math.Min(_intValues.Length - 1, index));
+            index = IndexClampMode.GetClampedValue(index, _intValues.Length);
             return (float)_intValues[index];
-		}
-
-		public override int IntValueAt(int index)
+        }
+        public override void SetFloatValueAt(int index, float value)
         {
-            index = IndexClampMode.GetClampedValue(index, _intValues.Length);// Math.Max(0, Math.Min(_intValues.Length - 1, index));
-            return _intValues[index];
-		}
+	        index = IndexClampMode.GetClampedValue(index, _intValues.Length);
+	        _intValues[index] = (int)value;
+        }
 
-		public override ISeries Copy()
+        public override int IntValueAt(int index)
+        {
+            index = IndexClampMode.GetClampedValue(index, _intValues.Length);
+            return _intValues[index];
+        }
+        public override void SetIntValueAt(int index, int value)
+        {
+	        index = IndexClampMode.GetClampedValue(index, _intValues.Length);
+	        _intValues[index] = value;
+        }
+
+        public override ISeries Copy()
 		{
 			return new IntSeries(VectorSize, (int[])_intValues.Clone()) { IndexClampMode = this.IndexClampMode };
 		}

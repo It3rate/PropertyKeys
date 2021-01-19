@@ -10,7 +10,6 @@ namespace Motive.SeriesData
     public class RectFSeries : FloatSeries
     {
 	    public override SeriesType Type => SeriesType.RectF;
-	    private const int RectSize = 4;
 
 		/// <summary>
         /// Create a rectF with l,t,r,b.
@@ -18,35 +17,30 @@ namespace Motive.SeriesData
         /// <param name="values"></param>
 	    public RectFSeries(params float[] values) : base(2, values)
 	    {
-		    if (_floatValues.Length > RectSize)
-		    {
-			    var old = _floatValues;
-			    _floatValues = new float[RectSize];
-			    Array.Copy(old, _floatValues, RectSize);
-		    }
-			else if (_floatValues.Length < RectSize)
-		    {
-			    var old = _floatValues;
-			    _floatValues = new float[RectSize];
-			    for (int i = 0; i < RectSize; i++)
-			    {
-				    _floatValues[i] = i < RectSize ? old[i] : old[old.Length - 1];
-                }
-            }
-	    }
-	    public float this[int index]
-	    {
-		    get => index < RectSize ? _floatValues[index] : _floatValues[RectSize - 1];
-		    set => _floatValues[index < RectSize ? index : RectSize - 1] = value;
-	    }
-	    public new float X => _floatValues[0];
-        public new float Y => _floatValues[1];
-	    public float Right =>  _floatValues[2];
-	    public float Bottom => _floatValues[3];
-	    public float Width => _floatValues[2] - _floatValues[0];
-        public float Height =>_floatValues[3] - _floatValues[1];
-	    public float Top => _floatValues[1];
-	    public float Left => _floatValues[0];
+            EnsureCount(2, true);
+        }
+        public float Left
+        {
+	        get => X;
+	        set => X = value;
+        }
+        public float Top
+        {
+	        get => Y;
+	        set => Y = value;
+        }
+        public float Right
+        {
+	        get => Z;
+	        set => Z = value;
+        }
+        public float Bottom
+        {
+	        get => W;
+	        set => W = value;
+        }
+	    public float Width => Right - Left;
+        public float Height => Bottom - Top;
 	    public float Area => Width * Height;
 
 	    public float CX => X + Width / 2f;

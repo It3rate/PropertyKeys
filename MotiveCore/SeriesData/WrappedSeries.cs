@@ -6,7 +6,7 @@ using Motive.Stores;
 
 namespace Motive.SeriesData
 {
-	public class WrappedSeries : ISeries
+	public abstract class WrappedSeries : ISeries
 	{
 		protected ISeries _series;
 		public string Name { get => _series.Name; set => _series.Name = value; }
@@ -51,10 +51,26 @@ namespace Motive.SeriesData
 		}
 		public virtual RectFSeries Frame => _series.Frame;
 		public virtual ISeries Size => _series.Size;
-		public virtual float X => _series.X;
-		public virtual float Y => _series.Y;
-		public virtual float Z => _series.Z;
-		public virtual float W => _series.W;
+		public float X
+		{
+			get => _series.X;
+			set => _series.X = value;
+		}
+		public float Y
+		{
+			get => _series.Y;
+			set => _series.Y = value;
+		}
+		public float Z
+		{
+			get => _series.Z;
+			set => _series.Z = value;
+		}
+		public float W
+		{
+			get => _series.W;
+			set => _series.W = value;
+		}
 		public virtual int DataSize => _series.DataSize;
 
 		public virtual ISeries GetSeriesAt(float t)
@@ -62,7 +78,7 @@ namespace Motive.SeriesData
 			return _series.GetSeriesAt(t);
 		}
 
-		public virtual SeriesBase GetSeriesAt(int index)
+		public virtual ISeries GetSeriesAt(int index)
 		{
 			return _series.GetSeriesAt(index);
 		}
@@ -72,7 +88,7 @@ namespace Motive.SeriesData
 			_series.SetSeriesAt(index, series);
 		}
 
-		public virtual SeriesBase GetVirtualValueAt(float t)
+		public virtual ISeries GetVirtualValueAt(float t)
 		{
 			return _series.GetVirtualValueAt(t);
 		}
@@ -82,9 +98,19 @@ namespace Motive.SeriesData
 			return _series.FloatValueAt(index);
 		}
 
+		public void SetFloatValueAt(int index, float value)
+		{
+			_series.SetFloatValueAt(index, value);
+		}
+
 		public virtual int IntValueAt(int index)
 		{
 			return _series.IntValueAt(index);
+		}
+
+		public void SetIntValueAt(int index, int value)
+		{
+			_series.SetIntValueAt(index, value);
 		}
 
 		public virtual float[] FloatDataRef => _series.FloatDataRef;
@@ -95,7 +121,7 @@ namespace Motive.SeriesData
 			_series.ReverseEachElement();
 		}
 
-		public virtual void Append(SeriesBase series)
+		public virtual void Append(ISeries series)
 		{
 			_series.Append(series);
 		}
@@ -115,17 +141,7 @@ namespace Motive.SeriesData
 			_series.InterpolateInto(b, seriesT);
 		}
 
-		public virtual Store CreateLinearStore(int capacity)
-		{
-			return _series.CreateLinearStore(capacity);
-		}
-
-		public virtual IStore Store(Sampler sampler = null)
-		{
-			return _series.Store(sampler);
-		}
-
-		public virtual List<ISeries> ToList()
+        public virtual List<ISeries> ToList()
 		{
 			return _series.ToList();
 		}
@@ -133,11 +149,6 @@ namespace Motive.SeriesData
 		public virtual void SetByList(List<ISeries> items)
 		{
 			_series.SetByList(items);
-		}
-
-		public virtual ISeries Copy()
-		{
-			return _series.Copy();
 		}
 
 		public virtual void ResetData()
@@ -159,5 +170,14 @@ namespace Motive.SeriesData
 		{
 			_series.MapOrderToItemPositions(items);
 		}
+
+		public virtual Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
+		public virtual IStore Store(Sampler sampler = null)
+		{
+			sampler = sampler ?? new LineSampler(this.Count);
+			return new Store(this, sampler);
+		}
+
+		public abstract ISeries Copy();
 	}
 }

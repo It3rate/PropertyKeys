@@ -77,10 +77,26 @@ namespace Motive.SeriesData
 
         protected int StartIndex = 0;
         protected int EndIndex = 0;
-        public float X => FloatValueAt(StartIndex);
-        public float Y => FloatValueAt(StartIndex + 1);
-        public float Z => FloatValueAt(StartIndex + 2);
-        public float W => FloatValueAt(StartIndex + 3);
+        public float X
+        {
+	        get => FloatValueAt(StartIndex);
+	        set => SetFloatValueAt(StartIndex, value);
+        }
+        public float Y
+        {
+	        get => FloatValueAt(StartIndex + 1);
+	        set => SetFloatValueAt(StartIndex + 1, value);
+        }
+        public float Z
+        {
+	        get => FloatValueAt(StartIndex + 2);
+	        set => SetFloatValueAt(StartIndex + 2, value);
+        }
+        public float W
+        {
+	        get => FloatValueAt(StartIndex + 3);
+	        set => SetFloatValueAt(StartIndex + 3, value);
+        }
 
         /// <summary>
         /// Cached frame in four vectorSize data points, x, y, x + width, y + height.
@@ -116,11 +132,7 @@ namespace Motive.SeriesData
             protected set => _cachedSize = value;
         }
 
-        public abstract IList AppendBase(SeriesBase series);
-        public virtual void Append(SeriesBase series)
-        {
-	        _valuesRef = AppendBase(series);
-        }
+        public abstract void Append(ISeries series);
 
         private float[] GetFloatArray()
         {
@@ -139,8 +151,8 @@ namespace Motive.SeriesData
         protected void CalculateFrame()
         {
             // TODO: move this down, or generally find a better way to do this.
-	        var min = GetSeriesAt(0).GetFloatArray();
-	        var max = GetSeriesAt(0).GetFloatArray();
+	        var min = ((SeriesBase)GetSeriesAt(0)).GetFloatArray();
+	        var max = ((SeriesBase)GetSeriesAt(0)).GetFloatArray();
 
 	        for (var i = 0; i < DataSize; i += VectorSize)
 	        {
@@ -228,18 +240,42 @@ namespace Motive.SeriesData
 
         public abstract void CombineInto(ISeries b, CombineFunction combineFunction, float t = 0);
 
-        public abstract SeriesBase GetSeriesAt(int index);
+        public abstract ISeries GetSeriesAt(int index);
         public abstract void SetSeriesAt(int index, ISeries series);
         public abstract float FloatValueAt(int index);
+        public abstract void SetFloatValueAt(int index, float value);
         public abstract int IntValueAt(int index);
+        public abstract void SetIntValueAt(int index, int value);
         public abstract float[] FloatDataRef { get; }
         public abstract int[] IntDataRef { get; }
+
+        public void EnsureCount(int count, bool makeExact = false)
+        {
+	        int targetCount = Count < count ? count : Count;
+	        targetCount = makeExact ? count : targetCount;
+	        if (targetCount != Count)
+	        {
+		        IList newArray = CloneArrayOfSize(targetCount * VectorSize, true);
+		        // fill any excess with last values
+		        if (_valuesRef.Count < newArray.Count)
+		        {
+			        var val = _valuesRef[_valuesRef.Count - 1]; // todo: maybe use internal Clamp mode when filling expanded arrays
+			        for (int i = _valuesRef.Count; i < newArray.Count; i++)
+			        {
+				        newArray[i] = val;
+			        }
+		        }
+		        _valuesRef = newArray;
+	        }
+        }
+
+        public abstract IList CloneArrayOfSize(int size, bool assignAsInternalArray);
         public abstract ISeries Copy();
 
         public virtual ISeries GetSeriesAt(float t) => GetSeriesAt(SamplerUtils.IndexFromT(Count, t));
-        public virtual SeriesBase GetVirtualValueAt(float t)
+        public virtual ISeries GetVirtualValueAt(float t)
         {
-	        SeriesBase result;
+	        ISeries result;
             if (t >= 1)
             {
                 result = GetSeriesAt(Count - 1);
@@ -344,5 +380,6 @@ namespace Motive.SeriesData
         public virtual void Update(double currentTime, double deltaTime)
         {
         }
+
     }
 }
