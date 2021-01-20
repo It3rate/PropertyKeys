@@ -89,7 +89,7 @@ namespace Motive
 			//});
 		}
 
-        private static int _testCount = 9;//13;
+        private static int _testCount = 13;
         private int _testIndex = 0;//_testCount;
         private void NextTest()
         {

@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Components\LayoutContainer.cs" />
     <Compile Include="Components\Hexgrid.cs" />
+    <Compile Include="Graphic\BezierShape.cs" />
     <Compile Include="Graphic\PolyShape.cs" />
     <Compile Include="Graphic\UIBox.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

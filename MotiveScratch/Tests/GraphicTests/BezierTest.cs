@@ -30,8 +30,8 @@ namespace Motive.Tests.GraphicTests
 			var bezStore = new Store(bezSeries, bezSampler);
 
 			var tModStore = new FunctionalTStore(
-				(t, internalT) => (t * .7f + internalT) % 1,
-				(time, it) => it + 0.01f);//time/16000f);
+				(t, internalT) => (t * .7f + internalT) % 1, // tail
+				(time, it) => it + 0.01f); // delay
 			var locStore = new MergingStore(tModStore, bezStore);
 
 			IStore fillColor = new FloatSeries(3,  0.1f, 0.2f, 1f,  0.8f, 0.2f, 0.6f,  1f, 0.8f, 0.1f).Store();

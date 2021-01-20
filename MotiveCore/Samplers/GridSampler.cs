@@ -5,6 +5,9 @@ using Motive.SeriesData.Utils;
 
 namespace Motive.Samplers
 {
+    /// <summary>
+    /// Samples grid of SampleCount based on Strides, sampled along each element of VectorSize.
+    /// </summary>
 	public class GridSampler : Sampler
 	{
 		public AlignmentType[] AlignmentTypes { get; protected set; } // left, right, centered, justified

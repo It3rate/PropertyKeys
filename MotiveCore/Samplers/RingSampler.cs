@@ -7,6 +7,9 @@ using Motive.Stores;
 
 namespace Motive.Samplers
 {
+    /// <summary>
+    /// Creates Rings with SampleCount elements based on Strides, from Frame size to MinRadius. Doesn't actually use series data directly.
+    /// </summary>
 	public class RingSampler : Sampler
 	{
         protected IStore Orientation { get; }

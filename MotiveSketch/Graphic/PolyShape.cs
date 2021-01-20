@@ -9,7 +9,43 @@ using Motive.SeriesData.Utils;
 
 namespace Motive.Graphic
 {
-	public class PolyShape : GraphicBase
+    // These shapes should probably sample from (or be?) Stores. Rather than shapes from scratch, there should be 
+    // a set of Series that hold pointCounts, radius etc. Then a sampler can transform and sample the points
+    // and Stores multiply or blend them. Have mental goal of shape tweening to see where things should fit.
+    // There should be one global renderer, and it does things like set color, stroke path etc. The shapes should all 
+    // feed that.
+
+    // points and relations
+    // Series are tensors that can supply or be used to generate numerical information.
+    // Samplers are parameterized functions that can generate numerical information from an arbitrary series.
+    // Stores combine one or many samplers and series together to generate data.
+    // 'Strokes' are contiguous data sampled from stores using an instruction set
+    // 'Shapes' are collections of strokes and information on how to render them (color etc).
+    // 'Animations' are a shape's life cycles as it changes over time.
+    // 'Worlds' are Animations that interact with each other.
+
+    // VisSeries: holds primitive sets of points for point, line, rect, circ, arc. Only structural. Could even be bezier series or poly shape.
+    // VisNode: Like VisSeries, but always uses a ref to Series, Node or Stroke, and internal series is a pos/offset type FloatSeries (eg 4 Count of values for each node in a rect).
+	//          Gets the type of element from the series ref (arc, line, etc)
+    // VisSampler: Can sample VisSeries or VisStroke to create e.g. reversed line from rect. Can compute offsets. Produces VisNodes.
+    //              VisSampler can act as the Query engine as well. (get top line etc). Returns Vis primitive nodes when queried with series.
+    // VisStore: regular store
+    // VisStroke: Uses instructions and context from VisShape to generate a stroke from 'skill' style instructions (may be encoded as series). Generates GraphicsPath.
+    // VisShape: Is a VisPad. Gets context (letterbox etc), and renders multiple strokes using color, stroke width, strokes, etc. Feeds renderer.
+
+    // BezierSeries: Series holds points and curve/move/line types.
+    // BezierSampler: Samples points by index, or continuous path by t.
+    // BezierStore: Maybe can just be regular store. By their nature they can blend and transform point sets, interpolate paths.
+    // BezierStroke: Can sample store for points along t or by index. Generates GraphicsPath.
+    // BezierShape: Multiple paths, holds color info, line weights etc. Feeds Renderer.
+
+    // PolySeries: Has Count of XY positions, but usually is purely virtual values.
+    // PolySampler: Able to sample points or along path. Can get arbitrary segments, cw or ccw.
+    // PolyStore: regular store.
+    // PolyStroke: Generates graphics path using VisStore.
+    // PolyShape: Full color info, could do complex non connected shapes if that made sense, but not meant for repetition.
+
+    public class PolyShape : GraphicBase
 	{
         // Add directional radius series to allow rects, spirals etc. Or should that just be a periodic blend between two shapes?
 
