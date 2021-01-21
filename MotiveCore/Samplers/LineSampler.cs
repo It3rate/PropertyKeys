@@ -8,7 +8,7 @@ namespace Motive.Samplers
 
 		public override ISeries GetValuesAtT(ISeries series, float t)
 		{
-			return series.GetVirtualValueAt(t);
+			return series.GetInterpolatedSeriesAt(t);
 		}
 	}
 }

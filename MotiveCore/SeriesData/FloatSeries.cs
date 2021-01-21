@@ -180,8 +180,8 @@ namespace Motive.SeriesData
 
 		public void Normalize()
 		{
-			float[] frameMin = Frame.GetVirtualValueAt(0).FloatDataRef;
-			float[] frameMax = Frame.GetVirtualValueAt(1).FloatDataRef;
+			float[] frameMin = Frame.GetInterpolatedSeriesAt(0).FloatDataRef;
+			float[] frameMax = Frame.GetInterpolatedSeriesAt(1).FloatDataRef;
 			float maxDif = int.MinValue;
 			for (int i = 0; i < frameMax.Length; i++)
 			{
@@ -204,8 +204,8 @@ namespace Motive.SeriesData
 			Normalize();
 
 			ISeries frame = bounds.Frame;
-			float[] boundsMin = frame.GetVirtualValueAt(0).FloatDataRef;
-			float[] boundsDif = (float[])frame.GetVirtualValueAt(1).FloatDataRef.Clone();
+			float[] boundsMin = frame.GetInterpolatedSeriesAt(0).FloatDataRef;
+			float[] boundsDif = (float[])frame.GetInterpolatedSeriesAt(1).FloatDataRef.Clone();
 			for (int i = 0; i < boundsDif.Length; i++)
 			{
 				boundsDif[i] -= boundsMin[i];

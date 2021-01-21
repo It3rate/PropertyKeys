@@ -19,7 +19,7 @@ namespace Motive.Samplers
 
 	    public override ISeries GetValuesAtT(ISeries series, float t)
 	    {
-		    ISeries result = series.GetVirtualValueAt(t);
+		    ISeries result = series.GetInterpolatedSeriesAt(t);
 		    result.Map(_floatEquation);
 		    return result;
 	    }

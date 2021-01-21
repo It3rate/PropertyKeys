@@ -65,8 +65,8 @@ namespace Motive.Graphic
 	            bezier.AppendToGraphicsPath(gp);
 
                 var loc = dict[PropertyId.Location];
-                var originSeries = dict[PropertyId.Origin]?.GetVirtualValueAt(0) ?? new FloatSeries(1, 0f, 0f);
-                var scaleSeries = dict[PropertyId.Scale]?.GetVirtualValueAt(0) ?? new FloatSeries(1, 1f, 1f);
+                var originSeries = dict[PropertyId.Origin]?.GetInterpolatedSeriesAt(0) ?? new FloatSeries(1, 0f, 0f);
+                var scaleSeries = dict[PropertyId.Scale]?.GetInterpolatedSeriesAt(0) ?? new FloatSeries(1, 1f, 1f);
                 var state = g.Save();
                 var scaleX = scaleSeries.X;
                 var scaleY = scaleSeries.Y;

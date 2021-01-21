@@ -44,7 +44,7 @@ namespace Motive.Samplers
             var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
             for (var i = 0; i < result.Length; i++)
 			{
-				result[i] = (i < Strides.Length) ? series.GetVirtualValueAt(seriesT[i]).FloatValueAt(i) : 0;
+				result[i] = (i < Strides.Length) ? series.GetInterpolatedSeriesAt(seriesT[i]).FloatValueAt(i) : 0;
 			}
 
 			return SeriesUtils.CreateSeriesOfType(series, result);

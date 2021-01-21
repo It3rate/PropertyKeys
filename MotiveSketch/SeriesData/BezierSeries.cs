@@ -87,7 +87,7 @@ namespace Motive.SeriesData
 			}
             _polylineLength = len;
 		}
-        public override ISeries GetVirtualValueAt(float t)
+        public override ISeries GetInterpolatedSeriesAt(float t)
 		{
 			var index = (int) (t * Count);
 			return GetSeriesAt(index);

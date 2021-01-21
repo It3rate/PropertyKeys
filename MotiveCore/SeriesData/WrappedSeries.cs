@@ -83,9 +83,9 @@ namespace Motive.SeriesData
 			_series.SetSeriesAt(index, series);
 		}
 
-		public virtual ISeries GetVirtualValueAt(float t)
+		public virtual ISeries GetInterpolatedSeriesAt(float t)
 		{
-			return _series.GetVirtualValueAt(t);
+			return _series.GetInterpolatedSeriesAt(t);
 		}
 
 		public virtual float FloatValueAt(int index)

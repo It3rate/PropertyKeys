@@ -113,8 +113,8 @@ namespace Motive.SeriesData
 		protected void CalculateFrame()
 		{
             _cachedFrame = (RectFSeries)MinMax.Copy();
-            float[] max = MinMax.GetVirtualValueAt(1f).FloatDataRef;
-            ArrayExtension.SubtractFloatArrayFrom(max, MinMax.GetVirtualValueAt(0).FloatDataRef);
+            float[] max = MinMax.GetInterpolatedSeriesAt(1f).FloatDataRef;
+            ArrayExtension.SubtractFloatArrayFrom(max, MinMax.GetInterpolatedSeriesAt(0).FloatDataRef);
             _cachedSize = new FloatSeries(VectorSize, max);
         }
 

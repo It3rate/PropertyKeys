@@ -47,7 +47,7 @@ namespace Motive.SeriesData
         ISeries GetSeriesAt(float t);
         ISeries GetSeriesAt(int index);
         void SetSeriesAt(int index, ISeries series);
-        ISeries GetVirtualValueAt(float t);
+        ISeries GetInterpolatedSeriesAt(float t);
         float FloatValueAt(int index);
         void SetFloatValueAt(int index, float value);
         int IntValueAt(int index);

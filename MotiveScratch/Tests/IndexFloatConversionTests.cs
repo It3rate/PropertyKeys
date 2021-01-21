@@ -137,25 +137,25 @@ namespace Motive.Tests
 		{
 			// series_1 = new FloatSeries(1, 1f, 2f, 11f, 22f);
 			float sample;
-			sample = series_1.GetVirtualValueAt(0f).X;
+			sample = series_1.GetInterpolatedSeriesAt(0f).X;
 			Assert.AreEqual(1f, sample, delta);
 
-			sample = series_1.GetVirtualValueAt(0.25f).X;
+			sample = series_1.GetInterpolatedSeriesAt(0.25f).X;
 			Assert.AreEqual(1.75f, sample, delta);
-			sample = series_1.GetVirtualValueAt(1f / 3f).X;
+			sample = series_1.GetInterpolatedSeriesAt(1f / 3f).X;
 			Assert.AreEqual(2f, sample, delta);
-			sample = series_1.GetVirtualValueAt(0.5f).X;
+			sample = series_1.GetInterpolatedSeriesAt(0.5f).X;
 			Assert.AreEqual(6.5f, sample, delta);
-			sample = series_1.GetVirtualValueAt(2f / 3f).X;
+			sample = series_1.GetInterpolatedSeriesAt(2f / 3f).X;
 			Assert.AreEqual(11f, sample, delta);
-			sample = series_1.GetVirtualValueAt(0.75f).X;
+			sample = series_1.GetInterpolatedSeriesAt(0.75f).X;
 			Assert.AreEqual(13.75f, sample, delta);
 
-			sample = series_1.GetVirtualValueAt(1f).X;
+			sample = series_1.GetInterpolatedSeriesAt(1f).X;
 			Assert.AreEqual(22f, sample, delta);
-			sample = series_1.GetVirtualValueAt(1.2f).X;
+			sample = series_1.GetInterpolatedSeriesAt(1.2f).X;
 			Assert.AreEqual(22f, sample, delta);
-			sample = series_1.GetVirtualValueAt(11f).X;
+			sample = series_1.GetInterpolatedSeriesAt(11f).X;
 			Assert.AreEqual(22f, sample, delta);
 		}
 
@@ -179,23 +179,23 @@ namespace Motive.Tests
 		{
 			//series_2 = new FloatSeries(2, 10f, 20f, 110f, 220f, 310f, 420f);
 			float[] sample;
-			sample = series_2.GetVirtualValueAt(-10f).FloatDataRef;
+			sample = series_2.GetInterpolatedSeriesAt(-10f).FloatDataRef;
 			ArraysEqual(new float[] {10f, 20f}, sample, delta);
-			sample = series_2.GetVirtualValueAt(0f).FloatDataRef;
+			sample = series_2.GetInterpolatedSeriesAt(0f).FloatDataRef;
 			ArraysEqual(new float[] {10f, 20f}, sample, delta);
 
-			sample = series_2.GetVirtualValueAt(0.25f).FloatDataRef;
+			sample = series_2.GetInterpolatedSeriesAt(0.25f).FloatDataRef;
 			ArraysEqual(new float[] {60f, 120f}, sample, delta);
-			sample = series_2.GetVirtualValueAt(0.5f).FloatDataRef;
+			sample = series_2.GetInterpolatedSeriesAt(0.5f).FloatDataRef;
 			ArraysEqual(new float[] {110f, 220f}, sample, 0.6f);// due to rounding of .5 on indexes of different accelerations this is out a bit. //delta);
-			sample = series_2.GetVirtualValueAt(0.75f).FloatDataRef;
+			sample = series_2.GetInterpolatedSeriesAt(0.75f).FloatDataRef;
 			ArraysEqual(new float[] {210f, 320f}, sample, delta);
 
-			sample = series_2.GetVirtualValueAt(1f).FloatDataRef;
+			sample = series_2.GetInterpolatedSeriesAt(1f).FloatDataRef;
 			ArraysEqual(new float[] {310f, 420f}, sample, delta);
-			sample = series_2.GetVirtualValueAt(1.1f).FloatDataRef;
+			sample = series_2.GetInterpolatedSeriesAt(1.1f).FloatDataRef;
 			ArraysEqual(new float[] {310f, 420f}, sample, delta);
-			sample = series_2.GetVirtualValueAt(10f).FloatDataRef;
+			sample = series_2.GetInterpolatedSeriesAt(10f).FloatDataRef;
 			ArraysEqual(new float[] {310f, 420f}, sample, delta);
 
 			//float testSample = series_2.GetSeriesAtT(1f / 3f).X;

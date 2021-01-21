@@ -273,14 +273,10 @@ namespace Motive.SeriesData
         public abstract ISeries Copy();
 
         public virtual ISeries GetSeriesAt(float t) => GetSeriesAt(SamplerUtils.IndexFromT(Count, t));
-        public virtual ISeries GetVirtualValueAt(float t)
+        public virtual ISeries GetInterpolatedSeriesAt(float t)
         {
 	        ISeries result;
-            if (t >= 1)
-            {
-                result = GetSeriesAt(Count - 1); // todo: GetVirtualValueAt should probably respect clampType
-            }
-            else if (Count > 1)
+            if (Count > 1) // optimization
             {
                 var endIndex = Count - 1;
                 // interpolate between indexes to get virtual values from array.

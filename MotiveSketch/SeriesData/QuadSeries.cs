@@ -70,7 +70,7 @@
 //            }
 //            _polylineLength = len;
 //        }
-//        public override Series GetVirtualValueAt(float t)
+//        public override Series GetInterpolatedSeriesAt(float t)
 //        {
 //            var index = (int)(t * Count);
 //            return GetSeriesAt(index);
