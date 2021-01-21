@@ -51,7 +51,7 @@ namespace Motive.Tests.GraphicTests
 	        Store loc = new Store(Runner.MainFrameRect, new HexagonSampler(new int[] { 20, 11 }));
 	        composite.AppendProperty(PropertyId.Location, loc);
 
-            var csLoc = new FunctionSampler(loc.Sampler, mouseLink, SeriesEquationType.Bubble, SlotUtils.XY);
+            var csLoc = new MutateTSampler(loc.Sampler, mouseLink, SeriesEquationType.Bubble, SlotUtils.XY);
             csLoc.EffectRatio = new ParametricSeries(2, 0.1f, 0.4f);
             var chained = new ChainedSampler(csLoc, new Easing(EasingType.EaseInOut, EasingType.EaseInOut));
 
@@ -59,13 +59,13 @@ namespace Motive.Tests.GraphicTests
             composite.AppendProperty(PropertyId.Location, locMouseStore);
 
 
-            FunctionSampler cs = new FunctionSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
+            var cs = new MutateTSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.X);
             cs.EffectRatio = new ParametricSeries(2, 2.5f, 1.2f);
             var chained2 = new ChainedSampler(cs, new Easing(EasingType.SmoothStart2, clamp: true));
             var mouseRadius = new Store(new FloatSeries(2, 10f, 10f, 9f, 9f, 3f, 3f), cs);
             composite.AppendProperty(PropertyId.Radius, mouseRadius);
 
-            FunctionSampler cso = new FunctionSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.Y);
+            var cso = new MutateTSampler(loc.Sampler, mouseLink, SeriesEquationType.Polar, SlotUtils.Y);
             var mouseOrient = new Store(new FloatSeries(1, 0f, 1f), cso);
             composite.AddProperty(PropertyId.Orientation, mouseOrient);
 

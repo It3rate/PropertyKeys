@@ -34,7 +34,7 @@ namespace Motive.Samplers
         SignedDistance, // returns xDist, yDist
 	}
 
-    public class FunctionSampler : Sampler
+    public class MutateTSampler : Sampler
     {
 	    private SeriesEquationType _seriesEquationType;
         private readonly Sampler _sampleA;
@@ -44,14 +44,14 @@ namespace Motive.Samplers
 	    private readonly BinaryFloatEquation _binaryFloatEquation;
         public ParametricSeries EffectRatio { get; set; }
 
-        public FunctionSampler(Sampler sampleA, FloatEquation floatEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
+        public MutateTSampler(Sampler sampleA, FloatEquation floatEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
         {
-	        _sampleA = sampleA;
-	        _seriesEquationType = SeriesEquationType.FloatEquation;
-	        _floatEquation = floatEquation;
-	        SampleCount = sampleCount;
+            _sampleA = sampleA;
+            _seriesEquationType = SeriesEquationType.FloatEquation;
+            _floatEquation = floatEquation;
+            SampleCount = sampleCount;
         }
-        public FunctionSampler(Sampler sampleA, Sampler sampleB, BinaryFloatEquation binaryFloatEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
+        public MutateTSampler(Sampler sampleA, Sampler sampleB, BinaryFloatEquation binaryFloatEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
         {
 	        _sampleA = sampleA;
 	        _sampleB = sampleB;
@@ -59,7 +59,7 @@ namespace Motive.Samplers
 	        _binaryFloatEquation = binaryFloatEquation;
 	        SampleCount = sampleCount;
         }
-        public FunctionSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
+        public MutateTSampler(Sampler sampleA, Sampler sampleB, SeriesEquation seriesEquation, Slot[] swizzleMap = null, int sampleCount = 1) : base(swizzleMap, sampleCount)
         {
 		    _sampleA = sampleA;
 		    _sampleB = sampleB;
@@ -68,7 +68,7 @@ namespace Motive.Samplers
 		    SampleCount = sampleCount;
 	    }
 
-        public FunctionSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int sampleCount = 1) :
+        public MutateTSampler(Sampler sampleA, Sampler sampleB, SeriesEquationType seriesEquationType, Slot[] swizzleMap = null, int sampleCount = 1) :
 	        this(sampleA, sampleB, GetSeriesEquationByType(seriesEquationType), swizzleMap, sampleCount)
         {
 	        _seriesEquationType = seriesEquationType;

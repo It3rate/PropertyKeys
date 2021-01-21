@@ -33,6 +33,16 @@ namespace Motive.Samplers
 		Product = 0,
 		Widest,
 		Sum,
+        Fixed,
+	}
+
+	public enum SnapStyle
+	{
+        Continuous = 0,
+        Floor,
+        Ceiling,
+        Round,
+        Region, // 10%,30%,20%,30%,10% (corner, toMid, mid, toEnd, end)
 	}
 
     public class SamplerUtils

@@ -88,11 +88,11 @@
     <Compile Include="Samplers\CenterBlurSampler.cs" />
     <Compile Include="Samplers\ChainedSampler.cs" />
     <Compile Include="Samplers\Easing.cs" />
-    <Compile Include="Samplers\FunctionSampler.cs" />
+    <Compile Include="Samplers\MutateTSampler.cs" />
     <Compile Include="Samplers\GridSampler.cs" />
     <Compile Include="Samplers\LineSampler.cs" />
     <Compile Include="Samplers\LinkSampler.cs" />
-    <Compile Include="Samplers\MappingSampler.cs" />
+    <Compile Include="Samplers\MutateValueSampler.cs" />
     <Compile Include="Samplers\RandomSampler.cs" />
     <Compile Include="Samplers\RingSampler.cs" />
     <Compile Include="Samplers\Sampler.cs" />
@@ -103,6 +103,7 @@
     <Compile Include="SeriesData\ParametricSeries.cs" />
     <Compile Include="SeriesData\RandomSeries.cs" />
     <Compile Include="SeriesData\RectFSeries.cs" />
+    <Compile Include="SeriesData\RefSeries.cs" />
     <Compile Include="SeriesData\SeriesBase.cs" />
     <Compile Include="SeriesData\Utils\ArrayExtension.cs" />
     <Compile Include="SeriesData\Utils\BitmapExtension.cs" />

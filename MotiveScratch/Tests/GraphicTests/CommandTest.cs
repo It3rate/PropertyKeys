@@ -36,11 +36,11 @@ namespace Motive.Tests.GraphicTests
             Store fillColor = new Store(new FloatSeries(3, 0,0,0.6f,1f,1f,0.6f), mouseLink.Sampler);
 
             var mouseClicks = new CommandCreateLinkSampler(cmdMouseInput.ContainerId, PropertyId.MouseClickCount);
-            var fs = new FunctionSampler(mouseClicks.Sampler, (f) => (f % 16) / 16f);
+            var fs = new MutateTSampler(mouseClicks.Sampler, (f) => (f % 16) / 16f);
             Store pointCount = new Store(new IntSeries(1, 10, 6, 4, 9, 7, 5, 3, 10, 4, 9, 7, 6, 8, 5, 8, 3), fs);
 
-            Store radius = new Store(_runner.ExternalValue0, new MappingSampler((a) => a * 10 + 8));
-            Store starness = new Store(_runner.ExternalValue1, new MappingSampler((a) => a * 2f - .9f));
+            Store radius = new Store(_runner.ExternalValue0, new MutateValueSampler((a) => a * 10 + 8));
+            Store starness = new Store(_runner.ExternalValue1, new MutateValueSampler((a) => a * 2f - .9f));
 
             CommandCreateContainer cmdGrid = new CommandCreateContainer(
 				Store.CreateItemStore(hexStore.Capacity),

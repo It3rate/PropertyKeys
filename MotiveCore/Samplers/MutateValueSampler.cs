@@ -8,11 +8,11 @@ using Motive.SeriesData.Utils;
 
 namespace Motive.Samplers
 {
-    public class MappingSampler : Sampler
+    public class MutateValueSampler : Sampler
     {
 	    private readonly FloatEquation _floatEquation;
 
-	    public MappingSampler(FloatEquation floatEquation, int sampleCount = 1) : base(sampleCount: sampleCount)
+	    public MutateValueSampler(FloatEquation floatEquation, int sampleCount = 1) : base(sampleCount: sampleCount)
 	    {
 		    _floatEquation = floatEquation;
 	    }
