@@ -19,8 +19,8 @@ Sampler
 	SampleCount (capacity) - create by sampler growth type or virtual count (or maybe step size)
 	Strides
 	SwizzleMap
-	GrowthType (Product, sum)
-	ClampTypes (Wrap, Mirror, clamp)
+	GrowthMode (Product, sum)
+	ClampModes (Wrap, Mirror, clamp)
 	Alignment (left, right) - too specific, should be property
 	PropertySlots - takes properties from store if available, like renderer.
 	query(t, series) - do we need series here? Maybe just t transform and store multiplies by series

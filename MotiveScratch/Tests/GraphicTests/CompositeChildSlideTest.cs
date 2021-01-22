@@ -59,12 +59,12 @@ namespace Motive.Tests.GraphicTests
             var easeStore = new Store(new FloatSeries(1, 0f, 1f), new Easing(EasingType.EaseInOut3AndBack), CombineFunction.Multiply);
             var result = new BlendTransition(compositeStart, compositeEnd, new Timer(0, 3000), easeStore);
 
-            var radStore = new Store(new FloatSeries(12, 35f, 15f), new LineSampler(), CombineFunction.Multiply);
-            radStore.Series.IndexClampMode = DiscreteClampMode.Mirror;
+            var radStore = new Store(new FloatSeries(12, 35f, 15f), new LinearSampler(), CombineFunction.Multiply);
+            radStore.Series.IndexClampMode = ClampMode.Mirror;
             var radiusLink = new LinkingStore(result.Id, PropertyId.FillColor, SlotUtils.X, radStore);
             compositeStart.AddProperty(PropertyId.Radius, radiusLink);
 
-            var starStore = new Store(new FloatSeries(1, 400f), new LineSampler(), CombineFunction.DivideFrom);
+            var starStore = new Store(new FloatSeries(1, 400f), new LinearSampler(), CombineFunction.DivideFrom);
             var starnessLink = new LinkingStore(compositeEnd.Id, PropertyId.Location, SlotUtils.Y, starStore);
             compositeStart.AddProperty(PropertyId.Starness, starnessLink);
 
@@ -78,7 +78,7 @@ namespace Motive.Tests.GraphicTests
 	        //container.AddProperty(PropertyId.PointCount, new IntSeries(1, 6).Store());
             container.AddProperty(PropertyId.PenColor, new FloatSeries(3, .2f, .1f, .2f, 0.3f, 0f, 0f).Store());
 
-	        var lineStore = new Store(new FloatSeries(1, .05f, .18f), new LineSampler(), CombineFunction.Multiply);
+	        var lineStore = new Store(new FloatSeries(1, .05f, .18f), new LinearSampler(), CombineFunction.Multiply);
 	        var lineLink = new LinkingStore(container.Id, PropertyId.Radius, SlotUtils.X, lineStore);
             container.AddProperty(PropertyId.PenWidth, lineLink);
             container.Renderer = new PolyShape();

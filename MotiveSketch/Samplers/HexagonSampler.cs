@@ -10,7 +10,7 @@ namespace Motive.Samplers
 {
 	public class HexagonSampler : GridSampler
 	{
-		public HexagonSampler(int[] strides, Slot[] swizzleMap = null, GrowthType growthType = GrowthType.Product) : base(strides, swizzleMap, growthType)
+		public HexagonSampler(int[] strides, Slot[] swizzleMap = null, GrowthMode growthMode = GrowthMode.Product) : base(strides, swizzleMap, growthMode)
 		{
 		}
 		

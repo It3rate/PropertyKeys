@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using Motive.SeriesData;
 using Motive.Samplers;
+using InterpolationMode = System.Drawing.Drawing2D.InterpolationMode;
 
 namespace Motive.Components.ExternalInput
 {

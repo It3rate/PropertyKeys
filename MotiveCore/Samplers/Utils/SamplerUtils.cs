@@ -10,33 +10,23 @@ using Motive.SeriesData.Utils;
 
 namespace Motive.Samplers
 {
-	public enum ClampMode
-	{
-		None = 0, // -1..0..1..2
-		Wrap, // 0..1->0..1.. 012012012012
-		Mirror, // 0..1,1..0,0..1,1.. 012210012210
-		ClampAtZero, // 0..0..1..2 000123..
-		ClampAtOne, // -1..0..1..1 ..-101111
-		Clamp, // 0..0..1..1..1.. 0001222
-		WrapRight, // 1..0->1..0->1... 210210210..
-	}
-
-    public enum AlignmentType
+    public enum AlignMode
 	{
 		Left = 0,
 		Right,
 		Centered,
 		Justified,
 	}
-	public enum GrowthType
+    // Determines how Strides are treated when calculating total possible virtual elements. A nxn grid is multiplies, but multiple rows of specified lengths are added.
+	public enum GrowthMode
 	{
 		Product = 0,
 		Widest,
 		Sum,
         Fixed,
 	}
-
-	public enum SnapStyle
+    // Determines how values are calculated when the queried index/t falls between actual data positions. This will usually be continuous, but some elements require discrete values.
+	public enum InterpolationMode
 	{
         Continuous = 0,
         Floor,
@@ -61,18 +51,18 @@ namespace Motive.Samplers
 		    return index / (capacity - 1f);
 	    }
 
-	    public static int StridesToSampleCount(int[] strides, GrowthType growthType)
+	    public static int StridesToSampleCount(int[] strides, GrowthMode growthMode)
 	    {
 		    int result = 0;
-		    switch (growthType)
+		    switch (growthMode)
 		    {
-			    case GrowthType.Product:
+			    case GrowthMode.Product:
 				    result = strides.Aggregate(1, (a, b) => b != 0 ? a * b : a);
 				    break;
-			    case GrowthType.Widest:
+			    case GrowthMode.Widest:
 				    result = strides.Max() * strides.Length;
 				    break;
-			    case GrowthType.Sum:
+			    case GrowthMode.Sum:
 				    result = strides.Sum();
 				    break;
 		    }
@@ -119,25 +109,24 @@ namespace Motive.Samplers
 			    }
 		    }
 			// only makes sense to clamp element one when rows are manually defined.
-            if (sampler.ClampTypes?.Length > 0)
+            if (sampler.ClampModes?.Length > 0)
             {
-                switch (sampler.ClampTypes[0])
+                switch (sampler.ClampModes[0])
                 {
-                    case ClampMode.WrapRight:
-                        positions[0] = (maxStride - 1) - positions[0];
+                    case ClampMode.Clamp:
+                        positions[0] = (positions[0] < 0) ? 0 : (positions[0] > 1) ? 1 : positions[0];
                         break;
                     case ClampMode.Mirror:
                         positions[0] = (positions[1] & 1) == 0 ? positions[0] : (maxStride - 1) - positions[0];
                         break;
-                    case ClampMode.ClampAtZero:
-                        positions[0] = (positions[0] < 0) ? 0 : positions[0];
-                        break;
-                    case ClampMode.ClampAtOne:
-                        positions[0] = (positions[0] > 1) ? 1 : positions[0];
-                        break;
-                    case ClampMode.Clamp:
-                        positions[0] = (positions[0] < 0) ? 0 : (positions[0] > 1) ? 1 : positions[0];
-                        break;
+
+                    // these don't make sense in Summed distribution as there is no wrapping
+                    //case ClampMode.Wrap:
+	                   // positions[0] = positions[0];
+	                   // break;
+                    //case ClampMode.ReverseWrap:
+	                   // positions[0] = (maxStride - 1) - positions[0];
+	                   // break;
                 }
                 result[0] = positions[0] / (float)maxStride;
             }
@@ -164,29 +153,23 @@ namespace Motive.Samplers
 			    float div = offsetT / minSegSize;
 			    int pos = (int)Math.Floor(div);
 			    int index = pos % curStride;
-			    if (sampler.ClampTypes.Length > i)
+			    if (sampler.ClampModes.Length > i)
 			    {
-				    switch (sampler.ClampTypes[i])
+				    switch (sampler.ClampModes[i])
 				    {
 					    case ClampMode.None:
+						    break;
+					    case ClampMode.Clamp:
+						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
 						    break;
 					    case ClampMode.Wrap:
 						    pos = index;
 						    break;
-					    case ClampMode.WrapRight:
+					    case ClampMode.ReverseWrap:
 						    pos = curStride - index;
 						    break;
-					    case ClampMode.Mirror:
+                        case ClampMode.Mirror:
 						    pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
-						    break;
-					    case ClampMode.ClampAtZero:
-						    pos = (pos < 0) ? 0 : index;
-						    break;
-					    case ClampMode.ClampAtOne:
-						    pos = (pos > 1) ? 1 : index;
-						    break;
-					    case ClampMode.Clamp:
-						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
 						    break;
 				    }
 			    }
@@ -216,29 +199,23 @@ namespace Motive.Samplers
 			    int curStride = sampler.Strides[i];
 			    int pos = offset / minSegSize;
 			    int index = pos % curStride;
-			    if (sampler.ClampTypes.Length > i)
+			    if (sampler.ClampModes.Length > i)
 			    {
-				    switch (sampler.ClampTypes[i])
+				    switch (sampler.ClampModes[i])
 				    {
 					    case ClampMode.None:
+						    break;
+					    case ClampMode.Clamp:
+						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
 						    break;
 					    case ClampMode.Wrap:
 						    pos = index;
 						    break;
-					    case ClampMode.WrapRight:
+					    case ClampMode.ReverseWrap:
 						    pos = curStride - index;
 						    break;
-					    case ClampMode.Mirror:
+                        case ClampMode.Mirror:
 						    pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
-						    break;
-					    case ClampMode.ClampAtZero:
-						    pos = (pos < 0) ? 0 : index;
-						    break;
-					    case ClampMode.ClampAtOne:
-						    pos = (pos > 1) ? 1 : index;
-						    break;
-					    case ClampMode.Clamp:
-						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
 						    break;
 				    }
 			    }

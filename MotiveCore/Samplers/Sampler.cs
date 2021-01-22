@@ -35,17 +35,19 @@ namespace Motive.Samplers
 		public int SampleCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
 		public int[] Strides { get; protected set; }
-		private GrowthType _growthType; // Product, Widest, Sum
-		public GrowthType GrowthType
+
+		private GrowthMode _growthMode; // Product, Widest, Sum
+		public GrowthMode GrowthMode
 		{
-			get => _growthType;
+			get => _growthMode;
 			set
 			{
-				_growthType = value;
-				SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthType);
+				_growthMode = value;
+				SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthMode);
             }
 		}
-		public ClampMode[] ClampTypes { get; set; } // Wrap, Mirror, Clamp...
+		public ClampMode[] ClampModes { get; set; } // Wrap, Mirror, Clamp... This is an array to allow an infinite scroll grid (last Stride doesn't wrap).
+		public InterpolationMode InterpolationMode { get; set; }
 
         protected Sampler(Slot[] swizzleMap = null, int sampleCount = 1)
 		{
@@ -54,8 +56,8 @@ namespace Motive.Samplers
             SwizzleMap = swizzleMap;
 			SampleCount = sampleCount;
 			Strides = new []{1};
-			ClampTypes = new []{ClampMode.None};
-			_growthType = GrowthType.Product;
+			ClampModes = new []{ClampMode.None};
+			_growthMode = GrowthMode.Product;
 		}
 
 		public virtual ISeries GetValuesAtT(ISeries series, float t)

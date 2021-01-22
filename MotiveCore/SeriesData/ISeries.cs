@@ -32,7 +32,7 @@ namespace Motive.SeriesData
         int Count { get; }
 		SeriesType Type { get; }
 		int VectorSize { get; set; }
-		DiscreteClampMode IndexClampMode { get; set; }
+		ClampMode IndexClampMode { get; set; }
 
         // todo: this frame and size implementation is weak and temporary
         RectFSeries Frame { get; }

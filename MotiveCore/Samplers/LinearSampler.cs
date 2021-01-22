@@ -2,9 +2,9 @@
 
 namespace Motive.Samplers
 {
-	public class LineSampler : Sampler
+	public class LinearSampler : Sampler
 	{
-		public LineSampler(int sampleCount = 1) : base(sampleCount: sampleCount) { }
+		public LinearSampler(int sampleCount = 1) : base(sampleCount: sampleCount) { }
 
 		public override ISeries GetValuesAtT(ISeries series, float t)
 		{

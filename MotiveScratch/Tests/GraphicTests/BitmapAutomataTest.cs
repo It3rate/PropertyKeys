@@ -98,7 +98,7 @@ namespace Motive.Tests.GraphicTests
             automataComposite.AddProperty(PropertyId.FillColor, ls);
 			automataComposite.AddProperty(PropertyId.Location, hexContainer.GetStore(PropertyId.Location));
 
-            var radStore = new Store(new FloatSeries(1, radius), new LineSampler(), CombineFunction.Multiply);
+            var radStore = new Store(new FloatSeries(1, radius), new LinearSampler(), CombineFunction.Multiply);
             var radiusLink = new LinkingStore(automataComposite.Id, PropertyId.Automata, new[] { Slot.S3 }, radStore);
             automataComposite.AddProperty(PropertyId.Radius, radiusLink);
 

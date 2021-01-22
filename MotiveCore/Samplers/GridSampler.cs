@@ -10,26 +10,26 @@ namespace Motive.Samplers
     /// </summary>
 	public class GridSampler : Sampler
 	{
-		public AlignmentType[] AlignmentTypes { get; protected set; } // left, right, centered, justified
+		public AlignMode[] AlignmentTypes { get; protected set; } // left, right, centered, justified
 
-        public GridSampler(int[] strides, Slot[] swizzleMap = null, GrowthType growthType = GrowthType.Product) : base(swizzleMap)
+        public GridSampler(int[] strides, Slot[] swizzleMap = null, GrowthMode growthMode = GrowthMode.Product) : base(swizzleMap)
         {
-			GrowthType = growthType;
+			GrowthMode = growthMode;
 			Strides = strides;
-			SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthType);
+			SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthMode);
 
-            ClampTypes = new ClampMode[strides.Length];
+            ClampModes = new ClampMode[strides.Length];
             for (int i = 0; i < strides.Length - 1; i++)
             {
-	            ClampTypes[i] = ClampMode.Wrap;
+	            ClampModes[i] = ClampMode.Wrap;
             }
-            ClampTypes[strides.Length - 1] = ClampMode.None;
-            AlignmentTypes = new AlignmentType[strides.Length];
+            ClampModes[strides.Length - 1] = ClampMode.None;
+            AlignmentTypes = new AlignMode[strides.Length];
         }
 
         protected ParametricSeries GetSampledTsNoSwizzle(ParametricSeries seriesT, out int[] positions)
 		{
-			return GrowthType == GrowthType.Product ?
+			return GrowthMode == GrowthMode.Product ?
 				SamplerUtils.DistributeTBySampler(seriesT, this, out positions) :
 				SamplerUtils.DistributeTBySummedSampler(seriesT, this, out positions);
         }
@@ -39,16 +39,15 @@ namespace Motive.Samplers
             return Swizzle(result, seriesT);
         }
         
-        protected override ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
-        {
-            var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
-            for (var i = 0; i < result.Length; i++)
-			{
-				result[i] = (i < Strides.Length) ? series.GetInterpolatedSeriesAt(seriesT[i]).FloatValueAt(i) : 0;
-			}
-
-			return SeriesUtils.CreateSeriesOfType(series, result);
-        }
+   //     protected override ISeries GetSeriesSample(ISeries series, ParametricSeries seriesT)
+   //     {
+   //         var result = ArrayExtension.GetFloatZeroArray(series.VectorSize);
+   //         for (var i = 0; i < result.Length; i++)
+			//{
+			//	result[i] = (i < Strides.Length) ? series.GetInterpolatedSeriesAt(seriesT[i]).FloatValueAt(i) : 0;
+			//}
+   //         return SeriesUtils.CreateSeriesOfType(series, result);
+   //     }
 
         public override int NeighborCount => 4;
         private int WrappedIndexes(int x, int y) => (x >= Strides[0] ? 0 : x < 0 ? Strides[0] - 1 : x) +  Strides[0] * (y >= Strides[1] ? 0 : y < 0 ? Strides[1] - 1 : y);

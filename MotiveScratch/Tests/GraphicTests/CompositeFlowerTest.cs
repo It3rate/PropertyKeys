@@ -71,7 +71,7 @@ namespace Motive.Tests.GraphicTests
             composite.AddProperty(PropertyId.Location, loc);
 	        composite.AddProperty(PropertyId.PointCount, new IntSeries(1, 5).Store());
 
-	        Store radiusStore = new Store(new FloatSeries(2, 8f, 8f), new LineSampler(70));
+	        Store radiusStore = new Store(new FloatSeries(2, 8f, 8f), new LinearSampler(70));
 	        composite.AddProperty(PropertyId.Radius, radiusStore);
 	        radiusStore.BakeData();
 	        radiusStore.GetSeriesRef().SetSeriesAt(standOutStar, new FloatSeries(2, 16f,16f));
@@ -151,7 +151,7 @@ namespace Motive.Tests.GraphicTests
 
 	        var ringSampler = new RingSampler(new int[] { 6, 4 });
 	        var hexSampler = new HexagonSampler(new int[] { 10, 7 });
-	        var lineSampler = new LineSampler(70);
+	        var lineSampler = new LinearSampler(70);
 	        var blurSampler = new CenterBlurSampler(new int[] { 10, 7 }, false);
 
 	        var start = new float[] { 0.5f, 0.3f, 0.3f, 1f, .95f, .95f };

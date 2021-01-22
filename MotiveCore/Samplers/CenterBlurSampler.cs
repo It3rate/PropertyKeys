@@ -10,6 +10,7 @@ namespace Motive.Samplers
     public class CenterBlurSampler : GridSampler
     {
 		public bool CenterOne { get; }
+        // This can probably be a MutateTSampler.
 	    public CenterBlurSampler(int[] strides, bool centerOne = true) : base(strides)
 	    {
 		    CenterOne = centerOne;

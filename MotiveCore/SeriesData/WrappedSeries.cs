@@ -39,7 +39,7 @@ namespace Motive.SeriesData
 			get => _series.VectorSize;
 			set => _series.VectorSize = value;
 		}
-		public virtual DiscreteClampMode IndexClampMode
+		public virtual ClampMode IndexClampMode
 		{
 			get => _series.IndexClampMode;
 			set => _series.IndexClampMode = value;
@@ -166,10 +166,10 @@ namespace Motive.SeriesData
 			_series.MapOrderToItemPositions(items);
 		}
 
-		public virtual Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
+		public virtual Store CreateLinearStore(int capacity) => new Store(this, new LinearSampler(capacity));
 		public virtual IStore Store(Sampler sampler = null)
 		{
-			sampler = sampler ?? new LineSampler(this.Count);
+			sampler = sampler ?? new LinearSampler(this.Count);
 			return new Store(this, sampler);
 		}
 

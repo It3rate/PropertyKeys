@@ -70,7 +70,7 @@ namespace Motive.SeriesData
         public int Id { get; set; }
 
         public int VectorSize { get; set; }
-        public DiscreteClampMode IndexClampMode { get; set; } = DiscreteClampMode.Clamp;
+        public ClampMode IndexClampMode { get; set; } = ClampMode.Clamp; // This should be in the Sampler...
         public int DataSize => _valuesRef.Count;
         public virtual int Count => (int)(_valuesRef.Count / VectorSize);
         public abstract SeriesType Type { get; }
@@ -360,10 +360,10 @@ namespace Motive.SeriesData
         }
 
         #region Convinience methods
-        public Store CreateLinearStore(int capacity) => new Store(this, new LineSampler(capacity));
+        public Store CreateLinearStore(int capacity) => new Store(this, new LinearSampler(capacity));
         public IStore Store(Sampler sampler = null)
         {
-            sampler = sampler ?? new LineSampler(this.Count);
+            sampler = sampler ?? new LinearSampler(this.Count);
             return new Store(this, sampler);
         }
 		#endregion

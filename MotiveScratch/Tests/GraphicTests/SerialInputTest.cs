@@ -96,7 +96,7 @@ namespace Motive.Tests.GraphicTests
             container.AddProperty(PropertyId.Radius, new FloatSeries(2, 10f, 10f).Store());
             container.AddProperty(PropertyId.PointCount, new IntSeries(1, 4, 8).Store());
 
-            var lineStore = new Store(new FloatSeries(1, .05f, .2f), new LineSampler(), CombineFunction.Multiply);
+            var lineStore = new Store(new FloatSeries(1, .05f, .2f), new LinearSampler(), CombineFunction.Multiply);
             var lineLink = new LinkingStore(container.Id, PropertyId.Radius, SlotUtils.X, lineStore);
             container.AddProperty(PropertyId.PenWidth, lineLink);
             container.Renderer = new PolyShape();

@@ -11,7 +11,7 @@ namespace Motive.Stores
 	    protected Store() { }
         public Store(ISeries series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace) : base(series)
 		{
-			Sampler = sampler ?? new LineSampler(series.Count);
+			Sampler = sampler ?? new LinearSampler(series.Count);
 			CombineFunction = combineFunction;
         }
 

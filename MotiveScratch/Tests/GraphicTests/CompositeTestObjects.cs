@@ -224,7 +224,7 @@ namespace Motive.Tests.GraphicTests
 
         private static void AddColor(Container container)
         {
-	        Sampler colorSampler = new LineSampler(); //new GridSampler(new []{10, 10});
+	        Sampler colorSampler = new LinearSampler(); //new GridSampler(new []{10, 10});
 	        var start = new float[] { 0.3f, 0.1f, 0.2f,   1f, 1f, 0,       0, 0.15f, 1f,      0, 0.5f, 0.1f };
 	        var end = new float[] { 0, 0.2f, 0.7f,        0.8f, 0, 0.3f,   0.7f, 1f, 0.1f,    0.4f, 0, 1f };
 	        var colorStartStore = new Store(new FloatSeries(3, start), colorSampler);

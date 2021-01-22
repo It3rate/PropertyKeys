@@ -90,13 +90,13 @@
     <Compile Include="Samplers\Easing.cs" />
     <Compile Include="Samplers\MutateTSampler.cs" />
     <Compile Include="Samplers\GridSampler.cs" />
-    <Compile Include="Samplers\LineSampler.cs" />
+    <Compile Include="Samplers\LinearSampler.cs" />
     <Compile Include="Samplers\LinkSampler.cs" />
     <Compile Include="Samplers\MutateValueSampler.cs" />
     <Compile Include="Samplers\RandomSampler.cs" />
     <Compile Include="Samplers\RingSampler.cs" />
     <Compile Include="Samplers\Sampler.cs" />
-    <Compile Include="Samplers\SamplerUtils.cs" />
+    <Compile Include="Samplers\Utils\SamplerUtils.cs" />
     <Compile Include="SeriesData\FloatSeries.cs" />
     <Compile Include="SeriesData\IntSeries.cs" />
     <Compile Include="SeriesData\ISeries.cs" />
@@ -107,7 +107,7 @@
     <Compile Include="SeriesData\SeriesBase.cs" />
     <Compile Include="SeriesData\Utils\ArrayExtension.cs" />
     <Compile Include="SeriesData\Utils\BitmapExtension.cs" />
-    <Compile Include="SeriesData\Utils\ClampMode.cs" />
+    <Compile Include="Samplers\Utils\ClampMode.cs" />
     <Compile Include="SeriesData\Utils\SeriesUtils.cs" />
     <Compile Include="SeriesData\Utils\SlotUtils.cs" />
     <Compile Include="SeriesData\WrappedSeries.cs" />

@@ -72,7 +72,7 @@ namespace Motive.Graphic
             return result;
 		}
 
-		//private DiscreteClampMode _radiusClampType = DiscreteClampMode.Mirror;
+		//private ClampMode _radiusClampType = ClampMode.Mirror;
         public BezierSeries GeneratePolyShape(float orientation, int pointCount, float roundness, ISeries radii, float starness)
         {
 			var hasStarness = Math.Abs(starness) > 0.001f;

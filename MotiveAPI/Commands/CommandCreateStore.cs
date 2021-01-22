@@ -22,7 +22,7 @@ namespace Motive.Commands
         public CommandCreateStore(ISeries series, Sampler sampler = null, CombineFunction combineFunction = CombineFunction.Replace)
         {
 	        _seriesId = series.Id;
-	        sampler = sampler ?? new LineSampler(series.Count);
+	        sampler = sampler ?? new LinearSampler(series.Count);
 	        _samplerId = sampler.Id;
 	        _combineFunction = combineFunction;
         }

@@ -25,8 +25,8 @@ namespace Motive.Tests.GraphicTests
 
         public void NextVersion()
         {
-	        //var hexSampler = new HexagonSampler(new int[] { 15, 10, 13, 14, 7, 14, 15, 10, 13, 14, 7, 4 }, null, GrowthType.Widest);
-	        var hexSampler = new HexagonSampler(new int[] { 15, 12 }, null, GrowthType.Product);
+	        //var hexSampler = new HexagonSampler(new int[] { 15, 10, 13, 14, 7, 14, 15, 10, 13, 14, 7, 4 }, null, GrowthMode.Widest);
+	        var hexSampler = new HexagonSampler(new int[] { 15, 12 }, null, GrowthMode.Product);
 	        Store hexStore = new Store(new RectFSeries(250f, 100f, 650f, 400f), hexSampler);
 
 	        var cmdMouseInput = new CommandCreateMouseInput();

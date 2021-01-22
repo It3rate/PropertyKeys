@@ -17,11 +17,11 @@ namespace Motive.Samplers
 
         public RingSampler(int[] ringCounts, IStore orientation = null, Slot[] swizzleMap = null) : base(swizzleMap)
         {
-	        GrowthType = GrowthType.Sum;
+	        GrowthMode = GrowthMode.Sum;
             Strides = ringCounts;
             Orientation = orientation;
 
-            SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthType);
+            SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthMode);
 
             MinRadius = 0.3f;
         }
