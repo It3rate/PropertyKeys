@@ -2,7 +2,7 @@
 using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 
-namespace Motive.Samplers
+namespace Motive.Samplers.Utils
 {
     // Samples passed series based on the 'easing' encoded in the internal normalized bezier curve.
 	public class BezierSampler : Sampler

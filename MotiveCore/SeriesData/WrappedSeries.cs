@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
 

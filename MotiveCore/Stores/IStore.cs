@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using Motive.Components.Libraries;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 
 namespace Motive.Stores

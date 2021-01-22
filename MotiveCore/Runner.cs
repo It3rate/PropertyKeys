@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using Motive.Components;
 using Motive.Components.Libraries;
 using Motive.Graphic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.Stores;
 using Timer = System.Timers.Timer;

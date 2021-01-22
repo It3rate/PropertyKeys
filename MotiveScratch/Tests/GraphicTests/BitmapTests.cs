@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Linq;
 using Motive.Components;
 using Motive.Components.Transitions;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.Stores;
 using Motive.SeriesData.Utils;

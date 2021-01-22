@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Motive.Commands;
 using Motive.Components;
 using Motive.Graphic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.Stores;
 

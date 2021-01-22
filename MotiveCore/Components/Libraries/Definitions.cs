@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 
 namespace Motive.Components.Libraries
 {

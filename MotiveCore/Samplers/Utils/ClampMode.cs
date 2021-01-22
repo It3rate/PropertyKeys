@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Motive.Samplers
+namespace Motive.Samplers.Utils
 {
 	public enum ClampMode
 	{

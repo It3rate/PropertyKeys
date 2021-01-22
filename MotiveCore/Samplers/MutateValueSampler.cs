@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 
-namespace Motive.Samplers
+namespace Motive.Samplers.Utils
 {
     public class MutateValueSampler : Sampler
     {

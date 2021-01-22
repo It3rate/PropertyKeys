@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Windows.Forms;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
 using Motive.Components.Libraries;

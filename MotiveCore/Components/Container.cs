@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using Motive.Graphic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 using Motive.Stores;

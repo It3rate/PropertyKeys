@@ -96,6 +96,9 @@
     <Compile Include="Samplers\RandomSampler.cs" />
     <Compile Include="Samplers\RingSampler.cs" />
     <Compile Include="Samplers\Sampler.cs" />
+    <Compile Include="Samplers\Utils\AlignMode.cs" />
+    <Compile Include="Samplers\Utils\GrowthMode.cs" />
+    <Compile Include="Samplers\Utils\InterpolationMode.cs" />
     <Compile Include="Samplers\Utils\SamplerUtils.cs" />
     <Compile Include="SeriesData\FloatSeries.cs" />
     <Compile Include="SeriesData\IntSeries.cs" />

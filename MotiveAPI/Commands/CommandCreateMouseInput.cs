@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Motive.Components.ExternalInput;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 
 namespace Motive.Commands
 {

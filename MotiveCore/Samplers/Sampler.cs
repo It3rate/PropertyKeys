@@ -5,7 +5,7 @@ using Motive.Components.Libraries;
 using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 
-namespace Motive.Samplers
+namespace Motive.Samplers.Utils
 {
 	// Sampler needs refactoring. Currently inputs can be int index, float t, Parametric t mods t, and Parametric gets result.
 	// Instead, this can probably just be a t modifier, and t is *always* a floatSeries (no parametric needed).
@@ -34,7 +34,7 @@ namespace Motive.Samplers
 		public int Id { get; set; }
 		public int SampleCount { get; protected set; } = 1;
 		public Slot[] SwizzleMap { get; set; }
-		public int[] Strides { get; protected set; }
+		public int[] Strides { get; protected set; } // this should be an intSeries.
 
 		private GrowthMode _growthMode; // Product, Widest, Sum
 		public GrowthMode GrowthMode
@@ -43,7 +43,7 @@ namespace Motive.Samplers
 			set
 			{
 				_growthMode = value;
-				SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthMode);
+				SampleCount = GrowthMode.GetCapacityOf(Strides);
             }
 		}
 		public ClampMode[] ClampModes { get; set; } // Wrap, Mirror, Clamp... This is an array to allow an infinite scroll grid (last Stride doesn't wrap).

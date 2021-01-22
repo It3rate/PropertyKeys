@@ -7,7 +7,7 @@ using Motive.Components;
 using Motive.SeriesData;
 using Motive.Commands;
 using Motive.Graphic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.Stores;
 
 namespace Motive.Tests.GraphicTests

@@ -1,6 +1,6 @@
 ﻿using Motive.SeriesData;
 
-namespace Motive.Samplers
+namespace Motive.Samplers.Utils
 {
 	public class LinearSampler : Sampler
 	{

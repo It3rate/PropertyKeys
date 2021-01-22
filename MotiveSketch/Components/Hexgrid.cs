@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing.Drawing2D;
 using Motive.Graphic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 
 namespace Motive.Components
 {

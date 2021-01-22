@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 
 namespace Motive.Stores

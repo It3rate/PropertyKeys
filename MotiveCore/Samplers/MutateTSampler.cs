@@ -9,7 +9,7 @@ using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
 
-namespace Motive.Samplers
+namespace Motive.Samplers.Utils
 {
 	public delegate ParametricSeries SeriesEquation(ParametricSeries a, ParametricSeries b = null, ParametricSeries c = null);
 

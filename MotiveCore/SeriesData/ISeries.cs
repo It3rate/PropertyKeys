@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Motive.Components.Libraries;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
 

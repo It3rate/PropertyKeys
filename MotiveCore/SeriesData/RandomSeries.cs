@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 
 namespace Motive.SeriesData
 {

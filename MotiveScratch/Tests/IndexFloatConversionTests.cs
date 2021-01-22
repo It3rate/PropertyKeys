@@ -1,5 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 
 namespace Motive.Tests

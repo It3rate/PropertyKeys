@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 using Motive.Stores;

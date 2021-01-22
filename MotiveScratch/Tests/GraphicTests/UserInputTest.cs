@@ -7,7 +7,7 @@ using Motive.Components;
 using Motive.Components.ExternalInput;
 using Motive.Components.Transitions;
 using Motive.Graphic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 using Motive.Stores;

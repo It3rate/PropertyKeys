@@ -5,7 +5,7 @@ using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
 
-namespace Motive.Samplers
+namespace Motive.Samplers.Utils
 {
     /// <summary>
     /// Creates Rings with SampleCount elements based on Strides, from Frame size to MinRadius. Doesn't actually use series data directly.
@@ -21,7 +21,7 @@ namespace Motive.Samplers
             Strides = ringCounts;
             Orientation = orientation;
 
-            SampleCount = SamplerUtils.StridesToSampleCount(Strides, GrowthMode);
+            SampleCount = GrowthMode.GetCapacityOf(Strides);
 
             MinRadius = 0.3f;
         }

@@ -9,7 +9,7 @@ using Motive.Components;
 using Motive.Components.ExternalInput;
 using Motive.Components.Simulators.Automata;
 using Motive.Graphic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 using Motive.Stores;

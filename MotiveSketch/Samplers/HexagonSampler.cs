@@ -6,7 +6,7 @@ using Motive.SeriesData;
 using Motive.SeriesData.Utils;
 using Motive.Stores;
 
-namespace Motive.Samplers
+namespace Motive.Samplers.Utils
 {
 	public class HexagonSampler : GridSampler
 	{
@@ -16,7 +16,7 @@ namespace Motive.Samplers
 		
         public override ParametricSeries GetSampledTs(ParametricSeries seriesT)
         {
-	        var result = GetSampledTsNoSwizzle(seriesT, out var positions);
+	        var result = GetGridPositions(seriesT, out var positions); //GetSampledTsNoSwizzle(seriesT, out var positions);
 
             bool isOddRow = (positions[1] & 1) == 1;
             float hexRowScale = 1f / (Strides[0] - 1f) * 0.5f;

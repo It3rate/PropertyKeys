@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Box2DX.Collision;
 using Box2DX.Common;
 using Box2DX.Dynamics;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.Components.ExternalInput;
 using Math = System.Math;

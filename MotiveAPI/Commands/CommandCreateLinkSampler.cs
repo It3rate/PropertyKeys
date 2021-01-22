@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Motive.Components;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData.Utils;
 
 namespace Motive.Commands

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Motive.Graphic;
-using Motive.Samplers;
+using Motive.Samplers.Utils;
 using Motive.SeriesData;
 using Motive.Stores;
 
