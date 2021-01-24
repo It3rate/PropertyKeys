@@ -16,7 +16,6 @@ namespace Motive.Samplers.Utils
 
         public static Sampler GetSamplerById(int id) => Runner.CurrentSamplers[id];
 
-        // todo: reconcile indexFromT with TFromIndex -- one returns 0-1 inclusive, the second exclusive.
         public static int IndexFromT(int capacity, float t)
 	    {
 		    return Math.Max(0, Math.Min(capacity - 1, (int)Math.Round(t * (capacity - 1f))));
@@ -26,51 +25,6 @@ namespace Motive.Samplers.Utils
 		    return index / (capacity - 1f);
 	    }
 
-
-	    public static IntSeries DistributeBySampler(IntSeries series, Sampler sampler, out int[] positions)
-	    {
-		    var len = sampler.Strides.Length;
-		    positions = new int[len];
-		    bool hasMultiple = series.Count > 1;
-		    int minSegSize = sampler.SampleCount - 1;
-		    int offset = series.IntValueAt(0);
-		    for (int i = 0; i < len; i++)
-		    {
-			    // allow input of multiple parameters - use position per stride in this case.
-			    // if mismatched lengths, just use last value available (basically error condition).
-			    if (hasMultiple && series.Count > i)
-			    {
-				    minSegSize = sampler.Strides[i] - 1;
-				    offset = series.IntValueAt(i);
-			    }
-			    int curStride = sampler.Strides[i];
-			    int pos = offset / minSegSize;
-			    int index = pos % curStride;
-			    if (sampler.ClampModes.Length > i)
-			    {
-				    switch (sampler.ClampModes[i])
-				    {
-					    case ClampMode.None:
-						    break;
-					    case ClampMode.Clamp:
-						    pos = (pos < 0) ? 0 : (pos > 1) ? 1 : index;
-						    break;
-					    case ClampMode.Wrap:
-						    pos = index;
-						    break;
-					    case ClampMode.ReverseWrap:
-						    pos = curStride - index;
-						    break;
-                        case ClampMode.Mirror:
-						    pos = ((index / curStride) & 1) == 0 ? index : curStride - index;
-						    break;
-				    }
-			    }
-			    positions[i] = pos;
-			    minSegSize *= curStride;
-		    }
-		    return new IntSeries(len, positions);
-	    }
         /// <summary>
         /// Returns normalized indexes into segmented array based on index and size. Passed size can be virtual (larger than implied segments total).
         /// </summary>
@@ -155,12 +109,11 @@ namespace Motive.Samplers.Utils
             float remainder = lastSegment > 1 ? refRemainder / (lastSegment - discreteAdjust) : 0;
             return new ParametricSeries(2, indexT, remainder);
         }
-        public static void SummedIndexAndRemainder(int stride, int partialIndex, ref int index, out int remainder)
+        private static void SummedIndexAndRemainder(int stride, int partialIndex, ref int index, out int remainder)
         {
             if(partialIndex >= stride)
             {
                 remainder = partialIndex - stride;
-
                 index++;
             }
             else

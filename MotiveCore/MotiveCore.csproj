@@ -108,6 +108,7 @@
     <Compile Include="SeriesData\RectFSeries.cs" />
     <Compile Include="SeriesData\RefSeries.cs" />
     <Compile Include="SeriesData\SeriesBase.cs" />
+    <Compile Include="SeriesData\StrideSeries.cs" />
     <Compile Include="SeriesData\Utils\ArrayExtension.cs" />
     <Compile Include="SeriesData\Utils\BitmapExtension.cs" />
     <Compile Include="Samplers\Utils\ClampMode.cs" />

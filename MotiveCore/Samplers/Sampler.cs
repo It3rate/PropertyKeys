@@ -7,28 +7,32 @@ using Motive.SeriesData.Utils;
 
 namespace Motive.Samplers.Utils
 {
-	// Sampler needs refactoring. Currently inputs can be int index, float t, Parametric t mods t, and Parametric gets result.
-	// Instead, this can probably just be a t modifier, and t is *always* a floatSeries (no parametric needed).
-	// A grid would be two samplers, one to split t into two values, and one just a linear scalar to the frame size.
-	// (or maybe even the frame size scalar is just done on the renderer?).
-	// Strides become 'dimensions', essentially just a way to express capacity (product, sum or continuous (0-1) style).
-	// Continuous style requires an item list (or assumes no items), as there can't be virtual items.
-	// Neighbors may need to move to Container, or at least the items element would need to be passed.
+    // Sampler needs refactoring. Currently inputs can be int index, float t, Parametric t mods t, and Parametric gets result.
+    // Instead, this can probably just be a t modifier, and t is *always* a floatSeries (no parametric needed).
 
-	// It seems composites should be a specific type of store (items/children are series, t division is sampler),
-	// and stores should have properties like composites do, used for internal clocks, variables, scalars etc).
+    // Strides should be an IntSeries, and sampling should be much more 'in system', like clampMode, interpolateMode make common things like grid work automatically.
 
-	// Can stores know how to ID and use their own properties? Ideally can get rid of PropertyIds as constant, 
-	// and they become self contained modifiers. Maybe.
-	// Counter: Location has many possible calculations independent of final use.
-	// So a GridStore calculates a grid, but goes on a location property, which is universal?
-	// Or location property is only known to things with locations via some interface?
-	// Store types have a list of required properties, ideally enforced in ctor, by type even.
-	// Required properties could be mandated in ctor and available via getter and store type, on interface.
+    // A grid would be two samplers, one to split t into two values, and one just a linear scalar to the frame size.
+	    // (or maybe even the frame size scalar is just done on the renderer?).
+	    // Strides become 'dimensions', essentially just a way to express capacity (product, sum or continuous (0-1) style).
+	    // Continuous style requires an item list (or assumes no items), as there can't be virtual items.
+	    // Neighbors may need to move to Container, or at least the items element would need to be passed.
 
-	// series is always a matrix?
+    //      Stores:Series/Sampler     Composite:adds Property->Stores    Container:adds Children
+    // hmm, so maybe not this... 
+    // It seems composites should be a specific type of store (items/children are series, t division is sampler),
+    // and stores should have properties like composites do, used for internal clocks, variables, scalars etc).
+    // Can stores know how to ID and use their own properties? Ideally can get rid of PropertyIds as constant, 
+    // and they become self contained modifiers. Maybe.
+    // Counter: Location has many possible calculations independent of final use.
+    // So a GridStore calculates a grid, but goes on a location property, which is universal?
+    // Or location property is only known to things with locations via some interface?
+    // Store types have a list of required properties, ideally enforced in ctor, by type even.
+    // Required properties could be mandated in ctor and available via getter and store type, on interface.
 
-	public abstract class Sampler : IDefinition
+    // series is always a matrix?
+
+    public abstract class Sampler : IDefinition
 	{
         public string Name { get; set; }
 		public int Id { get; set; }
