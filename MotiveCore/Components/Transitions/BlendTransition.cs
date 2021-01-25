@@ -32,19 +32,19 @@ namespace Motive.Components.Transitions
             GenerateBlends(); // eventually immutable after creation, so no new blends
         }
 
-        public override int NestedItemCount
+        public override int NestedCapacity
         {
             get
             {
-                var startCount = Start?.NestedItemCount ?? 1;
-                var endCount = End?.NestedItemCount ?? 1;
+                var startCount = Start?.NestedCapacity ?? 1;
+                var endCount = End?.NestedCapacity ?? 1;
                 return (int)Math.Max(startCount, endCount);
             }
         }
         public override int NestedItemCountAtT(float t)
         {
-            var startCount = Start?.NestedItemCount ?? 1;
-            var endCount = End?.NestedItemCount ?? 1;
+            var startCount = Start?.NestedCapacity ?? 1;
+            var endCount = End?.NestedCapacity ?? 1;
             return (int)(startCount + (endCount - startCount) * t);
         }
         

@@ -17,6 +17,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Tests\HexagonSamplerTests.cs" />
+    <Compile Remove="Tests\IndexFloatConversionTests.cs" />
+    <Compile Remove="Tests\RingSamplerTests.cs" />
+    <Compile Remove="Tests\SamplerUtilsTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System">
       <HintPath>System</HintPath>
     </Reference>

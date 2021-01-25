@@ -13,7 +13,8 @@ namespace Motive.Samplers.Utils
 		Widest,
 		Sum,
 		Fixed,
-	}
+		Reference,
+    }
 
     public static class GrowthModeExtension
     {

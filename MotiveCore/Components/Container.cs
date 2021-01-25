@@ -20,10 +20,27 @@ namespace Motive.Components
 		
         public IContainer Parent { get; set; }
         public IRenderable Renderer { get; set; }
-		
-        // todo: move away from location being so important.
         public override int Capacity => Math.Max(GetStore(PropertyId.Location)?.Capacity ?? 0, GetStore(PropertyId.Items).Capacity);
-
+        public virtual int NestedCapacity
+        {
+	        get
+	        {
+		        int result = 0;
+		        if (_children.Count > 0)
+		        {
+			        for (int i = 0; i < Capacity; i++)
+			        {
+				        int childIndex = Math.Min(_children.Count - 1, i);
+				        result += GetComposite(_children[childIndex]).NestedCapacity;
+			        }
+		        }
+		        else
+		        {
+			        result = GetStore(PropertyId.Items)?.Capacity ?? 0;
+		        }
+		        return result;
+	        }
+        }
         protected Container(IStore items)
         {
             if (items != null)
@@ -63,26 +80,6 @@ namespace Motive.Components
 			Parent?.GetDefinedStores(ids);
 		}
 
-        public virtual int NestedItemCount
-        {
-            get
-            {
-                int result = 0;
-                if (_children.Count > 0)
-                {
-                    for (int i = 0; i < Capacity; i++)
-                    {
-                        int childIndex = Math.Min(_children.Count - 1, i);
-                        result += GetComposite(_children[childIndex]).NestedItemCount;
-                    }
-                }
-                else
-                {
-                    result = GetStore(PropertyId.Items)?.Capacity ?? 0;
-                }
-                return result;
-            }
-        }
         public virtual int[] ChildCounts
         {
             get
@@ -97,7 +94,7 @@ namespace Motive.Components
                     for (int i = 0; i < Capacity; i++)
                     {
                         int childIndex = Math.Max(0, Math.Min(_children.Count - 1, i));
-                        result[i] = GetComposite(_children[childIndex]).NestedItemCount;
+                        result[i] = GetComposite(_children[childIndex]).NestedCapacity;
                     }
                 }
                 return result;
@@ -105,7 +102,7 @@ namespace Motive.Components
         }
         public virtual int NestedItemCountAtT(float t)
         {
-            return NestedItemCount;
+            return NestedCapacity;
         }
 
         public void AddChild(IContainer child)
@@ -179,12 +176,14 @@ namespace Motive.Components
             return store != null ? store.GetSampledTs(seriesT) : seriesT;
         }
 
+        // not used
         public virtual ISeries GetNestedSeriesAtT(PropertyId propertyId, float t, ISeries parentSeries)
         {
+	        //return null;
 	        // this uses t because many interpolations have no specific capacity information (eg a shared color store)
 	        ISeries result;
-	        int index = SamplerUtils.IndexFromT(NestedItemCount, t);
-	        var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, index);
+	        int index = SamplerUtils.IndexFromT(NestedCapacity, t);
+	        var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, index, true);
 	        float indexT = sample.X;
 	        float segmentT = sample.Y;
 	        if (ChildCounts.Length <= 1)
@@ -212,8 +211,8 @@ namespace Motive.Components
 			{
 				AddLocalPropertiesAtT(data, t);
 			}
-			
-			var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, SamplerUtils.IndexFromT(NestedItemCount, t));// (int)Math.Floor(t * (NestedItemCount - 1f) + 0.5f));
+
+            var sample = SamplerUtils.GetSummedJaggedT(ChildCounts, SamplerUtils.IndexFromT(NestedCapacity, t), false);// (int)Math.Floor(t * (NestedCapacity - 1f) + 0.5f));
 			float indexT = sample.X;
 			float segmentT = sample.Y;
 			if (_children.Count > 0)
@@ -247,7 +246,7 @@ namespace Motive.Components
 
         public virtual void Draw(Graphics g, Dictionary<PropertyId, ISeries> dict)
         {
-            var capacity = NestedItemCount;// NestedItemCountAtT(InterpolationT);
+            var capacity = NestedCapacity;// NestedItemCountAtT(InterpolationT);
             if (capacity > 0)// != null)
             {
 				var items = GetLocalStore(PropertyId.Items);

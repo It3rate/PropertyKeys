@@ -26,6 +26,38 @@ namespace Motive.Samplers.Utils
 	    }
 
         /// <summary>
+        /// Returns normalized indexes into a jagged set of elements at the passed index.
+        /// Normally the last parameter will be 0-1 in order to pass to children,
+        /// but in the case of eg grid sampling it can return a normalized index based on the count of the last segment.
+        /// </summary>
+        /// <param name="segments">The lengths of elements in a jagged array.</param>
+        /// <param name="index">The index to sample.</param>
+        /// <param name="continuousRemainder">Decides if the remainder t is 0-.9999, or in discrete steps based on the count of the last sampled segment.</param>
+        /// <returns></returns>
+        public static ParametricSeries GetSummedJaggedT(int[] segments, int index, bool continuousRemainder)
+	    {
+		    int row = 0;
+		    int col = index;
+		    foreach (var seg in segments)
+		    {
+			    if (col >= seg)
+			    {
+				    col -= seg;
+				    row++;
+			    }
+			    else
+			    {
+				    break;
+			    }
+		    }
+		    int colLength = segments[row];
+		    // the index could overflow the sum of segments, so finish the calculation regardless
+		    float indexT = segments.Length > 0 ? row / (float)segments.Length : 0;
+		    float discreteAdjust = continuousRemainder ? 0f : 1f;
+		    float remainder = colLength > 1 ? col / (colLength - discreteAdjust) : 0;
+		    return new ParametricSeries(2, indexT, remainder);
+	    }
+        /// <summary>
         /// Returns normalized indexes into segmented array based on index and size. Passed size can be virtual (larger than implied segments total).
         /// </summary>
         /// <param name="segments">The segments (e.g. row/cols) for the container.</param>
@@ -54,14 +86,14 @@ namespace Motive.Samplers.Utils
 
             return new ParametricSeries(indexes.Length, result);
         }
-        public static ParametricSeries GetMultipliedJaggedTFromT(int[] segments, int capacity, float t)
+        private static ParametricSeries GetMultipliedJaggedTFromT(int[] segments, int capacity, float t)
         {
 	        var index = IndexFromT(capacity, t); // (int)Math.Round(t * (capacity - 1f));
             //var index = (int)(t * (capacity - 1) + 0.5f); // Need an index for a strided object, so discard remainder.
             return GetMultipliedJaggedT(segments, capacity, index);
         }
 
-        public static int[] GetPositionsForIndex(int[] segments, int capacity, int index)
+        private static int[] GetPositionsForIndex(int[] segments, int capacity, int index)
         {
             var result = new int[segments.Length];
             var count = Math.Max(0, Math.Min(capacity - 1, index));
@@ -76,50 +108,6 @@ namespace Motive.Samplers.Utils
                 count -= result[i] * dimSize;
             }
             return result;
-        }
-
-		/// <summary>
-        /// Returns normalized indexes into a jagged set of elements at the passed index.
-        /// Normally the last parameter will be 0-1 in order to pass to children,
-        /// but in the case of eg grid sampling it can return a normalized index based on the count of the last segment.
-        /// </summary>
-        /// <param name="segments">The lengths of elements in a jagged array.</param>
-        /// <param name="index">The index to sample.</param>
-        /// <param name="isLastSegmentDiscrete">Decides if the last parameter is 0-1 (default), or discrete based on the count of the last sampled segment.</param>
-        /// <returns></returns>
-        public static ParametricSeries GetSummedJaggedT(int[] segments, int index, bool isLastSegmentDiscrete = false)
-        {
-            int partialIndex = index;
-            int refRemainder = index;
-            int refIndex = 0;
-            int lastSegment = 0;
-            foreach (var seg in segments)
-            {
-	            if(refRemainder < seg)
-	            {
-					lastSegment = seg;
-		            break;
-	            }
-	            SummedIndexAndRemainder(seg, partialIndex, ref refIndex, out refRemainder);
-	            partialIndex = refRemainder;
-            }
-            // the index could overflow the sum of segments, so finish the calculation regardless
-            float indexT = segments.Length > 0 ? refIndex / (segments.Length - 0f) : 0;
-            float discreteAdjust = isLastSegmentDiscrete ? 0f : 1f;
-            float remainder = lastSegment > 1 ? refRemainder / (lastSegment - discreteAdjust) : 0;
-            return new ParametricSeries(2, indexT, remainder);
-        }
-        private static void SummedIndexAndRemainder(int stride, int partialIndex, ref int index, out int remainder)
-        {
-            if(partialIndex >= stride)
-            {
-                remainder = partialIndex - stride;
-                index++;
-            }
-            else
-            {
-                remainder = partialIndex;
-            }
         }
 
 		/// <summary>

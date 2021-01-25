@@ -11,8 +11,12 @@ namespace Motive.Components
 {
     public interface IContainer : IComposite, IDrawable
     {
-	    int[] ChildCounts { get; }
-	    int NestedItemCount { get; }
+	    int[] ChildCounts { get; }       
+	    
+	    /// <summary>
+	    /// Number of contained elements including all child counts.
+	    /// </summary>
+        int NestedCapacity { get; }
 	    int NestedItemCountAtT(float t);
 
         IRenderable QueryPropertiesAtT(Dictionary<PropertyId, ISeries> data, float t, bool addLocalProperties);

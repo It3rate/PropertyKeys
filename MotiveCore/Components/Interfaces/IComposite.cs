@@ -60,6 +60,9 @@ namespace Motive.Components
         //void OnDeactivate();
         //void Update(double currentTime, double deltaTime);
 
+        /// <summary>
+        /// Number of potential elements in this composite. Doesn't include child counts.
+        /// </summary>
         int Capacity { get; }
 
 
