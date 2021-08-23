@@ -91,9 +91,13 @@ namespace Motive.Stores
 
         public static Store CreateItemStore(int count)
 		{
-			IntSeries result = new IntSeries(1, 0, count - 1);
-			return result.CreateLinearStore(count);
-        }
+            // creates a series from 0 to count-1, these are the actual indexes, but will be interpolated from 0-1 to include all values.
+            // From the outside, this should be identical to the case where every value is baked.
+            // Question of whether this should go to n or n-1, probably n?
+			IntSeries series = new IntSeries(1, 0, count - 1);
+			var result = series.CreateLinearStore(count);
+			return result;
+		}
         private static readonly IStore _emptyItemStore = IntSeries.Empty.Store();
         public static IStore EmptyItemStore => _emptyItemStore;
     }

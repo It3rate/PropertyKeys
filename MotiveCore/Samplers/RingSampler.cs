@@ -33,7 +33,7 @@ namespace Motive.Samplers.Utils
 	        {
 		        //int max = SampleCount - 1;
 		        //int index = (int)Math.Max(0, Math.Min(max, Math.Floor(seriesT.X * max + 0.5f)));
-                int index = (int)((SampleCount - 1) * seriesT.X);
+                int index = (int)((SampleCount - 1) * seriesT.X + 0.5f);
                 result = SamplerUtils.GetSummedJaggedT(Strides, index, true);
 	        }
 	        else

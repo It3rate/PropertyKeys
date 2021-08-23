@@ -43,7 +43,6 @@ namespace Motive.SeriesData
 					{
 						_floatValues[i] += b.FloatValueAt(i);
 					}
-
 					break;
                 case CombineFunction.Subtract:
                     for (var i = 0; i < minSize; i++)
@@ -62,7 +61,6 @@ namespace Motive.SeriesData
 					{
 						_floatValues[i] *= b.FloatValueAt(i);
 					}
-
 					break;
                 case CombineFunction.Divide:
                     for (var i = 0; i < minSize; i++)
